@@ -20,6 +20,7 @@ export async function createLesson(data: {
   durationMin?: number;
   isPublished?: boolean;
   isFreePreview?: boolean;
+  videoUrl?: string | null;
 }): Promise<Lesson> {
   return prisma.lesson.create({ data });
 }
@@ -31,6 +32,7 @@ export async function updateLesson(id: string, data: Partial<{
   durationMin: number;
   isPublished: boolean;
   isFreePreview: boolean;
+  videoUrl: string | null;
 }>): Promise<Lesson> {
   return prisma.lesson.update({ where: { id }, data });
 }

@@ -10,6 +10,7 @@ const updateSchema = z.object({
   durationMin: z.number().int().min(0).optional(),
   isPublished: z.boolean().optional(),
   isFreePreview: z.boolean().optional(),
+  videoUrl: z.string().url().nullable().optional(),
 });
 
 export async function PATCH(

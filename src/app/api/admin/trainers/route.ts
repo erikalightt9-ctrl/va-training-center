@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import {
-  getAllCourses,
-  createCourse,
-} from "@/lib/repositories/course.repository";
-import { createCourseSchema } from "@/lib/validations/course.schema";
+  getAllTrainers,
+  createTrainer,
+} from "@/lib/repositories/trainer.repository";
+import { createTrainerSchema } from "@/lib/validations/trainer.schema";
 
 /* ------------------------------------------------------------------ */
-/*  GET — Admin: list all courses with counts                          */
+/*  GET — Admin: list all trainers with course count                   */
 /* ------------------------------------------------------------------ */
 
 export async function GET(request: NextRequest) {
@@ -24,15 +24,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const courses = await getAllCourses();
+    const trainers = await getAllTrainers();
 
     return NextResponse.json({
       success: true,
-      data: courses,
+      data: trainers,
       error: null,
     });
   } catch (err) {
-    console.error("[GET /api/admin/courses]", err);
+    console.error("[GET /api/admin/trainers]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
       { status: 500 },
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  POST — Admin: create a course                                      */
+/*  POST — Admin: create a trainer                                     */
 /* ------------------------------------------------------------------ */
 
 export async function POST(request: NextRequest) {
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const parsed = createCourseSchema.safeParse(body);
+    const parsed = createTrainerSchema.safeParse(body);
 
     if (!parsed.success) {
       const firstIssue = parsed.error.issues[0]?.message ?? "Invalid input";
@@ -69,23 +69,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const course = await createCourse(parsed.data);
+    const trainer = await createTrainer(parsed.data);
 
     return NextResponse.json(
-      { success: true, data: course, error: null },
+      { success: true, data: trainer, error: null },
       { status: 201 },
     );
   } catch (err) {
-    console.error("[POST /api/admin/courses]", err);
+    const isPrismaUniqueError =
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code: string }).code === "P2002";
 
-    const message =
-      err instanceof Error && err.message.includes("Unique constraint")
-        ? "A course with this slug already exists"
-        : "Internal server error";
+    if (isPrismaUniqueError) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          error: "A trainer with this email already exists",
+        },
+        { status: 409 },
+      );
+    }
 
+    console.error("[POST /api/admin/trainers]", err);
     return NextResponse.json(
-      { success: false, data: null, error: message },
-      { status: message === "Internal server error" ? 500 : 409 },
+      { success: false, data: null, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

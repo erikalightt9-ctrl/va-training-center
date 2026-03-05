@@ -1,0 +1,31 @@
+import { z } from "zod";
+
+export const createCourseSchema = z.object({
+  slug: z.enum(["MEDICAL_VA", "REAL_ESTATE_VA", "US_BOOKKEEPING_VA"], {
+    message: "Slug must be MEDICAL_VA, REAL_ESTATE_VA, or US_BOOKKEEPING_VA",
+  }),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(200, "Title must be 200 characters or fewer"),
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters"),
+  durationWeeks: z
+    .number()
+    .int("Duration must be a whole number")
+    .min(1, "Duration must be at least 1 week")
+    .max(52, "Duration must be 52 weeks or fewer"),
+  price: z
+    .number()
+    .min(0, "Price must be 0 or greater"),
+  outcomes: z
+    .array(z.string().min(1, "Outcome cannot be empty"))
+    .min(1, "At least one outcome is required"),
+  isActive: z.boolean().optional(),
+});
+
+export const updateCourseSchema = createCourseSchema.partial();
+
+export type CreateCourseData = z.infer<typeof createCourseSchema>;
+export type UpdateCourseData = z.infer<typeof updateCourseSchema>;

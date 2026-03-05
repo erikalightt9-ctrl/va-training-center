@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Video } from "lucide-react";
 
 interface Course {
   id: string;
@@ -8,12 +9,13 @@ interface Course {
 }
 
 interface Lesson {
-  id: string;
-  title: string;
-  order: number;
-  durationMin: number;
-  isPublished: boolean;
-  isFreePreview: boolean;
+  readonly id: string;
+  readonly title: string;
+  readonly order: number;
+  readonly durationMin: number;
+  readonly isPublished: boolean;
+  readonly isFreePreview: boolean;
+  readonly videoUrl: string | null;
 }
 
 export default function AdminLessonsPage() {
@@ -26,6 +28,7 @@ export default function AdminLessonsPage() {
   const [durationMin, setDurationMin] = useState(0);
   const [isPublished, setIsPublished] = useState(false);
   const [isFreePreview, setIsFreePreview] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -64,6 +67,7 @@ export default function AdminLessonsPage() {
           durationMin,
           isPublished,
           isFreePreview,
+          videoUrl: videoUrl.trim() || null,
         }),
       });
       const data = await res.json();
@@ -72,6 +76,7 @@ export default function AdminLessonsPage() {
         setContent("");
         setOrder(lessons.length + 2);
         setIsFreePreview(false);
+        setVideoUrl("");
         setSuccess("Lesson created!");
         loadLessons(selectedCourse);
       } else {
@@ -180,6 +185,15 @@ export default function AdminLessonsPage() {
                   className="w-full border rounded-lg px-3 py-2 text-sm mt-1 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+              <div>
+                <label className="text-xs font-medium text-gray-600">Video URL (optional)</label>
+                <input
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="https://youtube.com/embed/..."
+                  className="w-full border rounded-lg px-3 py-2 text-sm mt-1 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <input
@@ -229,8 +243,11 @@ export default function AdminLessonsPage() {
                     className="flex items-center justify-between p-3 border rounded-lg"
                   >
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
                         #{l.order} {l.title}
+                        {l.videoUrl && (
+                          <Video className="h-3.5 w-3.5 text-blue-500" aria-label="Has video" />
+                        )}
                       </span>
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full ${

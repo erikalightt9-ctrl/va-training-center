@@ -103,14 +103,16 @@ model Course {
   isActive      Boolean      @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  enrollments   Enrollment[]
-  lessons       Lesson[]
-  quizzes       Quiz[]
-  certificates  Certificate[]
-  threads       ForumThread[]
+  enrollments     Enrollment[]
+  lessons         Lesson[]
+  quizzes         Quiz[]
+  certificates    Certificate[]
+  threads         ForumThread[]
   assignments     Assignment[]
   calendarEvents  CalendarEvent[]
   schedules       Schedule[]
+  trainers        CourseTrainer[]
+  resources       CourseResource[]
 
   @@map("courses")
 }
@@ -231,9 +233,11 @@ model Lesson {
   durationMin Int      @default(0)
   isPublished   Boolean  @default(false)
   isFreePreview Boolean  @default(false)
+  videoUrl      String?
   createdAt     DateTime @default(now())
   course      Course             @relation(fields: [courseId], references: [id])
   completions LessonCompletion[]
+  resources   CourseResource[]
 
   @@index([courseId, order])
   @@map("lessons")
@@ -615,4 +619,50 @@ model Testimonial {
 
   @@index([isPublished, displayOrder])
   @@map("testimonials")
+}
+
+model Trainer {
+  id              String          @id @default(cuid())
+  name            String
+  email           String          @unique
+  phone           String?
+  bio             String?         @db.Text
+  specializations String[]
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  courses         CourseTrainer[]
+
+  @@index([isActive])
+  @@map("trainers")
+}
+
+model CourseTrainer {
+  id         String   @id @default(cuid())
+  courseId    String
+  trainerId  String
+  role       String   @default("instructor")
+  assignedAt DateTime @default(now())
+  course     Course   @relation(fields: [courseId], references: [id])
+  trainer    Trainer  @relation(fields: [trainerId], references: [id])
+
+  @@unique([courseId, trainerId])
+  @@map("course_trainers")
+}
+
+model CourseResource {
+  id        String   @id @default(cuid())
+  courseId   String
+  lessonId   String?
+  title      String
+  type       String
+  filePath   String
+  fileName   String
+  fileSize   Int
+  createdAt  DateTime @default(now())
+  course     Course   @relation(fields: [courseId], references: [id])
+  lesson     Lesson?  @relation(fields: [lessonId], references: [id])
+
+  @@index([courseId])
+  @@map("course_resources")
 }
