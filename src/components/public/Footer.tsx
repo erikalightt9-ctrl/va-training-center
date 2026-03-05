@@ -13,8 +13,8 @@ export function Footer() {
               <span>VA Training Center</span>
             </div>
             <p className="text-blue-200 text-sm leading-relaxed">
-              Empowering Filipino virtual assistants with world-class training to thrive in the
-              global remote work economy.
+              Training AI-powered Filipino Virtual Assistants for the global market.
+              Human expertise + AI tools = unstoppable productivity.
             </p>
           </div>
 

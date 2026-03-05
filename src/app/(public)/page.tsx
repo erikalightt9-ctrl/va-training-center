@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { HeroSection } from "@/components/public/HeroSection";
+import { VAaiSection } from "@/components/public/VAaiSection";
 import { CourseCard } from "@/components/public/CourseCard";
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "Home — Virtual Assistant Training Programs",
   description:
-    "Start your VA career with VA Training Center. Specialized courses in Medical VA, Real Estate VA, and US Bookkeeping VA.",
+    "Become an AI-powered Virtual Assistant. Specialized courses in Medical VA, Real Estate VA, and US Bookkeeping VA — with hands-on AI training.",
 };
 
 const courseHrefs: Record<string, string> = {
@@ -28,6 +29,8 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
+
+      <VAaiSection />
 
       {/* Course preview */}
       <section className="py-16 px-4 bg-white">
@@ -64,10 +67,10 @@ export default async function HomePage() {
       {/* CTA Banner */}
       <section className="bg-blue-700 text-white py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-extrabold mb-4">Ready to Start Your VA Journey?</h2>
+          <h2 className="text-3xl font-extrabold mb-4">Ready to Become an AI-Powered VA?</h2>
           <p className="text-blue-100 mb-8 text-lg">
-            Apply today and take the first step toward a rewarding remote career. Applications are
-            open year-round.
+            Join 2,400+ Filipino professionals who are earning more by working smarter with AI.
+            Applications are open year-round.
           </p>
           <Button asChild size="lg" className="bg-white text-blue-700 font-bold hover:bg-blue-50">
             <Link href="/enroll">Apply Now — It is Free</Link>

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   DollarSign,
-  Globe,
   TrendingUp,
+  Zap,
   CheckCircle2,
   Users,
 } from "lucide-react";
@@ -21,14 +21,14 @@ const outcomes = [
     label: "Within 30 days",
   },
   {
-    icon: Globe,
-    value: "100% Remote",
-    label: "Work from anywhere",
+    icon: Zap,
+    value: "3x Productivity",
+    label: "With AI tools",
   },
 ] as const;
 
 const proofPoints = [
-  "No experience required",
+  "AI tools training included",
   "Flexible schedule",
   "Payment plans available",
 ] as const;
@@ -47,17 +47,17 @@ export function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-6 tracking-tight">
-            Launch Your Virtual Assistant Career{" "}
-            <span className="text-amber-300">in 30 Days</span>
+            Become an{" "}
+            <span className="text-amber-300">AI-Powered</span>{" "}
+            Virtual Assistant
           </h1>
 
           {/* Subheadline — outcome-focused */}
           <p className="text-blue-100 text-lg sm:text-xl leading-relaxed mb-8 max-w-xl">
-            Earn{" "}
+            Master human expertise + AI tools. Our graduates are{" "}
+            <strong className="text-white">3x more productive</strong> and earn{" "}
             <strong className="text-white">$800&ndash;$1,500/month</strong>{" "}
-            working remotely for US, UK &amp; AU clients.{" "}
-            <strong className="text-white">85%</strong> of our graduates land
-            their first client within 30 days.
+            working remotely for US, UK &amp; AU clients.
           </p>
 
           {/* CTAs */}

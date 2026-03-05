@@ -1,29 +1,41 @@
-import { Award, Users, Briefcase, HeartHandshake } from "lucide-react";
+import { Bot, Award, Users, Briefcase, Wrench, HeartHandshake } from "lucide-react";
 
 const reasons = [
   {
-    icon: Award,
-    title: "Industry-Recognized Certification",
+    icon: Bot,
+    title: "AI-Enhanced Curriculum",
     description:
-      "Earn certificates that are recognized by top US, Australian, and UK employers. Stand out in a competitive market.",
+      "Learn to use AI assistants, automation tools, and smart workflows in every course module. Graduate ready to work smarter from day one.",
+  },
+  {
+    icon: Award,
+    title: "Industry Certification",
+    description:
+      "Earn a VA + AI Proficiency Certificate recognized by international employers in the US, Australia, and UK.",
   },
   {
     icon: Users,
     title: "Expert Instructors",
     description:
-      "Learn from practicing professionals with years of real-world experience in their respective VA specializations.",
+      "Learn from practicing VAs who use AI tools daily with real international clients — not just textbook theory.",
   },
   {
     icon: Briefcase,
     title: "Job Placement Support",
     description:
-      "We connect our graduates with our network of 150+ hiring partners. 85% of our graduates land their first client within 30 days.",
+      "85% of graduates land their first client within 30 days through our network of 150+ hiring partners worldwide.",
+  },
+  {
+    icon: Wrench,
+    title: "Hands-On AI Training",
+    description:
+      "Practice with real AI tools in every lesson — applied workflows for drafting, summarizing, automating, and more.",
   },
   {
     icon: HeartHandshake,
-    title: "Lifetime Community Access",
+    title: "Lifetime Community",
     description:
-      "Join an active community of VA professionals. Get ongoing support, job leads, and networking opportunities for life.",
+      "Join 2,400+ AI-powered VAs sharing tools, tips, job leads, and networking opportunities for life.",
   },
 ];
 
@@ -33,12 +45,12 @@ export function WhyChooseUs() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-3">Why Choose VA Training Center?</h2>
-          <p className="text-gray-600 max-w-xl mx-auto">
-            We are committed to giving you the skills, certifications, and connections you need to
-            build a successful remote career.
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            We don&apos;t just teach VA skills — we train you to combine human expertise with AI tools,
+            giving you the edge to earn more and deliver faster.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {reasons.map((reason) => (
             <div
               key={reason.title}

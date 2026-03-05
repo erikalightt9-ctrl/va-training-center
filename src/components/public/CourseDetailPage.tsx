@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Clock, DollarSign, ArrowRight, Play, BookOpen } from "lucide-react";
+import { CheckCircle2, Clock, DollarSign, ArrowRight, Play, BookOpen, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Course } from "@prisma/client";
 
@@ -20,6 +20,41 @@ interface CourseDetailPageProps {
 }
 
 /* ------------------------------------------------------------------ */
+/*  AI Tools per Course                                                */
+/* ------------------------------------------------------------------ */
+
+const AI_TOOLS: Record<string, ReadonlyArray<string>> = {
+  MEDICAL_VA: [
+    "AI-assisted clinical documentation",
+    "Smart patient scheduling automation",
+    "Automated appointment reminders",
+    "AI-powered medical transcription",
+    "Intelligent EHR data entry",
+    "AI-generated patient communication templates",
+  ],
+  REAL_ESTATE_VA: [
+    "AI-powered listing descriptions",
+    "Automated CMA report generation",
+    "Smart CRM workflow automation",
+    "AI-assisted social media content",
+    "Intelligent lead follow-up sequences",
+    "AI-generated market analysis summaries",
+  ],
+  US_BOOKKEEPING_VA: [
+    "AI-assisted data entry and categorization",
+    "Automated bank reconciliation tools",
+    "Smart invoice processing",
+    "AI-generated financial summaries",
+    "Intelligent anomaly and error detection",
+    "Automated report formatting and delivery",
+  ],
+};
+
+function getAiToolsForCourse(slug: string): ReadonlyArray<string> {
+  return AI_TOOLS[slug] ?? AI_TOOLS.MEDICAL_VA;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -31,8 +66,14 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
       {/* Hero */}
       <section className="bg-blue-900 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="inline-block bg-blue-700 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-            Training Program
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="inline-block bg-blue-700 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full">
+              Training Program
+            </span>
+            <span className="inline-flex items-center gap-1 bg-amber-400/20 text-amber-200 text-xs font-semibold px-3 py-1 rounded-full">
+              <Bot className="h-3 w-3" />
+              AI-Enhanced
+            </span>
           </div>
           <h1 className="text-4xl font-extrabold mb-4">{course.title}</h1>
           <p className="text-blue-100 text-lg leading-relaxed mb-8 max-w-2xl">
@@ -74,6 +115,39 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AI Tools Callout */}
+      <section className="py-12 px-4 bg-blue-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-blue-100 rounded-lg p-2">
+              <Bot className="h-5 w-5 text-blue-700" />
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-gray-900">
+                AI Tools You&apos;ll Learn
+              </h2>
+              <p className="text-sm text-gray-500">
+                Every module includes hands-on AI tool training
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {getAiToolsForCourse(course.slug).map((tool) => (
+              <div
+                key={tool}
+                className="flex items-center gap-3 bg-white rounded-lg px-4 py-3 border border-blue-100"
+              >
+                <Bot className="h-4 w-4 text-blue-600 shrink-0" />
+                <span className="text-sm text-gray-700">{tool}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-4">
+            AI handles the speed work — you provide the judgment, verification, and client delivery.
+          </p>
         </div>
       </section>
 
@@ -147,7 +221,11 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                Certificate of completion
+                Hands-on AI tools training
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                VA + AI Proficiency Certificate
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
