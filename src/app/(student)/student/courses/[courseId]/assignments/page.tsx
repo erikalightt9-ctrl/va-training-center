@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 
 interface Submission {
   id: string;
@@ -68,25 +67,39 @@ export default function AssignmentsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-700 text-white px-6 py-4">
-        <Link href={`/student/courses/${courseId}`} className="text-blue-200 hover:text-white text-sm">← Course</Link>
-        <h1 className="text-xl font-bold mt-1">Assignments</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Assignments</h1>
+        <p className="text-gray-500 text-sm mt-1">Submit your work for grading</p>
       </div>
-      <div className="max-w-3xl mx-auto p-6 space-y-4">
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {assignments.length === 0 ? (
-          <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">No assignments posted yet.</div>
-        ) : assignments.map((a) => (
-          <div key={a.id} className="bg-white rounded-xl shadow p-6">
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      {assignments.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400">
+          No assignments posted yet.
+        </div>
+      ) : (
+        assignments.map((a) => (
+          <div key={a.id} className="bg-white rounded-xl border border-gray-200 p-6">
             <div className="flex items-start justify-between">
               <h3 className="font-semibold text-gray-800">{a.title}</h3>
-              <span className={`text-xs px-2 py-1 rounded-full font-medium ${a.submission ? a.submission.status === "GRADED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600"}`}>
+              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                a.submission
+                  ? a.submission.status === "GRADED"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}>
                 {a.submission ? a.submission.status : "Not Submitted"}
               </span>
             </div>
             <p className="text-gray-600 text-sm mt-2 whitespace-pre-wrap">{a.instructions}</p>
-            {a.dueDate && <p className="text-xs text-gray-400 mt-2">Due: {new Date(a.dueDate).toLocaleDateString()}</p>}
+            {a.dueDate && (
+              <p className="text-xs text-gray-400 mt-2">
+                Due: {new Date(a.dueDate).toLocaleDateString()}
+              </p>
+            )}
             {a.submission?.status === "GRADED" && (
               <div className="mt-3 p-3 bg-green-50 rounded-lg text-sm">
                 <p className="font-medium text-green-700">Grade: {a.submission.grade}/{a.maxPoints}</p>
@@ -95,12 +108,16 @@ export default function AssignmentsPage({
             )}
             {!a.submission && (
               <div className="mt-4">
-                <input type="file" ref={(el) => { fileRefs.current[a.id] = el; }}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" className="hidden"
+                <input
+                  type="file"
+                  ref={(el) => { fileRefs.current[a.id] = el; }}
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                  className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) handleSubmit(a.id, file);
-                  }} />
+                  }}
+                />
                 <button onClick={() => fileRefs.current[a.id]?.click()}
                   disabled={uploading === a.id}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
@@ -109,11 +126,13 @@ export default function AssignmentsPage({
               </div>
             )}
             {a.submission && a.submission.status !== "GRADED" && (
-              <p className="text-sm text-gray-500 mt-3">Submitted: {a.submission.fileName} • Awaiting grade</p>
+              <p className="text-sm text-gray-500 mt-3">
+                Submitted: {a.submission.fileName} &bull; Awaiting grade
+              </p>
             )}
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   );
 }

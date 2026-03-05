@@ -3,6 +3,8 @@ import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 import { submitQuizAttempt } from "@/lib/repositories/quiz.repository";
 import { onQuizPassed } from "@/lib/services/gamification.service";
+import { sendQuizPassed } from "@/lib/services/notification.service";
+import { prisma } from "@/lib/prisma";
 
 const attemptSchema = z.object({
   answers: z.array(z.object({
@@ -30,6 +32,26 @@ export async function POST(
     const attemptResult = await submitQuizAttempt(studentId, quizId, result.data.answers);
     if (attemptResult.passed) {
       await onQuizPassed(studentId);
+
+      // Send quiz passed notification (non-blocking)
+      const [student, quiz] = await Promise.all([
+        prisma.student.findUnique({ where: { id: studentId }, select: { name: true, email: true } }),
+        prisma.quiz.findUnique({
+          where: { id: quizId },
+          select: { title: true, passingScore: true, course: { select: { title: true } } },
+        }),
+      ]);
+
+      if (student && quiz) {
+        sendQuizPassed({
+          name: student.name,
+          email: student.email,
+          quizTitle: quiz.title,
+          courseTitle: quiz.course.title,
+          score: attemptResult.score,
+          passingScore: quiz.passingScore,
+        });
+      }
     }
     return NextResponse.json({ success: true, data: attemptResult, error: null });
   } catch (err) {

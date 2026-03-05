@@ -6,6 +6,9 @@ import type {
   EmploymentStatus,
   ToolFamiliarity,
   Student,
+  StudentPaymentStatus,
+  Schedule,
+  ScheduleStatus,
   Lesson,
   Quiz,
   QuizQuestion,
@@ -30,6 +33,9 @@ export type {
   EmploymentStatus,
   ToolFamiliarity,
   Student,
+  StudentPaymentStatus,
+  Schedule,
+  ScheduleStatus,
   Lesson,
   Quiz,
   QuizQuestion,
@@ -63,6 +69,25 @@ export interface ApiResponse<T = null> {
 export interface EnrollmentFilters {
   courseSlug?: CourseSlug;
   status?: EnrollmentStatus;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface EnrolleeFilters {
+  courseSlug?: CourseSlug;
+  paymentStatus?: StudentPaymentStatus;
+  accessGranted?: boolean;
+  batch?: string;
+  scheduleId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ScheduleFilters {
+  courseSlug?: CourseSlug;
+  status?: ScheduleStatus;
   search?: string;
   page?: number;
   limit?: number;

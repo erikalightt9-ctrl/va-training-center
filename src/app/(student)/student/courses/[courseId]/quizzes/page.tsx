@@ -1,6 +1,3 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { getQuizzesByCourse } from "@/lib/repositories/quiz.repository";
 import Link from "next/link";
 
@@ -11,24 +8,23 @@ export default async function QuizListPage({
 }: {
   params: Promise<{ courseId: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user as any).role !== "student") {
-    redirect("/student/login");
-  }
   const { courseId } = await params;
   const quizzes = await getQuizzesByCourse(courseId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-700 text-white px-6 py-4">
-        <Link href={`/student/courses/${courseId}`} className="text-blue-200 hover:text-white text-sm">← Course</Link>
-        <h1 className="text-xl font-bold mt-1">Quizzes</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Quizzes</h1>
+        <p className="text-gray-500 text-sm mt-1">Test your knowledge</p>
       </div>
-      <div className="max-w-3xl mx-auto p-6 space-y-4">
-        {quizzes.length === 0 ? (
-          <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">No quizzes available yet.</div>
-        ) : quizzes.map((quiz) => (
-          <div key={quiz.id} className="bg-white rounded-xl shadow p-6">
+
+      {quizzes.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400">
+          No quizzes available yet.
+        </div>
+      ) : (
+        quizzes.map((quiz) => (
+          <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="font-semibold text-gray-800 text-lg">{quiz.title}</h2>
             {quiz.description && <p className="text-gray-500 text-sm mt-1">{quiz.description}</p>}
             <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
@@ -40,8 +36,8 @@ export default async function QuizListPage({
               Take Quiz
             </Link>
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   );
 }

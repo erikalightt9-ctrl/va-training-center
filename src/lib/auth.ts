@@ -65,11 +65,23 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        // Access control: check if access has been granted
+        if (!student.accessGranted) {
+          throw new Error("Your access has not been granted yet. Please contact admin.");
+        }
+
+        // Access control: check if access has expired
+        if (student.accessExpiry && new Date(student.accessExpiry) < new Date()) {
+          throw new Error("Your access has expired. Please contact admin to renew.");
+        }
+
         return {
           id: student.id,
           email: student.email,
           name: student.name,
           role: "student" as const,
+          mustChangePassword: student.mustChangePassword,
+          accessExpiry: student.accessExpiry?.toISOString() ?? null,
         };
       },
     }),
@@ -79,21 +91,28 @@ export const authOptions: NextAuthOptions = {
     maxAge: 8 * 60 * 60, // 8 hours
   },
   pages: {
-    signIn: "/admin/login",
+    signIn: "/portal",
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = (user as typeof user & { role: string }).role;
+        token.mustChangePassword = (user as typeof user & { mustChangePassword?: boolean }).mustChangePassword ?? false;
+        token.accessExpiry = (user as typeof user & { accessExpiry?: string | null }).accessExpiry ?? null;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        const user = session.user as typeof session.user & { id: string; role: string };
+        const user = session.user as typeof session.user & {
+          id: string;
+          role: string;
+          mustChangePassword: boolean;
+        };
         user.id = token.id as string;
         user.role = token.role as string;
+        user.mustChangePassword = (token.mustChangePassword as boolean) ?? false;
       }
       return session;
     },

@@ -2,9 +2,10 @@ import sanitizeHtml from "sanitize-html";
 import { prisma } from "@/lib/prisma";
 import {
   createEnrollment,
-  findEnrollmentByEmail,
+  countEnrollmentsByEmail,
 } from "@/lib/repositories/enrollment.repository";
 import { sendConfirmationEmail } from "@/lib/email/send-confirmation";
+import { sendNewEnrollmentAdminNotification } from "@/lib/services/notification.service";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import type { Enrollment } from "@prisma/client";
 
@@ -35,9 +36,11 @@ export async function recordRateLimitAttempt(ip: string): Promise<void> {
   });
 }
 
+const MAX_ENROLLMENTS_PER_EMAIL = 5;
+
 export type EnrollmentResult =
   | { success: true; enrollment: Enrollment }
-  | { success: false; code: "DUPLICATE_EMAIL" | "RATE_LIMITED" | "VALIDATION_ERROR"; message: string };
+  | { success: false; code: "EMAIL_LIMIT_REACHED" | "RATE_LIMITED" | "VALIDATION_ERROR"; message: string };
 
 export async function processEnrollment(
   data: EnrollmentFormData,
@@ -56,13 +59,13 @@ export async function processEnrollment(
   // Record attempt
   await recordRateLimitAttempt(ipAddress);
 
-  // Duplicate email check
-  const existing = await findEnrollmentByEmail(data.email);
-  if (existing) {
+  // Email usage limit check (max 5 enrollments per email)
+  const emailCount = await countEnrollmentsByEmail(data.email);
+  if (emailCount >= MAX_ENROLLMENTS_PER_EMAIL) {
     return {
       success: false,
-      code: "DUPLICATE_EMAIL",
-      message: "An enrollment with this email address already exists.",
+      code: "EMAIL_LIMIT_REACHED",
+      message: `This email has reached the maximum of ${MAX_ENROLLMENTS_PER_EMAIL} enrollment applications. Please use a different email.`,
     };
   }
 
@@ -81,10 +84,52 @@ export async function processEnrollment(
   // Create enrollment
   const enrollment = await createEnrollment({ ...sanitized, ipAddress });
 
-  // Send confirmation email (non-blocking — log error but don't fail)
+  // Send confirmation email to enrollee (non-blocking)
   sendConfirmationEmail(enrollment).catch((err) => {
     console.error("[Email] Failed to send confirmation:", err);
   });
 
+  // Notify admin(s) about new enrollment (non-blocking)
+  notifyAdminsOfNewEnrollment(enrollment).catch((err) => {
+    console.error("[Email] Failed to notify admin:", err);
+  });
+
   return { success: true, enrollment };
+}
+
+async function notifyAdminsOfNewEnrollment(enrollment: Enrollment): Promise<void> {
+  // Fetch admin emails from the database
+  const admins = await prisma.admin.findMany({ select: { email: true } });
+  const adminEmails = admins.map((a) => a.email);
+
+  // Fallback to env var if no admins in DB
+  if (adminEmails.length === 0) {
+    const fallback = process.env.ADMIN_EMAIL;
+    if (fallback) adminEmails.push(fallback);
+  }
+
+  if (adminEmails.length === 0) return;
+
+  // Fetch course title
+  const course = await prisma.course.findUnique({
+    where: { id: enrollment.courseId },
+    select: { title: true },
+  });
+
+  const submittedAt = enrollment.createdAt.toLocaleDateString("en-PH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  await sendNewEnrollmentAdminNotification({
+    adminEmails,
+    enrolleeName: enrollment.fullName,
+    enrolleeEmail: enrollment.email,
+    courseTitle: course?.title ?? "Selected Course",
+    enrollmentId: enrollment.id,
+    submittedAt,
+  });
 }

@@ -10,6 +10,7 @@ const createSchema = z.object({
   order: z.number().int().min(1),
   durationMin: z.number().int().min(0).optional(),
   isPublished: z.boolean().optional(),
+  isFreePreview: z.boolean().optional(),
 });
 
 export async function GET(request: NextRequest) {

@@ -40,6 +40,30 @@ export async function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
+
+    // Check if access has expired (JWT snapshot)
+    if (token.accessExpiry) {
+      const expiry = new Date(token.accessExpiry as string);
+      if (expiry < new Date()) {
+        if (isStudentApi) {
+          return NextResponse.json(
+            { success: false, data: null, error: "Access expired" },
+            { status: 403 }
+          );
+        }
+        return NextResponse.redirect(
+          new URL("/portal?tab=student&error=expired", request.url)
+        );
+      }
+    }
+
+    // Force password change on first login
+    const isChangePasswordPage = pathname === "/student/change-password";
+    const isChangePasswordApi = pathname === "/api/student/change-password";
+
+    if (token.mustChangePassword === true && !isChangePasswordPage && !isChangePasswordApi) {
+      return NextResponse.redirect(new URL("/student/change-password", request.url));
+    }
   }
 
   return NextResponse.next();

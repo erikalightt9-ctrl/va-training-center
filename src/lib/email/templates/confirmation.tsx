@@ -1,23 +1,11 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Preview,
-  Section,
-  Text,
-  Row,
-  Column,
-} from "@react-email/components";
-import * as React from "react";
+import { Text, Section } from "@react-email/components";
+import { BaseLayout } from "./base-layout";
 
 interface ConfirmationEmailProps {
-  fullName: string;
-  courseTitle: string;
-  enrollmentId: string;
-  submittedAt: string;
+  readonly fullName: string;
+  readonly courseTitle: string;
+  readonly enrollmentId: string;
+  readonly submittedAt: string;
 }
 
 export function ConfirmationEmail({
@@ -27,192 +15,98 @@ export function ConfirmationEmail({
   submittedAt,
 }: ConfirmationEmailProps) {
   return (
-    <Html>
-      <Head />
-      <Preview>Your enrollment application has been received — {courseTitle}</Preview>
-      <Body style={bodyStyle}>
-        <Container style={containerStyle}>
-          {/* Header */}
-          <Section style={headerStyle}>
-            <Heading style={logoStyle}>VA Training Center</Heading>
-          </Section>
+    <BaseLayout previewText={`Application received for ${courseTitle}`}>
+      <Text style={styles.heading}>Application Received!</Text>
 
-          {/* Content */}
-          <Section style={contentStyle}>
-            <Heading as="h2" style={h2Style}>
-              Application Received!
-            </Heading>
+      <Text style={styles.text}>
+        Hi <strong>{fullName}</strong>,
+      </Text>
 
-            <Text style={textStyle}>
-              Hi <strong>{fullName}</strong>,
-            </Text>
+      <Text style={styles.text}>
+        Thank you for submitting your enrollment application for{" "}
+        <strong>{courseTitle}</strong>. We have received your application and
+        our team will review it shortly.
+      </Text>
 
-            <Text style={textStyle}>
-              Thank you for applying to the <strong>{courseTitle}</strong> program at VA Training
-              Center. We have successfully received your enrollment application.
-            </Text>
+      <Section style={styles.detailsBox}>
+        <Text style={styles.detailsTitle}>Application Details</Text>
+        <Text style={styles.detailRow}>
+          <strong>Course:</strong> {courseTitle}
+        </Text>
+        <Text style={styles.detailRow}>
+          <strong>Application ID:</strong> {enrollmentId}
+        </Text>
+        <Text style={styles.detailRow}>
+          <strong>Submitted:</strong> {submittedAt}
+        </Text>
+        <Text style={styles.detailRow}>
+          <strong>Status:</strong> Under Review
+        </Text>
+      </Section>
 
-            <Section style={detailBoxStyle}>
-              <Heading as="h3" style={h3Style}>
-                Application Details
-              </Heading>
-              <Row>
-                <Column>
-                  <Text style={detailLabelStyle}>Course</Text>
-                  <Text style={detailValueStyle}>{courseTitle}</Text>
-                </Column>
-              </Row>
-              <Row>
-                <Column>
-                  <Text style={detailLabelStyle}>Reference ID</Text>
-                  <Text style={detailValueStyle}>{enrollmentId}</Text>
-                </Column>
-              </Row>
-              <Row>
-                <Column>
-                  <Text style={detailLabelStyle}>Submitted</Text>
-                  <Text style={detailValueStyle}>{submittedAt}</Text>
-                </Column>
-              </Row>
-              <Row>
-                <Column>
-                  <Text style={detailLabelStyle}>Status</Text>
-                  <Text style={{ ...detailValueStyle, color: "#d97706", fontWeight: "bold" }}>
-                    Pending Review
-                  </Text>
-                </Column>
-              </Row>
-            </Section>
+      <Text style={styles.heading2}>What Happens Next?</Text>
 
-            <Text style={textStyle}>
-              Our admissions team will review your application and get back to you within{" "}
-              <strong>3–5 business days</strong>. You will receive another email once a decision has
-              been made.
-            </Text>
+      <Text style={styles.text}>
+        1. Our team will review your application within 24-48 hours.
+      </Text>
+      <Text style={styles.text}>
+        2. You will receive an email with the result of your application.
+      </Text>
+      <Text style={styles.text}>
+        3. If approved, you will receive payment instructions and portal access.
+      </Text>
 
-            <Text style={textStyle}>
-              If you have any questions in the meantime, please don&apos;t hesitate to reach out to
-              us at{" "}
-              <a href={`mailto:${process.env.EMAIL_FROM_ADDRESS}`} style={linkStyle}>
-                {process.env.EMAIL_FROM_ADDRESS}
-              </a>
-              .
-            </Text>
-          </Section>
-
-          <Hr style={hrStyle} />
-
-          {/* Footer */}
-          <Section style={footerStyle}>
-            <Text style={footerTextStyle}>
-              © {new Date().getFullYear()} VA Training Center. All rights reserved.
-            </Text>
-            <Text style={footerTextStyle}>
-              You are receiving this email because you submitted an enrollment application on our
-              website.
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+      <Text style={styles.textMuted}>
+        If you have any questions, feel free to reach out to our support team.
+      </Text>
+    </BaseLayout>
   );
 }
 
-// Styles
-const bodyStyle: React.CSSProperties = {
-  backgroundColor: "#f9fafb",
-  fontFamily: "'Segoe UI', Arial, sans-serif",
-};
-
-const containerStyle: React.CSSProperties = {
-  maxWidth: "600px",
-  margin: "0 auto",
-  backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  overflow: "hidden",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-};
-
-const headerStyle: React.CSSProperties = {
-  backgroundColor: "#1e3a8a",
-  padding: "24px 40px",
-};
-
-const logoStyle: React.CSSProperties = {
-  color: "#ffffff",
-  fontSize: "24px",
-  fontWeight: "bold",
-  margin: "0",
-};
-
-const contentStyle: React.CSSProperties = {
-  padding: "40px",
-};
-
-const h2Style: React.CSSProperties = {
-  fontSize: "24px",
-  fontWeight: "bold",
-  color: "#111827",
-  marginBottom: "16px",
-};
-
-const h3Style: React.CSSProperties = {
-  fontSize: "16px",
-  fontWeight: "bold",
-  color: "#374151",
-  marginBottom: "12px",
-  marginTop: "0",
-};
-
-const textStyle: React.CSSProperties = {
-  fontSize: "15px",
-  lineHeight: "1.6",
-  color: "#374151",
-  marginBottom: "16px",
-};
-
-const detailBoxStyle: React.CSSProperties = {
-  backgroundColor: "#f3f4f6",
-  borderRadius: "8px",
-  padding: "24px",
-  marginBottom: "24px",
-};
-
-const detailLabelStyle: React.CSSProperties = {
-  fontSize: "12px",
-  color: "#6b7280",
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-  marginBottom: "2px",
-  marginTop: "12px",
-};
-
-const detailValueStyle: React.CSSProperties = {
-  fontSize: "15px",
-  color: "#111827",
-  fontWeight: "500",
-  marginTop: "0",
-};
-
-const linkStyle: React.CSSProperties = {
-  color: "#1e3a8a",
-  textDecoration: "underline",
-};
-
-const hrStyle: React.CSSProperties = {
-  borderColor: "#e5e7eb",
-  margin: "0",
-};
-
-const footerStyle: React.CSSProperties = {
-  padding: "24px 40px",
-  backgroundColor: "#f9fafb",
-};
-
-const footerTextStyle: React.CSSProperties = {
-  fontSize: "12px",
-  color: "#9ca3af",
-  margin: "4px 0",
-};
-
-export default ConfirmationEmail;
+const styles = {
+  heading: {
+    fontSize: "22px",
+    fontWeight: "bold" as const,
+    color: "#1d4ed8",
+    margin: "0 0 16px" as const,
+  },
+  heading2: {
+    fontSize: "16px",
+    fontWeight: "bold" as const,
+    color: "#374151",
+    margin: "24px 0 8px" as const,
+  },
+  text: {
+    fontSize: "15px",
+    color: "#374151",
+    lineHeight: "1.6",
+    margin: "0 0 12px" as const,
+  },
+  textMuted: {
+    fontSize: "14px",
+    color: "#6b7280",
+    lineHeight: "1.6",
+    margin: "24px 0 0" as const,
+  },
+  detailsBox: {
+    backgroundColor: "#f9fafb",
+    border: "1px solid #e5e7eb",
+    borderRadius: "6px",
+    padding: "16px 20px",
+    margin: "20px 0" as const,
+  },
+  detailsTitle: {
+    fontSize: "14px",
+    fontWeight: "bold" as const,
+    color: "#374151",
+    margin: "0 0 12px" as const,
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.5px",
+  },
+  detailRow: {
+    fontSize: "14px",
+    color: "#4b5563",
+    margin: "4px 0" as const,
+    lineHeight: "1.5",
+  },
+} as const;

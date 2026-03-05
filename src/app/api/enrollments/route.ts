@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     if (!outcome.success) {
       const statusMap = {
-        DUPLICATE_EMAIL: 409,
+        EMAIL_LIMIT_REACHED: 409,
         RATE_LIMITED: 429,
         VALIDATION_ERROR: 422,
       };

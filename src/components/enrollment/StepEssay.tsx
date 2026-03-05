@@ -30,7 +30,7 @@ export function StepEssay({ form }: StepEssayProps) {
           Why do you want to enroll in this program? *
         </Label>
         <p className="text-xs text-gray-500">
-          Minimum 100 characters. Share your goals, motivation, and what you hope to achieve.
+          Share your goals, motivation, and what you hope to achieve.
         </p>
         <Textarea
           id="whyEnroll"

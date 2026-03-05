@@ -9,6 +9,7 @@ const updateSchema = z.object({
   order: z.number().int().min(1).optional(),
   durationMin: z.number().int().min(0).optional(),
   isPublished: z.boolean().optional(),
+  isFreePreview: z.boolean().optional(),
 });
 
 export async function PATCH(

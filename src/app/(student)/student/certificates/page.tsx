@@ -2,35 +2,34 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getStudentCertificates } from "@/lib/repositories/certificate.repository";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function CertificatesPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user as any).role !== "student") {
-    redirect("/student/login");
-  }
-  const studentId = (session.user as any).id as string;
+  const studentId = (session?.user as { id: string } | undefined)?.id;
+  if (!studentId) redirect("/student/login");
+
   const certificates = await getStudentCertificates(studentId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-700 text-white px-6 py-4">
-        <Link href="/student/dashboard" className="text-blue-200 hover:text-white text-sm">← Dashboard</Link>
-        <h1 className="text-xl font-bold mt-1">My Certificates</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">My Certificates</h1>
+        <p className="text-gray-500 text-sm mt-1">Download your earned certificates</p>
       </div>
-      <div className="max-w-3xl mx-auto p-6 space-y-4">
-        {certificates.length === 0 ? (
-          <div className="bg-white rounded-xl shadow p-10 text-center">
-            <div className="text-5xl mb-4">🎓</div>
-            <p className="text-gray-500">Complete all lessons in a course to earn a certificate!</p>
-          </div>
-        ) : certificates.map((cert) => (
-          <div key={cert.id} className="bg-white rounded-xl shadow p-6 flex items-center justify-between">
+
+      {certificates.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+          <div className="text-5xl mb-4">{"\uD83C\uDF93"}</div>
+          <p className="text-gray-500">Complete all lessons in a course to earn a certificate!</p>
+        </div>
+      ) : (
+        certificates.map((cert) => (
+          <div key={cert.id} className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🎓</span>
+                <span className="text-2xl">{"\uD83C\uDF93"}</span>
                 <h3 className="font-semibold text-gray-800">{cert.course.title}</h3>
               </div>
               <p className="text-sm text-gray-500 mt-1">
@@ -43,8 +42,8 @@ export default async function CertificatesPage() {
               Download PDF
             </a>
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   );
 }

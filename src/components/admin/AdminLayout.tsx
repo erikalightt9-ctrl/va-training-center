@@ -3,13 +3,43 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { GraduationCap, LayoutDashboard, Users, LogOut, Download } from "lucide-react";
+import {
+  GraduationCap,
+  LayoutDashboard,
+  Users,
+  UserCheck,
+  LogOut,
+  Download,
+  CreditCard,
+  BookOpen,
+  ClipboardList,
+  BarChart3,
+  Award,
+  MessageSquare,
+  FileBarChart,
+  Settings,
+  UserCog,
+  CalendarDays,
+  CalendarClock,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/enrollees", label: "Enrollees", icon: Users },
+  { href: "/admin/students", label: "Students", icon: Users },
+  { href: "/admin/enrollees", label: "Enrollees", icon: UserCheck },
+  { href: "/admin/schedules", label: "Schedules", icon: CalendarClock },
+  { href: "/admin/courses", label: "Courses", icon: BookOpen },
+  { href: "/admin/trainers", label: "Trainers", icon: UserCog },
+  { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/assignments", label: "Assignments", icon: ClipboardList },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/certificates", label: "Certificates", icon: Award },
+  { href: "/admin/communications", label: "Communications", icon: MessageSquare },
+  { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
+  { href: "/admin/reports", label: "Reports", icon: FileBarChart },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -26,14 +56,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                pathname === item.href
+                (pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href)))
                   ? "bg-blue-700 text-white"
                   : "text-blue-200 hover:bg-blue-800 hover:text-white"
               )}
@@ -56,7 +86,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             variant="ghost"
             size="sm"
             className="w-full justify-start text-blue-200 hover:bg-blue-800 hover:text-white gap-3 px-3"
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
+            onClick={() => signOut({ callbackUrl: "/portal?tab=admin" })}
           >
             <LogOut className="h-4 w-4" />
             Sign Out

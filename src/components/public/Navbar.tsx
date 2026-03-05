@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, GraduationCap } from "lucide-react";
+import { Menu, X, GraduationCap, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -47,9 +47,16 @@ export function Navbar() {
           </nav>
 
           {/* CTA */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/portal"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              Login / Enroll
+            </Link>
             <Button asChild size="sm" className="bg-blue-700 hover:bg-blue-800">
-              <Link href="/enroll">Enroll Now</Link>
+              <Link href="/portal?tab=enroll">Enroll Now</Link>
             </Button>
           </div>
 
@@ -81,8 +88,16 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/portal"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              <LogIn className="h-4 w-4" />
+              Login / Enroll
+            </Link>
             <Button asChild size="sm" className="w-full bg-blue-700 hover:bg-blue-800">
-              <Link href="/enroll" onClick={() => setMobileOpen(false)}>
+              <Link href="/portal?tab=enroll" onClick={() => setMobileOpen(false)}>
                 Enroll Now
               </Link>
             </Button>

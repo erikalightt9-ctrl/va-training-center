@@ -1,4 +1,4 @@
-import { transporter } from "@/lib/mailer";
+import { sendMailWithRetry } from "@/lib/mailer";
 
 interface StudentCredentialsOptions {
   name: string;
@@ -37,10 +37,16 @@ export async function sendStudentCredentialsEmail(opts: StudentCredentialsOption
 </body>
 </html>`;
 
-  await transporter.sendMail({
-    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
-    to: opts.email,
-    subject: `Your Learning Portal Access — ${opts.courseTitle} | VA Training Center`,
-    html,
-  });
+  const fromName = process.env.EMAIL_FROM_NAME ?? "VA Training Center";
+  const fromAddr = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@vatrainingcenter.com";
+
+  await sendMailWithRetry(
+    {
+      from: `"${fromName}" <${fromAddr}>`,
+      to: opts.email,
+      subject: `Your Learning Portal Access — ${opts.courseTitle} | VA Training Center`,
+      html,
+    },
+    `Credentials to ${opts.email}`,
+  );
 }

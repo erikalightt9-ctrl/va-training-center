@@ -1,11 +1,13 @@
 import { render } from "@react-email/components";
-import { transporter } from "@/lib/mailer";
+import { sendMailWithRetry } from "@/lib/mailer";
 import { ConfirmationEmail } from "@/lib/email/templates/confirmation";
 import { prisma } from "@/lib/prisma";
 import type { Enrollment } from "@prisma/client";
 
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "VA Training Center";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@vatrainingcenter.com";
+
 export async function sendConfirmationEmail(enrollment: Enrollment): Promise<void> {
-  // Fetch course title
   const course = await prisma.course.findUnique({
     where: { id: enrollment.courseId },
     select: { title: true },
@@ -27,13 +29,16 @@ export async function sendConfirmationEmail(enrollment: Enrollment): Promise<voi
       courseTitle,
       enrollmentId: enrollment.id,
       submittedAt,
-    })
+    }),
   );
 
-  await transporter.sendMail({
-    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
-    to: enrollment.email,
-    subject: `Application Received — ${courseTitle} | VA Training Center`,
-    html,
-  });
+  await sendMailWithRetry(
+    {
+      from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
+      to: enrollment.email,
+      subject: `Application Received — ${courseTitle} | VA Training Center`,
+      html,
+    },
+    `Confirmation to ${enrollment.email}`,
+  );
 }

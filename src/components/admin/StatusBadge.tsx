@@ -14,6 +14,10 @@ const STATUS_CONFIG: Record<EnrollmentStatus, { label: string; className: string
     label: "Rejected",
     className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
   },
+  ENROLLED: {
+    label: "Enrolled",
+    className: "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
+  },
 };
 
 export function StatusBadge({ status }: { status: EnrollmentStatus }) {

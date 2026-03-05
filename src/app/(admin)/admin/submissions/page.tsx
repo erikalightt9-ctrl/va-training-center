@@ -55,10 +55,12 @@ export default function AdminSubmissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-gray-800">Assignment Submissions</h1>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Assignment Submissions</h1>
+        <p className="text-gray-500 text-sm mt-1">Review and grade student submissions</p>
+      </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
         {submissions.length === 0 ? (
           <div className="bg-white rounded-xl shadow p-10 text-center text-gray-400">
             No pending submissions.
@@ -112,7 +114,6 @@ export default function AdminSubmissionsPage() {
             )}
           </div>
         ))}
-      </div>
     </div>
   );
 }

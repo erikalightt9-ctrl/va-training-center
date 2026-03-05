@@ -1,0 +1,113 @@
+import { prisma } from "@/lib/prisma";
+
+const FAQ_ENTRIES = [
+  {
+    q: "What courses do you offer?",
+    a: "We offer three specialized VA training programs: Medical VA, Real Estate VA, and US Bookkeeping VA. Each program is designed to give you industry-specific skills for a successful virtual assistant career.",
+  },
+  {
+    q: "How do I enroll?",
+    a: "Visit our Enroll page, fill out the enrollment form with your details, and submit. Our team will review your application and notify you via email within 1-3 business days.",
+  },
+  {
+    q: "How much does it cost?",
+    a: "Course prices vary by program. Visit the Courses page to see current pricing for each program.",
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "We accept GCash and bank transfer. After your enrollment is approved, you'll receive payment instructions via email with our GCash QR code and bank details.",
+  },
+  {
+    q: "How long are the courses?",
+    a: "Course duration varies by program — typically between 4-12 weeks depending on the specialization.",
+  },
+  {
+    q: "Do I get a certificate?",
+    a: "Yes! Upon completing all lessons in your course, you'll receive a digital certificate of completion that you can download and share.",
+  },
+  {
+    q: "What are the requirements?",
+    a: "You need to be at least 16 years old, have basic computer skills, and reliable internet access. No prior VA experience is required — our courses are designed for beginners.",
+  },
+  {
+    q: "How do I access my course after enrollment?",
+    a: "Once your enrollment is approved (and payment confirmed for paid courses), you'll receive login credentials via email. Use them at the Student Login page to access your dashboard.",
+  },
+  {
+    q: "Can I contact support?",
+    a: "Yes! You can reach us through the Contact page on our website, or reply to any email you receive from us.",
+  },
+  {
+    q: "What is a Virtual Assistant?",
+    a: "A Virtual Assistant (VA) is a remote professional who provides administrative, technical, or creative support to businesses and entrepreneurs. It's a flexible career you can do from anywhere.",
+  },
+];
+
+export function buildFaqContext(): string {
+  return FAQ_ENTRIES.map((entry) => `Q: ${entry.q}\nA: ${entry.a}`).join("\n\n");
+}
+
+export async function buildCourseContext(): Promise<string> {
+  const courses = await prisma.course.findMany({
+    where: { isActive: true },
+    select: {
+      title: true,
+      slug: true,
+      description: true,
+      durationWeeks: true,
+      price: true,
+      outcomes: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (courses.length === 0) return "No courses are currently available.";
+
+  return courses
+    .map((course) => {
+      const price = Number(course.price);
+      const priceStr = price > 0 ? `PHP ${price.toLocaleString()}` : "Free";
+      const outcomes = course.outcomes.length > 0
+        ? `Key outcomes: ${course.outcomes.join(", ")}`
+        : "";
+
+      return [
+        `Course: ${course.title}`,
+        `Duration: ${course.durationWeeks} weeks`,
+        `Price: ${priceStr}`,
+        course.description,
+        outcomes,
+      ]
+        .filter(Boolean)
+        .join("\n");
+    })
+    .join("\n\n---\n\n");
+}
+
+export async function buildSystemPrompt(): Promise<string> {
+  const faq = buildFaqContext();
+  const courses = await buildCourseContext();
+
+  return `You are a friendly and helpful assistant for VA Training Center, a platform that trains people to become professional Virtual Assistants.
+
+Your role:
+- Answer questions about courses, enrollment, pricing, payment, and the platform
+- Be warm, encouraging, and professional
+- Keep answers concise (2-4 sentences max)
+- If you don't know something specific, suggest contacting support via the Contact page
+- Never make up information not provided in the context below
+- Do not discuss topics unrelated to VA Training Center or virtual assistant careers
+- Guide prospective students toward enrolling
+
+COURSE CATALOG:
+${courses}
+
+FREQUENTLY ASKED QUESTIONS:
+${faq}
+
+IMPORTANT LINKS:
+- Courses: /courses
+- Enroll: /enroll
+- Contact: /contact
+- Student Login: /student/login`;
+}

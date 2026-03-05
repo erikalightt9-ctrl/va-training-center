@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import type { EnrollmentFilters, PaginatedResult } from "@/types";
+import type { Decimal } from "@prisma/client/runtime/client";
 import type { Enrollment, EnrollmentStatus, Prisma } from "@prisma/client";
 
 export type EnrollmentWithCourse = Enrollment & {
-  course: { id: string; slug: string; title: string };
+  course: { id: string; slug: string; title: string; price: Decimal };
 };
 
 export async function createEnrollment(
@@ -29,14 +30,16 @@ export async function createEnrollment(
   });
 }
 
-export async function findEnrollmentByEmail(email: string): Promise<Enrollment | null> {
-  return prisma.enrollment.findUnique({ where: { email } });
+export async function countEnrollmentsByEmail(email: string): Promise<number> {
+  return prisma.enrollment.count({
+    where: { email: { equals: email, mode: "insensitive" } },
+  });
 }
 
 export async function findEnrollmentById(id: string): Promise<EnrollmentWithCourse | null> {
   return prisma.enrollment.findUnique({
     where: { id },
-    include: { course: { select: { id: true, slug: true, title: true } } },
+    include: { course: { select: { id: true, slug: true, title: true, price: true } } },
   });
 }
 
@@ -60,7 +63,7 @@ export async function listEnrollments(
   const [data, total] = await Promise.all([
     prisma.enrollment.findMany({
       where,
-      include: { course: { select: { id: true, slug: true, title: true } } },
+      include: { course: { select: { id: true, slug: true, title: true, price: true } } },
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
@@ -94,7 +97,7 @@ export async function updateEnrollmentStatus(
 
 export async function getAllEnrollmentsForExport(): Promise<EnrollmentWithCourse[]> {
   return prisma.enrollment.findMany({
-    include: { course: { select: { id: true, slug: true, title: true } } },
+    include: { course: { select: { id: true, slug: true, title: true, price: true } } },
     orderBy: { createdAt: "desc" },
   });
 }

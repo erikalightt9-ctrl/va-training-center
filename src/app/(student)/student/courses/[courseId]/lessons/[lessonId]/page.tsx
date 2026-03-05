@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface Lesson {
@@ -17,7 +16,6 @@ export default function LessonViewerPage({
 }: {
   params: Promise<{ courseId: string; lessonId: string }>;
 }) {
-  const router = useRouter();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [courseId, setCourseId] = useState("");
   const [lessonId, setLessonId] = useState("");
@@ -61,44 +59,47 @@ export default function LessonViewerPage({
   }
 
   if (!lesson) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-400">Loading...</div>;
+    return <div className="flex items-center justify-center py-20 text-gray-400">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-700 text-white px-6 py-4">
-        <Link href={`/student/courses/${courseId}`} className="text-blue-200 hover:text-white text-sm">← Course Overview</Link>
-        <h1 className="text-xl font-bold mt-1">{lesson.title}</h1>
-        {lesson.durationMin > 0 && <p className="text-blue-200 text-sm">{lesson.durationMin} min read</p>}
+    <div className="space-y-6">
+      <div>
+        <Link href={`/student/courses/${courseId}`} className="text-blue-600 hover:text-blue-800 text-sm">
+          &larr; Back to Course
+        </Link>
+        <h1 className="text-2xl font-bold text-gray-900 mt-2">{lesson.title}</h1>
+        {lesson.durationMin > 0 && <p className="text-gray-500 text-sm mt-1">{lesson.durationMin} min read</p>}
       </div>
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="bg-white rounded-xl shadow p-8">
-          <div className="prose max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">
-            {lesson.content}
+
+      <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="prose max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">
+          {lesson.content}
+        </div>
+
+        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+
+        {certificate && (
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-center">
+            <p className="font-semibold text-green-700">Congratulations! You&apos;ve earned a certificate!</p>
+            <a href={`/api/student/certificates/${certificate.certNumber}/download`}
+              className="mt-3 inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">
+              Download Certificate
+            </a>
           </div>
-          {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
-          {certificate && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-center">
-              <div className="text-2xl mb-2">🎓</div>
-              <p className="font-semibold text-green-700">Congratulations! You've earned a certificate!</p>
-              <a href={`/api/student/certificates/${certificate.certNumber}/download`}
-                className="mt-3 inline-block bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">
-                Download Certificate
-              </a>
+        )}
+
+        <div className="mt-8 flex justify-end">
+          {completed ? (
+            <div className="flex items-center gap-2 text-green-600 font-medium">
+              <span className="text-xl">{"\u2713"}</span> Lesson Completed
             </div>
+          ) : (
+            <button onClick={markComplete} disabled={completing}
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+              {completing ? "Marking Complete..." : "Mark as Complete"}
+            </button>
           )}
-          <div className="mt-8 flex justify-end">
-            {completed ? (
-              <div className="flex items-center gap-2 text-green-600 font-medium">
-                <span className="text-xl">✓</span> Lesson Completed
-              </div>
-            ) : (
-              <button onClick={markComplete} disabled={completing}
-                className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-                {completing ? "Marking Complete..." : "Mark as Complete"}
-              </button>
-            )}
-          </div>
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ export async function createLesson(data: {
   order: number;
   durationMin?: number;
   isPublished?: boolean;
+  isFreePreview?: boolean;
 }): Promise<Lesson> {
   return prisma.lesson.create({ data });
 }
@@ -29,6 +30,7 @@ export async function updateLesson(id: string, data: Partial<{
   order: number;
   durationMin: number;
   isPublished: boolean;
+  isFreePreview: boolean;
 }>): Promise<Lesson> {
   return prisma.lesson.update({ where: { id }, data });
 }
@@ -85,6 +87,47 @@ export async function getCompletedLessonIds(
 export async function getAllLessonsByCourse(courseId: string): Promise<Lesson[]> {
   return prisma.lesson.findMany({
     where: { courseId },
+    orderBy: { order: "asc" },
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Free Preview                                                       */
+/* ------------------------------------------------------------------ */
+
+export interface PreviewLesson {
+  readonly id: string;
+  readonly title: string;
+  readonly order: number;
+  readonly durationMin: number;
+}
+
+export async function getPreviewLessons(courseId: string): Promise<PreviewLesson[]> {
+  return prisma.lesson.findMany({
+    where: { courseId, isPublished: true, isFreePreview: true },
+    select: { id: true, title: true, order: true, durationMin: true },
+    orderBy: { order: "asc" },
+  });
+}
+
+export async function getPreviewLessonById(lessonId: string): Promise<Lesson | null> {
+  return prisma.lesson.findFirst({
+    where: { id: lessonId, isPublished: true, isFreePreview: true },
+  });
+}
+
+export interface CourseCurriculumItem {
+  readonly id: string;
+  readonly title: string;
+  readonly order: number;
+  readonly durationMin: number;
+  readonly isFreePreview: boolean;
+}
+
+export async function getCourseCurriculum(courseId: string): Promise<CourseCurriculumItem[]> {
+  return prisma.lesson.findMany({
+    where: { courseId, isPublished: true },
+    select: { id: true, title: true, order: true, durationMin: true, isFreePreview: true },
     orderBy: { order: "asc" },
   });
 }

@@ -16,6 +16,7 @@ enum EnrollmentStatus {
   PENDING
   APPROVED
   REJECTED
+  ENROLLED
 }
 
 enum EmploymentStatus {
@@ -54,6 +55,21 @@ enum SubmissionStatus {
   RETURNED
 }
 
+enum PaymentStatus {
+  PENDING_PAYMENT
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum EventType {
+  ANNOUNCEMENT
+  DEADLINE
+  ORIENTATION
+  HOLIDAY
+  CUSTOM
+}
+
 enum BadgeType {
   FIRST_LESSON
   QUIZ_MASTER
@@ -61,6 +77,19 @@ enum BadgeType {
   TOP_CONTRIBUTOR
   ASSIGNMENT_STAR
   FORUM_STARTER
+}
+
+enum StudentPaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum ScheduleStatus {
+  OPEN
+  CLOSED
+  FULL
+  COMPLETED
 }
 
 model Course {
@@ -79,7 +108,9 @@ model Course {
   quizzes       Quiz[]
   certificates  Certificate[]
   threads       ForumThread[]
-  assignments   Assignment[]
+  assignments     Assignment[]
+  calendarEvents  CalendarEvent[]
+  schedules       Schedule[]
 
   @@map("courses")
 }
@@ -87,9 +118,10 @@ model Course {
 model Enrollment {
   id                    String            @id @default(cuid())
   status                EnrollmentStatus  @default(PENDING)
+  paymentStatus         PaymentStatus     @default(PENDING_PAYMENT)
   fullName              String
   dateOfBirth           DateTime          @db.Date
-  email                 String            @unique
+  email                 String
   contactNumber         String
   address               String            @db.Text
   educationalBackground String            @db.Text
@@ -104,14 +136,40 @@ model Enrollment {
   emailConfirmedAt      DateTime?
   statusUpdatedAt       DateTime?
   statusUpdatedBy       String?
+  referenceCode         String?           @unique
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
   student               Student?
+  payments              Payment[]
 
   @@index([status])
   @@index([courseId])
   @@index([createdAt])
+  @@index([paymentStatus])
+  @@index([email])
+  @@index([referenceCode])
   @@map("enrollments")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  enrollmentId    String
+  amount          Decimal       @db.Decimal(10, 2)
+  method          String
+  status          PaymentStatus @default(PENDING_PAYMENT)
+  proofFilePath   String?
+  proofFileName   String?
+  referenceNumber String?
+  notes           String?       @db.Text
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  enrollment      Enrollment    @relation(fields: [enrollmentId], references: [id])
+
+  @@index([enrollmentId])
+  @@index([status])
+  @@map("payments")
 }
 
 model Admin {
@@ -126,13 +184,22 @@ model Admin {
 }
 
 model Student {
-  id           String   @id @default(cuid())
-  enrollmentId String   @unique
-  email        String   @unique
-  passwordHash String
-  name         String
-  createdAt    DateTime @default(now())
+  id                 String               @id @default(cuid())
+  enrollmentId       String               @unique
+  email              String               @unique
+  passwordHash       String
+  name               String
+  mustChangePassword Boolean              @default(true)
+  batch              String?
+  scheduleId         String?
+  paymentStatus      StudentPaymentStatus @default(UNPAID)
+  amountPaid         Decimal              @default(0) @db.Decimal(10, 2)
+  accessGranted      Boolean              @default(false)
+  accessExpiry       DateTime?
+  notes              String?              @db.Text
+  createdAt          DateTime             @default(now())
   enrollment   Enrollment         @relation(fields: [enrollmentId], references: [id])
+  schedule     Schedule?          @relation(fields: [scheduleId], references: [id])
   completions  LessonCompletion[]
   attempts     QuizAttempt[]
   certificates Certificate[]
@@ -141,8 +208,12 @@ model Student {
   submissions  Submission[]
   badges       StudentBadge[]
   points       PointTransaction[]
+  attendance   AttendanceRecord[]
 
   @@index([email])
+  @@index([paymentStatus])
+  @@index([accessGranted])
+  @@index([scheduleId])
   @@map("students")
 }
 
@@ -153,8 +224,9 @@ model Lesson {
   content     String   @db.Text
   order       Int
   durationMin Int      @default(0)
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isPublished   Boolean  @default(false)
+  isFreePreview Boolean  @default(false)
+  createdAt     DateTime @default(now())
   course      Course             @relation(fields: [courseId], references: [id])
   completions LessonCompletion[]
 
@@ -293,19 +365,21 @@ model Assignment {
 }
 
 model Submission {
-  id           String           @id @default(cuid())
-  assignmentId String
-  studentId    String
-  filePath     String
-  fileName     String
-  fileSize     Int
-  status       SubmissionStatus @default(PENDING)
-  grade        Int?
-  feedback     String?          @db.Text
-  submittedAt  DateTime         @default(now())
-  gradedAt     DateTime?
-  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
-  student      Student          @relation(fields: [studentId], references: [id])
+  id              String           @id @default(cuid())
+  assignmentId    String
+  studentId       String
+  filePath        String
+  fileName        String
+  fileSize        Int
+  status          SubmissionStatus @default(PENDING)
+  grade           Int?
+  feedback        String?          @db.Text
+  aiEvaluation    Json?
+  aiEvaluatedAt   DateTime?
+  submittedAt     DateTime         @default(now())
+  gradedAt        DateTime?
+  assignment      Assignment       @relation(fields: [assignmentId], references: [id])
+  student         Student          @relation(fields: [studentId], references: [id])
 
   @@unique([assignmentId, studentId])
   @@index([assignmentId])
@@ -347,6 +421,19 @@ model PointTransaction {
   @@map("point_transactions")
 }
 
+model AttendanceRecord {
+  id        String    @id @default(cuid())
+  studentId String
+  clockIn   DateTime  @default(now())
+  clockOut  DateTime?
+  createdAt DateTime  @default(now())
+  student   Student   @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+  @@index([clockIn])
+  @@map("attendance_records")
+}
+
 model ContactMessage {
   id        String   @id @default(cuid())
   name      String
@@ -366,4 +453,46 @@ model RateLimitAttempt {
 
   @@index([ip, endpoint, createdAt])
   @@map("rate_limit_attempts")
+}
+
+model Schedule {
+  id                   String         @id @default(cuid())
+  name                 String
+  courseId              String
+  startDate            DateTime       @db.Date
+  endDate              DateTime       @db.Date
+  daysOfWeek           Int[]
+  startTime            String
+  endTime              String
+  maxCapacity          Int            @default(25)
+  enrollmentCutOffDays Int            @default(2)
+  status               ScheduleStatus @default(OPEN)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  course               Course         @relation(fields: [courseId], references: [id])
+  students             Student[]
+
+  @@index([courseId])
+  @@index([status])
+  @@index([startDate])
+  @@map("schedules")
+}
+
+model CalendarEvent {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  date        DateTime  @db.Date
+  endDate     DateTime? @db.Date
+  type        EventType @default(CUSTOM)
+  courseId     String?
+  createdBy   String
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  course      Course?   @relation(fields: [courseId], references: [id])
+
+  @@index([date])
+  @@index([courseId])
+  @@map("calendar_events")
 }

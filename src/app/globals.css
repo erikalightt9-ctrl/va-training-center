@@ -124,3 +124,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* react-day-picker v9 dropdown styling */
+.rdp-dropdown {
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.25rem center;
+  background-size: 1rem;
+}
+
+.rdp-dropdown:focus {
+  outline: none;
+  ring: 2px;
+  border-color: hsl(var(--ring));
+}

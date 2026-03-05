@@ -1,17 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import {
   findEnrollmentById,
-  updateEnrollmentStatus,
 } from "@/lib/repositories/enrollment.repository";
-import { createStudentAccount, generateTemporaryPassword, studentExists } from "@/lib/services/student-auth.service";
-import { sendStudentCredentialsEmail } from "@/lib/email/send-student-credentials";
+import { generateTemporaryPassword } from "@/lib/services/student-auth.service";
+import { generateReferenceCode } from "@/lib/utils/reference-code";
+import {
+  sendEnrollmentApproved,
+  sendEnrollmentRejected,
+  sendPaymentInstructions,
+} from "@/lib/services/notification.service";
 import { prisma } from "@/lib/prisma";
 import type { EnrollmentStatus } from "@prisma/client";
 
 const patchSchema = z.object({
-  status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED", "ENROLLED"]),
+  rejectionFeedback: z.string().optional(),
 });
 
 export async function GET(
@@ -72,34 +78,109 @@ export async function PATCH(
       );
     }
 
-    const updated = await updateEnrollmentStatus(
-      id,
-      result.data.status as EnrollmentStatus,
-      token.id as string
-    );
+    const courseTitle = existing.course.title;
+    const coursePrice = Number(existing.course.price);
+    const adminId = token.id as string;
 
-    // Auto-create student account when approved
+    // ── APPROVED ──────────────────────────────────────────────────
     if (result.data.status === "APPROVED") {
-      const alreadyExists = await studentExists(id);
-      if (!alreadyExists) {
-        const course = await prisma.course.findUnique({
-          where: { id: existing.courseId },
-          select: { title: true },
-        });
+      const isFree = coursePrice <= 0;
+
+      if (isFree) {
+        // FREE COURSE: Create student immediately with access + set ENROLLED
         const tempPassword = generateTemporaryPassword();
-        await createStudentAccount(id, existing.email, existing.fullName, tempPassword);
-        try {
-          await sendStudentCredentialsEmail({
-            name: existing.fullName,
-            email: existing.email,
-            courseTitle: course?.title ?? "Your Course",
-            temporaryPassword: tempPassword,
-          });
-        } catch (emailErr) {
-          console.error("[Student credentials email failed]", emailErr);
-        }
+        const passwordHash = await bcrypt.hash(tempPassword, 12);
+        const accessExpiry = new Date();
+        accessExpiry.setDate(accessExpiry.getDate() + 90);
+
+        await prisma.$transaction([
+          prisma.enrollment.update({
+            where: { id },
+            data: {
+              status: "ENROLLED" as EnrollmentStatus,
+              statusUpdatedAt: new Date(),
+              statusUpdatedBy: adminId,
+            },
+          }),
+          prisma.student.create({
+            data: {
+              enrollmentId: id,
+              email: existing.email.toLowerCase(),
+              name: existing.fullName,
+              passwordHash,
+              paymentStatus: "PAID",
+              amountPaid: 0,
+              accessGranted: true,
+              accessExpiry,
+            },
+          }),
+        ]);
+
+        sendEnrollmentApproved({
+          name: existing.fullName,
+          email: existing.email,
+          courseTitle,
+          temporaryPassword: tempPassword,
+        });
+      } else {
+        // PAID COURSE: Do NOT create student account.
+        // Generate reference code and send payment instructions.
+        const referenceCode = await generateReferenceCode();
+
+        await prisma.enrollment.update({
+          where: { id },
+          data: {
+            status: "APPROVED" as EnrollmentStatus,
+            referenceCode,
+            statusUpdatedAt: new Date(),
+            statusUpdatedBy: adminId,
+          },
+        });
+
+        sendPaymentInstructions({
+          name: existing.fullName,
+          email: existing.email,
+          courseTitle,
+          amount: coursePrice.toLocaleString(),
+          enrollmentId: id,
+          referenceCode,
+        });
       }
+
+      const updated = await findEnrollmentById(id);
+      return NextResponse.json({ success: true, data: updated, error: null });
     }
+
+    // ── REJECTED ──────────────────────────────────────────────────
+    if (result.data.status === "REJECTED") {
+      const updated = await prisma.enrollment.update({
+        where: { id },
+        data: {
+          status: "REJECTED" as EnrollmentStatus,
+          statusUpdatedAt: new Date(),
+          statusUpdatedBy: adminId,
+        },
+      });
+
+      sendEnrollmentRejected({
+        name: existing.fullName,
+        email: existing.email,
+        courseTitle,
+        feedback: result.data.rejectionFeedback,
+      });
+
+      return NextResponse.json({ success: true, data: updated, error: null });
+    }
+
+    // ── PENDING (revert) ──────────────────────────────────────────
+    const updated = await prisma.enrollment.update({
+      where: { id },
+      data: {
+        status: result.data.status as EnrollmentStatus,
+        statusUpdatedAt: new Date(),
+        statusUpdatedBy: adminId,
+      },
+    });
 
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
