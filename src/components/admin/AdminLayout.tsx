@@ -27,35 +27,110 @@ import {
   MessageSquareQuote,
   Trophy,
   ClipboardCheck,
+  FileText,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SidebarNavGroup } from "@/components/shared/SidebarNavGroup";
+import type { NavItem } from "@/components/shared/SidebarNavGroup";
 
-const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/students", label: "Students", icon: Users },
-  { href: "/admin/enrollees", label: "Enrollees", icon: UserCheck },
-  { href: "/admin/schedules", label: "Schedules", icon: CalendarClock },
-  { href: "/admin/courses", label: "Courses", icon: BookOpen },
-  { href: "/admin/trainers", label: "Trainers", icon: UserCog },
-  { href: "/admin/payments", label: "Payments", icon: CreditCard },
-  { href: "/admin/assignments", label: "Assignments", icon: ClipboardList },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/admin/certificates", label: "Certificates", icon: Award },
-  { href: "/admin/communications", label: "Communications", icon: MessageSquare },
-  { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/admin/reports", label: "Reports", icon: FileBarChart },
-  { href: "/admin/ai-insights", label: "AI Insights", icon: Brain },
-  { href: "/admin/control-tower", label: "Control Tower", icon: Rocket },
-  { href: "/admin/job-postings", label: "Job Postings", icon: Briefcase },
-  { href: "/admin/job-applications", label: "Job Applications", icon: ClipboardCheck },
-  { href: "/admin/student-ranking", label: "Student Ranking", icon: Trophy },
-  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+// ---------------------------------------------------------------------------
+// Navigation group definitions
+// ---------------------------------------------------------------------------
+
+interface NavGroup {
+  readonly label: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly items: ReadonlyArray<NavItem>;
+}
+
+const adminNavGroups: ReadonlyArray<NavGroup> = [
+  {
+    label: "Students",
+    icon: Users,
+    items: [
+      { href: "/admin/students", label: "Student Directory", icon: Users },
+      { href: "/admin/engagement", label: "Student Progress", icon: TrendingUp },
+      { href: "/admin/attendance", label: "Attendance Records", icon: ClipboardCheck },
+    ],
+  },
+  {
+    label: "Enrollment",
+    icon: UserCheck,
+    items: [
+      { href: "/admin/enrollees", label: "Applications", icon: UserCheck },
+    ],
+  },
+  {
+    label: "Payments",
+    icon: CreditCard,
+    items: [
+      { href: "/admin/payments", label: "Payment Records", icon: CreditCard },
+    ],
+  },
+  {
+    label: "Courses & Learning",
+    icon: BookOpen,
+    items: [
+      { href: "/admin/courses", label: "All Courses", icon: BookOpen },
+      { href: "/admin/lessons", label: "Lessons", icon: FileText },
+      { href: "/admin/trainers", label: "Assign Trainers", icon: UserCog },
+      { href: "/admin/schedules", label: "Training Schedule", icon: CalendarClock },
+      { href: "/admin/assignments", label: "Assignments", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "Jobs & Opportunities",
+    icon: Briefcase,
+    items: [
+      { href: "/admin/job-postings", label: "Job Listings", icon: Briefcase },
+      { href: "/admin/job-applications", label: "Job Applications", icon: ClipboardCheck },
+      { href: "/admin/student-ranking", label: "Student Ranking", icon: Trophy },
+    ],
+  },
+  {
+    label: "Certificates",
+    icon: Award,
+    items: [
+      { href: "/admin/certificates", label: "Issued Certificates", icon: Award },
+    ],
+  },
+  {
+    label: "Communication",
+    icon: MessageSquare,
+    items: [
+      { href: "/admin/communications", label: "Messages", icon: MessageSquare },
+      { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
+      { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
+    ],
+  },
+  {
+    label: "Reports & Analytics",
+    icon: BarChart3,
+    items: [
+      { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+      { href: "/admin/ai-insights", label: "AI Insights", icon: Brain },
+      { href: "/admin/control-tower", label: "Control Tower", icon: Rocket },
+      { href: "/admin/reports", label: "Reports", icon: FileBarChart },
+    ],
+  },
+  {
+    label: "System Settings",
+    icon: Settings,
+    items: [
+      { href: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
 ];
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isDashboardActive = pathname === "/admin";
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -69,20 +144,31 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                (pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href)))
-                  ? "bg-blue-700 text-white"
-                  : "text-blue-200 hover:bg-blue-800 hover:text-white"
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+          {/* Dashboard — standalone link */}
+          <Link
+            href="/admin"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              isDashboardActive
+                ? "bg-blue-700 text-white"
+                : "text-blue-200 hover:bg-blue-800 hover:text-white"
+            )}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Link>
+
+          {/* Separator */}
+          <div className="pt-2" />
+
+          {/* Nav Groups */}
+          {adminNavGroups.map((group) => (
+            <SidebarNavGroup
+              key={group.label}
+              label={group.label}
+              icon={group.icon}
+              items={group.items}
+            />
           ))}
         </nav>
 

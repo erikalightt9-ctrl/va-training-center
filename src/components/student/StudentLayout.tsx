@@ -40,13 +40,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { SidebarNavGroup } from "@/components/student/SidebarNavGroup";
-
-interface NavItem {
-  readonly href: string;
-  readonly label: string;
-  readonly icon: React.ComponentType<{ className?: string }>;
-}
+import { SidebarNavGroup } from "@/components/shared/SidebarNavGroup";
+import type { NavItem } from "@/components/shared/SidebarNavGroup";
 
 interface NavGroup {
   readonly label: string;
@@ -57,7 +52,7 @@ interface NavGroup {
 function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
   return [
     {
-      label: "Learning",
+      label: "My Courses",
       icon: BookMarked,
       items: [
         { href: `/student/courses/${courseId}`, label: "My Course", icon: BookOpen },
@@ -67,7 +62,7 @@ function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
       ],
     },
     {
-      label: "AI Lab",
+      label: "AI Training Lab",
       icon: Sparkles,
       items: [
         { href: "/student/ai-simulator", label: "VA Simulator", icon: Users },
@@ -94,7 +89,7 @@ function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
       ],
     },
     {
-      label: "Progress",
+      label: "Progress & Certificates",
       icon: BarChart3,
       items: [
         { href: "/student/learning-analytics", label: "Learning Analytics", icon: BarChart3 },

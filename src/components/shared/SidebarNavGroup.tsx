@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface NavItem {
+export interface NavItem {
   readonly href: string;
   readonly label: string;
   readonly icon: React.ComponentType<{ className?: string }>;
