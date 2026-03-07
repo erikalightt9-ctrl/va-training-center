@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { generateDocument } from "@/lib/services/ai-business-assistant.service";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 import { generateDocumentSchema } from "@/lib/validations/ai-business.schema";
 
 /* ------------------------------------------------------------------ */
@@ -20,6 +21,10 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
     }
+
+    const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
 
     const body = await request.json();
     const parsed = generateDocumentSchema.safeParse(body);

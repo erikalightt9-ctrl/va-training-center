@@ -5,6 +5,7 @@ import {
   assessSubmission,
   canAssess,
 } from "@/lib/services/ai-assessment.service";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 
 /* ------------------------------------------------------------------ */
 /*  POST — Trigger AI assessment for a submission                      */
@@ -29,6 +30,8 @@ export async function POST(
 
     const { submissionId } = await params;
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
 
     // Verify student owns this submission
     const submission = await prisma.submission.findUnique({

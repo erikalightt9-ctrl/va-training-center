@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { BusinessAssistant } from "@/components/student/BusinessAssistant";
+import { SubscriptionGate } from "@/components/student/SubscriptionGate";
 import { Briefcase } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -18,25 +19,27 @@ export default async function BusinessAssistantPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-indigo-100 rounded-lg p-2">
-            <Briefcase className="h-5 w-5 text-indigo-700" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              AI Business Assistant
-            </h1>
-            <p className="text-sm text-gray-500">
-              Generate proposals, invoices, contracts, emails, and SOPs with AI
-            </p>
+      <SubscriptionGate>
+        {/* Header */}
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-indigo-100 rounded-lg p-2">
+              <Briefcase className="h-5 w-5 text-indigo-700" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                AI Business Assistant
+              </h1>
+              <p className="text-sm text-gray-500">
+                Generate proposals, invoices, contracts, emails, and SOPs with AI
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Business Assistant */}
-      <BusinessAssistant />
+        {/* Business Assistant */}
+        <BusinessAssistant />
+      </SubscriptionGate>
     </div>
   );
 }

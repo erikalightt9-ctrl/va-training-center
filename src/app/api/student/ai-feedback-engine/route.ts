@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getAggregatedFeedback } from "@/lib/repositories/feedback-engine.repository";
 import { generateFullAssessment } from "@/lib/services/ai-feedback-engine.service";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 import { fullAssessmentSchema } from "@/lib/validations/ai-feedback-engine.schema";
 
 /* ------------------------------------------------------------------ */
@@ -23,6 +24,8 @@ export async function GET(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const data = await getAggregatedFeedback(studentId);
 
     return NextResponse.json({
@@ -58,6 +61,8 @@ export async function POST(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const body = await request.json();
 
     const parsed = fullAssessmentSchema.safeParse(body);

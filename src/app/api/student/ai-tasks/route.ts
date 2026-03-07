@@ -3,6 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { generateTask, evaluateTaskAnswer } from "@/lib/services/ai-task-generator.service";
 import { generateTaskSchema, evaluateTaskSchema } from "@/lib/validations/ai-task.schema";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 import type { CourseSlug } from "@prisma/client";
 
 /* ------------------------------------------------------------------ */
@@ -42,6 +43,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
+
     const body = await request.json();
     const parsed = generateTaskSchema.safeParse(body);
 
@@ -52,7 +57,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const courseSlug = await getStudentCourseSlug(token.id as string);
+    const courseSlug = await getStudentCourseSlug(studentId);
     if (!courseSlug) {
       return NextResponse.json(
         { success: false, data: null, error: "Course not found" },
@@ -93,6 +98,10 @@ export async function PUT(request: NextRequest) {
         { status: 401 },
       );
     }
+
+    const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
 
     const body = await request.json();
     const parsed = evaluateTaskSchema.safeParse(body);

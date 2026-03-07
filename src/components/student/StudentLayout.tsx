@@ -37,6 +37,7 @@ import {
   ShieldCheck,
   Building2,
   Laptop,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -62,9 +63,10 @@ function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
       ],
     },
     {
-      label: "AI Training Lab",
+      label: "AI Training Lab \u2728 PRO",
       icon: Sparkles,
       items: [
+        { href: "/student/ai-premium", label: "Upgrade to PRO", icon: Crown },
         { href: "/student/ai-simulator", label: "VA Simulator", icon: Users },
         { href: "/student/ai-tasks", label: "Task Generator", icon: Zap },
         { href: "/student/ai-assessments", label: "AI Review", icon: Target },

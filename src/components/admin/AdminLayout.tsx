@@ -29,6 +29,7 @@ import {
   ClipboardCheck,
   FileText,
   TrendingUp,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,7 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
     icon: CreditCard,
     items: [
       { href: "/admin/payments", label: "Payment Records", icon: CreditCard },
+      { href: "/admin/subscriptions", label: "AI Subscriptions", icon: Crown },
     ],
   },
   {

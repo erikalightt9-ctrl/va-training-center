@@ -88,6 +88,19 @@ enum StudentPaymentStatus {
   PAID
 }
 
+enum SubscriptionPlan {
+  MONTHLY
+  QUARTERLY
+  LIFETIME
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
 enum ScheduleStatus {
   OPEN
   CLOSED
@@ -230,6 +243,7 @@ model Student {
   emailPracticeSessions EmailPracticeSession[]
   jobApplications       JobApplication[]
   verifiedSkills        VerifiedSkill[]
+  subscriptions         Subscription[]
 
   @@index([email])
   @@index([paymentStatus])
@@ -811,4 +825,25 @@ model VerifiedSkill {
   @@unique([studentId, skillType])
   @@index([studentId])
   @@map("verified_skills")
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  studentId       String
+  plan            SubscriptionPlan
+  status          SubscriptionStatus @default(PENDING)
+  amount          Decimal            @db.Decimal(10, 2)
+  paymentMethod   String?
+  paymentProof    String?
+  referenceNumber String?
+  startDate       DateTime?
+  endDate         DateTime?
+  approvedBy      String?
+  approvedAt      DateTime?
+  createdAt       DateTime           @default(now())
+  student         Student            @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+  @@index([status])
+  @@map("subscriptions")
 }

@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AIAssessmentCard } from "@/components/student/AIAssessmentCard";
+import { SubscriptionGate } from "@/components/student/SubscriptionGate";
 import { Sparkles } from "lucide-react";
 import type { AIAssessmentResult } from "@/lib/types/ai.types";
 
@@ -60,43 +61,45 @@ export default async function AIAssessmentsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 rounded-lg p-2">
-            <Sparkles className="h-5 w-5 text-purple-700" />
+      <SubscriptionGate>
+        {/* Header */}
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-purple-100 rounded-lg p-2">
+              <Sparkles className="h-5 w-5 text-purple-700" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">AI Review</h1>
+              <p className="text-sm text-gray-500">
+                Get AI-powered feedback on your assignment submissions
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Review</h1>
-            <p className="text-sm text-gray-500">
-              Get AI-powered feedback on your assignment submissions
+        </div>
+
+        {/* Submissions list */}
+        {submissionData.length > 0 ? (
+          <div className="space-y-4">
+            {submissionData.map((sub) => (
+              <AIAssessmentCard key={sub.id} submission={sub} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="h-8 w-8 text-purple-600" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              No Submissions Yet
+            </h2>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              Submit your assignments to get AI-powered feedback and skill
+              assessments. Each submission can be reviewed by our AI to help you
+              improve.
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* Submissions list */}
-      {submissionData.length > 0 ? (
-        <div className="space-y-4">
-          {submissionData.map((sub) => (
-            <AIAssessmentCard key={sub.id} submission={sub} />
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="h-8 w-8 text-purple-600" />
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            No Submissions Yet
-          </h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
-            Submit your assignments to get AI-powered feedback and skill
-            assessments. Each submission can be reviewed by our AI to help you
-            improve.
-          </p>
-        </div>
-      )}
+        )}
+      </SubscriptionGate>
     </div>
   );
 }

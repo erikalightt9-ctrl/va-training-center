@@ -17,6 +17,7 @@ import {
   generateScenarioSchema,
   evaluateEmailSchema,
 } from "@/lib/validations/ai-email-practice.schema";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 import type { CourseSlug } from "@prisma/client";
 
 /* ------------------------------------------------------------------ */
@@ -56,6 +57,8 @@ export async function GET(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const courseSlug = await getStudentCourseSlug(studentId);
 
     if (!courseSlug) {
@@ -103,6 +106,8 @@ export async function POST(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const body = await request.json();
 
     const parsed = generateScenarioSchema.safeParse(body);
@@ -186,6 +191,8 @@ export async function PUT(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const body = await request.json();
 
     const parsed = evaluateEmailSchema.safeParse(body);

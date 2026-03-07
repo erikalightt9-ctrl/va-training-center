@@ -13,6 +13,7 @@ import {
   answerQuestionSchema,
   endInterviewSchema,
 } from "@/lib/validations/ai-interview.schema";
+import { requireSubscription } from "@/lib/guards/subscription.guard";
 import type { CourseSlug } from "@prisma/client";
 
 /* ------------------------------------------------------------------ */
@@ -52,6 +53,8 @@ export async function GET(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const courseSlug = await getStudentCourseSlug(studentId);
 
     if (!courseSlug) {
@@ -99,6 +102,8 @@ export async function POST(request: NextRequest) {
     }
 
     const studentId = token.id as string;
+    const denied = await requireSubscription(studentId);
+    if (denied) return denied;
     const body = await request.json();
     const action = body.action as string;
 

@@ -437,6 +437,7 @@ export async function deleteEnrollee(id: string): Promise<void> {
     prisma.certificate.deleteMany({ where: { studentId: id } }),
     prisma.forumPost.deleteMany({ where: { studentId: id } }),
     prisma.forumThread.deleteMany({ where: { studentId: id } }),
+    prisma.subscription.deleteMany({ where: { studentId: id } }),
     prisma.student.delete({ where: { id } }),
   ]);
 }
