@@ -131,8 +131,8 @@ export async function PATCH(
         }),
       ]);
 
-      // Send login email with credentials (fire-and-forget)
-      sendEnrollmentApproved({
+      // Send login email with credentials (awaited for Vercel serverless)
+      await sendEnrollmentApproved({
         name: existing.fullName,
         email: existing.email,
         courseTitle,
@@ -154,7 +154,7 @@ export async function PATCH(
         },
       });
 
-      sendEnrollmentRejected({
+      await sendEnrollmentRejected({
         name: existing.fullName,
         email: existing.email,
         courseTitle,

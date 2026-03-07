@@ -101,23 +101,25 @@ export async function processEnrollment(
     minute: "2-digit",
   });
 
-  // Send enrollment confirmation with payment instructions (non-blocking)
-  sendEnrollmentConfirmationWithPayment({
-    fullName: enrollment.fullName,
-    email: enrollment.email,
-    courseTitle,
-    enrollmentId: enrollment.id,
-    submittedAt,
-    paymentUrl: `${base}/pay/${enrollment.id}`,
-    statusTrackingUrl: `${base}/enrollment-status/${enrollment.id}`,
-  }).catch((err) => {
-    console.error("[Email] Failed to send enrollment confirmation:", err);
-  });
+  // Send both emails in parallel, await to prevent Vercel from killing the function
+  const emailResults = await Promise.allSettled([
+    sendEnrollmentConfirmationWithPayment({
+      fullName: enrollment.fullName,
+      email: enrollment.email,
+      courseTitle,
+      enrollmentId: enrollment.id,
+      submittedAt,
+      paymentUrl: `${base}/pay/${enrollment.id}`,
+      statusTrackingUrl: `${base}/enrollment-status/${enrollment.id}`,
+    }),
+    notifyAdminsOfNewEnrollment(enrollment),
+  ]);
 
-  // Notify admin(s) about new enrollment (non-blocking)
-  notifyAdminsOfNewEnrollment(enrollment).catch((err) => {
-    console.error("[Email] Failed to notify admin:", err);
-  });
+  for (const result of emailResults) {
+    if (result.status === "rejected") {
+      console.error("[Email] Failed to send:", result.reason);
+    }
+  }
 
   return { success: true, enrollment };
 }

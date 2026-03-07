@@ -126,8 +126,8 @@ export async function approvePayment(
     }),
   ]);
 
-  // 6. Send payment confirmed email with credentials (fire-and-forget)
-  sendPaymentConfirmed({
+  // 6. Send payment confirmed email with credentials (awaited for Vercel serverless)
+  await sendPaymentConfirmed({
     name: enrollment.fullName,
     email: enrollment.email,
     courseTitle: enrollment.course.title,

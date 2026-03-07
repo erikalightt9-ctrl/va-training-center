@@ -87,10 +87,10 @@ async function main() {
   // ── Admin user ─────────────────────────────────────────────────
   const passwordHash = await bcrypt.hash("Admin@123456!", 12);
   await prisma.admin.upsert({
-    where: { email: "admin@vatrainingcenter.com" },
+    where: { email: "gdscapital.168@gmail.com" },
     update: {},
     create: {
-      email: "admin@vatrainingcenter.com",
+      email: "gdscapital.168@gmail.com",
       passwordHash,
       name: "Super Admin",
     },
@@ -1115,7 +1115,7 @@ You are now prepared to launch your career as a US Bookkeeping Virtual Assistant
   console.log("✅ US Bookkeeping VA quiz seeded");
 
   console.log("\n✅ All seeding complete!");
-  console.log("   Admin: admin@vatrainingcenter.com / Admin@123456!");
+  console.log("   Admin: gdscapital.168@gmail.com / Admin@123456!");
 }
 
 main()

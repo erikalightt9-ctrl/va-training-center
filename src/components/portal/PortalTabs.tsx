@@ -63,7 +63,7 @@ function LoginPanel({ provider }: { readonly provider: "student" | "admin" }) {
   const redirectTo = provider === "admin" ? "/admin" : "/student/dashboard";
   const placeholder =
     provider === "admin"
-      ? "admin@vatrainingcenter.com"
+      ? "gdscapital.168@gmail.com"
       : "your@email.com";
 
   async function handleSubmit(e: React.FormEvent) {
