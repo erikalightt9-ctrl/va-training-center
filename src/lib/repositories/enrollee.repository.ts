@@ -423,3 +423,20 @@ export async function getEnrolleeActivityLog(
   entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   return entries.slice(0, limit);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Delete a student (enrollee) and all related data                   */
+/* ------------------------------------------------------------------ */
+
+export async function deleteEnrollee(id: string): Promise<void> {
+  await prisma.$transaction([
+    prisma.attendanceRecord.deleteMany({ where: { studentId: id } }),
+    prisma.lessonCompletion.deleteMany({ where: { studentId: id } }),
+    prisma.quizAttempt.deleteMany({ where: { studentId: id } }),
+    prisma.submission.deleteMany({ where: { studentId: id } }),
+    prisma.certificate.deleteMany({ where: { studentId: id } }),
+    prisma.forumPost.deleteMany({ where: { studentId: id } }),
+    prisma.forumThread.deleteMany({ where: { studentId: id } }),
+    prisma.student.delete({ where: { id } }),
+  ]);
+}

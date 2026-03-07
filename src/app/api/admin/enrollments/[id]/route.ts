@@ -4,6 +4,8 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import {
   findEnrollmentById,
+  updateEnrollmentFields,
+  deleteEnrollment,
 } from "@/lib/repositories/enrollment.repository";
 import { generateTemporaryPassword, studentExists } from "@/lib/services/student-auth.service";
 import {
@@ -16,6 +18,14 @@ import type { EnrollmentStatus } from "@prisma/client";
 const patchSchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "ENROLLED", "PAYMENT_SUBMITTED", "PAYMENT_VERIFIED", "EMAIL_VERIFIED"]),
   rejectionFeedback: z.string().optional(),
+});
+
+const editSchema = z.object({
+  fullName: z.string().min(2).max(200).optional(),
+  email: z.string().email().optional(),
+  contactNumber: z.string().min(5).max(30).optional(),
+  address: z.string().min(5).optional(),
+  courseId: z.string().cuid().optional(),
 });
 
 export async function GET(
@@ -51,7 +61,7 @@ export async function PATCH(
     const { id } = await params;
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
-    if (!token?.id) {
+    if (!token?.id || token.role !== "admin") {
       return NextResponse.json(
         { success: false, data: null, error: "Unauthorized" },
         { status: 401 }
@@ -59,6 +69,37 @@ export async function PATCH(
     }
 
     const body = await request.json();
+
+    // If body has editable fields (not status), handle field editing
+    if (body.fullName || body.email || body.contactNumber || body.address || body.courseId) {
+      const editResult = editSchema.safeParse(body);
+      if (!editResult.success) {
+        return NextResponse.json(
+          { success: false, data: null, error: editResult.error.issues[0]?.message ?? "Invalid input" },
+          { status: 422 }
+        );
+      }
+
+      const existing = await findEnrollmentById(id);
+      if (!existing) {
+        return NextResponse.json(
+          { success: false, data: null, error: "Enrollment not found" },
+          { status: 404 }
+        );
+      }
+
+      // Only allow editing non-approved enrollments
+      if (existing.status === "ENROLLED") {
+        return NextResponse.json(
+          { success: false, data: null, error: "Cannot edit an enrolled application" },
+          { status: 400 }
+        );
+      }
+
+      const updated = await updateEnrollmentFields(id, editResult.data);
+      return NextResponse.json({ success: true, data: updated, error: null });
+    }
+
     const result = patchSchema.safeParse(body);
 
     if (!result.success) {
@@ -177,6 +218,54 @@ export async function PATCH(
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
     console.error("[PATCH /api/admin/enrollments/[id]]", err);
+    return NextResponse.json(
+      { success: false, data: null, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  DELETE — Admin: delete an enrollment application                   */
+/* ------------------------------------------------------------------ */
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token?.id || token.role !== "admin") {
+      return NextResponse.json(
+        { success: false, data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await params;
+
+    const existing = await findEnrollmentById(id);
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, data: null, error: "Enrollment not found" },
+        { status: 404 }
+      );
+    }
+
+    // Prevent deleting enrolled applications (student already created)
+    if (existing.status === "ENROLLED") {
+      return NextResponse.json(
+        { success: false, data: null, error: "Cannot delete an enrolled application. Remove the enrollee first." },
+        { status: 400 }
+      );
+    }
+
+    await deleteEnrollment(id);
+
+    return NextResponse.json({ success: true, data: null, error: null });
+  } catch (err) {
+    console.error("[DELETE /api/admin/enrollments/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
       { status: 500 }

@@ -6,6 +6,7 @@ import {
   updateEnrolleeNotes,
   assignEnrolleeToSchedule,
   getEnrolleeActivityLog,
+  deleteEnrollee,
 } from "@/lib/repositories/enrollee.repository";
 import { enrolleeGeneralUpdateSchema } from "@/lib/validations/enrollee.schema";
 
@@ -96,6 +97,45 @@ export async function PATCH(
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
     console.error("[PATCH /api/admin/enrollees/[id]]", err);
+    return NextResponse.json(
+      { success: false, data: null, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  DELETE — Admin: delete an enrollee (student) and related data      */
+/* ------------------------------------------------------------------ */
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    if (!token?.role || token.role !== "admin") {
+      return NextResponse.json(
+        { success: false, data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await params;
+
+    const existing = await findEnrolleeById(id);
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, data: null, error: "Enrollee not found" },
+        { status: 404 }
+      );
+    }
+
+    await deleteEnrollee(id);
+
+    return NextResponse.json({ success: true, data: null, error: null });
+  } catch (err) {
+    console.error("[DELETE /api/admin/enrollees/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
       { status: 500 }

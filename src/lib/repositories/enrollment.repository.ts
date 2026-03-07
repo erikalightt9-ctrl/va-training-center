@@ -105,3 +105,29 @@ export async function getAllEnrollmentsForExport(): Promise<EnrollmentWithCourse
 export async function countRecentEnrollments(since: Date): Promise<number> {
   return prisma.enrollment.count({ where: { createdAt: { gte: since } } });
 }
+
+/** Update editable fields on an enrollment application */
+export async function updateEnrollmentFields(
+  id: string,
+  data: {
+    readonly fullName?: string;
+    readonly email?: string;
+    readonly contactNumber?: string;
+    readonly address?: string;
+    readonly courseId?: string;
+  },
+): Promise<Enrollment> {
+  return prisma.enrollment.update({
+    where: { id },
+    data,
+  });
+}
+
+/** Delete an enrollment application (hard delete) */
+export async function deleteEnrollment(id: string): Promise<void> {
+  // Delete associated payments first, then the enrollment
+  await prisma.$transaction([
+    prisma.payment.deleteMany({ where: { enrollmentId: id } }),
+    prisma.enrollment.delete({ where: { id } }),
+  ]);
+}
