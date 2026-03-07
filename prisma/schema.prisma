@@ -191,6 +191,8 @@ model Student {
   email              String               @unique
   passwordHash       String
   name               String
+  bio                String?              @db.Text
+  avatarUrl          String?
   mustChangePassword Boolean              @default(true)
   batch              String?
   scheduleId         String?
@@ -216,6 +218,8 @@ model Student {
   simulations    SimulationSession[]
   interviews     InterviewSession[]
   jobMatches     JobMatch[]
+  employerFeedback  EmployerFeedback[]
+  mentorshipRequests MentorshipRequest[]
 
   @@index([email])
   @@index([paymentStatus])
@@ -329,11 +333,11 @@ model Certificate {
 
 model ForumThread {
   id        String      @id @default(cuid())
-  courseId  String
+  courseId  String?
   studentId String
   title     String
   createdAt DateTime    @default(now())
-  course    Course      @relation(fields: [courseId], references: [id])
+  course    Course?     @relation(fields: [courseId], references: [id])
   student   Student     @relation(fields: [studentId], references: [id])
   posts     ForumPost[]
 
@@ -632,6 +636,7 @@ model Trainer {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   courses         CourseTrainer[]
+  mentorshipRequests MentorshipRequest[]
 
   @@index([isActive])
   @@map("trainers")
@@ -665,4 +670,51 @@ model CourseResource {
 
   @@index([courseId])
   @@map("course_resources")
+}
+
+enum FeedbackCategory {
+  COMMUNICATION
+  TECHNICAL_SKILLS
+  PROFESSIONALISM
+  RELIABILITY
+  PROBLEM_SOLVING
+  OVERALL
+}
+
+enum MentorshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+}
+
+model EmployerFeedback {
+  id           String           @id @default(cuid())
+  studentId    String
+  reviewerName String
+  reviewerRole String
+  category     FeedbackCategory
+  rating       Int
+  feedback     String           @db.Text
+  createdAt    DateTime         @default(now())
+  student      Student          @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+  @@map("employer_feedback")
+}
+
+model MentorshipRequest {
+  id        String           @id @default(cuid())
+  studentId String
+  trainerId String
+  status    MentorshipStatus @default(PENDING)
+  message   String           @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  student   Student          @relation(fields: [studentId], references: [id])
+  trainer   Trainer          @relation(fields: [trainerId], references: [id])
+
+  @@index([studentId])
+  @@index([trainerId])
+  @@map("mentorship_requests")
 }

@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+export const dynamic = "force-dynamic";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { UserCircle } from "lucide-react";
+import { ProfileEditor } from "@/components/student/ProfileEditor";
+
+export const metadata: Metadata = { title: "My Profile | VA Student" };
+
+export default async function StudentProfilePage() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user as { id: string; role: string } | undefined;
+
+  if (!user || user.role !== "student") {
+    redirect("/student/login");
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="bg-blue-100 rounded-lg p-2">
+            <UserCircle className="h-5 w-5 text-blue-700" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+            <p className="text-sm text-gray-500">
+              View and update your profile information
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <ProfileEditor />
+    </div>
+  );
+}

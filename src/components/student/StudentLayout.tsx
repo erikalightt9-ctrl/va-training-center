@@ -24,9 +24,18 @@ import {
   Activity,
   Search,
   LogOut,
+  BookMarked,
+  BarChart3,
+  TreePine,
+  FileText,
+  Star,
+  MessagesSquare,
+  Heart,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SidebarNavGroup } from "@/components/student/SidebarNavGroup";
 
 interface NavItem {
   readonly href: string;
@@ -34,28 +43,80 @@ interface NavItem {
   readonly icon: React.ComponentType<{ className?: string }>;
 }
 
-function buildNavItems(courseId: string): ReadonlyArray<NavItem> {
+interface NavGroup {
+  readonly label: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly items: ReadonlyArray<NavItem>;
+}
+
+function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
   return [
-    { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: `/student/courses/${courseId}`, label: "My Course", icon: BookOpen },
-    { href: `/student/courses/${courseId}/quizzes`, label: "Quizzes", icon: ClipboardList },
-    { href: `/student/courses/${courseId}/assignments`, label: "Assignments", icon: FileCheck },
-    { href: `/student/courses/${courseId}/forum`, label: "Forum", icon: MessageSquare },
-    { href: `/student/courses/${courseId}/leaderboard`, label: "Leaderboard", icon: Trophy },
-    { href: "/student/ai-practice", label: "AI Practice", icon: Bot },
-    { href: "/student/certificates", label: "Certificates", icon: Award },
-    { href: "/student/calendar", label: "Calendar", icon: CalendarDays },
-    { href: "/student/portfolio", label: "Portfolio", icon: UserCircle },
-    { href: "/student/career-readiness", label: "Career Score", icon: Target },
-    { href: "/student/ai-assessments", label: "AI Review", icon: Sparkles },
-    { href: "/student/ai-tasks", label: "Task Generator", icon: Zap },
-    { href: "/student/business-assistant", label: "Biz Assistant", icon: Briefcase },
-    { href: "/student/ai-simulator", label: "VA Simulator", icon: Users },
-    { href: "/student/ai-interviews", label: "Mock Interview", icon: Mic },
-    { href: "/student/work-pace", label: "Work Pace", icon: Activity },
-    { href: "/student/job-matches", label: "Job Matches", icon: Search },
+    {
+      label: "Learning",
+      icon: BookMarked,
+      items: [
+        { href: `/student/courses/${courseId}`, label: "My Course", icon: BookOpen },
+        { href: `/student/courses/${courseId}/quizzes`, label: "Quizzes", icon: ClipboardList },
+        { href: `/student/courses/${courseId}/assignments`, label: "Assignments", icon: FileCheck },
+        { href: "/student/ai-practice", label: "AI Practice", icon: Bot },
+      ],
+    },
+    {
+      label: "AI Lab",
+      icon: Sparkles,
+      items: [
+        { href: "/student/ai-simulator", label: "VA Simulator", icon: Users },
+        { href: "/student/ai-tasks", label: "Task Generator", icon: Zap },
+        { href: "/student/ai-assessments", label: "AI Review", icon: Target },
+        { href: "/student/ai-interviews", label: "Mock Interviews", icon: Mic },
+        { href: "/student/business-assistant", label: "Biz Assistant", icon: Briefcase },
+      ],
+    },
+    {
+      label: "Career",
+      icon: Briefcase,
+      items: [
+        { href: "/student/job-matches", label: "Job Matches", icon: Search },
+        { href: "/student/resume-builder", label: "Resume Builder", icon: FileText },
+        { href: "/student/portfolio", label: "Portfolio", icon: UserCircle },
+        { href: "/student/career-readiness", label: "Career Readiness", icon: Target },
+        { href: "/student/employer-feedback", label: "Employer Feedback", icon: Star },
+      ],
+    },
+    {
+      label: "Progress",
+      icon: BarChart3,
+      items: [
+        { href: "/student/learning-analytics", label: "Learning Analytics", icon: BarChart3 },
+        { href: "/student/skill-tree", label: "Skill Tree", icon: TreePine },
+        { href: "/student/certificates", label: "Certificates", icon: Award },
+        { href: "/student/work-pace", label: "Work Pace", icon: Activity },
+      ],
+    },
+    {
+      label: "Community",
+      icon: MessagesSquare,
+      items: [
+        { href: "/student/forum", label: "Student Forum", icon: MessageSquare },
+        { href: `/student/courses/${courseId}/forum`, label: "Course Forum", icon: MessagesSquare },
+        { href: `/student/courses/${courseId}/leaderboard`, label: "Leaderboard", icon: Trophy },
+        { href: "/student/calendar", label: "Calendar", icon: CalendarDays },
+        { href: "/student/mentorship", label: "Mentorship", icon: Heart },
+      ],
+    },
   ];
 }
+
+interface StandaloneNavItem {
+  readonly href: string;
+  readonly label: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+}
+
+const bottomNavItems: ReadonlyArray<StandaloneNavItem> = [
+  { href: "/student/profile", label: "Profile", icon: UserCircle },
+  { href: "/student/settings", label: "Settings", icon: Settings },
+];
 
 interface StudentLayoutProps {
   readonly courseId: string;
@@ -64,7 +125,9 @@ interface StudentLayoutProps {
 
 export function StudentLayout({ courseId, children }: StudentLayoutProps) {
   const pathname = usePathname();
-  const navItems = buildNavItems(courseId);
+  const navGroups = buildNavGroups(courseId);
+
+  const isDashboardActive = pathname === "/student/dashboard";
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -78,11 +141,40 @@ export function StudentLayout({ courseId, children }: StudentLayoutProps) {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/student/dashboard" && pathname.startsWith(item.href));
+          {/* Dashboard — standalone */}
+          <Link
+            href="/student/dashboard"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              isDashboardActive
+                ? "bg-blue-700 text-white"
+                : "text-blue-200 hover:bg-blue-800 hover:text-white"
+            )}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Link>
 
+          {/* Separator */}
+          <div className="pt-2" />
+
+          {/* Nav Groups */}
+          {navGroups.map((group) => (
+            <SidebarNavGroup
+              key={group.label}
+              label={group.label}
+              icon={group.icon}
+              items={group.items}
+            />
+          ))}
+
+          {/* Separator */}
+          <div className="pt-2" />
+
+          {/* Bottom standalone items */}
+          {bottomNavItems.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
