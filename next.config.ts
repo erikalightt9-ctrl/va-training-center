@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  async redirects() {
+    return [
+      { source: "/courses", destination: "/programs", permanent: true },
+      { source: "/courses/medical-va", destination: "/programs/medical-va", permanent: true },
+      { source: "/courses/real-estate-va", destination: "/programs/real-estate-va", permanent: true },
+      { source: "/courses/us-bookkeeping-va", destination: "/programs/us-bookkeeping-va", permanent: true },
+      { source: "/courses/:slug/preview/:lessonId", destination: "/programs/:slug/preview/:lessonId", permanent: true },
+      { source: "/jobs", destination: "/career-placement", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

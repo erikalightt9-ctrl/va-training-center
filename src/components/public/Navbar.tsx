@@ -5,16 +5,71 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, GraduationCap, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { MobileNavMenu } from "./MobileNavMenu";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/courses", label: "Courses" },
-  { href: "/jobs", label: "Jobs" },
-  { href: "/contact", label: "Contact" },
-  { href: "/verify", label: "Verify" },
-];
+/* ------------------------------------------------------------------ */
+/*  Navigation data                                                    */
+/* ------------------------------------------------------------------ */
+
+interface NavDropdownItem {
+  readonly href: string;
+  readonly label: string;
+  readonly description: string;
+}
+
+const programsItems: readonly NavDropdownItem[] = [
+  { href: "/programs", label: "All Programs", description: "Browse our VA training specializations" },
+  { href: "/learning-paths", label: "Learning Paths", description: "See your training roadmap" },
+  { href: "/certifications", label: "Certifications", description: "Credentials you'll earn" },
+] as const;
+
+const studentsItems: readonly NavDropdownItem[] = [
+  { href: "/career-placement", label: "Career Placement", description: "Jobs & placement support" },
+  { href: "/student-success", label: "Student Success", description: "Graduate stories & outcomes" },
+  { href: "/community", label: "Community", description: "Connect with fellow VAs" },
+  { href: "/resources", label: "Resources", description: "Free tools & guides" },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/*  DropdownLink — reusable item inside a dropdown                     */
+/* ------------------------------------------------------------------ */
+
+function DropdownLink({
+  href,
+  label,
+  description,
+  pathname,
+}: NavDropdownItem & { readonly pathname: string }) {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          href={href}
+          className={cn(
+            "block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-blue-50 focus:bg-blue-50",
+            pathname === href && "bg-blue-50"
+          )}
+        >
+          <div className="text-sm font-medium text-gray-900">{label}</div>
+          <p className="mt-1 text-xs leading-snug text-gray-500">{description}</p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Navbar                                                             */
+/* ------------------------------------------------------------------ */
 
 export function Navbar() {
   const pathname = usePathname();
@@ -31,31 +86,71 @@ export function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-blue-700",
-                  pathname === link.href
-                    ? "text-blue-700 border-b-2 border-blue-700 pb-0.5"
-                    : "text-gray-600"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              {/* Programs dropdown */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-sm font-medium text-gray-600 hover:text-blue-700 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent">
+                  Programs
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[320px] gap-1 p-2">
+                    {programsItems.map((item) => (
+                      <DropdownLink key={item.href} {...item} pathname={pathname} />
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
 
-          {/* CTA */}
+              {/* For Students dropdown */}
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-sm font-medium text-gray-600 hover:text-blue-700 bg-transparent hover:bg-transparent data-[state=open]:bg-transparent">
+                  For Students
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[340px] gap-1 p-2">
+                    {studentsItems.map((item) => (
+                      <DropdownLink key={item.href} {...item} pathname={pathname} />
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              {/* Flat links */}
+              <NavigationMenuItem>
+                <Link
+                  href="/enterprise"
+                  className={cn(
+                    "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-blue-700",
+                    pathname === "/enterprise" ? "text-blue-700" : "text-gray-600"
+                  )}
+                >
+                  For Business
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link
+                  href="/verify"
+                  className={cn(
+                    "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-blue-700",
+                    pathname === "/verify" ? "text-blue-700" : "text-gray-600"
+                  )}
+                >
+                  Verify
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          {/* CTA area */}
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/portal"
               className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
             >
               <LogIn className="h-4 w-4" />
-              Login / Enroll
+              Login
             </Link>
             <Button asChild size="sm" className="bg-blue-700 hover:bg-blue-800">
               <Link href="/portal?tab=enroll">Enroll Now</Link>
@@ -65,7 +160,7 @@ export function Navbar() {
           {/* Mobile toggle */}
           <button
             className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900"
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -75,36 +170,12 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "block text-sm font-medium transition-colors hover:text-blue-700",
-                  pathname === link.href ? "text-blue-700" : "text-gray-600"
-                )}
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/portal"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              <LogIn className="h-4 w-4" />
-              Login / Enroll
-            </Link>
-            <Button asChild size="sm" className="w-full bg-blue-700 hover:bg-blue-800">
-              <Link href="/portal?tab=enroll" onClick={() => setMobileOpen(false)}>
-                Enroll Now
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <MobileNavMenu
+          pathname={pathname}
+          programsItems={programsItems}
+          studentsItems={studentsItems}
+          onClose={() => setMobileOpen(false)}
+        />
       )}
     </header>
   );

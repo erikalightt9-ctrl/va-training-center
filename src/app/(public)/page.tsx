@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 };
 
 const courseHrefs: Record<string, string> = {
-  MEDICAL_VA: "/courses/medical-va",
-  REAL_ESTATE_VA: "/courses/real-estate-va",
-  US_BOOKKEEPING_VA: "/courses/us-bookkeeping-va",
+  MEDICAL_VA: "/programs/medical-va",
+  REAL_ESTATE_VA: "/programs/real-estate-va",
+  US_BOOKKEEPING_VA: "/programs/us-bookkeeping-va",
 };
 
 export default async function HomePage() {
@@ -51,13 +51,13 @@ export default async function HomePage() {
                 durationWeeks={course.durationWeeks}
                 price={course.price.toString()}
                 slug={course.slug}
-                href={courseHrefs[course.slug] ?? "/courses"}
+                href={courseHrefs[course.slug] ?? "/programs"}
               />
             ))}
           </div>
           <div className="text-center mt-10">
             <Button asChild variant="outline" size="lg">
-              <Link href="/courses">View All Programs</Link>
+              <Link href="/programs">View All Programs</Link>
             </Button>
           </div>
         </div>
