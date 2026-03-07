@@ -5,9 +5,9 @@ import { ProgramComparisonTable } from "@/components/public/ProgramComparisonTab
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Programs \u2014 VA Training Center",
+  title: "Programs \u2014 HUMI+ VA Training Center",
   description:
-    "Explore VA Training Center's specialized programs: Medical VA, Real Estate VA, and US Bookkeeping VA.",
+    "Explore HUMI+ VA Training Center's specialized programs: Medical VA, Real Estate VA, and US Bookkeeping VA.",
 };
 
 const courseHrefs: Record<string, string> = {

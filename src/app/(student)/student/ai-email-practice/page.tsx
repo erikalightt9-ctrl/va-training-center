@@ -8,7 +8,7 @@ import { AIEmailPractice } from "@/components/student/AIEmailPractice";
 import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Email Practice | VA Student",
+  title: "Email Practice | HUMI+ Student",
 };
 
 export default async function AIEmailPracticePage() {

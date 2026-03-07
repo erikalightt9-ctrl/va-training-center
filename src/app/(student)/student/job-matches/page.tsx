@@ -8,7 +8,7 @@ import { JobMatchDashboard } from "@/components/student/JobMatchDashboard";
 import { Briefcase } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Job Matches | VA Student",
+  title: "Job Matches | HUMI+ Student",
 };
 
 export default async function StudentJobMatchesPage() {

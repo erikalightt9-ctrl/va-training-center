@@ -407,7 +407,7 @@ Record every patient interaction in the EHR with date, time, who you spoke with,
 - HIPAA Compliance Training Certificate
 - EHR-specific certifications (Epic, athenahealth)
 - Medical Terminology Certificate
-- This VA Training Center course completion certificate
+- This HUMI+ VA Training Center course completion certificate
 
 **Where to Find Medical VA Jobs:**
 - Specialized agencies: MedVA, VMeDx, REVA Global

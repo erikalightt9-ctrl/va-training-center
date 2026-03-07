@@ -8,7 +8,7 @@ import { AITaskGenerator } from "@/components/student/AITaskGenerator";
 import { Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Task Generator | VA Student",
+  title: "AI Task Generator | HUMI+ Student",
 };
 
 export default async function AITasksPage() {

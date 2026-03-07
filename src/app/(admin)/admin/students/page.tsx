@@ -11,7 +11,7 @@ import { StudentManagementTabs } from "@/components/admin/StudentManagementTabs"
 import type { EnrollmentFilters } from "@/types";
 import type { CourseSlug, EnrollmentStatus } from "@prisma/client";
 
-export const metadata: Metadata = { title: "Students | VA Admin" };
+export const metadata: Metadata = { title: "Students | HUMI+ Admin" };
 
 interface PageProps {
   searchParams: Promise<{

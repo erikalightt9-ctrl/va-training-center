@@ -8,7 +8,7 @@ import { AIInterviewSimulator } from "@/components/student/AIInterviewSimulator"
 import { Mic } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Mock Interviews | VA Student",
+  title: "AI Mock Interviews | HUMI+ Student",
 };
 
 export default async function AIInterviewsPage() {

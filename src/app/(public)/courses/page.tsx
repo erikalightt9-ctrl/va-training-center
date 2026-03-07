@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = {
   title: "Courses",
   description:
-    "Explore VA Training Center's specialized programs: Medical VA, Real Estate VA, and US Bookkeeping VA.",
+    "Explore HUMI+ VA Training Center's specialized programs: Medical VA, Real Estate VA, and US Bookkeeping VA.",
 };
 
 const courseHrefs: Record<string, string> = {

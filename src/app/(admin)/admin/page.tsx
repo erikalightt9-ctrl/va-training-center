@@ -29,7 +29,7 @@ import {
   getRecentActivity,
 } from "@/lib/repositories/dashboard.repository";
 
-export const metadata: Metadata = { title: "Dashboard | VA Admin" };
+export const metadata: Metadata = { title: "Dashboard | HUMI+ Admin" };
 
 // ---------------------------------------------------------------------------
 // Helpers

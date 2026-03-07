@@ -5,7 +5,7 @@ import { findEnrollmentById } from "@/lib/repositories/enrollment.repository";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Payment Successful | VA Training Center",
+  title: "Payment Successful | HUMI+ VA Training Center",
 };
 
 export default async function PaymentSuccessPage({

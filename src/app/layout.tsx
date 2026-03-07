@@ -6,14 +6,14 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "VA Training Center — Virtual Assistant Courses",
-    template: "%s | VA Training Center",
+    default: "HUMI+ VA Training Center — Virtual Assistant Courses",
+    template: "%s | HUMI+ VA Training Center",
   },
   description:
-    "VA Training Center offers world-class virtual assistant training programs for Medical VA, Real Estate VA, and US Bookkeeping VA careers.",
+    "HUMI+ VA Training Center offers world-class virtual assistant training programs for Medical VA, Real Estate VA, and US Bookkeeping VA careers.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   openGraph: {
-    siteName: "VA Training Center",
+    siteName: "HUMI+ VA Training Center",
     type: "website",
   },
 };

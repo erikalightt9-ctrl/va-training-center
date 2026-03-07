@@ -8,7 +8,7 @@ import { AISimulator } from "@/components/student/AISimulator";
 import { Users } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI VA Simulator | VA Student",
+  title: "AI VA Simulator | HUMI+ Student",
 };
 
 export default async function AISimulatorPage() {

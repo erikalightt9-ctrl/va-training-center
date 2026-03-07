@@ -8,7 +8,7 @@ import { AIFeedbackDashboard } from "@/components/student/AIFeedbackDashboard";
 import { BarChart2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Feedback Engine | VA Student",
+  title: "AI Feedback Engine | HUMI+ Student",
 };
 
 export default async function AIFeedbackEnginePage() {

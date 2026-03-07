@@ -8,7 +8,7 @@ import { BusinessAssistant } from "@/components/student/BusinessAssistant";
 import { Briefcase } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Business Assistant | VA Student",
+  title: "Business Assistant | HUMI+ Student",
 };
 
 export default async function BusinessAssistantPage() {
