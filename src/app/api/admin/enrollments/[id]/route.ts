@@ -253,14 +253,6 @@ export async function DELETE(
       );
     }
 
-    // Prevent deleting enrolled applications (student already created)
-    if (existing.status === "ENROLLED") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Cannot delete an enrolled application. Remove the enrollee first." },
-        { status: 400 }
-      );
-    }
-
     await deleteEnrollment(id);
 
     return NextResponse.json({ success: true, data: null, error: null });

@@ -281,22 +281,20 @@ export function EnrolleesTable({ enrollments }: EnrolleesTableProps) {
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
                       )}
-                      {!isEnrolled && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(e.id, e.fullName)}
-                          disabled={isDeleting}
-                          className="text-red-500 hover:text-red-700"
-                          title="Delete"
-                        >
-                          {isDeleting ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-3.5 w-3.5" />
-                          )}
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(e.id, e.fullName)}
+                        disabled={isDeleting}
+                        className="text-red-500 hover:text-red-700"
+                        title="Delete"
+                      >
+                        {isDeleting ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
                       <Button
                         asChild
                         variant="ghost"

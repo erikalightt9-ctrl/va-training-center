@@ -123,11 +123,36 @@ export async function updateEnrollmentFields(
   });
 }
 
-/** Delete an enrollment application (hard delete) */
+/** Delete an enrollment application (hard delete).
+ *  If the enrollment is ENROLLED, also cascade-deletes the student and all related data. */
 export async function deleteEnrollment(id: string): Promise<void> {
-  // Delete associated payments first, then the enrollment
-  await prisma.$transaction([
+  // Check if a student record exists for this enrollment
+  const student = await prisma.student.findUnique({
+    where: { enrollmentId: id },
+    select: { id: true },
+  });
+
+  const operations: Prisma.PrismaPromise<unknown>[] = [];
+
+  // If enrolled, cascade-delete all student-related data first
+  if (student) {
+    operations.push(
+      prisma.attendanceRecord.deleteMany({ where: { studentId: student.id } }),
+      prisma.lessonCompletion.deleteMany({ where: { studentId: student.id } }),
+      prisma.quizAttempt.deleteMany({ where: { studentId: student.id } }),
+      prisma.submission.deleteMany({ where: { studentId: student.id } }),
+      prisma.certificate.deleteMany({ where: { studentId: student.id } }),
+      prisma.forumPost.deleteMany({ where: { studentId: student.id } }),
+      prisma.forumThread.deleteMany({ where: { studentId: student.id } }),
+      prisma.student.delete({ where: { id: student.id } }),
+    );
+  }
+
+  // Delete payments and enrollment
+  operations.push(
     prisma.payment.deleteMany({ where: { enrollmentId: id } }),
     prisma.enrollment.delete({ where: { id } }),
-  ]);
+  );
+
+  await prisma.$transaction(operations);
 }
