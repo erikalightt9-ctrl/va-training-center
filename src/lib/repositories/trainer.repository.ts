@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Trainer, CourseTrainer } from "@prisma/client";
+import type { Trainer, CourseTrainer, TrainerTier } from "@prisma/client";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -10,6 +10,11 @@ interface CreateTrainerData {
   readonly bio?: string | null;
   readonly photoUrl?: string | null;
   readonly specializations?: ReadonlyArray<string>;
+  readonly tier?: TrainerTier;
+  readonly credentials?: string | null;
+  readonly certifications?: ReadonlyArray<string>;
+  readonly industryExperience?: string | null;
+  readonly yearsOfExperience?: number;
 }
 
 interface UpdateTrainerData {
@@ -20,10 +25,16 @@ interface UpdateTrainerData {
   readonly photoUrl?: string | null;
   readonly specializations?: ReadonlyArray<string>;
   readonly isActive?: boolean;
+  readonly tier?: TrainerTier;
+  readonly credentials?: string | null;
+  readonly certifications?: ReadonlyArray<string>;
+  readonly industryExperience?: string | null;
+  readonly yearsOfExperience?: number;
+  readonly accessGranted?: boolean;
 }
 
 interface TrainerWithCourseCount extends Trainer {
-  readonly _count: { readonly courses: number };
+  readonly _count: { readonly courses: number; readonly students: number };
 }
 
 interface CourseDetail {
@@ -48,9 +59,28 @@ export async function getAllTrainers(): Promise<
 > {
   return prisma.trainer.findMany({
     include: {
-      _count: { select: { courses: true } },
+      _count: { select: { courses: true, students: true } },
     },
     orderBy: { name: "asc" },
+  });
+}
+
+export async function getActiveTrainersByCourse(
+  courseId: string,
+): Promise<ReadonlyArray<Trainer>> {
+  const courseTrainers = await prisma.courseTrainer.findMany({
+    where: { courseId },
+    include: { trainer: true },
+  });
+  return courseTrainers
+    .filter((ct) => ct.trainer.isActive)
+    .map((ct) => ct.trainer);
+}
+
+export async function getActiveTrainers(): Promise<ReadonlyArray<Trainer>> {
+  return prisma.trainer.findMany({
+    where: { isActive: true },
+    orderBy: [{ tier: "desc" }, { averageRating: "desc" }, { name: "asc" }],
   });
 }
 
@@ -74,6 +104,14 @@ export async function getTrainerById(
         orderBy: { assignedAt: "desc" },
       },
     },
+  });
+}
+
+export async function getTrainerByEmail(
+  email: string,
+): Promise<Trainer | null> {
+  return prisma.trainer.findUnique({
+    where: { email: email.toLowerCase() },
   });
 }
 
@@ -102,6 +140,13 @@ export async function createTrainer(
       specializations: data.specializations
         ? [...data.specializations]
         : [],
+      tier: data.tier ?? "BASIC",
+      credentials: data.credentials ?? null,
+      certifications: data.certifications
+        ? [...data.certifications]
+        : [],
+      industryExperience: data.industryExperience ?? null,
+      yearsOfExperience: data.yearsOfExperience ?? 0,
     },
   });
 }
@@ -118,8 +163,16 @@ export async function updateTrainer(
   if (data.bio !== undefined) updatePayload.bio = data.bio;
   if (data.photoUrl !== undefined) updatePayload.photoUrl = data.photoUrl;
   if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
+  if (data.tier !== undefined) updatePayload.tier = data.tier;
+  if (data.credentials !== undefined) updatePayload.credentials = data.credentials;
+  if (data.industryExperience !== undefined) updatePayload.industryExperience = data.industryExperience;
+  if (data.yearsOfExperience !== undefined) updatePayload.yearsOfExperience = data.yearsOfExperience;
+  if (data.accessGranted !== undefined) updatePayload.accessGranted = data.accessGranted;
   if (data.specializations !== undefined) {
     updatePayload.specializations = [...data.specializations];
+  }
+  if (data.certifications !== undefined) {
+    updatePayload.certifications = [...data.certifications];
   }
 
   return prisma.trainer.update({
@@ -131,7 +184,7 @@ export async function updateTrainer(
 export async function deleteTrainer(id: string): Promise<Trainer> {
   return prisma.trainer.update({
     where: { id },
-    data: { isActive: false },
+    data: { isActive: false, accessGranted: false },
   });
 }
 
@@ -159,5 +212,54 @@ export async function removeTrainerFromCourse(
     where: {
       courseId_trainerId: { courseId, trainerId },
     },
+  });
+}
+
+// ── Trainer dashboard queries ───────────────────────────────────────
+
+export async function getTrainerDashboardStats(trainerId: string) {
+  const [studentCount, scheduleCount, ratingStats] = await Promise.all([
+    prisma.student.count({ where: { trainerId } }),
+    prisma.schedule.count({ where: { trainerId, status: { in: ["OPEN", "FULL"] } } }),
+    prisma.trainerRating.aggregate({
+      where: { trainerId },
+      _avg: { rating: true },
+      _count: { rating: true },
+    }),
+  ]);
+
+  return {
+    totalStudents: studentCount,
+    activeSchedules: scheduleCount,
+    averageRating: ratingStats._avg.rating,
+    totalRatings: ratingStats._count.rating,
+  };
+}
+
+export async function getTrainerSchedules(trainerId: string) {
+  return prisma.schedule.findMany({
+    where: { trainerId },
+    include: {
+      course: { select: { id: true, title: true, slug: true } },
+      _count: { select: { students: true } },
+    },
+    orderBy: { startDate: "asc" },
+  });
+}
+
+export async function getTrainerStudents(trainerId: string) {
+  return prisma.student.findMany({
+    where: { trainerId },
+    include: {
+      enrollment: {
+        select: {
+          fullName: true,
+          email: true,
+          course: { select: { title: true, slug: true } },
+        },
+      },
+      _count: { select: { completions: true, submissions: true } },
+    },
+    orderBy: { createdAt: "desc" },
   });
 }

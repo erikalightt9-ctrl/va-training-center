@@ -108,6 +108,12 @@ enum ScheduleStatus {
   COMPLETED
 }
 
+enum TrainerTier {
+  BASIC
+  PROFESSIONAL
+  PREMIUM
+}
+
 model Course {
   id            String       @id @default(cuid())
   slug          CourseSlug   @unique
@@ -150,6 +156,11 @@ model Enrollment {
   whyEnroll             String            @db.Text
   courseId              String
   course                Course            @relation(fields: [courseId], references: [id])
+  trainerId             String?
+  trainer               Trainer?          @relation(fields: [trainerId], references: [id])
+  trainerTier           TrainerTier?
+  baseProgramPrice      Decimal?          @db.Decimal(10, 2)
+  trainerUpgradeFee     Decimal?          @db.Decimal(10, 2)
   ipAddress             String?
   emailConfirmedAt         DateTime?
   emailVerificationToken   String?           @unique
@@ -169,6 +180,7 @@ model Enrollment {
   @@index([createdAt])
   @@index([paymentStatus])
   @@index([email])
+  @@index([trainerId])
   @@index([referenceCode])
   @@map("enrollments")
 }
@@ -221,10 +233,12 @@ model Student {
   accessGranted      Boolean              @default(false)
   accessExpiry       DateTime?
   notes              String?              @db.Text
+  trainerId          String?
   portfolioPublic    Boolean              @default(false)
   createdAt          DateTime             @default(now())
   enrollment   Enrollment         @relation(fields: [enrollmentId], references: [id])
   schedule     Schedule?          @relation(fields: [scheduleId], references: [id])
+  trainer      Trainer?           @relation(fields: [trainerId], references: [id])
   completions  LessonCompletion[]
   attempts     QuizAttempt[]
   certificates Certificate[]
@@ -244,8 +258,10 @@ model Student {
   jobApplications       JobApplication[]
   verifiedSkills        VerifiedSkill[]
   subscriptions         Subscription[]
+  trainerRatings        TrainerRating[]
 
   @@index([email])
+  @@index([trainerId])
   @@index([paymentStatus])
   @@index([accessGranted])
   @@index([scheduleId])
@@ -496,6 +512,7 @@ model Schedule {
   id                   String         @id @default(cuid())
   name                 String
   courseId              String
+  trainerId            String?
   startDate            DateTime       @db.Date
   endDate              DateTime       @db.Date
   daysOfWeek           Int[]
@@ -507,9 +524,11 @@ model Schedule {
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   course               Course         @relation(fields: [courseId], references: [id])
+  trainer              Trainer?       @relation(fields: [trainerId], references: [id])
   students             Student[]
 
   @@index([courseId])
+  @@index([trainerId])
   @@index([status])
   @@index([startDate])
   @@map("schedules")
@@ -652,21 +671,53 @@ model Testimonial {
 }
 
 model Trainer {
-  id              String          @id @default(cuid())
-  name            String
-  email           String          @unique
-  phone           String?
-  bio             String?         @db.Text
-  photoUrl        String?         @db.Text
-  specializations String[]
-  isActive        Boolean         @default(true)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  courses         CourseTrainer[]
-  mentorshipRequests MentorshipRequest[]
+  id                   String          @id @default(cuid())
+  name                 String
+  email                String          @unique
+  passwordHash         String?
+  phone                String?
+  bio                  String?         @db.Text
+  photoUrl             String?         @db.Text
+  specializations      String[]
+  tier                 TrainerTier     @default(BASIC)
+  credentials          String?         @db.Text
+  certifications       String[]
+  industryExperience   String?         @db.Text
+  yearsOfExperience    Int             @default(0)
+  studentsTrainedCount Int             @default(0)
+  successRate          Decimal?        @db.Decimal(5, 2)
+  averageRating        Decimal?        @db.Decimal(3, 2)
+  totalRatings         Int             @default(0)
+  accessGranted        Boolean         @default(false)
+  isActive             Boolean         @default(true)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  courses              CourseTrainer[]
+  mentorshipRequests   MentorshipRequest[]
+  ratings              TrainerRating[]
+  enrollments          Enrollment[]
+  students             Student[]
+  schedules            Schedule[]
 
   @@index([isActive])
+  @@index([tier])
   @@map("trainers")
+}
+
+model TrainerRating {
+  id        String   @id @default(cuid())
+  trainerId String
+  studentId String
+  rating    Int
+  review    String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trainer   Trainer  @relation(fields: [trainerId], references: [id])
+  student   Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([trainerId, studentId])
+  @@index([trainerId])
+  @@map("trainer_ratings")
 }
 
 model CourseTrainer {

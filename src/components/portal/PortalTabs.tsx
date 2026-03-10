@@ -8,6 +8,7 @@ import {
   LogIn,
   ShieldCheck,
   UserPlus,
+  UserCog,
   Loader2,
   AlertCircle,
   ArrowRight,
@@ -23,7 +24,7 @@ import type { Course } from "@prisma/client";
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type TabId = "student" | "admin" | "enroll";
+type TabId = "student" | "admin" | "trainer" | "enroll";
 
 interface Tab {
   readonly id: TabId;
@@ -41,26 +42,32 @@ interface PortalTabsProps {
 
 const TABS: ReadonlyArray<Tab> = [
   { id: "student", label: "Student Login", icon: LogIn },
+  { id: "trainer", label: "Trainer Login", icon: UserCog },
   { id: "admin", label: "Admin Login", icon: ShieldCheck },
   { id: "enroll", label: "Enroll Now", icon: UserPlus },
 ] as const;
 
 function isValidTab(value: string | null): value is TabId {
-  return value === "student" || value === "admin" || value === "enroll";
+  return value === "student" || value === "admin" || value === "trainer" || value === "enroll";
 }
 
 /* ------------------------------------------------------------------ */
 /*  Login Form (shared for both student & admin)                       */
 /* ------------------------------------------------------------------ */
 
-function LoginPanel({ provider }: { readonly provider: "student" | "admin" }) {
+function LoginPanel({ provider }: { readonly provider: "student" | "admin" | "trainer" }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const redirectTo = provider === "admin" ? "/admin" : "/student/dashboard";
+  const REDIRECT_MAP: Record<string, string> = {
+    admin: "/admin",
+    student: "/student/dashboard",
+    trainer: "/trainer",
+  };
+  const redirectTo = REDIRECT_MAP[provider] ?? "/";
   const placeholder =
     provider === "admin"
       ? "gdscapital.168@gmail.com"
@@ -216,6 +223,18 @@ export function PortalTabs({ courses }: PortalTabsProps) {
               Access your courses, lessons, and assignments
             </p>
             <LoginPanel provider="student" />
+          </div>
+        )}
+
+        {activeTab === "trainer" && (
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">
+              Trainer Login
+            </h2>
+            <p className="text-sm text-gray-500 mb-6">
+              Manage your schedules, students, and training materials
+            </p>
+            <LoginPanel provider="trainer" />
           </div>
         )}
 

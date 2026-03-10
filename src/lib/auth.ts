@@ -85,6 +85,48 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    CredentialsProvider({
+      id: "trainer",
+      name: "Trainer Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
+        }
+
+        const trainer = await prisma.trainer.findUnique({
+          where: { email: credentials.email.toLowerCase() },
+        });
+
+        if (!trainer || !trainer.passwordHash) {
+          throw new Error("Invalid credentials");
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, trainer.passwordHash);
+
+        if (!isValid) {
+          throw new Error("Invalid credentials");
+        }
+
+        if (!trainer.isActive) {
+          throw new Error("Your account has been deactivated. Please contact admin.");
+        }
+
+        if (!trainer.accessGranted) {
+          throw new Error("Your access has not been granted yet. Please contact admin.");
+        }
+
+        return {
+          id: trainer.id,
+          email: trainer.email,
+          name: trainer.name,
+          role: "trainer" as const,
+        };
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
