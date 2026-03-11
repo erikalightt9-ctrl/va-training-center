@@ -57,6 +57,13 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
     ],
   },
   {
+    label: "Trainers",
+    icon: UserCog,
+    items: [
+      { href: "/admin/trainers", label: "Trainer Management", icon: UserCog },
+    ],
+  },
+  {
     label: "Enrollment",
     icon: UserCheck,
     items: [
@@ -77,7 +84,6 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
     items: [
       { href: "/admin/courses", label: "All Courses", icon: BookOpen },
       { href: "/admin/lessons", label: "Lessons", icon: FileText },
-      { href: "/admin/trainers", label: "Assign Trainers", icon: UserCog },
       { href: "/admin/schedules", label: "Training Schedule", icon: CalendarClock },
       { href: "/admin/assignments", label: "Assignments", icon: ClipboardList },
     ],
