@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 import {
   EMPLOYMENT_STATUS_LABELS,
@@ -6,10 +7,43 @@ import {
 } from "@/lib/validations/enrollment.schema";
 import type { Course } from "@prisma/client";
 
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+type TierValue = "BASIC" | "PROFESSIONAL" | "PREMIUM";
+
+interface PublicTrainer {
+  readonly id: string;
+  readonly name: string;
+  readonly tier: TierValue;
+  readonly photoUrl: string | null;
+}
+
 interface StepReviewProps {
   form: UseFormReturn<EnrollmentFormData>;
   courses: Pick<Course, "id" | "title">[];
 }
+
+/* ------------------------------------------------------------------ */
+/*  Pricing constants (mirrored from server)                           */
+/* ------------------------------------------------------------------ */
+
+const TIER_LABELS: Readonly<Record<TierValue, string>> = {
+  BASIC: "Basic",
+  PROFESSIONAL: "Professional",
+  PREMIUM: "Premium",
+};
+
+const TIER_PRICES: Readonly<Record<TierValue, { readonly upgrade: number; readonly total: number }>> = {
+  BASIC: { upgrade: 0, total: 1500 },
+  PROFESSIONAL: { upgrade: 2000, total: 3500 },
+  PREMIUM: { upgrade: 6000, total: 7500 },
+};
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
 
 function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -20,9 +54,45 @@ function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
 export function StepReview({ form, courses }: StepReviewProps) {
   const data = useWatch({ control: form.control });
   const course = courses.find((c) => c.id === data.courseId);
+  const [trainerName, setTrainerName] = useState<string | null>(null);
+  const [trainerTier, setTrainerTier] = useState<TierValue>("BASIC");
+
+  // Fetch trainer name if one was selected
+  useEffect(() => {
+    if (!data.trainerId) {
+      setTrainerName(null);
+      setTrainerTier("BASIC");
+      return;
+    }
+
+    async function fetchTrainer() {
+      try {
+        const res = await fetch("/api/public/trainers");
+        const json = await res.json();
+        if (json.success) {
+          const found = (json.data as ReadonlyArray<PublicTrainer>).find(
+            (t) => t.id === data.trainerId,
+          );
+          if (found) {
+            setTrainerName(found.name);
+            setTrainerTier(found.tier);
+          }
+        }
+      } catch {
+        /* silent */
+      }
+    }
+    fetchTrainer();
+  }, [data.trainerId]);
+
+  const pricing = TIER_PRICES[trainerTier];
 
   return (
     <div className="space-y-6">
@@ -43,6 +113,41 @@ export function StepReview({ form, courses }: StepReviewProps) {
           <ReviewRow label="Email" value={data.email || "—"} />
           <ReviewRow label="Contact No." value={data.contactNumber || "—"} />
           <ReviewRow label="Address" value={data.address || "—"} />
+        </dl>
+      </div>
+
+      {/* Trainer & Pricing */}
+      <div className="bg-gray-50 rounded-xl p-5">
+        <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
+          Trainer & Pricing
+        </h3>
+        <dl>
+          <ReviewRow
+            label="Trainer"
+            value={
+              trainerName
+                ? `${trainerName} (${TIER_LABELS[trainerTier]})`
+                : "Auto-assign Basic Trainer"
+            }
+          />
+          <ReviewRow
+            label="Base Price"
+            value={`₱1,500`}
+          />
+          {pricing.upgrade > 0 && (
+            <ReviewRow
+              label="Tier Upgrade"
+              value={`₱${pricing.upgrade.toLocaleString()}`}
+            />
+          )}
+          <ReviewRow
+            label="Total"
+            value={
+              <span className="font-bold text-green-700">
+                ₱{pricing.total.toLocaleString()}
+              </span>
+            }
+          />
         </dl>
       </div>
 

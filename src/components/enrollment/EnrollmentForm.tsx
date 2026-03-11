@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { enrollmentSchema, type EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import { ProgressBar } from "./ProgressBar";
 import { StepPersonal } from "./StepPersonal";
+import { StepTrainerSelect } from "./StepTrainerSelect";
 import { StepProfessional } from "./StepProfessional";
 import { StepEssay } from "./StepEssay";
 import { StepReview } from "./StepReview";
@@ -22,14 +23,16 @@ import {
 import { AlertCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Course } from "@prisma/client";
 
-const STEP_LABELS = ["Personal", "Professional", "Statement", "Review"];
+const TOTAL_STEPS = 5;
+const STEP_LABELS = ["Personal", "Trainer", "Professional", "Statement", "Review"];
 const STORAGE_KEY = "va_enrollment_draft";
 
 const STEP_FIELDS: Record<number, (keyof EnrollmentFormData)[]> = {
   1: ["fullName", "dateOfBirth", "email", "contactNumber", "address"],
-  2: ["educationalBackground", "workExperience", "employmentStatus"],
-  3: ["whyEnroll"],
-  4: [],
+  2: [], // trainer selection is optional (defaults to auto-assign)
+  3: ["educationalBackground", "workExperience", "employmentStatus"],
+  4: ["whyEnroll"],
+  5: [],
 };
 
 interface EnrollmentFormProps {
@@ -57,6 +60,7 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
       toolsFamiliarity: [],
       whyEnroll: "",
       courseId: courses[0]?.id ?? "",
+      trainerId: undefined,
     },
     mode: "onTouched",
   });
@@ -86,7 +90,7 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
   const goNext = async () => {
     const fields = STEP_FIELDS[step];
     const valid = fields.length === 0 || (await form.trigger(fields));
-    if (valid) setStep((s) => Math.min(s + 1, 4));
+    if (valid) setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   };
 
   const goPrev = () => setStep((s) => Math.max(s - 1, 1));
@@ -136,9 +140,9 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <ProgressBar currentStep={step} totalSteps={4} stepLabels={STEP_LABELS} />
+      <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} stepLabels={STEP_LABELS} />
 
-      {/* Course selector — always visible */}
+      {/* Course selector — shown on step 1 */}
       {step === 1 && (
         <div className="mb-6 space-y-1">
           <Label>Select Course *</Label>
@@ -169,9 +173,10 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
       {/* Step panels */}
       <div className="mb-8">
         {step === 1 && <StepPersonal form={form} />}
-        {step === 2 && <StepProfessional form={form} />}
-        {step === 3 && <StepEssay form={form} />}
-        {step === 4 && <StepReview form={form} courses={courses} />}
+        {step === 2 && <StepTrainerSelect form={form} />}
+        {step === 3 && <StepProfessional form={form} />}
+        {step === 4 && <StepEssay form={form} />}
+        {step === 5 && <StepReview form={form} courses={courses} />}
       </div>
 
       {/* Error banner */}
@@ -194,7 +199,7 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
 
-        {step < 4 ? (
+        {step < TOTAL_STEPS ? (
           <Button type="button" onClick={goNext} className="bg-blue-700 hover:bg-blue-800 gap-1">
             Next <ChevronRight className="h-4 w-4" />
           </Button>

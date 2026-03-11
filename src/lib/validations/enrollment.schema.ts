@@ -61,6 +61,7 @@ export const enrollmentSchema = z.object({
     .min(1, "Please tell us why you want to enroll")
     .max(2000, "Response is too long"),
   courseId: z.string().cuid("Invalid course selection"),
+  trainerId: z.string().cuid("Invalid trainer selection").optional().nullable(),
 });
 
 export type EnrollmentFormData = z.infer<typeof enrollmentSchema>;

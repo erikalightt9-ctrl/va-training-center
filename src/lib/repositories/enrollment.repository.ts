@@ -2,14 +2,41 @@ import { prisma } from "@/lib/prisma";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import type { EnrollmentFilters, PaginatedResult } from "@/types";
 import type { Decimal } from "@prisma/client/runtime/client";
-import type { Enrollment, EnrollmentStatus, Prisma } from "@prisma/client";
+import type {
+  Enrollment,
+  EnrollmentStatus,
+  EmploymentStatus as PrismaEmploymentStatus,
+  ToolFamiliarity as PrismaToolFamiliarity,
+  TrainerTier,
+  Prisma,
+} from "@prisma/client";
 
 export type EnrollmentWithCourse = Enrollment & {
   course: { id: string; slug: string; title: string; price: Decimal };
 };
 
+interface CreateEnrollmentInput {
+  readonly fullName: string;
+  readonly dateOfBirth: string;
+  readonly email: string;
+  readonly contactNumber: string;
+  readonly address: string;
+  readonly educationalBackground: string;
+  readonly workExperience: string;
+  readonly employmentStatus: PrismaEmploymentStatus;
+  readonly technicalSkills: ReadonlyArray<string>;
+  readonly toolsFamiliarity: ReadonlyArray<PrismaToolFamiliarity>;
+  readonly whyEnroll: string;
+  readonly courseId: string;
+  readonly ipAddress?: string;
+  readonly trainerId?: string | null;
+  readonly trainerTier?: TrainerTier | null;
+  readonly baseProgramPrice?: number | null;
+  readonly trainerUpgradeFee?: number | null;
+}
+
 export async function createEnrollment(
-  data: EnrollmentFormData & { ipAddress?: string }
+  data: CreateEnrollmentInput,
 ): Promise<Enrollment> {
   return prisma.enrollment.create({
     data: {
@@ -21,11 +48,15 @@ export async function createEnrollment(
       educationalBackground: data.educationalBackground,
       workExperience: data.workExperience,
       employmentStatus: data.employmentStatus,
-      technicalSkills: data.technicalSkills,
-      toolsFamiliarity: data.toolsFamiliarity,
+      technicalSkills: [...data.technicalSkills],
+      toolsFamiliarity: [...data.toolsFamiliarity],
       whyEnroll: data.whyEnroll,
       courseId: data.courseId,
       ipAddress: data.ipAddress,
+      trainerId: data.trainerId ?? null,
+      trainerTier: data.trainerTier ?? null,
+      baseProgramPrice: data.baseProgramPrice ?? null,
+      trainerUpgradeFee: data.trainerUpgradeFee ?? null,
     },
   });
 }

@@ -28,7 +28,17 @@ export default async function PaymentPage({
   const hasPendingPayment = payments.some((p) => p.status === "PENDING_PAYMENT");
   const isPaid = enrollment.paymentStatus === "PAID" || enrollment.status === "ENROLLED";
 
-  const coursePrice = Number(enrollment.course.price);
+  // Use tier-based pricing if available, otherwise fall back to course price
+  const baseProgramPrice = enrollment.baseProgramPrice
+    ? Number(enrollment.baseProgramPrice)
+    : null;
+  const trainerUpgradeFee = enrollment.trainerUpgradeFee
+    ? Number(enrollment.trainerUpgradeFee)
+    : null;
+  const hasTierPricing = baseProgramPrice !== null;
+  const coursePrice = hasTierPricing
+    ? baseProgramPrice + (trainerUpgradeFee ?? 0)
+    : Number(enrollment.course.price);
   const referenceCode = enrollment.referenceCode;
   const gcashQrUrl = process.env.GCASH_QR_URL;
 
@@ -119,6 +129,15 @@ export default async function PaymentPage({
                 <p className="text-3xl font-bold text-green-800">
                   PHP {coursePrice.toLocaleString()}
                 </p>
+                {hasTierPricing && trainerUpgradeFee !== null && trainerUpgradeFee > 0 && (
+                  <div className="mt-2 text-xs text-green-600 space-y-0.5">
+                    <p>Base Program: ₱{baseProgramPrice.toLocaleString()}</p>
+                    <p>
+                      Trainer Upgrade ({enrollment.trainerTier ?? "BASIC"}): ₱
+                      {trainerUpgradeFee.toLocaleString()}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Payment methods */}
