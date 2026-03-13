@@ -11,6 +11,12 @@ import {
   CalendarClock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CourseTier } from "@prisma/client";
+import {
+  COURSE_TIER_LABELS,
+  COURSE_TIER_COLORS,
+  COURSE_TIERS_ORDERED,
+} from "@/lib/constants/course-tiers";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -22,6 +28,7 @@ interface LessonItem {
   readonly order: number;
   readonly durationMin: number;
   readonly isPublished: boolean;
+  readonly tier: CourseTier;
 }
 
 interface AssignmentItem {
@@ -80,6 +87,34 @@ function PublishedBadge({ published }: { readonly published: boolean }) {
       Draft
     </span>
   );
+}
+
+function TierBadge({ tier }: { readonly tier: CourseTier }) {
+  const colors = COURSE_TIER_COLORS[tier];
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}>
+      {COURSE_TIER_LABELS[tier]}
+    </span>
+  );
+}
+
+/** Group lessons by tier, preserving order */
+function groupLessonsByTier(
+  lessons: ReadonlyArray<LessonItem>,
+): ReadonlyArray<{ readonly tier: CourseTier; readonly lessons: ReadonlyArray<LessonItem> }> {
+  const groups: Record<CourseTier, LessonItem[]> = {
+    BASIC: [],
+    PROFESSIONAL: [],
+    ADVANCED: [],
+  };
+
+  for (const lesson of lessons) {
+    groups[lesson.tier].push(lesson);
+  }
+
+  return COURSE_TIERS_ORDERED
+    .filter((tier) => groups[tier].length > 0)
+    .map((tier) => ({ tier, lessons: groups[tier] }));
 }
 
 // ---------------------------------------------------------------------------
@@ -166,6 +201,8 @@ function LessonsTab({
 }: {
   readonly lessons: ReadonlyArray<LessonItem>;
 }) {
+  const [tierFilter, setTierFilter] = useState<CourseTier | "ALL">("ALL");
+
   if (lessons.length === 0) {
     return (
       <p className="text-sm text-gray-500 text-center py-8">
@@ -174,29 +211,85 @@ function LessonsTab({
     );
   }
 
+  const tierGroups = groupLessonsByTier(lessons);
+  const hasTiers = tierGroups.length > 1;
+
+  const filteredGroups = tierFilter === "ALL"
+    ? tierGroups
+    : tierGroups.filter((g) => g.tier === tierFilter);
+
   return (
-    <div className="space-y-2">
-      {lessons.map((lesson) => (
-        <div
-          key={lesson.id}
-          className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0">
-              {lesson.order}
-            </span>
-            <span className="text-sm font-medium text-gray-900">
-              {lesson.title}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            {lesson.durationMin > 0 && (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <Clock className="h-3.5 w-3.5" />
-                {lesson.durationMin} min
-              </span>
+    <div className="space-y-4">
+      {/* Tier filter tabs */}
+      {hasTiers && (
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => setTierFilter("ALL")}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              tierFilter === "ALL"
+                ? "bg-gray-900 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200",
             )}
-            <PublishedBadge published={lesson.isPublished} />
+          >
+            All ({lessons.length})
+          </button>
+          {tierGroups.map((group) => {
+            const colors = COURSE_TIER_COLORS[group.tier];
+            const isActive = tierFilter === group.tier;
+            return (
+              <button
+                key={group.tier}
+                onClick={() => setTierFilter(group.tier)}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                  isActive
+                    ? `${colors.bg} ${colors.text} ring-1 ${colors.border}`
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                )}
+              >
+                {COURSE_TIER_LABELS[group.tier]} ({group.lessons.length})
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Lesson groups */}
+      {filteredGroups.map((group) => (
+        <div key={group.tier}>
+          {hasTiers && tierFilter === "ALL" && (
+            <div className="flex items-center gap-2 mb-2 mt-2">
+              <TierBadge tier={group.tier} />
+              <span className="text-xs text-gray-400">{group.lessons.length} lessons</span>
+            </div>
+          )}
+          <div className="space-y-2">
+            {group.lessons.map((lesson) => (
+              <div
+                key={lesson.id}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shrink-0">
+                    {lesson.order}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {lesson.title}
+                  </span>
+                  {!hasTiers && <TierBadge tier={lesson.tier} />}
+                </div>
+                <div className="flex items-center gap-3">
+                  {lesson.durationMin > 0 && (
+                    <span className="flex items-center gap-1 text-xs text-gray-400">
+                      <Clock className="h-3.5 w-3.5" />
+                      {lesson.durationMin} min
+                    </span>
+                  )}
+                  <PublishedBadge published={lesson.isPublished} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       ))}

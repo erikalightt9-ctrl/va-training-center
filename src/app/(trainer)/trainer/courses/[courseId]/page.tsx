@@ -104,7 +104,10 @@ export default async function TrainerCourseDetailPage({
 
       {/* Tabs (client component for interactivity) */}
       <CourseDetailTabs
-        lessons={detail.lessons}
+        lessons={detail.lessons.map((l) => ({
+          ...l,
+          tier: l.tier as "BASIC" | "PROFESSIONAL" | "ADVANCED",
+        }))}
         assignments={detail.assignments.map((a) => ({
           ...a,
           dueDate: a.dueDate ? a.dueDate.toISOString() : null,

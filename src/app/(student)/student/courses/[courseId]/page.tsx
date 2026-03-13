@@ -1,9 +1,17 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { getLessonsByCourse, getCourseProgress, getCompletedLessonIds } from "@/lib/repositories/lesson.repository";
+import {
+  getLessonsByCourse,
+  getLessonsByCourseTier,
+  getCourseProgress,
+  getCourseProgressByTier,
+  getCompletedLessonIds,
+} from "@/lib/repositories/lesson.repository";
 import { getQuizzesByCourse } from "@/lib/repositories/quiz.repository";
 import { prisma } from "@/lib/prisma";
+import { COURSE_TIER_LABELS, COURSE_TIER_COLORS } from "@/lib/constants/course-tiers";
+import type { CourseTier } from "@prisma/client";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -19,10 +27,22 @@ export default async function CourseOverviewPage({
 
   const { courseId } = await params;
 
+  // Fetch student's enrolled tier
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: { courseTier: true },
+  });
+
+  const studentTier: CourseTier | null = student?.courseTier ?? null;
+
   const [course, lessons, progress, completedIds, quizzes] = await Promise.all([
     prisma.course.findUnique({ where: { id: courseId } }),
-    getLessonsByCourse(courseId),
-    getCourseProgress(studentId, courseId),
+    studentTier
+      ? getLessonsByCourseTier(courseId, studentTier)
+      : getLessonsByCourse(courseId),
+    studentTier
+      ? getCourseProgressByTier(studentId, courseId, studentTier)
+      : getCourseProgress(studentId, courseId),
     getCompletedLessonIds(studentId, courseId),
     getQuizzesByCourse(courseId),
   ]);
@@ -30,10 +50,22 @@ export default async function CourseOverviewPage({
   if (!course) redirect("/student/dashboard");
   const completedSet = new Set(completedIds);
 
+  const tierColors = studentTier ? COURSE_TIER_COLORS[studentTier] : null;
+  const tierLabel = studentTier ? COURSE_TIER_LABELS[studentTier] : null;
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+        <div className="flex items-center gap-3 mb-1">
+          <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+          {tierLabel && tierColors && (
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${tierColors.bg} ${tierColors.text}`}
+            >
+              {tierLabel} Tier
+            </span>
+          )}
+        </div>
         <p className="text-gray-500 text-sm mt-1">{course.description}</p>
       </div>
 

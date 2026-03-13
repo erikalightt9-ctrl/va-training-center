@@ -39,6 +39,9 @@ export const createCourseSchema = z.object({
       message: "Currency must be PHP, USD, EUR, or GBP",
     })
     .optional(),
+  priceBasic: z.number().min(0, "Basic price must be 0 or greater").optional(),
+  priceProfessional: z.number().min(0, "Professional price must be 0 or greater").optional(),
+  priceAdvanced: z.number().min(0, "Advanced price must be 0 or greater").optional(),
   outcomes: z
     .array(z.string().min(1, "Outcome cannot be empty"))
     .min(1, "At least one outcome is required"),

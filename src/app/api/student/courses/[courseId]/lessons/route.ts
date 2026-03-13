@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { getLessonsByCourse, getCompletedLessonIds } from "@/lib/repositories/lesson.repository";
+import { prisma } from "@/lib/prisma";
+import {
+  getLessonsByCourse,
+  getLessonsByCourseTier,
+  getCompletedLessonIds,
+} from "@/lib/repositories/lesson.repository";
 
 export async function GET(
   request: NextRequest,
@@ -13,10 +18,20 @@ export async function GET(
     }
     const studentId = token.id as string;
     const { courseId } = await params;
+
+    // Look up the student's enrolled course tier
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      select: { courseTier: true },
+    });
+
     const [lessons, completedIds] = await Promise.all([
-      getLessonsByCourse(courseId),
+      student?.courseTier
+        ? getLessonsByCourseTier(courseId, student.courseTier)
+        : getLessonsByCourse(courseId),
       getCompletedLessonIds(studentId, courseId),
     ]);
+
     const completedSet = new Set(completedIds);
     const data = lessons.map((l) => ({ ...l, completed: completedSet.has(l.id) }));
     return NextResponse.json({ success: true, data, error: null });

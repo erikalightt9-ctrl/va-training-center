@@ -5,18 +5,19 @@ import {
   TOOL_FAMILIARITY_LABELS,
   type EnrollmentFormData,
 } from "@/lib/validations/enrollment.schema";
-import type { Course } from "@prisma/client";
+import { COURSE_TIER_LABELS, COURSE_TIER_COLORS } from "@/lib/constants/course-tiers";
+import type { Course, CourseTier } from "@prisma/client";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type TierValue = "BASIC" | "PROFESSIONAL" | "PREMIUM";
+type TrainerTierValue = "BASIC" | "PROFESSIONAL" | "PREMIUM";
 
 interface PublicTrainer {
   readonly id: string;
   readonly name: string;
-  readonly tier: TierValue;
+  readonly tier: TrainerTierValue;
   readonly photoUrl: string | null;
 }
 
@@ -30,25 +31,37 @@ interface ScheduleInfo {
   readonly daysOfWeek: ReadonlyArray<number>;
 }
 
+interface CourseTierPricing {
+  readonly priceBasic: number;
+  readonly priceProfessional: number;
+  readonly priceAdvanced: number;
+}
+
 interface StepReviewProps {
   form: UseFormReturn<EnrollmentFormData>;
   courses: Pick<Course, "id" | "title">[];
 }
 
 /* ------------------------------------------------------------------ */
-/*  Pricing constants (mirrored from server)                           */
+/*  Pricing constants                                                  */
 /* ------------------------------------------------------------------ */
 
-const TIER_LABELS: Readonly<Record<TierValue, string>> = {
+const TRAINER_TIER_LABELS: Readonly<Record<TrainerTierValue, string>> = {
   BASIC: "Basic",
   PROFESSIONAL: "Professional",
   PREMIUM: "Premium",
 };
 
-const TIER_PRICES: Readonly<Record<TierValue, { readonly upgrade: number; readonly total: number }>> = {
-  BASIC: { upgrade: 0, total: 1500 },
-  PROFESSIONAL: { upgrade: 2000, total: 3500 },
-  PREMIUM: { upgrade: 6000, total: 7500 },
+const TRAINER_UPGRADE_FEES: Readonly<Record<TrainerTierValue, number>> = {
+  BASIC: 0,
+  PROFESSIONAL: 2000,
+  PREMIUM: 6000,
+};
+
+const DEFAULT_COURSE_TIER_PRICES: Readonly<Record<CourseTier, number>> = {
+  BASIC: 1500,
+  PROFESSIONAL: 3500,
+  ADVANCED: 5500,
 };
 
 /* ------------------------------------------------------------------ */
@@ -64,6 +77,28 @@ function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function TierBadge({ tier }: { readonly tier: CourseTier }) {
+  const colors = COURSE_TIER_COLORS[tier];
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${colors.bg} ${colors.text}`}>
+      {COURSE_TIER_LABELS[tier]}
+    </span>
+  );
+}
+
+function getCourseTierPrice(
+  pricing: CourseTierPricing | null,
+  tier: CourseTier,
+): number {
+  if (!pricing) return DEFAULT_COURSE_TIER_PRICES[tier];
+  const priceMap: Readonly<Record<CourseTier, number>> = {
+    BASIC: pricing.priceBasic,
+    PROFESSIONAL: pricing.priceProfessional,
+    ADVANCED: pricing.priceAdvanced,
+  };
+  return priceMap[tier];
+}
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -72,9 +107,33 @@ export function StepReview({ form, courses }: StepReviewProps) {
   const data = useWatch({ control: form.control });
   const course = courses.find((c) => c.id === data.courseId);
   const [trainerName, setTrainerName] = useState<string | null>(null);
-  const [trainerTier, setTrainerTier] = useState<TierValue>("BASIC");
+  const [trainerTier, setTrainerTier] = useState<TrainerTierValue>("BASIC");
   const [scheduleName, setScheduleName] = useState<string | null>(null);
   const [scheduleInfo, setScheduleInfo] = useState<ScheduleInfo | null>(null);
+  const [courseTierPricing, setCourseTierPricing] = useState<CourseTierPricing | null>(null);
+
+  const selectedCourseTier = (data.courseTier as CourseTier) ?? "BASIC";
+
+  // Fetch course tier pricing
+  useEffect(() => {
+    if (!data.courseId) {
+      setCourseTierPricing(null);
+      return;
+    }
+
+    async function fetchPricing() {
+      try {
+        const res = await fetch(`/api/courses/${data.courseId}/pricing`);
+        const json = await res.json();
+        if (json.success) {
+          setCourseTierPricing(json.data);
+        }
+      } catch {
+        /* silent */
+      }
+    }
+    fetchPricing();
+  }, [data.courseId]);
 
   // Fetch trainer name if one was selected
   useEffect(() => {
@@ -132,7 +191,9 @@ export function StepReview({ form, courses }: StepReviewProps) {
     fetchSchedule();
   }, [data.scheduleId, data.courseId]);
 
-  const pricing = TIER_PRICES[trainerTier];
+  const courseTierPrice = getCourseTierPrice(courseTierPricing, selectedCourseTier);
+  const trainerUpgradeFee = TRAINER_UPGRADE_FEES[trainerTier];
+  const totalPrice = courseTierPrice + trainerUpgradeFee;
 
   return (
     <div className="space-y-6">
@@ -148,11 +209,28 @@ export function StepReview({ form, courses }: StepReviewProps) {
           Personal Information
         </h3>
         <dl>
-          <ReviewRow label="Full Name" value={data.fullName || "—"} />
-          <ReviewRow label="Date of Birth" value={data.dateOfBirth || "—"} />
-          <ReviewRow label="Email" value={data.email || "—"} />
-          <ReviewRow label="Contact No." value={data.contactNumber || "—"} />
-          <ReviewRow label="Address" value={data.address || "—"} />
+          <ReviewRow label="Full Name" value={data.fullName || "\u2014"} />
+          <ReviewRow label="Date of Birth" value={data.dateOfBirth || "\u2014"} />
+          <ReviewRow label="Email" value={data.email || "\u2014"} />
+          <ReviewRow label="Contact No." value={data.contactNumber || "\u2014"} />
+          <ReviewRow label="Address" value={data.address || "\u2014"} />
+        </dl>
+      </div>
+
+      {/* Course & Tier Selection */}
+      <div className="bg-gray-50 rounded-xl p-5">
+        <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
+          Course & Tier
+        </h3>
+        <dl>
+          <ReviewRow
+            label="Course"
+            value={course?.title ?? "\u2014"}
+          />
+          <ReviewRow
+            label="Course Tier"
+            value={<TierBadge tier={selectedCourseTier} />}
+          />
         </dl>
       </div>
 
@@ -166,25 +244,25 @@ export function StepReview({ form, courses }: StepReviewProps) {
             label="Trainer"
             value={
               trainerName
-                ? `${trainerName} (${TIER_LABELS[trainerTier]})`
+                ? `${trainerName} (${TRAINER_TIER_LABELS[trainerTier]})`
                 : "Auto-assign Basic Trainer"
             }
           />
           <ReviewRow
-            label="Base Price"
-            value={`₱1,500`}
+            label="Course Tier Price"
+            value={`\u20B1${courseTierPrice.toLocaleString()}`}
           />
-          {pricing.upgrade > 0 && (
+          {trainerUpgradeFee > 0 && (
             <ReviewRow
-              label="Tier Upgrade"
-              value={`₱${pricing.upgrade.toLocaleString()}`}
+              label="Trainer Upgrade"
+              value={`\u20B1${trainerUpgradeFee.toLocaleString()}`}
             />
           )}
           <ReviewRow
             label="Total"
             value={
               <span className="font-bold text-green-700">
-                ₱{pricing.total.toLocaleString()}
+                {"\u20B1"}{totalPrice.toLocaleString()}
               </span>
             }
           />
@@ -205,11 +283,11 @@ export function StepReview({ form, courses }: StepReviewProps) {
             <>
               <ReviewRow
                 label="Dates"
-                value={`${new Date(scheduleInfo.startDate).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })} — ${new Date(scheduleInfo.endDate).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}`}
+                value={`${new Date(scheduleInfo.startDate).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })} \u2014 ${new Date(scheduleInfo.endDate).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}`}
               />
               <ReviewRow
                 label="Time"
-                value={`${scheduleInfo.startTime} – ${scheduleInfo.endTime}`}
+                value={`${scheduleInfo.startTime} \u2013 ${scheduleInfo.endTime}`}
               />
             </>
           )}
@@ -221,14 +299,14 @@ export function StepReview({ form, courses }: StepReviewProps) {
           Professional Background
         </h3>
         <dl>
-          <ReviewRow label="Education" value={data.educationalBackground || "—"} />
-          <ReviewRow label="Work Experience" value={data.workExperience || "—"} />
+          <ReviewRow label="Education" value={data.educationalBackground || "\u2014"} />
+          <ReviewRow label="Work Experience" value={data.workExperience || "\u2014"} />
           <ReviewRow
             label="Employment"
             value={
               data.employmentStatus
                 ? EMPLOYMENT_STATUS_LABELS[data.employmentStatus]
-                : "—"
+                : "\u2014"
             }
           />
           <ReviewRow
@@ -254,16 +332,12 @@ export function StepReview({ form, courses }: StepReviewProps) {
 
       <div className="bg-gray-50 rounded-xl p-5">
         <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
-          Personal Statement & Course
+          Personal Statement
         </h3>
         <dl>
           <ReviewRow
             label="Why Enroll"
-            value={<span className="whitespace-pre-wrap">{data.whyEnroll || "—"}</span>}
-          />
-          <ReviewRow
-            label="Course Selected"
-            value={course?.title ?? "—"}
+            value={<span className="whitespace-pre-wrap">{data.whyEnroll || "\u2014"}</span>}
           />
         </dl>
       </div>

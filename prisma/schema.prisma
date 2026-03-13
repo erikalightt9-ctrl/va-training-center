@@ -114,6 +114,12 @@ enum WaitlistStatus {
   CANCELLED
 }
 
+enum CourseTier {
+  BASIC
+  PROFESSIONAL
+  ADVANCED
+}
+
 model Course {
   id            String       @id @default(cuid())
   slug          String       @unique
@@ -121,6 +127,9 @@ model Course {
   description   String       @db.Text
   durationWeeks Int
   price         Decimal      @db.Decimal(10, 2)
+  priceBasic        Decimal  @default(1500) @db.Decimal(10, 2)
+  priceProfessional Decimal  @default(3500) @db.Decimal(10, 2)
+  priceAdvanced     Decimal  @default(5500) @db.Decimal(10, 2)
   currency      String       @default("PHP")
   outcomes      String[]
   isActive      Boolean      @default(true)
@@ -159,6 +168,7 @@ model Enrollment {
   course                Course            @relation(fields: [courseId], references: [id])
   trainerId             String?
   trainer               Trainer?          @relation(fields: [trainerId], references: [id])
+  courseTier            CourseTier        @default(BASIC)
   trainerTier           TrainerTier?
   baseProgramPrice      Decimal?          @db.Decimal(10, 2)
   trainerUpgradeFee     Decimal?          @db.Decimal(10, 2)
@@ -238,6 +248,7 @@ model Student {
   accessGranted      Boolean              @default(false)
   accessExpiry       DateTime?
   notes              String?              @db.Text
+  courseTier         CourseTier           @default(BASIC)
   trainerId          String?
   portfolioPublic    Boolean              @default(false)
   createdAt          DateTime             @default(now())
@@ -282,13 +293,14 @@ model Lesson {
   durationMin Int      @default(0)
   isPublished   Boolean  @default(false)
   isFreePreview Boolean  @default(false)
+  tier          CourseTier @default(BASIC)
   videoUrl      String?
   createdAt     DateTime @default(now())
   course      Course             @relation(fields: [courseId], references: [id])
   completions LessonCompletion[]
   resources   CourseResource[]
 
-  @@index([courseId, order])
+  @@index([courseId, tier, order])
   @@map("lessons")
 }
 
@@ -905,6 +917,16 @@ model Subscription {
   @@index([studentId])
   @@index([status])
   @@map("subscriptions")
+}
+
+model PlatformSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("platform_settings")
 }
 
 model Waitlist {

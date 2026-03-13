@@ -10,8 +10,9 @@ import {
   sendNewEnrollmentAdminNotification,
 } from "@/lib/services/notification.service";
 import { calculateEnrollmentPrice } from "@/lib/constants/pricing";
+import { getCourseTierPricing } from "@/lib/repositories/course.repository";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
-import type { Enrollment, TrainerTier } from "@prisma/client";
+import type { Enrollment, TrainerTier, CourseTier } from "@prisma/client";
 
 const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_ENROLLMENT_MAX ?? "5", 10);
 const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_ENROLLMENT_WINDOW_MS ?? "900000", 10);
@@ -100,7 +101,17 @@ export async function processEnrollment(
     }
   }
 
-  const pricing = calculateEnrollmentPrice(trainerTier);
+  const trainerPricing = calculateEnrollmentPrice(trainerTier);
+
+  // Resolve course tier pricing
+  const courseTier: CourseTier = sanitized.courseTier ?? "BASIC";
+  const tierPricing = await getCourseTierPricing(sanitized.courseId);
+  const courseTierPriceMap: Record<CourseTier, number> = {
+    BASIC: tierPricing?.basic ?? 1500,
+    PROFESSIONAL: tierPricing?.professional ?? 3500,
+    ADVANCED: tierPricing?.advanced ?? 5500,
+  };
+  const baseProgramPrice = courseTierPriceMap[courseTier];
 
   // Validate schedule if selected
   let resolvedScheduleId: string | null = null;
@@ -124,10 +135,11 @@ export async function processEnrollment(
   const enrollment = await createEnrollment({
     ...sanitized,
     ipAddress,
+    courseTier,
     trainerId: resolvedTrainerId,
     trainerTier,
-    baseProgramPrice: pricing.baseProgramPrice,
-    trainerUpgradeFee: pricing.trainerUpgradeFee,
+    baseProgramPrice,
+    trainerUpgradeFee: trainerPricing.trainerUpgradeFee,
     scheduleId: resolvedScheduleId,
   });
 

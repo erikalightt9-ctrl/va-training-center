@@ -9,6 +9,9 @@ interface CreateCourseData {
   readonly description: string;
   readonly durationWeeks: number;
   readonly price: number;
+  readonly priceBasic?: number;
+  readonly priceProfessional?: number;
+  readonly priceAdvanced?: number;
   readonly currency?: string;
   readonly outcomes: ReadonlyArray<string>;
   readonly isActive?: boolean;
@@ -20,9 +23,18 @@ interface UpdateCourseData {
   readonly description?: string;
   readonly durationWeeks?: number;
   readonly price?: number;
+  readonly priceBasic?: number;
+  readonly priceProfessional?: number;
+  readonly priceAdvanced?: number;
   readonly currency?: string;
   readonly outcomes?: ReadonlyArray<string>;
   readonly isActive?: boolean;
+}
+
+export interface CourseTierPricing {
+  readonly basic: number;
+  readonly professional: number;
+  readonly advanced: number;
 }
 
 // ── Return types ──────────────────────────────────────────────────
@@ -95,6 +107,9 @@ export async function createCourse(data: CreateCourseData): Promise<Course> {
       description: data.description,
       durationWeeks: data.durationWeeks,
       price: data.price,
+      priceBasic: data.priceBasic ?? data.price,
+      priceProfessional: data.priceProfessional ?? 3500,
+      priceAdvanced: data.priceAdvanced ?? 5500,
       currency: data.currency ?? "PHP",
       outcomes: [...data.outcomes],
       isActive: data.isActive ?? true,
@@ -118,6 +133,9 @@ export async function updateCourse(
         durationWeeks: data.durationWeeks,
       }),
       ...(data.price !== undefined && { price: data.price }),
+      ...(data.priceBasic !== undefined && { priceBasic: data.priceBasic }),
+      ...(data.priceProfessional !== undefined && { priceProfessional: data.priceProfessional }),
+      ...(data.priceAdvanced !== undefined && { priceAdvanced: data.priceAdvanced }),
       ...(data.currency !== undefined && { currency: data.currency }),
       ...(data.outcomes !== undefined && { outcomes: [...data.outcomes] }),
       ...(data.isActive !== undefined && { isActive: data.isActive }),
@@ -132,4 +150,25 @@ export async function deleteCourse(id: string): Promise<Course> {
     where: { id },
     data: { isActive: false },
   });
+}
+
+// ── Get tier pricing for a course ──────────────────────────────────
+
+export async function getCourseTierPricing(
+  courseId: string,
+): Promise<CourseTierPricing | null> {
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: {
+      priceBasic: true,
+      priceProfessional: true,
+      priceAdvanced: true,
+    },
+  });
+  if (!course) return null;
+  return {
+    basic: Number(course.priceBasic),
+    professional: Number(course.priceProfessional),
+    advanced: Number(course.priceAdvanced),
+  };
 }

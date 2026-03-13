@@ -260,13 +260,14 @@ export async function getTrainerCourseDetail(
     }),
     prisma.lesson.findMany({
       where: { courseId },
-      orderBy: { order: "asc" },
+      orderBy: [{ tier: "asc" }, { order: "asc" }],
       select: {
         id: true,
         title: true,
         order: true,
         durationMin: true,
         isPublished: true,
+        tier: true,
       },
     }),
     prisma.assignment.findMany({

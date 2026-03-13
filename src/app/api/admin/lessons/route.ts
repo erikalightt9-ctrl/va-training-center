@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
-import { getAllLessonsByCourse, createLesson } from "@/lib/repositories/lesson.repository";
+import {
+  getAllLessonsByCourse,
+  getAllLessonsByCourseTier,
+  createLesson,
+} from "@/lib/repositories/lesson.repository";
+
+const courseTierEnum = z.enum(["BASIC", "PROFESSIONAL", "ADVANCED"]);
 
 const createSchema = z.object({
   courseId: z.string(),
@@ -11,6 +17,7 @@ const createSchema = z.object({
   durationMin: z.number().int().min(0).optional(),
   isPublished: z.boolean().optional(),
   isFreePreview: z.boolean().optional(),
+  tier: courseTierEnum.optional(),
   videoUrl: z.string().url().nullable().optional(),
 });
 
@@ -25,7 +32,11 @@ export async function GET(request: NextRequest) {
     if (!courseId) {
       return NextResponse.json({ success: false, data: null, error: "courseId is required" }, { status: 422 });
     }
-    const lessons = await getAllLessonsByCourse(courseId);
+    const tier = searchParams.get("tier");
+    const validTier = courseTierEnum.safeParse(tier);
+    const lessons = validTier.success
+      ? await getAllLessonsByCourseTier(courseId, validTier.data)
+      : await getAllLessonsByCourse(courseId);
     return NextResponse.json({ success: true, data: lessons, error: null });
   } catch (err) {
     console.error("[GET /api/admin/lessons]", err);

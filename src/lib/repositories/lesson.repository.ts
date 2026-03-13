@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Lesson, LessonCompletion } from "@prisma/client";
+import type { Lesson, LessonCompletion, CourseTier } from "@prisma/client";
 
 export async function getLessonsByCourse(courseId: string): Promise<Lesson[]> {
   return prisma.lesson.findMany({
@@ -20,6 +20,7 @@ export async function createLesson(data: {
   durationMin?: number;
   isPublished?: boolean;
   isFreePreview?: boolean;
+  tier?: CourseTier;
   videoUrl?: string | null;
 }): Promise<Lesson> {
   return prisma.lesson.create({ data });
@@ -32,6 +33,7 @@ export async function updateLesson(id: string, data: Partial<{
   durationMin: number;
   isPublished: boolean;
   isFreePreview: boolean;
+  tier: CourseTier;
   videoUrl: string | null;
 }>): Promise<Lesson> {
   return prisma.lesson.update({ where: { id }, data });
@@ -131,5 +133,79 @@ export async function getCourseCurriculum(courseId: string): Promise<CourseCurri
     where: { courseId, isPublished: true },
     select: { id: true, title: true, order: true, durationMin: true, isFreePreview: true },
     orderBy: { order: "asc" },
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Tier-filtered queries                                              */
+/* ------------------------------------------------------------------ */
+
+export async function getLessonsByCourseTier(
+  courseId: string,
+  tier: CourseTier,
+): Promise<Lesson[]> {
+  return prisma.lesson.findMany({
+    where: { courseId, tier, isPublished: true },
+    orderBy: { order: "asc" },
+  });
+}
+
+export async function getAllLessonsByCourseTier(
+  courseId: string,
+  tier: CourseTier,
+): Promise<Lesson[]> {
+  return prisma.lesson.findMany({
+    where: { courseId, tier },
+    orderBy: { order: "asc" },
+  });
+}
+
+export async function getCourseProgressByTier(
+  studentId: string,
+  courseId: string,
+  tier: CourseTier,
+): Promise<CourseProgress> {
+  const [total, completions] = await Promise.all([
+    prisma.lesson.count({ where: { courseId, tier, isPublished: true } }),
+    prisma.lessonCompletion.count({
+      where: {
+        studentId,
+        lesson: { courseId, tier },
+      },
+    }),
+  ]);
+  const percent = total === 0 ? 0 : Math.round((completions / total) * 100);
+  return { completed: completions, total, percent };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Bulk create (for AI generation)                                    */
+/* ------------------------------------------------------------------ */
+
+interface BulkLessonInput {
+  readonly courseId: string;
+  readonly title: string;
+  readonly content: string;
+  readonly order: number;
+  readonly durationMin: number;
+  readonly tier: CourseTier;
+  readonly isPublished?: boolean;
+  readonly isFreePreview?: boolean;
+}
+
+export async function bulkCreateLessons(
+  lessons: readonly BulkLessonInput[],
+): Promise<{ readonly count: number }> {
+  return prisma.lesson.createMany({
+    data: lessons.map((l) => ({
+      courseId: l.courseId,
+      title: l.title,
+      content: l.content,
+      order: l.order,
+      durationMin: l.durationMin,
+      tier: l.tier,
+      isPublished: l.isPublished ?? false,
+      isFreePreview: l.isFreePreview ?? false,
+    })),
   });
 }

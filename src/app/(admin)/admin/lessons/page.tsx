@@ -1,12 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Video } from "lucide-react";
+import { Video, Sparkles, Loader2 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
 interface Course {
-  id: string;
-  title: string;
+  readonly id: string;
+  readonly title: string;
 }
+
+type TierFilter = "ALL" | "BASIC" | "PROFESSIONAL" | "ADVANCED";
 
 interface Lesson {
   readonly id: string;
@@ -15,23 +21,62 @@ interface Lesson {
   readonly durationMin: number;
   readonly isPublished: boolean;
   readonly isFreePreview: boolean;
+  readonly tier: TierFilter;
   readonly videoUrl: string | null;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
+
+const TIER_TABS: readonly { readonly value: TierFilter; readonly label: string }[] = [
+  { value: "ALL", label: "All Tiers" },
+  { value: "BASIC", label: "Basic" },
+  { value: "PROFESSIONAL", label: "Professional" },
+  { value: "ADVANCED", label: "Advanced" },
+] as const;
+
+const TIER_BADGE_STYLES: Readonly<Record<string, string>> = {
+  BASIC: "bg-gray-100 text-gray-700",
+  PROFESSIONAL: "bg-blue-100 text-blue-700",
+  ADVANCED: "bg-purple-100 text-purple-700",
+};
+
+const TIER_OPTIONS: readonly { readonly value: string; readonly label: string }[] = [
+  { value: "BASIC", label: "Basic" },
+  { value: "PROFESSIONAL", label: "Professional" },
+  { value: "ADVANCED", label: "Advanced" },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
 export default function AdminLessonsPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [activeTier, setActiveTier] = useState<TierFilter>("ALL");
+
+  // Create form state
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [order, setOrder] = useState(1);
   const [durationMin, setDurationMin] = useState(0);
   const [isPublished, setIsPublished] = useState(false);
   const [isFreePreview, setIsFreePreview] = useState(false);
+  const [tier, setTier] = useState<string>("BASIC");
   const [videoUrl, setVideoUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // AI generation state
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiTier, setAiTier] = useState<string>("ALL");
+  const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [aiSuccess, setAiSuccess] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/courses")
@@ -40,15 +85,20 @@ export default function AdminLessonsPage() {
       .catch(() => {});
   }, []);
 
-  async function loadLessons(courseId: string) {
-    const res = await fetch(`/api/admin/lessons?courseId=${courseId}`);
+  async function loadLessons(courseId: string, tierFilter?: TierFilter) {
+    const filterTier = tierFilter ?? activeTier;
+    const url = filterTier === "ALL"
+      ? `/api/admin/lessons?courseId=${courseId}`
+      : `/api/admin/lessons?courseId=${courseId}&tier=${filterTier}`;
+    const res = await fetch(url);
     const data = await res.json();
     if (data.success) setLessons(data.data);
   }
 
   useEffect(() => {
     if (selectedCourse) loadLessons(selectedCourse);
-  }, [selectedCourse]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCourse, activeTier]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -67,6 +117,7 @@ export default function AdminLessonsPage() {
           durationMin,
           isPublished,
           isFreePreview,
+          tier,
           videoUrl: videoUrl.trim() || null,
         }),
       });
@@ -113,13 +164,43 @@ export default function AdminLessonsPage() {
     loadLessons(selectedCourse);
   }
 
+  async function handleAiGenerate() {
+    setGenerating(true);
+    setAiError("");
+    setAiSuccess("");
+    try {
+      const res = await fetch("/api/admin/lessons/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId: selectedCourse, tier: aiTier }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAiSuccess(`Generated ${data.data.totalLessonsCreated} lessons as drafts!`);
+        setShowAiModal(false);
+        loadLessons(selectedCourse);
+      } else {
+        setAiError(data.error ?? "AI generation failed");
+      }
+    } catch {
+      setAiError("Network error during AI generation");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  const filteredLessons = activeTier === "ALL"
+    ? lessons
+    : lessons.filter((l) => l.tier === activeTier);
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Lesson Manager</h1>
-        <p className="text-gray-500 text-sm mt-1">Create and manage course lessons</p>
+        <p className="text-gray-500 text-sm mt-1">Create and manage course lessons by tier</p>
       </div>
 
+      {/* Course selector */}
       <div className="bg-white rounded-xl shadow p-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Select Course</label>
         <select
@@ -136,13 +217,46 @@ export default function AdminLessonsPage() {
 
       {selectedCourse && (
         <>
+          {/* Tier filter tabs */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {TIER_TABS.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTier(tab.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  activeTier === tab.value
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-50 border"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+            <div className="ml-auto">
+              <button
+                onClick={() => { setShowAiModal(true); setAiError(""); setAiSuccess(""); }}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-purple-700 hover:to-blue-700 transition"
+              >
+                <Sparkles className="h-4 w-4" />
+                Generate with AI
+              </button>
+            </div>
+          </div>
+
+          {/* AI success message */}
+          {aiSuccess && (
+            <div className="bg-green-50 border border-green-200 text-green-700 p-3 rounded-lg text-sm">
+              {aiSuccess}
+            </div>
+          )}
+
           {/* Create lesson form */}
           <div className="bg-white rounded-xl shadow p-6">
             <h2 className="font-semibold text-gray-700 mb-4">Create Lesson</h2>
             {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
             {success && <p className="text-green-600 text-sm mb-3">{success}</p>}
             <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs font-medium text-gray-600">Title</label>
                   <input
@@ -151,6 +265,18 @@ export default function AdminLessonsPage() {
                     required
                     className="w-full border rounded-lg px-3 py-2 text-sm mt-1 focus:ring-2 focus:ring-blue-500"
                   />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-600">Tier</label>
+                  <select
+                    value={tier}
+                    onChange={(e) => setTier(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 text-sm mt-1 focus:ring-2 focus:ring-blue-500"
+                  >
+                    {TIER_OPTIONS.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -231,13 +357,13 @@ export default function AdminLessonsPage() {
           {/* Lessons list */}
           <div className="bg-white rounded-xl shadow p-6">
             <h2 className="font-semibold text-gray-700 mb-4">
-              Lessons ({lessons.length})
+              Lessons ({filteredLessons.length})
             </h2>
-            {lessons.length === 0 ? (
-              <p className="text-gray-400 text-sm">No lessons yet.</p>
+            {filteredLessons.length === 0 ? (
+              <p className="text-gray-400 text-sm">No lessons yet for this tier.</p>
             ) : (
               <div className="space-y-2">
-                {lessons.map((l) => (
+                {filteredLessons.map((l) => (
                   <div
                     key={l.id}
                     className="flex items-center justify-between p-3 border rounded-lg"
@@ -248,6 +374,13 @@ export default function AdminLessonsPage() {
                         {l.videoUrl && (
                           <Video className="h-3.5 w-3.5 text-blue-500" aria-label="Has video" />
                         )}
+                      </span>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${
+                          TIER_BADGE_STYLES[l.tier] ?? "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {l.tier}
                       </span>
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full ${
@@ -294,6 +427,76 @@ export default function AdminLessonsPage() {
             )}
           </div>
         </>
+      )}
+
+      {/* AI Generation Modal */}
+      {showAiModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+              Generate Lessons with AI
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              AI will generate structured lesson modules as drafts for your review.
+            </p>
+
+            {aiError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm mb-4">
+                {aiError}
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="text-sm font-medium text-gray-700 mb-2 block">Select Tier</label>
+              <select
+                value={aiTier}
+                onChange={(e) => setAiTier(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="ALL">All Tiers (Basic + Professional + Advanced)</option>
+                <option value="BASIC">Basic Only</option>
+                <option value="PROFESSIONAL">Professional Only</option>
+                <option value="ADVANCED">Advanced Only</option>
+              </select>
+            </div>
+
+            <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 mb-4">
+              <p className="text-xs text-purple-700">
+                {aiTier === "ALL"
+                  ? "This will generate ~12 lessons (4 per tier) as unpublished drafts."
+                  : "This will generate ~4 lessons as unpublished drafts."}
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowAiModal(false)}
+                disabled={generating}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAiGenerate}
+                disabled={generating}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 transition"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generate
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

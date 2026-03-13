@@ -10,6 +10,7 @@ import { StepTrainerSelect } from "./StepTrainerSelect";
 import { StepScheduleSelect } from "./StepScheduleSelect";
 import { StepProfessional } from "./StepProfessional";
 import { StepEssay } from "./StepEssay";
+import { StepCourseTierSelect } from "./StepCourseTierSelect";
 import { StepReview } from "./StepReview";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -33,17 +34,18 @@ import {
 import { AlertCircle, Loader2, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import type { Course } from "@prisma/client";
 
-const TOTAL_STEPS = 6;
-const STEP_LABELS = ["Personal", "Trainer", "Schedule", "Professional", "Statement", "Review"];
+const TOTAL_STEPS = 7;
+const STEP_LABELS = ["Personal", "Tier", "Trainer", "Schedule", "Professional", "Statement", "Review"];
 const STORAGE_KEY = "va_enrollment_draft";
 
 const STEP_FIELDS: Record<number, (keyof EnrollmentFormData)[]> = {
   1: ["fullName", "dateOfBirth", "email", "contactNumber", "address"],
-  2: [], // trainer selection is optional
-  3: [], // schedule selection is optional
-  4: ["educationalBackground", "workExperience", "employmentStatus"],
-  5: ["whyEnroll"],
-  6: [],
+  2: [], // course tier selection is optional (defaults to BASIC)
+  3: [], // trainer selection is optional
+  4: [], // schedule selection is optional
+  5: ["educationalBackground", "workExperience", "employmentStatus"],
+  6: ["whyEnroll"],
+  7: [],
 };
 
 interface EnrollmentFormProps {
@@ -72,6 +74,7 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
       toolsFamiliarity: [],
       whyEnroll: "",
       courseId: courses[0]?.id ?? "",
+      courseTier: "BASIC",
       trainerId: undefined,
       scheduleId: undefined,
     },
@@ -241,11 +244,12 @@ export function EnrollmentForm({ courses }: EnrollmentFormProps) {
         {/* Step panels */}
         <div className="mb-8">
           {step === 1 && <StepPersonal form={form} />}
-          {step === 2 && <StepTrainerSelect form={form} />}
-          {step === 3 && <StepScheduleSelect form={form} />}
-          {step === 4 && <StepProfessional form={form} />}
-          {step === 5 && <StepEssay form={form} />}
-          {step === 6 && <StepReview form={form} courses={courses} />}
+          {step === 2 && <StepCourseTierSelect form={form} courseId={form.watch("courseId")} />}
+          {step === 3 && <StepTrainerSelect form={form} />}
+          {step === 4 && <StepScheduleSelect form={form} />}
+          {step === 5 && <StepProfessional form={form} />}
+          {step === 6 && <StepEssay form={form} />}
+          {step === 7 && <StepReview form={form} courses={courses} />}
         </div>
 
         {/* Error banner */}

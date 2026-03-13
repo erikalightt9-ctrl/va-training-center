@@ -42,6 +42,9 @@ interface Course {
   readonly description: string;
   readonly durationWeeks: number;
   readonly price: string;
+  readonly priceBasic: string;
+  readonly priceProfessional: string;
+  readonly priceAdvanced: string;
   readonly currency: string;
   readonly outcomes: ReadonlyArray<string>;
   readonly isActive: boolean;
@@ -56,6 +59,9 @@ interface FormState {
   readonly description: string;
   readonly durationWeeks: number;
   readonly price: number;
+  readonly priceBasic: number;
+  readonly priceProfessional: number;
+  readonly priceAdvanced: number;
   readonly currency: CurrencyCode;
   readonly outcomes: ReadonlyArray<string>;
   readonly isActive: boolean;
@@ -71,6 +77,9 @@ const INITIAL_FORM_STATE: FormState = {
   description: "",
   durationWeeks: 8,
   price: 0,
+  priceBasic: 1500,
+  priceProfessional: 3500,
+  priceAdvanced: 5500,
   currency: "PHP",
   outcomes: [""],
   isActive: true,
@@ -111,6 +120,9 @@ export function CourseManager() {
     INITIAL_FORM_STATE.durationWeeks,
   );
   const [price, setPrice] = useState(INITIAL_FORM_STATE.price);
+  const [priceBasic, setPriceBasic] = useState(INITIAL_FORM_STATE.priceBasic);
+  const [priceProfessional, setPriceProfessional] = useState(INITIAL_FORM_STATE.priceProfessional);
+  const [priceAdvanced, setPriceAdvanced] = useState(INITIAL_FORM_STATE.priceAdvanced);
   const [currency, setCurrency] = useState<CurrencyCode>(INITIAL_FORM_STATE.currency);
   const [outcomes, setOutcomes] = useState<ReadonlyArray<string>>(
     INITIAL_FORM_STATE.outcomes,
@@ -151,6 +163,9 @@ export function CourseManager() {
     setDescription(INITIAL_FORM_STATE.description);
     setDurationWeeks(INITIAL_FORM_STATE.durationWeeks);
     setPrice(INITIAL_FORM_STATE.price);
+    setPriceBasic(INITIAL_FORM_STATE.priceBasic);
+    setPriceProfessional(INITIAL_FORM_STATE.priceProfessional);
+    setPriceAdvanced(INITIAL_FORM_STATE.priceAdvanced);
     setCurrency(INITIAL_FORM_STATE.currency);
     setOutcomes(INITIAL_FORM_STATE.outcomes);
     setIsActive(INITIAL_FORM_STATE.isActive);
@@ -169,6 +184,9 @@ export function CourseManager() {
     setDescription(course.description);
     setDurationWeeks(course.durationWeeks);
     setPrice(Number(course.price));
+    setPriceBasic(Number(course.priceBasic));
+    setPriceProfessional(Number(course.priceProfessional));
+    setPriceAdvanced(Number(course.priceAdvanced));
     setCurrency((course.currency as CurrencyCode) || "PHP");
     setOutcomes(course.outcomes.length > 0 ? course.outcomes : [""]);
     setIsActive(course.isActive);
@@ -226,6 +244,9 @@ export function CourseManager() {
       description: description.trim(),
       durationWeeks,
       price,
+      priceBasic,
+      priceProfessional,
+      priceAdvanced,
       currency,
       outcomes: trimmedOutcomes,
       isActive,
@@ -442,7 +463,7 @@ export function CourseManager() {
                 />
               </div>
               <div>
-                <Label htmlFor="c-price">Price *</Label>
+                <Label htmlFor="c-price">Base Price *</Label>
                 <Input
                   id="c-price"
                   type="number"
@@ -480,6 +501,55 @@ export function CourseManager() {
                   />
                   <span className="text-sm text-gray-700">Active</span>
                 </label>
+              </div>
+            </div>
+
+            {/* Tier Pricing */}
+            <div>
+              <Label className="mb-2 block">Course Tier Pricing</Label>
+              <p className="text-xs text-gray-500 mb-3">
+                Set different prices for each enrollment tier.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border border-gray-200 rounded-lg p-3">
+                  <Label htmlFor="c-price-basic" className="text-gray-600 text-xs">
+                    Basic Tier
+                  </Label>
+                  <Input
+                    id="c-price-basic"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={priceBasic}
+                    onChange={(e) => setPriceBasic(parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="border border-blue-200 rounded-lg p-3 bg-blue-50/30">
+                  <Label htmlFor="c-price-pro" className="text-blue-700 text-xs">
+                    Professional Tier
+                  </Label>
+                  <Input
+                    id="c-price-pro"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={priceProfessional}
+                    onChange={(e) => setPriceProfessional(parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="border border-purple-200 rounded-lg p-3 bg-purple-50/30">
+                  <Label htmlFor="c-price-adv" className="text-purple-700 text-xs">
+                    Advanced Tier
+                  </Label>
+                  <Input
+                    id="c-price-adv"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={priceAdvanced}
+                    onChange={(e) => setPriceAdvanced(parseFloat(e.target.value) || 0)}
+                  />
+                </div>
               </div>
             </div>
 
