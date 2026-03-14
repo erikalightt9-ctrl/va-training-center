@@ -55,7 +55,9 @@ export function KnowledgeBaseManager() {
     try {
       const res = await fetch("/api/admin/knowledge-base");
       const data = await res.json();
-      if (data.success) setArticles(data.data);
+      if (data.success) {
+        setArticles(Array.isArray(data.data) ? data.data : data.data?.data ?? []);
+      }
     } catch { /* ignore */ }
     setLoading(false);
   }, []);
