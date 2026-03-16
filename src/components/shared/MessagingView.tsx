@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Mail, Send, Loader2, Plus, MessageSquare, Users, Search } from "lucide-react";
+import { Mail, Send, Loader2, Plus, MessageSquare, Users, Search, Paperclip, X } from "lucide-react";
 import { ACTOR_TYPE_LABELS, CONVERSATION_TYPE_LABELS } from "@/lib/constants/communications";
 import { NewConversationModal } from "./NewConversationModal";
 
@@ -51,6 +51,9 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
   const [loading, setLoading] = useState(true);
   const [showCompose, setShowCompose] = useState(false);
   const [search, setSearch] = useState("");
+  const [pendingFile, setPendingFile] = useState<{ url: string; name: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchConversations = useCallback(async () => {
@@ -85,19 +88,41 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/messages/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (data.success) {
+        setPendingFile(data.data);
+      }
+    } catch { /* ignore */ }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedId || !input.trim()) return;
+    if (!selectedId || (!input.trim() && !pendingFile)) return;
     setSending(true);
     try {
       const res = await fetch(`/api/messages/conversations/${selectedId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: input }),
+        body: JSON.stringify({
+          content: input || (pendingFile ? pendingFile.name : ""),
+          attachmentUrl: pendingFile?.url ?? null,
+          attachmentName: pendingFile?.name ?? null,
+        }),
       });
       const data = await res.json();
       if (data.success) {
         setInput("");
+        setPendingFile(null);
         fetchMessages(selectedId);
       }
     } catch { /* ignore */ }
@@ -281,8 +306,33 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                   <div ref={messagesEndRef} />
                 </div>
 
-                <form onSubmit={handleSend} className="border-t border-gray-200 p-3">
+                <form onSubmit={handleSend} className="border-t border-gray-200 p-3 space-y-2">
+                  {pendingFile && (
+                    <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5 text-xs text-blue-700">
+                      <Paperclip className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate flex-1">{pendingFile.name}</span>
+                      <button type="button" onClick={() => setPendingFile(null)} className="shrink-0 text-blue-400 hover:text-blue-600">
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  )}
                   <div className="flex items-end gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                      onChange={handleFileChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition shrink-0 disabled:opacity-50"
+                      title="Attach file"
+                    >
+                      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Paperclip className="h-4 w-4" />}
+                    </button>
                     <textarea
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
@@ -293,7 +343,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                       rows={1}
                       className="flex-1 resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-24"
                     />
-                    <button type="submit" disabled={sending || !input.trim()} className="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 shrink-0">
+                    <button type="submit" disabled={sending || (!input.trim() && !pendingFile)} className="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 shrink-0">
                       {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </button>
                   </div>
