@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { LessonDiscussionThread } from "@/components/shared/LessonDiscussionThread";
 
 interface Lesson {
   id: string;
@@ -23,6 +24,8 @@ export default function LessonViewerPage({
   const [completed, setCompleted] = useState(false);
   const [certificate, setCertificate] = useState<{ certNumber: string } | null>(null);
   const [error, setError] = useState("");
+  const [actorId, setActorId] = useState("");
+  const [actorType, setActorType] = useState("");
 
   useEffect(() => {
     params.then(({ courseId: cId, lessonId: lId }) => {
@@ -38,6 +41,17 @@ export default function LessonViewerPage({
           }
         });
     });
+
+    // Fetch current user identity for the discussion thread
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((session) => {
+        if (session?.user?.id) {
+          setActorId(session.user.id);
+          setActorType("STUDENT");
+        }
+      })
+      .catch(() => {/* ignore */});
   }, [params]);
 
   async function markComplete() {
@@ -102,6 +116,16 @@ export default function LessonViewerPage({
           )}
         </div>
       </div>
+
+      {/* Lesson Q&A Discussion Thread */}
+      {courseId && lessonId && actorId && (
+        <LessonDiscussionThread
+          courseId={courseId}
+          lessonId={lessonId}
+          currentActorId={actorId}
+          currentActorType={actorType}
+        />
+      )}
     </div>
   );
 }
