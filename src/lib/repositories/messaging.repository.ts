@@ -2,6 +2,50 @@ import type { ActorType, ConversationType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 /* ------------------------------------------------------------------ */
+/*  Name resolution helpers                                            */
+/* ------------------------------------------------------------------ */
+
+type ParticipantRef = { readonly actorType: ActorType; readonly actorId: string };
+
+async function resolveParticipantNames(
+  participants: ReadonlyArray<ParticipantRef>
+): Promise<Map<string, string>> {
+  const adminIds: string[] = [];
+  const trainerIds: string[] = [];
+  const studentIds: string[] = [];
+  const corporateIds: string[] = [];
+
+  for (const p of participants) {
+    if (p.actorType === "ADMIN") adminIds.push(p.actorId);
+    else if (p.actorType === "TRAINER") trainerIds.push(p.actorId);
+    else if (p.actorType === "STUDENT") studentIds.push(p.actorId);
+    else if (p.actorType === "CORPORATE_MANAGER") corporateIds.push(p.actorId);
+  }
+
+  const [admins, trainers, students, corporates] = await Promise.all([
+    adminIds.length > 0
+      ? prisma.admin.findMany({ where: { id: { in: adminIds } }, select: { id: true, name: true } })
+      : [],
+    trainerIds.length > 0
+      ? prisma.trainer.findMany({ where: { id: { in: trainerIds } }, select: { id: true, name: true } })
+      : [],
+    studentIds.length > 0
+      ? prisma.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, name: true } })
+      : [],
+    corporateIds.length > 0
+      ? prisma.corporateManager.findMany({ where: { id: { in: corporateIds } }, select: { id: true, name: true } })
+      : [],
+  ]);
+
+  const nameMap = new Map<string, string>();
+  for (const a of admins) nameMap.set(`ADMIN:${a.id}`, a.name);
+  for (const t of trainers) nameMap.set(`TRAINER:${t.id}`, t.name);
+  for (const s of students) nameMap.set(`STUDENT:${s.id}`, s.name);
+  for (const c of corporates) nameMap.set(`CORPORATE_MANAGER:${c.id}`, c.name);
+  return nameMap;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Interfaces                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -123,8 +167,20 @@ export async function getConversations(
     }),
   ]);
 
+  // Collect all unique participants across conversations for batch name resolution
+  const allParticipants = conversations.flatMap((c) => c.participants);
+  const nameMap = await resolveParticipantNames(allParticipants);
+
+  const enriched = conversations.map((conv) => ({
+    ...conv,
+    participants: conv.participants.map((p) => ({
+      ...p,
+      displayName: nameMap.get(`${p.actorType}:${p.actorId}`) ?? null,
+    })),
+  }));
+
   return {
-    data: conversations,
+    data: enriched,
     total,
     page,
     limit,

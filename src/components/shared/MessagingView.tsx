@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Mail, Send, Loader2, Plus, MessageSquare, Users } from "lucide-react";
+import { Mail, Send, Loader2, Plus, MessageSquare, Users, Search } from "lucide-react";
 import { ACTOR_TYPE_LABELS, CONVERSATION_TYPE_LABELS } from "@/lib/constants/communications";
 import { NewConversationModal } from "./NewConversationModal";
 
@@ -9,6 +9,7 @@ interface Participant {
   readonly actorType: string;
   readonly actorId: string;
   readonly lastReadAt: string | null;
+  readonly displayName: string | null;
 }
 
 interface Conversation {
@@ -49,6 +50,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCompose, setShowCompose] = useState(false);
+  const [search, setSearch] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchConversations = useCallback(async () => {
@@ -107,9 +109,20 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
     const other = conv.participants.find(
       (p) => !(p.actorType === currentActorType && p.actorId === currentActorId)
     );
-    if (other) return `${ACTOR_TYPE_LABELS[other.actorType] ?? ""} Chat`;
+    if (other) {
+      if (other.displayName) return other.displayName;
+      return `${ACTOR_TYPE_LABELS[other.actorType] ?? ""} Chat`;
+    }
     return CONVERSATION_TYPE_LABELS[conv.type] ?? "Conversation";
   }
+
+  const filteredConversations = search.trim()
+    ? conversations.filter((conv) =>
+        getConversationDisplayName(conv)
+          .toLowerCase()
+          .includes(search.trim().toLowerCase())
+      )
+    : conversations;
 
   function handleConversationCreated(conversationId: string) {
     setShowCompose(false);
@@ -148,6 +161,20 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                 Compose
               </button>
             </div>
+            {conversations.length > 0 && (
+              <div className="px-3 py-2 border-b border-gray-100">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search conversations..."
+                    className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-50"
+                  />
+                </div>
+              </div>
+            )}
             <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
               {loading ? (
                 <div className="p-6 text-center text-gray-400 text-sm">Loading...</div>
@@ -162,8 +189,12 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                     Start your first conversation
                   </button>
                 </div>
+              ) : filteredConversations.length === 0 ? (
+                <div className="p-6 text-center text-sm text-gray-400">
+                  No conversations match &ldquo;{search}&rdquo;
+                </div>
               ) : (
-                conversations.map((conv) => (
+                filteredConversations.map((conv) => (
                   <button
                     key={conv.id}
                     onClick={() => setSelectedId(conv.id)}
