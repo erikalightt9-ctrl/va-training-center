@@ -111,15 +111,7 @@ function LoginPanel({ provider }: { readonly provider: "student" | "admin" | "tr
       </div>
 
       <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <Label htmlFor={`${provider}-password`}>Password</Label>
-          <a
-            href={`/forgot-password?type=${provider}`}
-            className="text-xs text-blue-600 hover:underline"
-          >
-            Forgot Password?
-          </a>
-        </div>
+        <Label htmlFor={`${provider}-password`}>Password</Label>
         <Input
           id={`${provider}-password`}
           type="password"
@@ -154,6 +146,22 @@ function LoginPanel({ provider }: { readonly provider: "student" | "admin" | "tr
           </>
         )}
       </Button>
+
+      {/* Account help links */}
+      <div className="pt-1 space-y-2 border-t border-gray-100">
+        <a
+          href={`/forgot-password?type=${provider}`}
+          className="block text-sm text-blue-700 hover:underline"
+        >
+          I forgot my password
+        </a>
+        <a
+          href={`/forgot-password?type=${provider}&mode=email`}
+          className="block text-sm text-blue-700 hover:underline"
+        >
+          I forgot my email address
+        </a>
+      </div>
     </form>
   );
 }
