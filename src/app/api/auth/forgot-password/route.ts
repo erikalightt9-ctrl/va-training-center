@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requestPasswordReset } from "@/lib/services/password-reset.service";
+import { sendPasswordResetEmail } from "@/lib/email/send-password-reset";
 
 const schema = z.object({
   email: z.string().email("Invalid email address."),
@@ -32,17 +33,22 @@ export async function POST(request: NextRequest) {
     const outcome = await requestPasswordReset(email, userType, tenantId);
 
     if (!outcome.success) {
-      // Log internally but return generic message
       console.error("[POST /api/auth/forgot-password] invalid userType");
       return NextResponse.json(GENERIC_OK);
     }
 
-    // TODO: send email with reset link when email service is configured
-    // If outcome.token is non-empty, the user exists and the token is ready
+    // Send reset email only when the user was found (token is non-empty)
     if (outcome.token) {
-      const resetLink = `${process.env.APP_URL}/reset-password?token=${outcome.token}&type=${userType}`;
-      console.info("[forgot-password] reset link generated", { userType, resetLink });
-      // await sendPasswordResetEmail(email, resetLink);
+      const appUrl =
+        process.env.APP_URL ??
+        process.env.NEXTAUTH_URL ??
+        "https://cranky-blackburn.vercel.app";
+      const resetLink = `${appUrl}/reset-password?token=${outcome.token}&type=${userType}`;
+
+      // Fire-and-forget — don't block the response on email delivery
+      sendPasswordResetEmail({ email, resetLink, userType }).catch((err) => {
+        console.error("[forgot-password] email send failed:", err);
+      });
     }
 
     return NextResponse.json(GENERIC_OK);
