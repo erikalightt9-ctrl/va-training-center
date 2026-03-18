@@ -12,6 +12,7 @@ export async function createNotification(data: {
   readonly title: string;
   readonly message: string;
   readonly linkUrl?: string;
+  readonly tenantId?: string | null;
 }) {
   return prisma.notification.create({
     data: {
@@ -21,6 +22,7 @@ export async function createNotification(data: {
       title: data.title,
       message: data.message,
       linkUrl: data.linkUrl ?? null,
+      tenantId: data.tenantId ?? null,
     },
   });
 }
@@ -28,6 +30,10 @@ export async function createNotification(data: {
 /* ------------------------------------------------------------------ */
 /*  Query                                                              */
 /* ------------------------------------------------------------------ */
+
+export async function getNotificationById(id: string) {
+  return prisma.notification.findUnique({ where: { id } });
+}
 
 export async function findByRecipient(
   recipientType: ActorType,
@@ -81,7 +87,7 @@ export async function getUnreadCount(
 export async function markAsRead(id: string) {
   return prisma.notification.update({
     where: { id },
-    data: { isRead: true },
+    data: { isRead: true, readAt: new Date() },
   });
 }
 
@@ -91,6 +97,6 @@ export async function markAllAsRead(
 ) {
   return prisma.notification.updateMany({
     where: { recipientType, recipientId, isRead: false },
-    data: { isRead: true },
+    data: { isRead: true, readAt: new Date() },
   });
 }

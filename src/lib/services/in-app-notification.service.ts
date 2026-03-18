@@ -8,6 +8,7 @@ interface NotifyParams {
   readonly title: string;
   readonly message: string;
   readonly linkUrl?: string;
+  readonly tenantId?: string | null;
 }
 
 /**
@@ -22,6 +23,7 @@ export async function notify(params: NotifyParams) {
     title: params.title,
     message: params.message,
     linkUrl: params.linkUrl,
+    tenantId: params.tenantId ?? null,
   });
 }
 
@@ -38,6 +40,7 @@ export async function notifyMany(
     readonly title: string;
     readonly message: string;
     readonly linkUrl?: string;
+    readonly tenantId?: string | null;
   }
 ) {
   const promises = recipients.map((r) =>

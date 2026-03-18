@@ -15,6 +15,19 @@ export async function POST(
     }
 
     const { id } = await params;
+
+    // Ownership check: only the recipient may mark their own notification read
+    const notification = await notificationRepo.getNotificationById(id);
+    if (!notification) {
+      return NextResponse.json({ success: false, data: null, error: "Notification not found" }, { status: 404 });
+    }
+    if (
+      notification.recipientType !== actor.actorType ||
+      notification.recipientId !== actor.actorId
+    ) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
+
     await notificationRepo.markAsRead(id);
 
     return NextResponse.json({ success: true, data: null, error: null });

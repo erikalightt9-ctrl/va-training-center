@@ -81,6 +81,7 @@ export async function sendMessage(
           title: "New Message",
           message: `${senderName}: ${content.slice(0, 100)}${content.length > 100 ? "..." : ""}`,
           linkUrl: `/messages?conversation=${conversationId}`,
+          tenantId: conversation.tenantId,
         }
       );
     }
