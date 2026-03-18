@@ -159,7 +159,7 @@ function LoginPanel({ provider }: { readonly provider: "student" | "admin" | "tr
           href={`/forgot-password?type=${provider}&mode=email`}
           className="block text-sm text-blue-700 hover:underline"
         >
-          I forgot my email address
+          I don't know my email address
         </a>
       </div>
     </form>
