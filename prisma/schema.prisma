@@ -828,10 +828,12 @@ model Trainer {
   successRate          Decimal?        @db.Decimal(5, 2)
   averageRating        Decimal?        @db.Decimal(3, 2)
   totalRatings         Int             @default(0)
-  accessGranted        Boolean         @default(false)
-  isActive             Boolean         @default(true)
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
+  accessGranted         Boolean         @default(false)
+  isActive              Boolean         @default(true)
+  resetToken            String?         @unique
+  resetTokenExpiresAt   DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
   courses              CourseTrainer[]
   mentorshipRequests   MentorshipRequest[]
   ratings              TrainerRating[]

@@ -5,7 +5,7 @@ import { resetPassword } from "@/lib/services/password-reset.service";
 const schema = z.object({
   token: z.string().min(1, "Token is required."),
   newPassword: z.string().min(8, "Password must be at least 8 characters.").max(128),
-  userType: z.enum(["student", "admin", "manager"]),
+  userType: z.enum(["student", "admin", "trainer", "manager"]),
 });
 
 export async function POST(request: NextRequest) {

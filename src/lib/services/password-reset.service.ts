@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 /*  Types                                                               */
 /* ------------------------------------------------------------------ */
 
-export type UserType = "student" | "admin" | "manager";
+export type UserType = "student" | "admin" | "trainer" | "manager";
 
 export type RequestPasswordResetResult =
   | { success: true; token: string }
@@ -59,6 +59,22 @@ export async function requestPasswordReset(
 
     await prisma.student.update({
       where: { id: student.id },
+      data: { resetToken: token, resetTokenExpiresAt: expiresAt },
+    });
+
+    return { success: true, token };
+  }
+
+  if (userType === "trainer") {
+    const trainer = await prisma.trainer.findFirst({
+      where: { email: normalizedEmail },
+      select: { id: true },
+    });
+
+    if (!trainer) return { success: true, token: "" }; // silent
+
+    await prisma.trainer.update({
+      where: { id: trainer.id },
       data: { resetToken: token, resetTokenExpiresAt: expiresAt },
     });
 
@@ -136,6 +152,24 @@ export async function resetPassword(
         resetTokenExpiresAt: null,
         mustChangePassword: false,
       },
+    });
+
+    return { success: true };
+  }
+
+  if (userType === "trainer") {
+    const trainer = await prisma.trainer.findFirst({
+      where: { resetToken: token },
+      select: { id: true, resetTokenExpiresAt: true },
+    });
+
+    if (!trainer) return { success: false, error: "Invalid or expired token." };
+    if (!trainer.resetTokenExpiresAt || trainer.resetTokenExpiresAt < now)
+      return { success: false, error: "Token has expired." };
+
+    await prisma.trainer.update({
+      where: { id: trainer.id },
+      data: { passwordHash, resetToken: null, resetTokenExpiresAt: null },
     });
 
     return { success: true };

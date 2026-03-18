@@ -4,7 +4,7 @@ import { requestPasswordReset } from "@/lib/services/password-reset.service";
 
 const schema = z.object({
   email: z.string().email("Invalid email address."),
-  userType: z.enum(["student", "admin", "manager"]),
+  userType: z.enum(["student", "admin", "trainer", "manager"]),
   tenantId: z.string().optional(),
 });
 
