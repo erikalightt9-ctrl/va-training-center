@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 interface CreateConversationData {
   readonly type: ConversationType;
   readonly title?: string;
+  readonly tenantId?: string | null;
   readonly courseId?: string;
   readonly lessonId?: string;
   readonly createdByType: ActorType;
@@ -35,6 +36,7 @@ export async function createConversation(data: CreateConversationData) {
     data: {
       type: data.type,
       title: data.title ?? null,
+      tenantId: data.tenantId ?? null,
       courseId: data.courseId ?? null,
       lessonId: data.lessonId ?? null,
       createdByType: data.createdByType,
@@ -52,12 +54,15 @@ export async function createConversation(data: CreateConversationData) {
 
 export async function findOrCreateDirectConversation(
   actor1: { readonly actorType: ActorType; readonly actorId: string },
-  actor2: { readonly actorType: ActorType; readonly actorId: string }
+  actor2: { readonly actorType: ActorType; readonly actorId: string },
+  tenantId: string | null = null
 ) {
   const existing = await prisma.conversation.findFirst({
     where: {
       type: "DIRECT",
       isActive: true,
+      // Scope to tenant so DIRECT conversations don't leak across tenants
+      ...(tenantId ? { tenantId } : {}),
       AND: [
         {
           participants: {
@@ -78,6 +83,7 @@ export async function findOrCreateDirectConversation(
 
   return createConversation({
     type: "DIRECT",
+    tenantId,
     createdByType: actor1.actorType,
     createdById: actor1.actorId,
     participantIds: [actor2],
@@ -87,15 +93,18 @@ export async function findOrCreateDirectConversation(
 export async function getConversations(
   actorType: ActorType,
   actorId: string,
+  tenantId: string | null = null,
   page = 1,
   limit = 20
 ) {
   const skip = (page - 1) * limit;
+  const tenantFilter = tenantId ? { tenantId } : {};
 
   const [conversations, total] = await Promise.all([
     prisma.conversation.findMany({
       where: {
         isActive: true,
+        ...tenantFilter,
         participants: { some: { actorType, actorId } },
       },
       include: {
@@ -118,6 +127,7 @@ export async function getConversations(
     prisma.conversation.count({
       where: {
         isActive: true,
+        ...tenantFilter,
         participants: { some: { actorType, actorId } },
       },
     }),

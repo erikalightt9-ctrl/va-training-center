@@ -20,6 +20,11 @@ export async function GET(
       return NextResponse.json({ success: false, data: null, error: "Conversation not found" }, { status: 404 });
     }
 
+    // Tenant ownership check: reject cross-tenant reads
+    if (actor.tenantId && conversation.tenantId && conversation.tenantId !== actor.tenantId) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
+
     // Verify participant
     const isParticipant = conversation.participants.some(
       (p) => p.actorType === actor.actorType && p.actorId === actor.actorId

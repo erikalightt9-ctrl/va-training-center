@@ -15,6 +15,16 @@ export async function POST(
     }
 
     const { id } = await params;
+
+    // Tenant ownership check before marking read
+    const conversation = await messagingRepo.getConversationById(id);
+    if (!conversation) {
+      return NextResponse.json({ success: false, data: null, error: "Conversation not found" }, { status: 404 });
+    }
+    if (actor.tenantId && conversation.tenantId && conversation.tenantId !== actor.tenantId) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
+
     await messagingRepo.markConversationRead(id, actor.actorType, actor.actorId);
 
     return NextResponse.json({ success: true, data: null, error: null });
