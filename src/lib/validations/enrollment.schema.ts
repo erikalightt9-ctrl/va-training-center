@@ -34,8 +34,8 @@ export const enrollmentSchema = z.object({
     if (date > today) return false;
     const ageMs = today.getTime() - date.getTime();
     const age = ageMs / (365.25 * 24 * 60 * 60 * 1000);
-    return age <= 80;
-  }, "Date must be within the last 80 years and not in the future"),
+    return age >= 16 && age <= 80;
+  }, "Age must be between 16 and 80 years"),
   email: z.string().email("Invalid email address").toLowerCase(),
   contactNumber: z
     .string()
@@ -58,7 +58,7 @@ export const enrollmentSchema = z.object({
   toolsFamiliarity: z.array(z.enum(TOOL_FAMILIARITY_VALUES)),
   whyEnroll: z
     .string()
-    .min(1, "Please tell us why you want to enroll")
+    .min(100, "Please provide at least 100 characters explaining why you want to enroll")
     .max(2000, "Response is too long"),
   courseId: z.string().cuid("Invalid course selection"),
   courseTier: z.enum(["BASIC", "PROFESSIONAL", "ADVANCED"]),

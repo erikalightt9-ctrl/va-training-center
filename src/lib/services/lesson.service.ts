@@ -1,4 +1,5 @@
-import { markLessonComplete, getCourseProgress, getLessonById, getLessonsByCourse } from "@/lib/repositories/lesson.repository";
+import { markLessonComplete, getLessonById, getLessonsByCourse } from "@/lib/repositories/lesson.repository";
+import { upsertCourseProgress } from "@/lib/repositories/course-progress.repository";
 import { checkAndIssueCertificate } from "@/lib/services/certificate.service";
 import { onLessonComplete, onCourseCompleted } from "@/lib/services/gamification.service";
 import { sendLessonCompleted, sendCourseCompleted } from "@/lib/services/notification.service";
@@ -21,7 +22,8 @@ export async function completeLessonForStudent(
   const completion = await markLessonComplete(studentId, lessonId);
   await onLessonComplete(studentId, lesson.courseId);
 
-  const progress = await getCourseProgress(studentId, lesson.courseId);
+  // Upsert the denormalized progress cache so reads are O(1) going forward
+  const progress = await upsertCourseProgress(studentId, lesson.courseId);
   let certificate: Certificate | null = null;
 
   // Send lesson completion notification (non-blocking)
@@ -49,7 +51,7 @@ export async function completeLessonForStudent(
     });
   }
 
-  if (progress.percent === 100) {
+  if (progress.percentComplete === 100) {
     certificate = await checkAndIssueCertificate(studentId, lesson.courseId);
     if (certificate) {
       await onCourseCompleted(studentId, lesson.courseId);
