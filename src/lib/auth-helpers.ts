@@ -11,10 +11,12 @@ const ROLE_TO_ACTOR_TYPE: Readonly<Record<string, ActorType>> = {
 export interface ActorIdentity {
   readonly actorType: ActorType;
   readonly actorId: string;
+  /** null = superadmin or trainer (unrestricted); string = scoped to this tenant */
+  readonly tenantId: string | null;
 }
 
 /**
- * Extracts the actor identity (type + id) from a NextAuth JWT token.
+ * Extracts the actor identity (type + id + tenantId) from a NextAuth JWT token.
  * Returns null if the token is missing required fields.
  */
 export function getActorFromToken(token: JWT | null): ActorIdentity | null {
@@ -23,5 +25,9 @@ export function getActorFromToken(token: JWT | null): ActorIdentity | null {
   const actorType = ROLE_TO_ACTOR_TYPE[token.role as string];
   if (!actorType) return null;
 
-  return { actorType, actorId: token.id as string };
+  return {
+    actorType,
+    actorId: token.id as string,
+    tenantId: (token.tenantId as string | null) ?? null,
+  };
 }

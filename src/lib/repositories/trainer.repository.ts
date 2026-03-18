@@ -65,6 +65,18 @@ export async function getAllTrainers(): Promise<
   });
 }
 
+export async function getAllTrainersByTenant(tenantId: string): Promise<ReadonlyArray<TrainerWithCourseCount>> {
+  return prisma.trainer.findMany({
+    where: {
+      tenantAssignments: { some: { tenantId, isActive: true } },
+    },
+    include: {
+      _count: { select: { courses: true, students: true } },
+    },
+    orderBy: { name: "asc" },
+  });
+}
+
 export async function getActiveTrainersByCourse(
   courseId: string,
 ): Promise<ReadonlyArray<Trainer>> {
@@ -334,8 +346,12 @@ export async function getPendingSubmissionsForTrainer(trainerId: string) {
           id: true,
           title: true,
           maxPoints: true,
+          passingScore: true,
+          submissionType: true,
+          rubric: true,
           courseId: true,
           course: { select: { title: true } },
+          lesson: { select: { title: true } },
         },
       },
     },

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { requireAdmin } from "@/lib/auth-guards";
 import {
   getCourseById,
   updateCourse,
   deleteCourse,
 } from "@/lib/repositories/course.repository";
 import { updateCourseSchema } from "@/lib/validations/course.schema";
+import { assertTenantOwns, TenantMismatchError } from "@/lib/tenant-isolation";
 
 /* ------------------------------------------------------------------ */
 /*  GET — Admin: fetch a single course with full details               */
@@ -16,17 +18,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token?.id || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
 
@@ -38,12 +32,17 @@ export async function GET(
       );
     }
 
+    assertTenantOwns(course.tenantId, guard.tenantId);
+
     return NextResponse.json({
       success: true,
       data: course,
       error: null,
     });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[GET /api/admin/courses/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
@@ -61,17 +60,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token?.id || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
 
@@ -82,6 +73,8 @@ export async function PATCH(
         { status: 404 },
       );
     }
+
+    assertTenantOwns(existing.tenantId, guard.tenantId);
 
     const body = await request.json();
     const parsed = updateCourseSchema.safeParse(body);
@@ -102,6 +95,9 @@ export async function PATCH(
       error: null,
     });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[PATCH /api/admin/courses/[id]]", err);
 
     const message =
@@ -125,17 +121,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token?.id || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 },
-      );
-    }
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
 
@@ -147,6 +135,8 @@ export async function DELETE(
       );
     }
 
+    assertTenantOwns(existing.tenantId, guard.tenantId);
+
     await deleteCourse(id);
 
     return NextResponse.json({
@@ -155,6 +145,9 @@ export async function DELETE(
       error: null,
     });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[DELETE /api/admin/courses/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },

@@ -1,26 +1,30 @@
 // Unit tests for enrollment service with mocked repositories and mailer
 
 jest.mock("@/lib/repositories/enrollment.repository");
-jest.mock("@/lib/email/send-confirmation");
+jest.mock("@/lib/services/notification.service");
 jest.mock("@/lib/prisma", () => ({
   prisma: {
     rateLimitAttempt: {
       count: jest.fn(),
       create: jest.fn(),
     },
+    course: {
+      findUnique: jest.fn(),
+    },
   },
 }));
 
 import { processEnrollment } from "@/lib/services/enrollment.service";
 import * as repo from "@/lib/repositories/enrollment.repository";
-import { sendConfirmationEmail } from "@/lib/email/send-confirmation";
+import * as notificationService from "@/lib/services/notification.service";
 import { prisma } from "@/lib/prisma";
 
 const mockCreateEnrollment = repo.createEnrollment as jest.MockedFunction<typeof repo.createEnrollment>;
-const mockFindByEmail = repo.findEnrollmentByEmail as jest.MockedFunction<typeof repo.findEnrollmentByEmail>;
-const mockSendEmail = sendConfirmationEmail as jest.MockedFunction<typeof sendConfirmationEmail>;
+const mockCountByEmail = repo.countEnrollmentsByEmail as jest.MockedFunction<typeof repo.countEnrollmentsByEmail>;
+const mockSendEmail = notificationService.sendEnrollmentConfirmationWithPayment as jest.MockedFunction<typeof notificationService.sendEnrollmentConfirmationWithPayment>;
 const mockRateLimitCount = prisma.rateLimitAttempt.count as jest.MockedFunction<typeof prisma.rateLimitAttempt.count>;
 const mockRateLimitCreate = prisma.rateLimitAttempt.create as jest.MockedFunction<typeof prisma.rateLimitAttempt.create>;
+const mockCourseFind = prisma.course.findUnique as jest.MockedFunction<typeof prisma.course.findUnique>;
 
 const VALID_DATA = {
   fullName: "Juan Dela Cruz",
@@ -36,6 +40,7 @@ const VALID_DATA = {
   whyEnroll:
     "I want to enroll because I am looking to build a career as a virtual assistant and leverage my administrative skills to support international clients effectively while working remotely.",
   courseId: "clz1234567890abcdefghijk",
+  courseTier: "BASIC" as const,
 };
 
 const MOCK_ENROLLMENT = {
@@ -53,12 +58,18 @@ const MOCK_ENROLLMENT = {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // Default: under rate limit
+  // Default: under rate limit and no existing enrollments
   (mockRateLimitCount as jest.Mock).mockResolvedValue(0);
   (mockRateLimitCreate as jest.Mock).mockResolvedValue({});
-  mockFindByEmail.mockResolvedValue(null);
+  mockCountByEmail.mockResolvedValue(0);
   mockCreateEnrollment.mockResolvedValue(MOCK_ENROLLMENT as never);
-  mockSendEmail.mockResolvedValue(undefined);
+  // Default course tier pricing (used by getCourseTierPricing)
+  (mockCourseFind as jest.Mock).mockResolvedValue({
+    priceBasic: 5000,
+    priceProfessional: 8000,
+    priceAdvanced: 12000,
+  });
+  (mockSendEmail as jest.Mock).mockResolvedValue(undefined);
 });
 
 describe("processEnrollment", () => {
@@ -88,12 +99,12 @@ describe("processEnrollment", () => {
     expect(mockCreateEnrollment).not.toHaveBeenCalled();
   });
 
-  it("returns DUPLICATE_EMAIL when email already exists", async () => {
-    mockFindByEmail.mockResolvedValue(MOCK_ENROLLMENT as never);
+  it("returns EMAIL_LIMIT_REACHED when email has too many enrollments", async () => {
+    mockCountByEmail.mockResolvedValue(6); // exceeds MAX_ENROLLMENTS_PER_EMAIL (5)
     const result = await processEnrollment(VALID_DATA, "127.0.0.1");
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.code).toBe("DUPLICATE_EMAIL");
+      expect(result.code).toBe("EMAIL_LIMIT_REACHED");
     }
     expect(mockCreateEnrollment).not.toHaveBeenCalled();
   });

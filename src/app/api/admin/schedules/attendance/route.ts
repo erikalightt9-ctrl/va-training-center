@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { requireAdmin } from "@/lib/auth-guards";
 import {
   listAttendanceBySession,
   upsertSessionAttendances,
 } from "@/lib/repositories/session-attendance.repository";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 /* ------------------------------------------------------------------ */
 /*  GET /api/admin/schedules/attendance                                */
@@ -12,10 +12,9 @@ import { authOptions } from "@/lib/auth";
 /* ------------------------------------------------------------------ */
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const guard = requireAdmin(token);
+  if (!guard.ok) return guard.response;
 
   const { searchParams } = req.nextUrl;
   const scheduleId = searchParams.get("scheduleId");
@@ -43,10 +42,9 @@ export async function GET(req: NextRequest) {
 /* ------------------------------------------------------------------ */
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const guard = requireAdmin(token);
+  if (!guard.ok) return guard.response;
 
   const body = await req.json();
   const { scheduleId, sessionDate: sessionDateStr, items } = body;

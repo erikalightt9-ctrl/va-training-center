@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { requireAdmin } from "@/lib/auth-guards";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import {
@@ -13,6 +14,7 @@ import {
   sendEnrollmentRejected,
 } from "@/lib/services/notification.service";
 import { prisma } from "@/lib/prisma";
+import { assertTenantOwns, TenantMismatchError } from "@/lib/tenant-isolation";
 import type { EnrollmentStatus } from "@prisma/client";
 
 const patchSchema = z.object({
@@ -29,10 +31,14 @@ const editSchema = z.object({
 });
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
+
     const { id } = await params;
     const enrollment = await findEnrollmentById(id);
 
@@ -43,8 +49,13 @@ export async function GET(
       );
     }
 
+    assertTenantOwns(enrollment.course.tenantId, guard.tenantId);
+
     return NextResponse.json({ success: true, data: enrollment, error: null });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[GET /api/admin/enrollments/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
@@ -60,13 +71,8 @@ export async function PATCH(
   try {
     const { id } = await params;
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
-    if (!token?.id || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const body = await request.json();
 
@@ -87,6 +93,8 @@ export async function PATCH(
           { status: 404 }
         );
       }
+
+      assertTenantOwns(existing.course.tenantId, guard.tenantId);
 
       // Only allow editing non-approved enrollments
       if (existing.status === "ENROLLED") {
@@ -117,9 +125,11 @@ export async function PATCH(
       );
     }
 
+    assertTenantOwns(existing.course.tenantId, guard.tenantId);
+
     const courseTitle = existing.course.title;
     const coursePrice = Number(existing.course.price);
-    const adminId = token.id as string;
+    const adminId = token!.id as string;
 
     // ── APPROVED ──────────────────────────────────────────────────
     // Admin approves → auto-create student account → send login email
@@ -217,6 +227,9 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[PATCH /api/admin/enrollments/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
@@ -235,13 +248,8 @@ export async function DELETE(
 ) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
-    if (!token?.id || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
 
@@ -253,10 +261,15 @@ export async function DELETE(
       );
     }
 
+    assertTenantOwns(existing.course.tenantId, guard.tenantId);
+
     await deleteEnrollment(id);
 
     return NextResponse.json({ success: true, data: null, error: null });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[DELETE /api/admin/enrollments/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },

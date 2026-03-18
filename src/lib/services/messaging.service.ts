@@ -9,14 +9,16 @@ import { resolveActor } from "@/lib/services/actor.service";
 
 export async function getOrCreateDirectConversation(
   actor1: { readonly actorType: ActorType; readonly actorId: string },
-  actor2: { readonly actorType: ActorType; readonly actorId: string }
+  actor2: { readonly actorType: ActorType; readonly actorId: string },
+  tenantId: string | null = null
 ) {
-  return messagingRepo.findOrCreateDirectConversation(actor1, actor2);
+  return messagingRepo.findOrCreateDirectConversation(actor1, actor2, tenantId);
 }
 
 export async function createGroupConversation(data: {
   readonly type: ConversationType;
   readonly title?: string;
+  readonly tenantId?: string | null;
   readonly courseId?: string;
   readonly lessonId?: string;
   readonly createdByType: ActorType;
@@ -29,6 +31,7 @@ export async function createGroupConversation(data: {
   return messagingRepo.createConversation({
     type: data.type,
     title: data.title,
+    tenantId: data.tenantId,
     courseId: data.courseId,
     lessonId: data.lessonId,
     createdByType: data.createdByType,
@@ -78,6 +81,7 @@ export async function sendMessage(
           title: "New Message",
           message: `${senderName}: ${content.slice(0, 100)}${content.length > 100 ? "..." : ""}`,
           linkUrl: `/messages?conversation=${conversationId}`,
+          tenantId: conversation.tenantId,
         }
       );
     }

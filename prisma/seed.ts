@@ -1137,8 +1137,43 @@ You are now prepared to launch your career as a US Bookkeeping Virtual Assistant
   });
   console.log("✅ Settings defaults seeded");
 
+  // ── Default tenant (HUMI) ─────────────────────────────────────────
+  const defaultTenant = await prisma.organization.upsert({
+    where: { subdomain: "humi" },
+    update: {},
+    create: {
+      name: "HUMI Training Center",
+      subdomain: "humi",
+      isDefault: true,
+      plan: "PROFESSIONAL",
+      siteName: "HUMI Training Center",
+      tagline: "Your Path to a VA Career",
+      primaryColor: "#1d4ed8",
+      secondaryColor: "#7c3aed",
+    },
+  });
+
+  // Assign all un-tenanted courses to the default tenant
+  await prisma.course.updateMany({
+    where: { tenantId: null },
+    data: { tenantId: defaultTenant.id },
+  });
+
+  // Link any existing trainers to the default tenant via TenantTrainer
+  const trainers = await prisma.trainer.findMany({ select: { id: true } });
+  for (const trainer of trainers) {
+    await prisma.tenantTrainer.upsert({
+      where: { tenantId_trainerId: { tenantId: defaultTenant.id, trainerId: trainer.id } },
+      update: {},
+      create: { tenantId: defaultTenant.id, trainerId: trainer.id, isActive: true },
+    });
+  }
+
+  console.log(`✅ Default tenant seeded (subdomain: "${defaultTenant.subdomain}", id: ${defaultTenant.id})`);
+
   console.log("\n✅ All seeding complete!");
   console.log("   Admin: gdscapital.168@gmail.com / Admin@123456!");
+  console.log(`   Default tenant subdomain: humi`);
 }
 
 main()

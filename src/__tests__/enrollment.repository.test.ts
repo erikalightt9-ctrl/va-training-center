@@ -12,7 +12,7 @@ jest.mock("@/lib/prisma", () => ({
 
 import {
   createEnrollment,
-  findEnrollmentByEmail,
+  countEnrollmentsByEmail,
   findEnrollmentById,
   listEnrollments,
   updateEnrollmentStatus,
@@ -70,17 +70,18 @@ describe("createEnrollment", () => {
   });
 });
 
-describe("findEnrollmentByEmail", () => {
-  it("returns enrollment when found", async () => {
-    (mockPrisma.findUnique as jest.Mock).mockResolvedValue(MOCK_ENROLLMENT);
-    const result = await findEnrollmentByEmail("juan@example.com");
-    expect(result?.email).toBe("juan@example.com");
+describe("countEnrollmentsByEmail", () => {
+  it("returns count of enrollments for email", async () => {
+    (mockPrisma.count as jest.Mock).mockResolvedValue(2);
+    const result = await countEnrollmentsByEmail("juan@example.com");
+    expect(result).toBe(2);
+    expect(mockPrisma.count).toHaveBeenCalledTimes(1);
   });
 
-  it("returns null when not found", async () => {
-    (mockPrisma.findUnique as jest.Mock).mockResolvedValue(null);
-    const result = await findEnrollmentByEmail("notexist@example.com");
-    expect(result).toBeNull();
+  it("returns 0 when no enrollments found", async () => {
+    (mockPrisma.count as jest.Mock).mockResolvedValue(0);
+    const result = await countEnrollmentsByEmail("notexist@example.com");
+    expect(result).toBe(0);
   });
 });
 

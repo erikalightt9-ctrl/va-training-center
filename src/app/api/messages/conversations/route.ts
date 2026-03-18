@@ -32,12 +32,14 @@ export async function POST(request: NextRequest) {
     if (type === "DIRECT" && participantIds.length === 1) {
       conversation = await messagingService.getOrCreateDirectConversation(
         actor,
-        participantIds[0]
+        participantIds[0],
+        actor.tenantId
       );
     } else {
       conversation = await messagingService.createGroupConversation({
         type,
         title,
+        tenantId: actor.tenantId,
         courseId,
         lessonId,
         createdByType: actor.actorType,
@@ -81,6 +83,7 @@ export async function GET(request: NextRequest) {
     const conversations = await messagingRepo.getConversations(
       actor.actorType,
       actor.actorId,
+      actor.tenantId,
       page,
       limit
     );

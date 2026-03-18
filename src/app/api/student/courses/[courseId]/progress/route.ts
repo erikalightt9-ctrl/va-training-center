@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { prisma } from "@/lib/prisma";
-import {
-  getCourseProgress,
-  getCourseProgressByTier,
-} from "@/lib/repositories/lesson.repository";
+import { getCourseProgressCached } from "@/lib/repositories/course-progress.repository";
 
 export async function GET(
   request: NextRequest,
@@ -18,15 +14,9 @@ export async function GET(
     const studentId = token.id as string;
     const { courseId } = await params;
 
-    // Look up the student's enrolled course tier
-    const student = await prisma.student.findUnique({
-      where: { id: studentId },
-      select: { courseTier: true },
-    });
-
-    const progress = student?.courseTier
-      ? await getCourseProgressByTier(studentId, courseId, student.courseTier)
-      : await getCourseProgress(studentId, courseId);
+    // Reads from the denormalized cache (tier-aware internally); falls back to
+    // a live COUNT query on first visit before any lesson has been completed.
+    const progress = await getCourseProgressCached(studentId, courseId);
 
     return NextResponse.json({ success: true, data: progress, error: null });
   } catch (err) {

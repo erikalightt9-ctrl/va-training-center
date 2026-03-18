@@ -22,10 +22,13 @@ export async function POST(
 
     const { id } = await params;
 
-    // Verify participant
+    // Verify participant + tenant ownership
     const conversation = await messagingRepo.getConversationById(id);
     if (!conversation) {
       return NextResponse.json({ success: false, data: null, error: "Conversation not found" }, { status: 404 });
+    }
+    if (actor.tenantId && conversation.tenantId && conversation.tenantId !== actor.tenantId) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
     }
     const isParticipant = conversation.participants.some(
       (p) => p.actorType === actor.actorType && p.actorId === actor.actorId
@@ -75,6 +78,16 @@ export async function GET(
     }
 
     const { id } = await params;
+
+    // Tenant ownership check before returning messages
+    const conversation = await messagingRepo.getConversationById(id);
+    if (!conversation) {
+      return NextResponse.json({ success: false, data: null, error: "Conversation not found" }, { status: 404 });
+    }
+    if (actor.tenantId && conversation.tenantId && conversation.tenantId !== actor.tenantId) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
     const limit = searchParams.get("limit") ? Number(searchParams.get("limit")) : 50;

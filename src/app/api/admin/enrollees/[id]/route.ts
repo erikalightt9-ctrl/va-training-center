@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { requireAdmin } from "@/lib/auth-guards";
 import {
   findEnrolleeById,
   updateEnrolleeBatch,
@@ -9,6 +10,7 @@ import {
   deleteEnrollee,
 } from "@/lib/repositories/enrollee.repository";
 import { enrolleeGeneralUpdateSchema } from "@/lib/validations/enrollee.schema";
+import { assertTenantOwns, TenantMismatchError } from "@/lib/tenant-isolation";
 
 export async function GET(
   request: NextRequest,
@@ -16,12 +18,8 @@ export async function GET(
 ) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.role || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
     const [enrollee, activityLog] = await Promise.all([
@@ -36,12 +34,17 @@ export async function GET(
       );
     }
 
+    assertTenantOwns(enrollee.enrollment.course.tenantId, guard.tenantId);
+
     return NextResponse.json({
       success: true,
       data: { ...enrollee, activityLog },
       error: null,
     });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[GET /api/admin/enrollees/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
@@ -56,12 +59,8 @@ export async function PATCH(
 ) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.role || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
     const body = await request.json();
@@ -82,6 +81,8 @@ export async function PATCH(
       );
     }
 
+    assertTenantOwns(existing.enrollment.course.tenantId, guard.tenantId);
+
     // Apply updates
     if (result.data.scheduleId !== undefined) {
       await assignEnrolleeToSchedule(id, result.data.scheduleId);
@@ -96,6 +97,9 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[PATCH /api/admin/enrollees/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },
@@ -114,12 +118,8 @@ export async function DELETE(
 ) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.role || token.role !== "admin") {
-      return NextResponse.json(
-        { success: false, data: null, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
 
     const { id } = await params;
 
@@ -131,10 +131,15 @@ export async function DELETE(
       );
     }
 
+    assertTenantOwns(existing.enrollment.course.tenantId, guard.tenantId);
+
     await deleteEnrollee(id);
 
     return NextResponse.json({ success: true, data: null, error: null });
   } catch (err) {
+    if (err instanceof TenantMismatchError) {
+      return NextResponse.json({ success: false, data: null, error: "Forbidden" }, { status: 403 });
+    }
     console.error("[DELETE /api/admin/enrollees/[id]]", err);
     return NextResponse.json(
       { success: false, data: null, error: "Internal server error" },

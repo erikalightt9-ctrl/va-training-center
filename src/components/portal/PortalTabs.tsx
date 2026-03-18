@@ -111,7 +111,15 @@ function LoginPanel({ provider }: { readonly provider: "student" | "admin" | "tr
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor={`${provider}-password`}>Password</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor={`${provider}-password`}>Password</Label>
+          <a
+            href={`/forgot-password?type=${provider}`}
+            className="text-xs text-blue-600 hover:underline"
+          >
+            Forgot Password?
+          </a>
+        </div>
         <Input
           id={`${provider}-password`}
           type="password"

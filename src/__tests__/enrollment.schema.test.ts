@@ -15,6 +15,7 @@ const BASE_VALID: Record<string, unknown> = {
   whyEnroll:
     "I want to enroll because I am looking to transition into the virtual assistant industry to leverage my administrative skills and expand my remote work opportunities. This program aligns perfectly with my career goals.",
   courseId: "clz1234567890abcdefghijk",
+  courseTier: "BASIC",
 };
 
 describe("enrollmentSchema", () => {

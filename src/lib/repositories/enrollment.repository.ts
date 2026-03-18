@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import type { EnrollmentFilters, PaginatedResult } from "@/types";
+import { scopeViaCourse, type TenantScope } from "@/lib/tenant-isolation";
 import type { Decimal } from "@prisma/client/runtime/client";
 import type {
   Enrollment,
@@ -13,7 +14,7 @@ import type {
 } from "@prisma/client";
 
 export type EnrollmentWithCourse = Enrollment & {
-  course: { id: string; slug: string; title: string; price: Decimal };
+  course: { id: string; slug: string; title: string; price: Decimal; tenantId: string | null };
 };
 
 interface CreateEnrollmentInput {
@@ -75,20 +76,26 @@ export async function countEnrollmentsByEmail(email: string): Promise<number> {
 export async function findEnrollmentById(id: string): Promise<EnrollmentWithCourse | null> {
   return prisma.enrollment.findUnique({
     where: { id },
-    include: { course: { select: { id: true, slug: true, title: true, price: true } } },
+    include: { course: { select: { id: true, slug: true, title: true, price: true, tenantId: true } } },
   });
 }
 
 export async function listEnrollments(
   filters: EnrollmentFilters
 ): Promise<PaginatedResult<EnrollmentWithCourse>> {
-  const { courseSlug, status, search, page = 1, limit = 20 } = filters;
+  const { courseSlug, status, search, tenantId, page = 1, limit = 20 } = filters;
   const skip = (page - 1) * limit;
 
   const where: Prisma.EnrollmentWhereInput = {};
 
   if (status) where.status = status;
-  if (courseSlug) where.course = { slug: courseSlug };
+  if (courseSlug && tenantId) {
+    where.course = { slug: courseSlug, tenantId };
+  } else if (courseSlug) {
+    where.course = { slug: courseSlug };
+  } else if (tenantId) {
+    where.course = { tenantId };
+  }
   if (search) {
     where.OR = [
       { fullName: { contains: search, mode: "insensitive" } },
@@ -99,7 +106,7 @@ export async function listEnrollments(
   const [data, total] = await Promise.all([
     prisma.enrollment.findMany({
       where,
-      include: { course: { select: { id: true, slug: true, title: true, price: true } } },
+      include: { course: { select: { id: true, slug: true, title: true, price: true, tenantId: true } } },
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
@@ -131,9 +138,10 @@ export async function updateEnrollmentStatus(
   });
 }
 
-export async function getAllEnrollmentsForExport(): Promise<EnrollmentWithCourse[]> {
+export async function getAllEnrollmentsForExport(scope: TenantScope = null): Promise<EnrollmentWithCourse[]> {
   return prisma.enrollment.findMany({
-    include: { course: { select: { id: true, slug: true, title: true, price: true } } },
+    where: scopeViaCourse(scope),
+    include: { course: { select: { id: true, slug: true, title: true, price: true, tenantId: true } } },
     orderBy: { createdAt: "desc" },
   });
 }
