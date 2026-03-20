@@ -16,7 +16,6 @@ import {
   Award,
   MessageSquare,
   FileBarChart,
-  Settings,
   UserCog,
   CalendarDays,
   CalendarClock,
@@ -31,7 +30,6 @@ import {
   Crown,
   Building2,
   Ticket,
-  Bell,
   HelpCircle,
   Mail,
   Search,
@@ -118,7 +116,6 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
       { href: "/admin/messages", label: "Messaging", icon: Mail },
       { href: "/admin/tickets", label: "Support Tickets", icon: Ticket },
       { href: "/admin/knowledge-base", label: "Knowledge Base", icon: HelpCircle },
-      { href: "/admin/notifications", label: "Notifications", icon: Bell },
       { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
       { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
     ],
@@ -131,13 +128,6 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
       { href: "/admin/ai-insights", label: "AI Insights", icon: Brain },
       { href: "/admin/control-tower", label: "Control Tower", icon: Rocket },
       { href: "/admin/reports", label: "Reports", icon: FileBarChart },
-    ],
-  },
-  {
-    label: "System Settings",
-    icon: Settings,
-    items: [
-      { href: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },
 ];
