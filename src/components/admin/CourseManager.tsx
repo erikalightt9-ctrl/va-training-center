@@ -452,13 +452,13 @@ export function CourseManager() {
                 <Label htmlFor="c-duration">Duration (weeks) *</Label>
                 <Input
                   id="c-duration"
-                  type="number"
-                  min={1}
-                  max={52}
+                  type="text"
+                  inputMode="numeric"
                   value={durationWeeks}
-                  onChange={(e) =>
-                    setDurationWeeks(parseInt(e.target.value, 10) || 1)
-                  }
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    setDurationWeeks(val === "" ? 0 : parseInt(val, 10));
+                  }}
                   required
                 />
               </div>
@@ -466,13 +466,13 @@ export function CourseManager() {
                 <Label htmlFor="c-price">Base Price *</Label>
                 <Input
                   id="c-price"
-                  type="number"
-                  min={0}
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
                   value={price}
-                  onChange={(e) =>
-                    setPrice(parseFloat(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9.]/g, "");
+                    setPrice(val === "" ? 0 : parseFloat(val) || 0);
+                  }}
                   required
                 />
               </div>
@@ -517,11 +517,13 @@ export function CourseManager() {
                   </Label>
                   <Input
                     id="c-price-basic"
-                    type="number"
-                    min={0}
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     value={priceBasic}
-                    onChange={(e) => setPriceBasic(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, "");
+                      setPriceBasic(val === "" ? 0 : parseFloat(val) || 0);
+                    }}
                   />
                 </div>
                 <div className="border border-blue-200 rounded-lg p-3 bg-blue-50/30">
@@ -530,11 +532,13 @@ export function CourseManager() {
                   </Label>
                   <Input
                     id="c-price-pro"
-                    type="number"
-                    min={0}
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     value={priceProfessional}
-                    onChange={(e) => setPriceProfessional(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, "");
+                      setPriceProfessional(val === "" ? 0 : parseFloat(val) || 0);
+                    }}
                   />
                 </div>
                 <div className="border border-purple-200 rounded-lg p-3 bg-purple-50/30">
@@ -543,11 +547,13 @@ export function CourseManager() {
                   </Label>
                   <Input
                     id="c-price-adv"
-                    type="number"
-                    min={0}
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     value={priceAdvanced}
-                    onChange={(e) => setPriceAdvanced(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, "");
+                      setPriceAdvanced(val === "" ? 0 : parseFloat(val) || 0);
+                    }}
                   />
                 </div>
               </div>
