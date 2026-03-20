@@ -3,7 +3,8 @@
 /*  Desktop: horizontal table   Mobile: stacked cards                  */
 /* ------------------------------------------------------------------ */
 
-import type { Decimal } from "@prisma/client/runtime/library";
+/** Matches the Prisma Decimal interface without importing from internal paths */
+type Decimal = { toString(): string };
 
 interface ComparisonCourse {
   readonly id: string;
