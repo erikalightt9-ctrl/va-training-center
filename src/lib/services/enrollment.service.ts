@@ -102,9 +102,9 @@ export async function processEnrollment(
   const courseTier: CourseTier = sanitized.courseTier ?? "BASIC";
   const tierPricing = await getCourseTierPricing(sanitized.courseId);
   const courseTierPriceMap: Record<CourseTier, number> = {
-    BASIC: tierPricing?.basic ?? 1500,
-    PROFESSIONAL: tierPricing?.professional ?? 3500,
-    ADVANCED: tierPricing?.advanced ?? 5500,
+    BASIC: tierPricing?.basic ?? 0,
+    PROFESSIONAL: tierPricing?.professional ?? 0,
+    ADVANCED: tierPricing?.advanced ?? 0,
   };
   const baseProgramPrice = courseTierPriceMap[courseTier];
 
