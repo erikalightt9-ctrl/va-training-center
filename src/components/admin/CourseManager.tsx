@@ -113,9 +113,9 @@ const INDUSTRY_SUGGESTIONS = [
 ] as const;
 
 const INITIAL_TIER_STATE: TierEditorState = {
-  priceBasic: 1500,
-  priceProfessional: 3500,
-  priceAdvanced: 5500,
+  priceBasic: 0,
+  priceProfessional: 0,
+  priceAdvanced: 0,
   featuresBasic: DEFAULT_FEATURES_BASIC,
   featuresProfessional: DEFAULT_FEATURES_PROFESSIONAL,
   featuresAdvanced: DEFAULT_FEATURES_ADVANCED,
