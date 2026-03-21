@@ -9,6 +9,8 @@ import { LearningExperienceSection } from "@/components/public/LearningExperienc
 import { TrainersSection } from "@/components/public/TrainersSection";
 import { TestimonialsSection } from "@/components/public/TestimonialsSection";
 import { EnrollmentCTASection } from "@/components/public/EnrollmentCTASection";
+import { BrowseByIndustrySection } from "@/components/public/BrowseByIndustrySection";
+import { FeaturedCoursesSection } from "@/components/public/FeaturedCoursesSection";
 import { prisma } from "@/lib/prisma";
 import { resolveTenantFromSubdomain } from "@/lib/tenant";
 
@@ -63,10 +65,16 @@ export default async function HomePage() {
       {/* 7. Corporate Training — B2B positioning */}
       <CorporateTrainingSection />
 
-      {/* 8. Testimonials — dynamic from DB */}
+      {/* 8. Browse by Industry — groups courses by industry field */}
+      <BrowseByIndustrySection courses={courses} />
+
+      {/* 9. Featured Courses — first 3 active courses */}
+      <FeaturedCoursesSection courses={courses} courseHrefs={buildCourseHrefs(courses)} />
+
+      {/* 10. Testimonials — dynamic from DB */}
       <TestimonialsSection />
 
-      {/* 9. Final CTA — dual audience enrollment */}
+      {/* 11. Final CTA — dual audience enrollment */}
       <EnrollmentCTASection />
     </>
   );

@@ -51,6 +51,7 @@ interface Course {
   readonly featuresProfessional: ReadonlyArray<string>;
   readonly featuresAdvanced: ReadonlyArray<string>;
   readonly popularTier: string | null;
+  readonly industry: string | null;
   readonly isActive: boolean;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -72,6 +73,7 @@ interface FormState {
   readonly featuresProfessional: ReadonlyArray<string>;
   readonly featuresAdvanced: ReadonlyArray<string>;
   readonly popularTier: string | null;
+  readonly industry: string;
   readonly isActive: boolean;
 }
 
@@ -106,6 +108,19 @@ const DEFAULT_FEATURES_ADVANCED = [
   "Job placement support",
 ];
 
+const INDUSTRY_SUGGESTIONS = [
+  "Healthcare",
+  "Real Estate",
+  "Finance",
+  "Legal",
+  "Technology",
+  "E-Commerce",
+  "Business",
+  "Customer Success",
+  "Education",
+  "Marketing",
+] as const;
+
 const INITIAL_FORM_STATE: FormState = {
   slug: "",
   title: "",
@@ -121,6 +136,7 @@ const INITIAL_FORM_STATE: FormState = {
   featuresProfessional: DEFAULT_FEATURES_PROFESSIONAL,
   featuresAdvanced: DEFAULT_FEATURES_ADVANCED,
   popularTier: null,
+  industry: "",
   isActive: true,
 };
 
@@ -170,6 +186,7 @@ export function CourseManager() {
   const [featuresProfessional, setFeaturesProfessional] = useState<ReadonlyArray<string>>(INITIAL_FORM_STATE.featuresProfessional);
   const [featuresAdvanced, setFeaturesAdvanced] = useState<ReadonlyArray<string>>(INITIAL_FORM_STATE.featuresAdvanced);
   const [popularTier, setPopularTier] = useState<string | null>(INITIAL_FORM_STATE.popularTier);
+  const [industry, setIndustry] = useState(INITIAL_FORM_STATE.industry);
   const [isActive, setIsActive] = useState(INITIAL_FORM_STATE.isActive);
 
   /* ---------------------------------------------------------------- */
@@ -215,6 +232,7 @@ export function CourseManager() {
     setFeaturesProfessional(INITIAL_FORM_STATE.featuresProfessional);
     setFeaturesAdvanced(INITIAL_FORM_STATE.featuresAdvanced);
     setPopularTier(INITIAL_FORM_STATE.popularTier);
+    setIndustry(INITIAL_FORM_STATE.industry);
     setIsActive(INITIAL_FORM_STATE.isActive);
     setEditingId(null);
     setFormError(null);
@@ -240,6 +258,7 @@ export function CourseManager() {
     setFeaturesProfessional(course.featuresProfessional.length > 0 ? course.featuresProfessional : DEFAULT_FEATURES_PROFESSIONAL);
     setFeaturesAdvanced(course.featuresAdvanced.length > 0 ? course.featuresAdvanced : DEFAULT_FEATURES_ADVANCED);
     setPopularTier(course.popularTier ?? null);
+    setIndustry(course.industry ?? "");
     setIsActive(course.isActive);
     setEditingId(course.id);
     setFormError(null);
@@ -304,6 +323,7 @@ export function CourseManager() {
       featuresProfessional: featuresProfessional.map((f) => f.trim()).filter((f) => f.length > 0),
       featuresAdvanced: featuresAdvanced.map((f) => f.trim()).filter((f) => f.length > 0),
       popularTier: popularTier || null,
+      industry: industry.trim() || undefined,
       isActive,
     };
 
@@ -484,6 +504,29 @@ export function CourseManager() {
                   required
                 />
               </div>
+            </div>
+
+            {/* Industry */}
+            <div>
+              <Label htmlFor="c-industry">Industry</Label>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  id="c-industry"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  placeholder="e.g. Healthcare, Real Estate, Finance..."
+                  maxLength={100}
+                  list="industry-suggestions"
+                />
+                <datalist id="industry-suggestions">
+                  {INDUSTRY_SUGGESTIONS.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Used to group courses in Browse by Industry sections
+              </p>
             </div>
 
             {/* Description */}

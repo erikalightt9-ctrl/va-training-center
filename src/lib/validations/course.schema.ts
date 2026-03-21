@@ -52,6 +52,7 @@ export const createCourseSchema = z.object({
     .array(z.string().min(1, "Feature cannot be empty"))
     .optional(),
   popularTier: z.string().nullable().optional(),
+  industry: z.string().max(100).optional(),
   outcomes: z
     .array(z.string().min(1, "Outcome cannot be empty"))
     .min(1, "At least one outcome is required"),

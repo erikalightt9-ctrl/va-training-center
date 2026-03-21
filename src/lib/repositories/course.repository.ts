@@ -19,6 +19,7 @@ interface CreateCourseData {
   readonly featuresProfessional?: ReadonlyArray<string>;
   readonly featuresAdvanced?: ReadonlyArray<string>;
   readonly popularTier?: string | null;
+  readonly industry?: string;
   readonly isActive?: boolean;
 }
 
@@ -37,6 +38,7 @@ interface UpdateCourseData {
   readonly featuresProfessional?: ReadonlyArray<string>;
   readonly featuresAdvanced?: ReadonlyArray<string>;
   readonly popularTier?: string | null;
+  readonly industry?: string;
   readonly isActive?: boolean;
 }
 
@@ -148,6 +150,7 @@ export async function createCourse(
       ...(data.featuresProfessional && { featuresProfessional: [...data.featuresProfessional] }),
       ...(data.featuresAdvanced && { featuresAdvanced: [...data.featuresAdvanced] }),
       ...(data.popularTier !== undefined && { popularTier: data.popularTier }),
+      ...(data.industry !== undefined && { industry: data.industry }),
       isActive: data.isActive ?? true,
       ...(data.tenantId && { tenantId: data.tenantId }),
     },
@@ -179,6 +182,7 @@ export async function updateCourse(
       ...(data.featuresProfessional !== undefined && { featuresProfessional: [...data.featuresProfessional] }),
       ...(data.featuresAdvanced !== undefined && { featuresAdvanced: [...data.featuresAdvanced] }),
       ...(data.popularTier !== undefined && { popularTier: data.popularTier }),
+      ...(data.industry !== undefined && { industry: data.industry }),
       ...(data.isActive !== undefined && { isActive: data.isActive }),
     },
   });
