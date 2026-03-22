@@ -461,12 +461,55 @@ export async function getQuizAnalytics(quizId: string): Promise<QuizAnalytics> {
 // Leaderboard (per course)
 // ---------------------------------------------------------------------------
 
+export type LeaderboardBadge = "gold" | "silver" | "bronze" | null;
+
 export interface LeaderboardEntry {
   rank: number;
   studentId: string;
   name: string;
   score: number;
   completedAt: Date;
+  badge: LeaderboardBadge;
+}
+
+function assignBadge(rank: number): LeaderboardBadge {
+  if (rank === 1) return "gold";
+  if (rank === 2) return "silver";
+  if (rank === 3) return "bronze";
+  return null;
+}
+
+/** Convert "John Doe" → "J.D." for privacy in student view */
+export function toInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0].toUpperCase() + ".")
+    .join("");
+}
+
+/** Verify a student is enrolled in the course */
+export async function isStudentEnrolledInCourse(
+  studentId: string,
+  courseId: string
+): Promise<boolean> {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: { enrollment: { select: { courseId: true } } },
+  });
+  return student?.enrollment?.courseId === courseId;
+}
+
+/** Verify a trainer teaches the course (via CourseTrainer join table) */
+export async function isTrainerOfCourse(
+  trainerId: string,
+  courseId: string
+): Promise<boolean> {
+  const link = await prisma.courseTrainer.findFirst({
+    where: { courseId, trainerId },
+    select: { id: true },
+  });
+  return link != null;
 }
 
 export async function getCourseLeaderboard(
@@ -508,7 +551,7 @@ export async function getCourseLeaderboard(
     }
   }
 
-  // Sort: score DESC, completedAt ASC
+  // Sort: score DESC, completedAt ASC, then slice to limit
   const sorted = [...byStudent.entries()]
     .sort(([, a], [, b]) => {
       if (b.score !== a.score) return b.score - a.score;
@@ -516,11 +559,15 @@ export async function getCourseLeaderboard(
     })
     .slice(0, limit);
 
-  return sorted.map(([studentId, entry], idx) => ({
-    rank: idx + 1,
-    studentId,
-    name: entry.name,
-    score: entry.score,
-    completedAt: entry.completedAt,
-  }));
+  return sorted.map(([studentId, entry], idx) => {
+    const rank = idx + 1;
+    return {
+      rank,
+      studentId,
+      name: entry.name,
+      score: entry.score,
+      completedAt: entry.completedAt,
+      badge: assignBadge(rank),
+    };
+  });
 }
