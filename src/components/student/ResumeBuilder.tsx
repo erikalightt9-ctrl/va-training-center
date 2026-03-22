@@ -271,26 +271,31 @@ function GateModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="bg-yellow-100 rounded-lg p-1.5">
               <Sparkles className="h-4 w-4 text-yellow-600" />
             </div>
-            <h3 className="font-bold text-gray-900">PRO Feature</h3>
+            <h3 className="font-bold text-gray-900">Unlock Professional Resume Designs</h3>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <p className="text-sm text-gray-600 mb-5">
-          Premium templates and style customization require an active PRO subscription.
-        </p>
+        <ul className="space-y-2 mb-5">
+          {["Premium Templates", "Advanced Styling", "Better Hiring Chances"].map((item) => (
+            <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
+              <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+              {item}
+            </li>
+          ))}
+        </ul>
         <div className="flex gap-3">
           <Link
             href="/student/ai-premium"
             className="flex-1 bg-blue-600 text-white text-sm font-medium text-center py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
           >
-            Upgrade to PRO
+            Upgrade to Pro
           </Link>
           <button
             onClick={onClose}
@@ -512,6 +517,7 @@ export function ResumeBuilder({
     photoUrl: resume.photoUrl,
     templateId: resume.templateId,
     styleColor: resume.styleColor,
+    styleLayout: resume.styleLayout,
   };
 
   /* ── Loading ── */
@@ -634,9 +640,20 @@ export function ResumeBuilder({
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    {locked && <Lock className="absolute top-1.5 right-1.5 h-3 w-3 text-yellow-500" />}
-                    {t.isPremium && !locked && <Sparkles className="absolute top-1.5 right-1.5 h-3 w-3 text-yellow-500" />}
-                    <div className="h-1.5 rounded-full mb-1.5" style={{ backgroundColor: t.defaultColor }} />
+                    {/* Blur overlay + lock badge for locked premium templates */}
+                    {locked && (
+                      <div className="absolute inset-0 rounded-[10px] bg-white/60 backdrop-blur-[2px] flex items-start justify-end p-1.5 z-10">
+                        <span className="flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                          <Lock className="h-2.5 w-2.5" /> PRO
+                        </span>
+                      </div>
+                    )}
+                    {t.isPremium && !locked && (
+                      <span className="absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">
+                        <Sparkles className="h-2.5 w-2.5" /> PRO
+                      </span>
+                    )}
+                    <div className={`h-1.5 rounded-full mb-1.5 ${locked ? "blur-sm" : ""}`} style={{ backgroundColor: t.defaultColor }} />
                     <p className="text-[11px] font-semibold text-gray-900">{t.label}</p>
                     <p className="text-[10px] text-gray-500">{t.description}</p>
                   </button>
@@ -680,6 +697,25 @@ export function ResumeBuilder({
                       }`}
                     >
                       {f.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs font-medium text-gray-700">Layout</p>
+                <div className="flex gap-2">
+                  {[
+                    { value: "single",      label: "Single" },
+                    { value: "two-column",  label: "Two-Column" },
+                  ].map((l) => (
+                    <button
+                      key={l.value}
+                      onClick={() => updateField("styleLayout", l.value)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        resume.styleLayout === l.value
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      {l.label}
                     </button>
                   ))}
                 </div>

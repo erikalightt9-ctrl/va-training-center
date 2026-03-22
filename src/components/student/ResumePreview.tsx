@@ -40,6 +40,7 @@ export interface ResumeData {
   readonly photoUrl?: string | null;
   readonly templateId: string;
   readonly styleColor: string;
+  readonly styleLayout?: string;
 }
 
 /* ── Internal helpers ── */
@@ -477,5 +478,7 @@ export function ResumePreview({ data }: { data: ResumeData }) {
   if (data.templateId === "executive") return <ExecutiveLayout data={data} />;
   if (data.templateId === "creative") return <CreativeLayout data={data} />;
   if (data.templateId === "compact") return <CompactLayout data={data} />;
+  // Free templates: respect the layout toggle — two-column uses compact-style split
+  if (data.styleLayout === "two-column") return <CompactLayout data={data} />;
   return <ClassicLayout data={data} />;
 }
