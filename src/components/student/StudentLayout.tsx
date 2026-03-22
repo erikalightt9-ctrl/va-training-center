@@ -129,17 +129,6 @@ function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
   ];
 }
 
-interface StandaloneNavItem {
-  readonly href: string;
-  readonly label: string;
-  readonly icon: React.ComponentType<{ className?: string }>;
-}
-
-const bottomNavItems: ReadonlyArray<StandaloneNavItem> = [
-  { href: "/student/profile", label: "Profile", icon: UserCircle },
-  { href: "/student/settings", label: "Settings", icon: Settings },
-];
-
 interface StudentLayoutProps {
   readonly courseId: string;
   readonly children: React.ReactNode;
@@ -190,29 +179,6 @@ export function StudentLayout({ courseId, children }: StudentLayoutProps) {
             />
           ))}
 
-          {/* Separator */}
-          <div className="pt-2" />
-
-          {/* Bottom standalone items */}
-          {bottomNavItems.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-blue-700 text-white"
-                    : "text-blue-200 hover:bg-blue-800 hover:text-white"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
         </nav>
 
         <div className="px-3 py-4 border-t border-blue-800">
@@ -230,7 +196,31 @@ export function StudentLayout({ courseId, children }: StudentLayoutProps) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-end px-8 py-3 border-b border-gray-200 bg-white shrink-0">
+        <div className="flex items-center justify-end gap-1 px-8 py-3 border-b border-gray-200 bg-white shrink-0">
+          <Link
+            href="/student/profile"
+            title="Profile"
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              pathname === "/student/profile" || pathname.startsWith("/student/profile/")
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            )}
+          >
+            <UserCircle className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/student/settings"
+            title="Settings"
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              pathname === "/student/settings" || pathname.startsWith("/student/settings/")
+                ? "text-blue-600 bg-blue-50"
+                : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            )}
+          >
+            <Settings className="h-5 w-5" />
+          </Link>
           <NotificationBell />
         </div>
         <main className="flex-1 overflow-y-auto p-8">{children}</main>
