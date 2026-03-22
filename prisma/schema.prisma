@@ -1505,22 +1505,29 @@ model Placement {
 // ============================================================
 
 model PlacementResume {
-  id         String   @id @default(cuid())
-  studentId  String?
-  fullName   String
-  email      String
-  phone      String?
-  headline   String?
-  summary    String?  @db.Text
-  skills     String[]
-  experience String   @db.Text
-  education  String   @db.Text
-  fileUrl    String?
-  fileName   String?
-  fileType   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  student    Student? @relation(fields: [studentId], references: [id])
+  id              String   @id @default(cuid())
+  studentId       String?
+  fullName        String
+  email           String
+  phone           String?
+  headline        String?
+  summary         String?  @db.Text
+  skills          String[]
+  experience      String   @db.Text
+  education       String   @db.Text
+  fileUrl         String?
+  fileName        String?
+  fileType        String?
+  // Resume builder v2 fields
+  photoUrl        String?  @db.Text
+  templateId      String   @default("professional")
+  styleColor      String   @default("#2563eb")
+  styleFont       String   @default("inter")
+  styleLayout     String   @default("single")
+  isPremiumDesign Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  student         Student? @relation(fields: [studentId], references: [id])
 
   @@index([studentId])
   @@index([email])
