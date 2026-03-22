@@ -65,6 +65,8 @@ enum EventType {
   ORIENTATION
   HOLIDAY
   CUSTOM
+  CLASS
+  MEETING
 }
 
 enum BadgeType {
@@ -698,18 +700,22 @@ model Schedule {
 }
 
 model CalendarEvent {
-  id          String    @id @default(cuid())
-  title       String
-  description String?   @db.Text
-  date        DateTime  @db.Date
-  endDate     DateTime? @db.Date
-  type        EventType @default(CUSTOM)
-  courseId     String?
-  createdBy   String
-  isPublished Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  course      Course?   @relation(fields: [courseId], references: [id])
+  id             String    @id @default(cuid())
+  title          String
+  description    String?   @db.Text
+  date           DateTime  @db.Date
+  endDate        DateTime? @db.Date
+  startTime      String?   // "HH:MM" 24-hour, e.g. "09:00"
+  endTime        String?   // "HH:MM" 24-hour, e.g. "10:30"
+  type           EventType @default(CUSTOM)
+  courseId       String?
+  assignedUserId String?   // user assigned to this event
+  creatorRole    String?   // role of the creator: "admin" | "trainer"
+  createdBy      String
+  isPublished    Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  course         Course?   @relation(fields: [courseId], references: [id])
 
   @@index([date])
   @@index([courseId])
