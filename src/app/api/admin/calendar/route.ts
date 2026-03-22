@@ -5,10 +5,14 @@ import { createEventSchema } from "@/lib/validations/calendar.schema";
 import {
   getEventsByDateRange,
   createEvent,
+  updateEvent,
   hasTimeOverlap,
   getCalendarKpi,
 } from "@/lib/repositories/calendar.repository";
+import { getToken as getGoogleToken } from "@/lib/repositories/google-token.repository";
+import { createGoogleEvent } from "@/lib/services/google-calendar.service";
 import type { EventType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 function jsonError(msg: string, status: number) {
   return NextResponse.json({ success: false, data: null, error: msg }, { status });
@@ -80,6 +84,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const userId   = token!.id as string;
+    const userRole = (token!.role as string) ?? "admin";
+
+    // Create the local event
     const event = await createEvent({
       title: d.title,
       description: d.description ?? null,
@@ -90,10 +98,27 @@ export async function POST(request: NextRequest) {
       type: d.type as EventType,
       courseId: d.courseId ?? null,
       assignedUserId: d.assignedUserId ?? null,
-      createdBy: token!.id as string,
-      creatorRole: token!.role as string ?? "admin",
+      createdBy: userId,
+      creatorRole: userRole,
       isPublished: d.isPublished,
     });
+
+    // ── Google Calendar sync (fire-and-forget) ────────────────────────────────
+    const googleToken = await getGoogleToken(userId, userRole);
+    if (googleToken) {
+      const googleEventId = await createGoogleEvent(googleToken, {
+        title: event.title,
+        description: event.description,
+        date: d.date,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        timezone: process.env.DEFAULT_TIMEZONE ?? "UTC",
+      });
+      if (googleEventId) {
+        // Persist the googleEventId back to the local event
+        await updateEvent(event.id, { googleEventId } as Parameters<typeof updateEvent>[1]);
+      }
+    }
 
     return NextResponse.json({ success: true, data: event, error: null }, { status: 201 });
   } catch (err) {

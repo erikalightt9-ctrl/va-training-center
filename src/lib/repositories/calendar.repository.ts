@@ -187,6 +187,7 @@ export async function updateEvent(
     assignedUserId: string | null;
     creatorRole: string | null;
     isPublished: boolean;
+    googleEventId: string | null;
   }>,
 ): Promise<CalendarEvent> {
   return prisma.calendarEvent.update({ where: { id }, data });

@@ -717,9 +717,27 @@ model CalendarEvent {
   updatedAt      DateTime  @updatedAt
   course         Course?   @relation(fields: [courseId], references: [id])
 
+  googleEventId  String?   // Google Calendar event ID after sync
+
   @@index([date])
   @@index([courseId])
   @@map("calendar_events")
+}
+
+model GoogleCalendarToken {
+  id           String    @id @default(cuid())
+  userId       String
+  userRole     String    // "admin" | "trainer"
+  accessToken  String    @db.Text
+  refreshToken String?   @db.Text
+  tokenType    String?
+  expiresAt    DateTime?
+  calendarId   String    @default("primary")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([userId, userRole])
+  @@map("google_calendar_tokens")
 }
 
 model CareerReadinessScore {

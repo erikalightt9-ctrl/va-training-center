@@ -5,11 +5,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  CalendarDays,
 } from "lucide-react";
 import { WeekGrid } from "./WeekGrid";
 import { CalendarSidebar, SidebarFilters } from "./CalendarSidebar";
 import { CalendarKpiStrip, KpiData } from "./CalendarKpiStrip";
+import { GoogleCalendarConnect } from "./GoogleCalendarConnect";
 import { EventDialog } from "@/components/admin/EventDialog";
 import {
   CalendarEvent,
@@ -328,6 +328,9 @@ export function PremiumCalendar({
             </button>
           ))}
         </div>
+
+        {/* Google Calendar connect button (compact) */}
+        <GoogleCalendarConnect compact />
 
         {/* Loading indicator */}
         {loading && (

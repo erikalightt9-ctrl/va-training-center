@@ -8,6 +8,11 @@ import {
   deleteEvent,
   hasTimeOverlap,
 } from "@/lib/repositories/calendar.repository";
+import { getToken as getGoogleToken } from "@/lib/repositories/google-token.repository";
+import {
+  updateGoogleEvent,
+  deleteGoogleEvent,
+} from "@/lib/services/google-calendar.service";
 import type { EventType } from "@prisma/client";
 
 function jsonError(msg: string, status: number) {
@@ -52,9 +57,9 @@ export async function PUT(
     const d = result.data;
 
     // Resolve final date, startTime, endTime for overlap check
-    const finalDate = d.date ?? existing.date.toISOString().split("T")[0];
+    const finalDate  = d.date ?? existing.date.toISOString().split("T")[0];
     const finalStart = d.startTime !== undefined ? d.startTime : existing.startTime;
-    const finalEnd = d.endTime !== undefined ? d.endTime : existing.endTime;
+    const finalEnd   = d.endTime !== undefined ? d.endTime : existing.endTime;
 
     if (finalStart && finalEnd) {
       if (finalEnd <= finalStart) {
@@ -84,6 +89,24 @@ export async function PUT(
     if (d.isPublished !== undefined) updateData.isPublished = d.isPublished;
 
     const updated = await updateEvent(id, updateData);
+
+    // ── Google Calendar sync ─────────────────────────────────────────────────
+    if (existing.googleEventId) {
+      const userId   = token!.id as string;
+      const userRole = (token!.role as string) ?? "admin";
+      const googleToken = await getGoogleToken(userId, userRole);
+      if (googleToken) {
+        await updateGoogleEvent(googleToken, existing.googleEventId, {
+          title: updated.title,
+          description: updated.description,
+          date: finalDate,
+          startTime: finalStart,
+          endTime: finalEnd,
+          timezone: process.env.DEFAULT_TIMEZONE ?? "UTC",
+        });
+      }
+    }
+
     return NextResponse.json({ success: true, data: updated, error: null });
   } catch (err) {
     console.error("[PUT /api/admin/calendar/[id]]", err);
@@ -103,6 +126,16 @@ export async function DELETE(
 
     const existing = await getEventById(id);
     if (!existing) return jsonError("Event not found", 404);
+
+    // ── Google Calendar sync (delete before local delete) ────────────────────
+    if (existing.googleEventId) {
+      const userId   = token!.id as string;
+      const userRole = (token!.role as string) ?? "admin";
+      const googleToken = await getGoogleToken(userId, userRole);
+      if (googleToken) {
+        await deleteGoogleEvent(googleToken, existing.googleEventId);
+      }
+    }
 
     await deleteEvent(id);
     return NextResponse.json({ success: true, data: null, error: null });
