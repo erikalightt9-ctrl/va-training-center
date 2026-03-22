@@ -1,7 +1,23 @@
 import type { ActorType, ConversationType } from "@prisma/client";
 import * as messagingRepo from "@/lib/repositories/messaging.repository";
-import { notifyMany } from "@/lib/services/in-app-notification.service";
+import { notify } from "@/lib/services/in-app-notification.service";
 import { resolveActor } from "@/lib/services/actor.service";
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+/** Returns the role-prefixed messages path for a given actor type. */
+function messagesPath(actorType: ActorType, conversationId: string): string {
+  const base: Partial<Record<ActorType, string>> = {
+    STUDENT: "student",
+    TRAINER: "trainer",
+    ADMIN: "admin",
+    CORPORATE_MANAGER: "corporate",
+  };
+  const prefix = base[actorType] ?? "student";
+  return `/${prefix}/messages?conversation=${conversationId}`;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Create or Find Conversation                                        */
@@ -71,18 +87,20 @@ export async function sendMessage(
     );
 
     if (otherParticipants.length > 0) {
-      await notifyMany(
-        otherParticipants.map((p) => ({
-          actorType: p.actorType,
-          actorId: p.actorId,
-        })),
-        {
-          type: "NEW_MESSAGE",
-          title: "New Message",
-          message: `${senderName}: ${content.slice(0, 100)}${content.length > 100 ? "..." : ""}`,
-          linkUrl: `/messages?conversation=${conversationId}`,
-          tenantId: conversation.tenantId,
-        }
+      // Notify each participant with their role-specific messages URL so the
+      // link resolves correctly (e.g. /student/messages vs /admin/messages).
+      await Promise.allSettled(
+        otherParticipants.map((p) =>
+          notify({
+            recipientType: p.actorType,
+            recipientId: p.actorId,
+            type: "NEW_MESSAGE",
+            title: "New Message",
+            message: `${senderName}: ${content.slice(0, 100)}${content.length > 100 ? "..." : ""}`,
+            linkUrl: messagesPath(p.actorType, conversationId),
+            tenantId: conversation.tenantId,
+          })
+        )
       );
     }
   }
