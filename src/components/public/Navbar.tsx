@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, GraduationCap, LogIn } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -56,19 +55,14 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA area */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/portal"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
-            >
-              <LogIn className="h-4 w-4" />
-              Login
-            </Link>
-            <Button asChild size="sm" className="bg-blue-700 hover:bg-blue-800">
-              <Link href="/portal?tab=enroll">Start Free Trial</Link>
-            </Button>
-          </div>
+          {/* Login */}
+          <Link
+            href="/portal"
+            className="hidden md:flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
+          >
+            <LogIn className="h-4 w-4" />
+            Login
+          </Link>
 
           {/* Mobile toggle */}
           <button
@@ -103,13 +97,6 @@ export function Navbar() {
             >
               <LogIn className="h-4 w-4" />
               Login
-            </Link>
-            <Link
-              href="/portal?tab=enroll"
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-700 text-center hover:bg-blue-800"
-            >
-              Start Free Trial
             </Link>
           </div>
         </div>
