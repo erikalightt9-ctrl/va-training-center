@@ -3,6 +3,7 @@ import {
   Users,
   GraduationCap,
   HeadphonesIcon,
+  LayoutDashboard,
   Layers,
   Clock,
   BarChart3,
@@ -11,6 +12,8 @@ import {
   Trophy,
   FileText,
   Bell,
+  Shield,
+  DollarSign,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -83,6 +86,20 @@ const features: readonly Feature[] = [
       "Role-based messaging restrictions",
     ],
   },
+  {
+    title: "Admin Super Dashboard",
+    subtitle: "Full visibility and control",
+    description:
+      "A command center for your entire training operation — full analytics, revenue tracking, multi-tenant management, and role-based access control.",
+    icon: LayoutDashboard,
+    color: "bg-indigo-600",
+    highlights: [
+      "Full analytics (students, revenue, performance)",
+      "Multi-tenant control",
+      "Role-based access",
+      "Revenue & payment management",
+    ],
+  },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -106,6 +123,10 @@ const DETAIL_ICONS: Record<string, React.ElementType> = {
   "AI auto-reply & categorization": MessageSquare,
   "File attachments & notifications": Bell,
   "Role-based messaging restrictions": Users,
+  "Full analytics (students, revenue, performance)": BarChart3,
+  "Multi-tenant control": Layers,
+  "Role-based access": Shield,
+  "Revenue & payment management": DollarSign,
 };
 
 /* ------------------------------------------------------------------ */
@@ -114,7 +135,7 @@ const DETAIL_ICONS: Record<string, React.ElementType> = {
 
 export function FeatureBreakdownSection() {
   return (
-    <section className="py-20 bg-white">
+    <section id="features" className="py-20 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
@@ -289,6 +310,45 @@ function FeatureMockup({
               </span>
             </div>
             <p className="text-xs text-gray-500">Priority: {t.priority}</p>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    // Admin Super Dashboard
+    <div key="admin" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-gray-900 text-sm">Admin Dashboard</h4>
+        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">Live</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {[
+          { label: "Total Revenue", value: "₱2.4M", change: "+12%" },
+          { label: "Active Students", value: "847", change: "+8%" },
+          { label: "Completion Rate", value: "94%", change: "+3%" },
+          { label: "Avg. Rating", value: "4.8", change: "+0.2" },
+        ].map((s) => (
+          <div key={s.label} className="bg-white rounded-lg p-2.5 border border-gray-100">
+            <p className="text-[10px] text-gray-500">{s.label}</p>
+            <div className="flex items-baseline gap-1.5">
+              <p className="text-sm font-bold text-gray-900">{s.value}</p>
+              <span className="text-[9px] text-green-600 font-medium">{s.change}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-2">
+        {[
+          { label: "Organizations", count: 3, icon: "🏢" },
+          { label: "Active Trainers", count: 18, icon: "👨‍🏫" },
+          { label: "Pending Payments", count: 5, icon: "💳" },
+        ].map((item) => (
+          <div key={item.label} className="bg-white rounded-lg p-2.5 border border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">{item.icon}</span>
+              <span className="text-xs text-gray-700">{item.label}</span>
+            </div>
+            <span className="text-xs font-bold text-gray-900">{item.count}</span>
           </div>
         ))}
       </div>
