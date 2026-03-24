@@ -58,6 +58,7 @@ interface Trainer {
   readonly bio: string | null;
   readonly photoUrl: string | null;
   readonly specializations: ReadonlyArray<string>;
+  readonly tier: "BASIC" | "PROFESSIONAL" | "PREMIUM";
   readonly credentials: string | null;
   readonly certifications: ReadonlyArray<string>;
   readonly industryExperience: string | null;

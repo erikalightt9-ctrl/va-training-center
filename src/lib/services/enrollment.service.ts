@@ -11,7 +11,6 @@ import {
 } from "@/lib/services/notification.service";
 import { getTierConfig } from "@/lib/repositories/trainer-tier.repository";
 import { sendWaitlistJoinedEmail } from "@/lib/email/send-waitlist-notification";
-import { calculateEnrollmentPrice } from "@/lib/constants/pricing";
 import { getCourseTierPricing } from "@/lib/repositories/course.repository";
 import type { EnrollmentFormData } from "@/lib/validations/enrollment.schema";
 import type { Enrollment, CourseTier, TrainerTier } from "@prisma/client";
