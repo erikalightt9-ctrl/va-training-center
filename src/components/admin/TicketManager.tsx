@@ -273,6 +273,15 @@ export function TicketManager() {
     } catch { /* ignore */ }
   }, []);
 
+  // Auto-open ticket from URL param (from notification link)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ticketId = params.get("id");
+    if (ticketId) {
+      fetchTicketDetail(ticketId);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   async function handleStatusChange(ticketId: string, newStatus: string) {
     setUpdating(true);
     try {

@@ -35,6 +35,7 @@ import {
   Search,
   Menu,
   X,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarNavGroup } from "@/components/shared/SidebarNavGroup";
@@ -78,6 +79,7 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
     icon: CreditCard,
     items: [
       { href: "/admin/payments", label: "Payment Records", icon: CreditCard },
+      { href: "/admin/revenue", label: "Revenue", icon: DollarSign },
       { href: "/admin/subscriptions", label: "AI Subscriptions", icon: Crown },
     ],
   },

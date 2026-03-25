@@ -1785,3 +1785,58 @@ model TrainerTierConfig {
 
   @@map("trainer_tier_configs")
 }
+
+/* ------------------------------------------------------------------ */
+/*  Revenue System                                                      */
+/* ------------------------------------------------------------------ */
+
+enum RevenueType {
+  PLATFORM_FEE
+  TENANT_SUBSCRIPTION
+  ENROLLMENT_PAYMENT
+  TRAINER_EARNING
+  REFUND
+  MANUAL
+}
+
+model RevenueRecord {
+  id            String      @id @default(cuid())
+  tenantId      String?
+  userId        String?
+  userType      String?
+  type          RevenueType @default(MANUAL)
+  amount        Decimal     @db.Decimal(12, 2)
+  currency      String      @default("PHP")
+  description   String?
+  referenceId   String?
+  referenceType String?
+  status        String      @default("active")
+  deletedAt     DateTime?
+  deletedBy     String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  auditLogs     RevenueAuditLog[]
+
+  @@index([tenantId])
+  @@index([userId, userType])
+  @@index([createdAt])
+  @@index([status])
+  @@map("revenue_records")
+}
+
+model RevenueAuditLog {
+  id         String        @id @default(cuid())
+  recordId   String
+  action     String
+  actorId    String
+  actorRole  String
+  before     Json?
+  after      Json?
+  reason     String?
+  createdAt  DateTime      @default(now())
+  record     RevenueRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@index([recordId])
+  @@index([actorId])
+  @@map("revenue_audit_logs")
+}

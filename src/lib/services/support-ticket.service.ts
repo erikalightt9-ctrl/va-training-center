@@ -65,7 +65,7 @@ async function notifyAdminsOfNewTicket(ticket: {
     type: "TICKET_RESPONSE",
     title: `New [${ticket.priority}] Support Ticket`,
     message: `${ticket.referenceNo}: "${ticket.subject}"`,
-    linkUrl: `/admin/support?ticket=${ticket.id}`,
+    linkUrl: `/admin/tickets?id=${ticket.id}`,
   });
 
   // Email notifications (fire-and-forget per admin)
