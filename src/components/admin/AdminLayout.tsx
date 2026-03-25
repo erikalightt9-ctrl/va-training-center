@@ -114,9 +114,6 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
     items: [
       { href: "/admin/communications", label: "Contact Messages", icon: MessageSquare },
       { href: "/admin/messages", label: "Messaging", icon: Mail },
-      { href: "/admin/tickets", label: "Support Tickets", icon: Ticket },
-      { href: "/admin/knowledge-base", label: "Knowledge Base", icon: HelpCircle },
-      { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
       { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
     ],
   },
@@ -130,6 +127,22 @@ const adminNavGroups: ReadonlyArray<NavGroup> = [
       { href: "/admin/reports", label: "Reports", icon: FileBarChart },
     ],
   },
+];
+
+// ---------------------------------------------------------------------------
+// Primary standalone nav items (always visible, never nested)
+// ---------------------------------------------------------------------------
+
+interface StandaloneNavItem {
+  readonly href: string;
+  readonly label: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+}
+
+const adminPrimaryNavItems: ReadonlyArray<StandaloneNavItem> = [
+  { href: "/admin/knowledge-base", label: "Knowledge Base", icon: HelpCircle },
+  { href: "/admin/calendar",       label: "Calendar",       icon: CalendarDays },
+  { href: "/admin/tickets",        label: "Support Tickets", icon: Ticket },
 ];
 
 // ---------------------------------------------------------------------------
@@ -207,6 +220,32 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               onNavigate={() => setSidebarOpen(false)}
             />
           ))}
+
+          {/* ── Primary standalone items ── */}
+          <div className="pt-3 pb-1">
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-blue-400">
+              Quick Access
+            </p>
+          </div>
+          {adminPrimaryNavItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-blue-700 text-white"
+                    : "text-blue-200 hover:bg-blue-800 hover:text-white"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="px-3 py-4 border-t border-blue-800">

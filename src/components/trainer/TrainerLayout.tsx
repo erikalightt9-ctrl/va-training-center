@@ -17,6 +17,7 @@ import {
   Ticket,
   Bell,
   Mail,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,6 @@ const trainerNavGroups: ReadonlyArray<NavGroup> = [
     label: "Training",
     icon: CalendarClock,
     items: [
-      { href: "/trainer/schedule", label: "My Schedule", icon: CalendarClock },
       { href: "/trainer/students", label: "My Students", icon: Users },
     ],
   },
@@ -64,10 +64,25 @@ const trainerNavGroups: ReadonlyArray<NavGroup> = [
     icon: MessageSquare,
     items: [
       { href: "/trainer/messages", label: "Messages", icon: Mail },
-      { href: "/trainer/support", label: "Support Tickets", icon: Ticket },
       { href: "/trainer/notifications", label: "Notifications", icon: Bell },
     ],
   },
+];
+
+// ---------------------------------------------------------------------------
+// Primary standalone nav items (always visible, never nested)
+// ---------------------------------------------------------------------------
+
+interface StandaloneNavItem {
+  readonly href: string;
+  readonly label: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+}
+
+const trainerPrimaryNavItems: ReadonlyArray<StandaloneNavItem> = [
+  { href: "/help",             label: "Knowledge Base",   icon: HelpCircle },
+  { href: "/trainer/schedule", label: "Calendar",         icon: CalendarClock },
+  { href: "/trainer/support",  label: "Support Tickets",  icon: Ticket },
 ];
 
 interface StandaloneNavItem {
@@ -133,6 +148,31 @@ export function TrainerLayout({ children }: TrainerLayoutProps) {
               items={group.items}
             />
           ))}
+
+          {/* ── Primary standalone items ── */}
+          <div className="pt-3 pb-1">
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-blue-400">
+              Quick Access
+            </p>
+          </div>
+          {trainerPrimaryNavItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-blue-700 text-white"
+                    : "text-blue-200 hover:bg-blue-800 hover:text-white"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
 
           {/* Separator */}
           <div className="pt-2" />
