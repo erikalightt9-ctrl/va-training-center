@@ -1237,8 +1237,24 @@ model Organization {
   conversations  Conversation[]
   notifications  Notification[]
   subscriptions  TenantSubscription[]
+  featureFlags   TenantFeatureFlag[]
 
   @@map("organizations")
+}
+
+model TenantFeatureFlag {
+  id        String       @id @default(cuid())
+  tenantId  String
+  feature   String
+  enabled   Boolean      @default(false)
+  config    Json?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  tenant    Organization @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, feature])
+  @@index([tenantId])
+  @@map("tenant_feature_flags")
 }
 
 model TenantSubscription {
