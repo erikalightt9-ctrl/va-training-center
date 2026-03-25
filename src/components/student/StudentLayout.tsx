@@ -40,7 +40,6 @@ import {
   Crown,
   Ticket,
   HelpCircle,
-  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -120,7 +119,6 @@ function buildNavGroups(courseId: string): ReadonlyArray<NavGroup> {
       icon: Ticket,
       items: [
         { href: "/student/messages", label: "Messages", icon: Mail },
-        { href: "/student/notifications", label: "Notifications", icon: Bell },
       ],
     },
   ];
