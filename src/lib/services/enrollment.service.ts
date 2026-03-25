@@ -33,7 +33,9 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
     },
   });
 
-  return count < RATE_LIMIT_MAX;
+  // Use <= because this is called AFTER recordRateLimitAttempt (record-first pattern).
+  // The current attempt is already in the DB, so count includes it.
+  return count <= RATE_LIMIT_MAX;
 }
 
 export async function recordRateLimitAttempt(ip: string): Promise<void> {
@@ -52,7 +54,10 @@ export async function processEnrollment(
   data: EnrollmentFormData,
   ipAddress: string
 ): Promise<EnrollmentResult> {
-  // Rate limit check
+  // Record first, then check — eliminates TOCTOU race between check and record.
+  // Concurrent requests from the same IP each insert their own row before counting,
+  // so the count reflects all concurrent attempts, not just sequential ones.
+  await recordRateLimitAttempt(ipAddress);
   const allowed = await checkRateLimit(ipAddress);
   if (!allowed) {
     return {
@@ -61,9 +66,6 @@ export async function processEnrollment(
       message: "Too many enrollment attempts. Please try again later.",
     };
   }
-
-  // Record attempt
-  await recordRateLimitAttempt(ipAddress);
 
   // Email usage limit check (max 5 enrollments per email)
   const emailCount = await countEnrollmentsByEmail(data.email);
@@ -193,7 +195,7 @@ export async function processEnrollment(
       paymentUrl: `${base}/pay/${enrollment.id}`,
       statusTrackingUrl: `${base}/enrollment-status/${enrollment.id}`,
     }),
-    notifyAdminsOfNewEnrollment(enrollment),
+    notifyAdminsOfNewEnrollment(enrollment, courseTitle),
   ]);
 
   for (const result of emailResults) {
@@ -205,7 +207,7 @@ export async function processEnrollment(
   return { success: true, enrollment, waitlisted };
 }
 
-async function notifyAdminsOfNewEnrollment(enrollment: Enrollment): Promise<void> {
+async function notifyAdminsOfNewEnrollment(enrollment: Enrollment, courseTitle: string): Promise<void> {
   // Fetch admin emails from the database
   const admins = await prisma.admin.findMany({ select: { email: true } });
   const adminEmails = admins.map((a) => a.email);
@@ -217,12 +219,6 @@ async function notifyAdminsOfNewEnrollment(enrollment: Enrollment): Promise<void
   }
 
   if (adminEmails.length === 0) return;
-
-  // Fetch course title
-  const course = await prisma.course.findUnique({
-    where: { id: enrollment.courseId },
-    select: { title: true },
-  });
 
   const submittedAt = enrollment.createdAt.toLocaleDateString("en-PH", {
     year: "numeric",
@@ -236,7 +232,7 @@ async function notifyAdminsOfNewEnrollment(enrollment: Enrollment): Promise<void
     adminEmails,
     enrolleeName: enrollment.fullName,
     enrolleeEmail: enrollment.email,
-    courseTitle: course?.title ?? "Selected Course",
+    courseTitle,
     enrollmentId: enrollment.id,
     submittedAt,
   });

@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 
 const PAYMONGO_BASE = "https://api.paymongo.com/v1";
 
@@ -84,7 +84,10 @@ export function verifyPayMongoSignature(
       .update(`${timestamp}.${rawBody}`)
       .digest("hex");
 
-    return computed === hash;
+    const computedBuf = Buffer.from(computed, "hex");
+    const hashBuf = Buffer.from(hash, "hex");
+    if (computedBuf.length !== hashBuf.length) return false;
+    return timingSafeEqual(computedBuf, hashBuf);
   } catch {
     return false;
   }
