@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth-guards";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { sendCorporateCredentialsEmail } from "@/lib/email/send-corporate-credentials";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export async function POST(
 
     const org = await prisma.organization.findUnique({
       where: { id },
-      select: { id: true, maxSeats: true, _count: { select: { managers: true } } },
+      select: { id: true, name: true, maxSeats: true, _count: { select: { managers: true } } },
     });
     if (!org) {
       return NextResponse.json({ success: false, data: null, error: "Organization not found" }, { status: 404 });
@@ -108,6 +109,17 @@ export async function POST(
         },
       },
     });
+
+    // Fire-and-forget welcome email — do not block the response
+    sendCorporateCredentialsEmail({
+      name: employee.name,
+      email: employee.email,
+      organizationName: org.name,
+      temporaryPassword: "ChangeMe@123!",
+      role: "employee",
+    }).catch((mailErr) =>
+      console.error("[POST /api/admin/corporate/:id/employees] email failed", mailErr)
+    );
 
     return NextResponse.json({ success: true, data: employee, error: null }, { status: 201 });
   } catch (err) {

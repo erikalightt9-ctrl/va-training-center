@@ -3,6 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth-guards";
 import bcrypt from "bcryptjs";
+import { sendCorporateCredentialsEmail } from "@/lib/email/send-corporate-credentials";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export async function POST(
       return NextResponse.json({ success: false, data: null, error: "Maximum 500 employees per upload" }, { status: 400 });
     }
 
-    const org = await prisma.organization.findUnique({ where: { id }, select: { id: true } });
+    const org = await prisma.organization.findUnique({ where: { id }, select: { id: true, name: true } });
     if (!org) {
       return NextResponse.json({ success: false, data: null, error: "Organization not found" }, { status: 404 });
     }
@@ -75,6 +76,23 @@ export async function POST(
         })),
         skipDuplicates: true,
       });
+    }
+
+    // Fire-and-forget welcome emails for all newly created employees
+    if (toCreate.length > 0) {
+      Promise.allSettled(
+        toCreate.map((row) =>
+          sendCorporateCredentialsEmail({
+            name: row.name,
+            email: row.email,
+            organizationName: org.name,
+            temporaryPassword: "ChangeMe@123!",
+            role: "employee",
+          })
+        )
+      ).catch((mailErr) =>
+        console.error("[POST /api/admin/corporate/:id/upload-employees] email batch failed", mailErr)
+      );
     }
 
     return NextResponse.json({
