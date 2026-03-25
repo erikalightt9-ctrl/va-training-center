@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, GraduationCap, LogIn } from "lucide-react";
+import { Menu, X, GraduationCap, LogIn, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -55,14 +55,26 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Login */}
-          <Link
-            href="/portal"
-            className="hidden md:flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors"
-          >
-            <LogIn className="h-4 w-4" />
-            Login
-          </Link>
+          {/* Desktop CTAs */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Secondary: Log In */}
+            <Link
+              href="/portal"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-blue-700 transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              Log In
+            </Link>
+
+            {/* Primary: Enroll Now */}
+            <Link
+              href="/enroll"
+              className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md shadow-amber-500/30 transition-all hover:shadow-amber-500/40 hover:-translate-y-px active:translate-y-0"
+            >
+              Enroll Now
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
 
           {/* Mobile toggle */}
           <button
@@ -89,15 +101,28 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <hr className="my-2 border-gray-100" />
-            <Link
-              href="/portal"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-50"
-            >
-              <LogIn className="h-4 w-4" />
-              Login
-            </Link>
+
+            <div className="border-t border-gray-100 pt-3 mt-3 space-y-2">
+              {/* Primary mobile CTA */}
+              <Link
+                href="/enroll"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md shadow-amber-500/30 transition-colors"
+              >
+                Enroll Now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              {/* Secondary mobile CTA */}
+              <Link
+                href="/portal"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-1.5 w-full text-sm font-medium text-gray-500 hover:text-blue-700 py-2 transition-colors"
+              >
+                <LogIn className="h-4 w-4" />
+                Log In
+              </Link>
+            </div>
           </div>
         </div>
       )}
