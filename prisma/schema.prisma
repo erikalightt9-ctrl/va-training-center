@@ -1735,5 +1735,5 @@ model TrainerTierConfig {
   isActive         Boolean     @default(true)
   updatedAt        DateTime    @updatedAt
 
-  @@map("trainer_tier_config")
+  @@map("trainer_tier_configs")
 }
