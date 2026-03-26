@@ -19,6 +19,10 @@ import type { CtaContent } from "./section-forms/CtaForm";
 import type { TextContent } from "./section-forms/TextForm";
 import type { ImageContent } from "./section-forms/ImageForm";
 
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
 export type SectionType = "HERO" | "FEATURES" | "TESTIMONIALS" | "CONTACT" | "CTA" | "TEXT" | "IMAGE";
 
 type SectionContent =
@@ -33,6 +37,8 @@ type SectionContent =
 export type PageSection = SectionContent & {
   readonly id: string;
   readonly order: number;
+  readonly isVisible?: boolean;
+  readonly alignment?: "left" | "center" | "right";
 };
 
 interface SectionEditorProps {
@@ -42,9 +48,17 @@ interface SectionEditorProps {
   readonly dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Helper                                                             */
+/* ------------------------------------------------------------------ */
+
 function getSectionLabel(type: SectionType): string {
   return SECTION_TYPE_LABELS[type];
 }
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
 export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: SectionEditorProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -65,19 +79,54 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
   function renderForm() {
     switch (section.type) {
       case "HERO":
-        return <HeroForm content={section.content as HeroContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <HeroForm
+            content={section.content as HeroContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "FEATURES":
-        return <FeaturesForm content={section.content as FeaturesContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <FeaturesForm
+            content={section.content as FeaturesContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "TESTIMONIALS":
-        return <TestimonialsForm content={section.content as TestimonialsContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <TestimonialsForm
+            content={section.content as TestimonialsContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "CONTACT":
-        return <ContactForm content={section.content as ContactContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <ContactForm
+            content={section.content as ContactContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "CTA":
-        return <CtaForm content={section.content as CtaContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <CtaForm
+            content={section.content as CtaContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "TEXT":
-        return <TextForm content={section.content as TextContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <TextForm
+            content={section.content as TextContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       case "IMAGE":
-        return <ImageForm content={section.content as ImageContent} onChange={(c) => handleContentChange(c)} />;
+        return (
+          <ImageForm
+            content={section.content as ImageContent}
+            onChange={(c) => handleContentChange(c)}
+          />
+        );
       default:
         return <p className="text-sm text-gray-400">Unknown section type.</p>;
     }
@@ -85,7 +134,9 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+      {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-200">
+        {/* Drag handle */}
         <button
           type="button"
           className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 p-0.5 shrink-0"
@@ -94,6 +145,8 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
         >
           <GripVertical className="h-4 w-4" />
         </button>
+
+        {/* Collapse toggle */}
         <button
           type="button"
           onClick={() => setIsOpen((v) => !v)}
@@ -105,16 +158,32 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
           ) : (
             <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
           )}
-          <span className="text-sm font-medium text-gray-700">{getSectionLabel(section.type)}</span>
+          <span className="text-sm font-medium text-gray-700">
+            {getSectionLabel(section.type)}
+          </span>
           <span className="text-xs text-gray-400 font-mono">#{section.order + 1}</span>
         </button>
+
+        {/* Delete button */}
         {confirmDelete ? (
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs text-red-600 font-medium">Confirm?</span>
-            <Button type="button" variant="destructive" size="sm" onClick={() => onDelete(section.id)} className="h-7 px-2 text-xs">
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(section.id)}
+              className="h-7 px-2 text-xs"
+            >
               Yes, delete
             </Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => setConfirmDelete(false)} className="h-7 px-2 text-xs">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setConfirmDelete(false)}
+              className="h-7 px-2 text-xs"
+            >
               Cancel
             </Button>
           </div>
@@ -131,7 +200,13 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
           </Button>
         )}
       </div>
-      {isOpen && <div className="p-4">{renderForm()}</div>}
+
+      {/* Body */}
+      {isOpen && (
+        <div className="p-4">
+          {renderForm()}
+        </div>
+      )}
     </div>
   );
 }

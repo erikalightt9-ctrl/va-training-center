@@ -13,7 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SectionList } from "@/components/page-builder/SectionList";
+import { SectionListPanel } from "@/components/page-builder/SectionListPanel";
+import { LivePreviewPanel } from "@/components/page-builder/LivePreviewPanel";
+import { SettingsPanel } from "@/components/page-builder/SettingsPanel";
 import type { PageSection } from "@/components/page-builder/SectionEditor";
 
 /* ------------------------------------------------------------------ */
@@ -81,7 +83,11 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [seoOpen, setSeoOpen] = useState(false);
+  const [showSeoFields, setShowSeoFields] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+
+  // Responsive: track if we should show tabs instead of 3 panels
+  const [activeTab, setActiveTab] = useState<"list" | "preview" | "settings">("list");
 
   const fetchPage = useCallback(async () => {
     setLoading(true);
@@ -135,6 +141,8 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
         .map((s, i) => ({ ...s, order: i }));
       return { ...prev, sections };
     });
+    // Clear selection if deleted section was selected
+    setSelectedSectionId((prev) => (prev === id ? null : prev));
     setIsDirty(true);
     setSaveSuccess(false);
   }
@@ -152,6 +160,19 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
     setForm((prev) => {
       if (!prev) return prev;
       return { ...prev, sections: [...prev.sections, section] };
+    });
+    setSelectedSectionId(section.id);
+    setIsDirty(true);
+    setSaveSuccess(false);
+  }
+
+  function handleToggleVisibility(id: string): void {
+    setForm((prev) => {
+      if (!prev) return prev;
+      const sections = prev.sections.map((s) =>
+        s.id === id ? { ...s, isVisible: s.isVisible === false ? true : false } : s
+      );
+      return { ...prev, sections };
     });
     setIsDirty(true);
     setSaveSuccess(false);
@@ -192,7 +213,6 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
       setIsDirty(false);
       setSaveSuccess(true);
 
-      // Auto-clear success after 3s
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch {
       setSaveError("Network error. Please try again.");
@@ -212,7 +232,7 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
 
   if (loadError || !form) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 p-4">
         <Link href="/corporate/builder">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
@@ -227,223 +247,211 @@ export default function PageEditorPage({ params }: { params: Promise<{ pageId: s
     );
   }
 
+  const selectedSection = form.sections.find((s) => s.id === selectedSectionId) ?? null;
+
   return (
-    <div className="space-y-6 pb-16">
-      {/* Back link */}
-      <Link href="/corporate/builder">
-        <Button variant="ghost" size="sm" className="gap-2 -ml-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Pages
-        </Button>
-      </Link>
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      {/* ── Top bar ── */}
+      <div className="shrink-0 border-b border-gray-200 px-4 py-2 flex items-center gap-3 bg-white">
+        {/* Back link */}
+        <Link href="/corporate/builder">
+          <Button variant="ghost" size="sm" className="gap-1.5 px-2 h-8 text-xs shrink-0">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Pages
+          </Button>
+        </Link>
 
-      {/* Top bar */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
-        {/* Title + dirty indicator */}
-        <div className="flex items-start gap-4">
-          <div className="flex-1 min-w-0">
-            <Label htmlFor="page-title" className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 block">
-              Page Title
-            </Label>
-            <Input
-              id="page-title"
-              value={form.title}
-              onChange={(e) => updateForm("title", e.target.value)}
-              placeholder="My Page"
-              maxLength={200}
-              className="text-lg font-semibold"
-            />
-          </div>
-
-          <div className="shrink-0 flex items-center gap-3 pt-6">
-            {isDirty && (
-              <span className="text-xs text-amber-600 font-medium bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
-                Unsaved changes
-              </span>
-            )}
-            <Button
-              type="button"
-              onClick={handleSave}
-              disabled={saving || !isDirty}
-              className="gap-2"
-            >
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {saving ? "Saving…" : "Save"}
-            </Button>
-          </div>
+        {/* Title input */}
+        <div className="flex-1 min-w-0">
+          <Input
+            value={form.title}
+            onChange={(e) => updateForm("title", e.target.value)}
+            placeholder="Page title"
+            maxLength={200}
+            className="h-8 text-sm font-medium"
+          />
         </div>
 
-        {/* Slug + type row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="page-slug" className="text-sm font-medium text-gray-700">
-              Slug
-            </Label>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm text-gray-400">/</span>
-              <Input
-                id="page-slug"
-                value={form.slug}
-                onChange={(e) =>
-                  updateForm("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
-                }
-                placeholder="my-page"
-                maxLength={100}
-                className="font-mono text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="page-type" className="text-sm font-medium text-gray-700">
-              Page Type
-            </Label>
-            <select
-              id="page-type"
-              value={form.type}
-              onChange={(e) => updateForm("type", e.target.value as PageType)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <option value="CUSTOM">Custom</option>
-              <option value="LANDING">Landing Page</option>
-              <option value="CONTACT">Contact Page</option>
-            </select>
-          </div>
-        </div>
+        {/* Slug display */}
+        <span className="hidden sm:flex items-center gap-1 text-xs text-gray-400 shrink-0 font-mono">
+          <span>/</span>
+          <span className="max-w-[120px] truncate">{form.slug || "—"}</span>
+        </span>
 
         {/* Publish toggle */}
-        <div className="flex items-center justify-between pt-1 border-t border-gray-100">
-          <div>
-            <p className="text-sm font-medium text-gray-700">
-              {form.isPublished ? "Published" : "Draft"}
-            </p>
-            <p className="text-xs text-gray-400">
-              {form.isPublished
-                ? "This page is live and visible to visitors."
-                : "This page is hidden from public view."}
-            </p>
-          </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={form.isPublished}
-            onClick={() => updateForm("isPublished", !form.isPublished)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              form.isPublished ? "bg-blue-600" : "bg-gray-200"
+        <button
+          type="button"
+          role="switch"
+          aria-checked={form.isPublished}
+          onClick={() => updateForm("isPublished", !form.isPublished)}
+          className={`hidden sm:flex relative h-5 w-9 items-center rounded-full transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+            form.isPublished ? "bg-blue-600" : "bg-gray-200"
+          }`}
+          title={form.isPublished ? "Published" : "Draft"}
+        >
+          <span
+            className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+              form.isPublished ? "translate-x-4" : "translate-x-0.5"
             }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                form.isPublished ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-        </div>
+          />
+        </button>
+        <span className="hidden sm:block text-xs text-gray-500 shrink-0">
+          {form.isPublished ? "Published" : "Draft"}
+        </span>
 
-        {/* SEO fields — collapsible */}
-        <div className="border-t border-gray-100 pt-2">
-          <button
-            type="button"
-            onClick={() => setSeoOpen((v) => !v)}
-            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            {seoOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            SEO Settings
-          </button>
+        {/* SEO toggle */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowSeoFields((v) => !v)}
+          className="gap-1.5 h-8 text-xs px-2 shrink-0"
+        >
+          {showSeoFields ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+          SEO
+        </Button>
 
-          {seoOpen && (
-            <div className="mt-3 space-y-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="meta-title" className="text-sm font-medium text-gray-700">
-                  Meta Title
-                </Label>
-                <Input
-                  id="meta-title"
-                  value={form.metaTitle}
-                  onChange={(e) => updateForm("metaTitle", e.target.value)}
-                  placeholder="Page title for search engines"
-                  maxLength={200}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="meta-description" className="text-sm font-medium text-gray-700">
-                  Meta Description
-                </Label>
-                <textarea
-                  id="meta-description"
-                  value={form.metaDescription}
-                  onChange={(e) => updateForm("metaDescription", e.target.value)}
-                  placeholder="Short description for search engine results"
-                  maxLength={400}
-                  rows={3}
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-                />
-                <p className="text-xs text-gray-400 text-right">
-                  {form.metaDescription.length} / 400
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Unsaved changes badge */}
+        {isDirty && (
+          <span className="hidden sm:inline text-xs text-amber-600 font-medium bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0">
+            Unsaved
+          </span>
+        )}
 
-        {/* Status messages */}
+        {/* Save button */}
+        <Button
+          type="button"
+          size="sm"
+          onClick={handleSave}
+          disabled={saving || !isDirty}
+          className="gap-1.5 h-8 text-xs shrink-0"
+        >
+          {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+          {saving ? "Saving…" : "Save"}
+        </Button>
+
+        {/* Status icons */}
         {saveSuccess && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-            <CheckCircle className="h-4 w-4 shrink-0" />
-            Page saved successfully!
-          </div>
+          <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
         )}
         {saveError && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {saveError}
-          </div>
+          <span title={saveError ?? undefined}><AlertCircle className="h-4 w-4 text-red-500 shrink-0" /></span>
         )}
       </div>
 
-      {/* Sections */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
-            Sections ({form.sections.length})
-          </h2>
-        </div>
-
-        <SectionList
-          sections={form.sections}
-          onUpdate={handleSectionUpdate}
-          onDelete={handleSectionDelete}
-          onReorder={handleSectionReorder}
-          onAdd={handleSectionAdd}
-        />
-      </div>
-
-      {/* Sticky save bar when dirty */}
-      {isDirty && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg px-6 py-3 flex items-center justify-between">
-          <span className="text-sm text-amber-600 font-medium">You have unsaved changes</span>
-          <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (page) {
-                  setForm(pageToEditState(page));
-                  setIsDirty(false);
-                }
-              }}
-              disabled={saving}
-            >
-              Discard
-            </Button>
-            <Button type="button" size="sm" onClick={handleSave} disabled={saving} className="gap-2">
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {saving ? "Saving…" : "Save Changes"}
-            </Button>
+      {/* ── SEO fields (collapsible) ── */}
+      {showSeoFields && (
+        <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="meta-title" className="text-xs font-medium text-gray-600">
+              Meta Title
+            </Label>
+            <Input
+              id="meta-title"
+              value={form.metaTitle}
+              onChange={(e) => updateForm("metaTitle", e.target.value)}
+              placeholder="Page title for search engines"
+              maxLength={200}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="meta-description" className="text-xs font-medium text-gray-600">
+              Meta Description
+            </Label>
+            <Input
+              id="meta-description"
+              value={form.metaDescription}
+              onChange={(e) => updateForm("metaDescription", e.target.value)}
+              placeholder="Short description for search results"
+              maxLength={400}
+              className="h-8 text-xs"
+            />
           </div>
         </div>
       )}
+
+      {/* ── Mobile tab bar (< xl) ── */}
+      <div className="xl:hidden shrink-0 border-b border-gray-200 bg-white flex">
+        {(["list", "preview", "settings"] as const).map((tab) => {
+          const labels = { list: "Sections", preview: "Preview", settings: "Settings" };
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-2 text-xs font-medium transition-colors border-b-2 ${
+                activeTab === tab
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {labels[tab]}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── 3-panel grid (xl+) / tab view (< xl) ── */}
+      <div className="flex-1 overflow-hidden">
+        {/* Desktop: 3-panel grid */}
+        <div className="hidden xl:flex h-full">
+          <div className="w-[280px] shrink-0 overflow-hidden">
+            <SectionListPanel
+              sections={form.sections}
+              selectedId={selectedSectionId}
+              onSelect={setSelectedSectionId}
+              onAdd={handleSectionAdd}
+              onDelete={handleSectionDelete}
+              onReorder={handleSectionReorder}
+              onToggleVisibility={handleToggleVisibility}
+              disabled={saving}
+            />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <LivePreviewPanel sections={form.sections} />
+          </div>
+          <div className="w-[340px] shrink-0 overflow-hidden">
+            <SettingsPanel
+              section={selectedSection}
+              onUpdate={handleSectionUpdate}
+              onDelete={handleSectionDelete}
+            />
+          </div>
+        </div>
+
+        {/* Mobile: tab-based view */}
+        <div className="xl:hidden h-full overflow-hidden">
+          {activeTab === "list" && (
+            <SectionListPanel
+              sections={form.sections}
+              selectedId={selectedSectionId}
+              onSelect={(id) => {
+                setSelectedSectionId(id);
+                setActiveTab("settings");
+              }}
+              onAdd={(section) => {
+                handleSectionAdd(section);
+                setActiveTab("settings");
+              }}
+              onDelete={handleSectionDelete}
+              onReorder={handleSectionReorder}
+              onToggleVisibility={handleToggleVisibility}
+              disabled={saving}
+            />
+          )}
+          {activeTab === "preview" && (
+            <LivePreviewPanel sections={form.sections} />
+          )}
+          {activeTab === "settings" && (
+            <SettingsPanel
+              section={selectedSection}
+              onUpdate={handleSectionUpdate}
+              onDelete={handleSectionDelete}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -18,71 +18,96 @@ export type SectionType =
 export interface PageSection {
   type: SectionType | string;
   content: Record<string, unknown>;
+  isVisible?: boolean;
+  alignment?: "left" | "center" | "right";
 }
 
 interface SectionRendererProps {
   section: PageSection;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function asContent<T>(v: Record<string, unknown>): T {
-  return v as unknown as T;
-}
-
 export default function SectionRenderer({ section }: SectionRendererProps) {
-  const { type, content } = section;
+  const { type, content, isVisible, alignment } = section;
+
+  // Return null if section is explicitly hidden
+  if (isVisible === false) {
+    return null;
+  }
+
+  const textAlign = alignment ?? "center";
+
+  const alignmentStyle: React.CSSProperties = {
+    textAlign,
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const c = content as any;
+  let inner: React.ReactNode;
 
   switch (type as SectionType) {
     case "HERO":
-      return (
+      inner = (
         <HeroSection
-          content={asContent<React.ComponentProps<typeof HeroSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof HeroSection>["content"]}
         />
       );
+      break;
 
     case "FEATURES":
-      return (
+      inner = (
         <FeaturesSection
-          content={asContent<React.ComponentProps<typeof FeaturesSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof FeaturesSection>["content"]}
         />
       );
+      break;
 
     case "TESTIMONIALS":
-      return (
+      inner = (
         <TestimonialsSection
-          content={asContent<React.ComponentProps<typeof TestimonialsSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof TestimonialsSection>["content"]}
         />
       );
+      break;
 
     case "CONTACT":
-      return (
+      inner = (
         <ContactSection
-          content={asContent<React.ComponentProps<typeof ContactSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof ContactSection>["content"]}
         />
       );
+      break;
 
     case "CTA":
-      return (
+      inner = (
         <CtaSection
-          content={asContent<React.ComponentProps<typeof CtaSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof CtaSection>["content"]}
         />
       );
+      break;
 
     case "TEXT":
-      return (
+      inner = (
         <TextSection
-          content={asContent<React.ComponentProps<typeof TextSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof TextSection>["content"]}
         />
       );
+      break;
 
     case "IMAGE":
-      return (
+      inner = (
         <ImageSection
-          content={asContent<React.ComponentProps<typeof ImageSection>["content"]>(content)}
+          content={c as React.ComponentProps<typeof ImageSection>["content"]}
         />
       );
+      break;
 
     default:
       return null;
   }
+
+  return (
+    <div style={alignmentStyle}>
+      {inner}
+    </div>
+  );
 }
