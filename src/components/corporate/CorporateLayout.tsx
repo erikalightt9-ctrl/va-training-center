@@ -17,6 +17,8 @@ import {
   Megaphone,
   Ticket,
   Mail,
+  Layers,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -41,6 +43,8 @@ const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { href: "/corporate/messages", label: "Messages", icon: Mail },
   { href: "/corporate/announcements", label: "Announcements", icon: Megaphone },
   { href: "/corporate/support", label: "Support", icon: Ticket },
+  { href: "/corporate/builder", label: "Page Builder", icon: Layers },
+  { href: "/corporate/theme", label: "Brand & Theme", icon: Palette },
   { href: "/corporate/settings", label: "Settings", icon: Settings },
 ];
 
