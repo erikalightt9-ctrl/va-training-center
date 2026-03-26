@@ -29,7 +29,7 @@ import {
   TrendingUp,
   Crown,
   Building2,
-  Ticket,
+  TicketCheck,
   HelpCircle,
   Mail,
   Search,
@@ -144,7 +144,7 @@ const adminPrimaryNavItems: ReadonlyArray<StandaloneNavItem> = [
   { href: "/admin/messages",       label: "Messages",       icon: Mail },
   { href: "/admin/knowledge-base", label: "Knowledge Base", icon: HelpCircle },
   { href: "/admin/calendar",       label: "Calendar",       icon: CalendarDays },
-  { href: "/admin/tickets",        label: "Support Tickets", icon: Ticket },
+  { href: "/admin/tickets",        label: "Support Tickets", icon: TicketCheck },
 ];
 
 // ---------------------------------------------------------------------------

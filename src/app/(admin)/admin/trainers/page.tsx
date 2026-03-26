@@ -18,7 +18,12 @@ export default async function TrainersPage() {
     redirect("/portal?tab=admin");
   }
 
-  const tierConfigs = await getAllTierConfigs();
+  let tierConfigs: Awaited<ReturnType<typeof getAllTierConfigs>> = [];
+  try {
+    tierConfigs = await getAllTierConfigs();
+  } catch (err) {
+    console.error("[TrainersPage] Failed to load tier configs:", err);
+  }
 
   return (
     <div className="space-y-6">
