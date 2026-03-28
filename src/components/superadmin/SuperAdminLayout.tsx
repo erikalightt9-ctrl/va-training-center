@@ -12,15 +12,19 @@ import {
   LogOut,
   Menu,
   X,
+  ToggleLeft,
+  DollarSign,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
-  { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/superadmin/tenants", label: "Tenants", icon: Building2 },
-  { href: "/superadmin/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/superadmin/settings", label: "Platform Settings", icon: Settings },
+  { href: "/superadmin",              label: "Dashboard",       icon: LayoutDashboard, exact: true },
+  { href: "/superadmin/tenants",      label: "Tenants",         icon: Building2 },
+  { href: "/superadmin/analytics",    label: "Analytics",       icon: BarChart3 },
+  { href: "/superadmin/revenue",      label: "Revenue",         icon: DollarSign },
+  { href: "/superadmin/feature-flags",label: "Feature Flags",   icon: ToggleLeft },
+  { href: "/superadmin/settings",     label: "Platform Settings", icon: Settings },
 ];
 
 interface SuperAdminLayoutProps {

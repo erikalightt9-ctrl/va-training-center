@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Bell,
   Headphones,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ interface NavItem {
 const NAV_ITEMS: ReadonlyArray<NavItem> = [
   { href: "/corporate/dashboard",     label: "Dashboard",     icon: LayoutDashboard, match: "exact" },
   { href: "/corporate/employees",     label: "Team",          icon: Users },
+  { href: "/corporate/courses",       label: "Courses",       icon: BookOpen },
   { href: "/corporate/enrollments",   label: "Enrollments",   icon: ClipboardList },
   { href: "/corporate/trainers",      label: "Trainers",      icon: GraduationCap },
   { href: "/corporate/tasks",         label: "Tasks",         icon: CheckSquare },

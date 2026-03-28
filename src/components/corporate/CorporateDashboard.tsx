@@ -202,7 +202,8 @@ export function CorporateDashboard({
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           <ModuleCard href="/corporate/employees"   icon={Users}        label="Team"         description="Manage employees and seat assignments"           color="bg-blue-100 text-blue-600"   badge={stats.totalEmployees} />
-          <ModuleCard href="/corporate/enrollments" icon={BookOpen}     label="Enrollments"  description="Track course enrollments and progress"          color="bg-green-100 text-green-600"  badge={stats.activeEnrollments} />
+          <ModuleCard href="/corporate/courses"     icon={BookOpen}     label="Courses"      description="Browse and assign courses to your team"         color="bg-emerald-100 text-emerald-600" />
+          <ModuleCard href="/corporate/enrollments" icon={ClipboardList} label="Enrollments" description="Track course enrollments and progress"          color="bg-green-100 text-green-600"  badge={stats.activeEnrollments} />
           <ModuleCard href="/corporate/trainers"    icon={GraduationCap} label="Trainers"    description="View and manage assigned trainers"              color="bg-indigo-100 text-indigo-600" />
           <ModuleCard href="/corporate/tasks"       icon={CheckSquare}  label="Tasks"        description="Assign and track team tasks with deadlines"     color="bg-orange-100 text-orange-600" />
           <ModuleCard href="/corporate/calendar"    icon={CalendarDays} label="Calendar"     description="Sessions, deadlines, and team events"           color="bg-cyan-100 text-cyan-600" />
