@@ -1132,6 +1132,8 @@ model Organization {
   conversations  Conversation[]
   notifications  Notification[]
   subscriptions  TenantSubscription[]
+  tasks          OrganizationTask[]
+  files          OrganizationFile[]
 
   @@map("organizations")
 }
@@ -1473,4 +1475,57 @@ model Placement {
 
   @@index([placedAt])
   @@map("placements")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Organization Tasks                                                 */
+/* ------------------------------------------------------------------ */
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model OrganizationTask {
+  id             String       @id @default(cuid())
+  organizationId String
+  title          String       @db.VarChar(200)
+  description    String?      @db.Text
+  status         TaskStatus   @default(TODO)
+  priority       TaskPriority @default(MEDIUM)
+  dueDate        DateTime?
+  assigneeName   String?      @db.VarChar(100)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@index([organizationId, dueDate])
+  @@map("organization_tasks")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Organization Files                                                 */
+/* ------------------------------------------------------------------ */
+
+model OrganizationFile {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String       @db.VarChar(255)
+  size           Int
+  mimeType       String       @db.VarChar(100)
+  url            String
+  uploadedBy     String?      @db.VarChar(100)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@map("organization_files")
 }

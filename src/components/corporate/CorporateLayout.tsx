@@ -15,6 +15,10 @@ import {
   Building2,
   Loader2,
   Globe,
+  CheckSquare,
+  CalendarDays,
+  Sparkles,
+  FolderOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -34,9 +38,14 @@ interface PrimaryNavItem {
 
 const PRIMARY_NAV: ReadonlyArray<PrimaryNavItem> = [
   { href: "/corporate/dashboard",   label: "Dashboard",   icon: LayoutDashboard, match: "exact" },
-  { href: "/corporate/employees",   label: "Employees",   icon: Users },
+  { href: "/corporate/employees",   label: "Team",        icon: Users },
   { href: "/corporate/enrollments", label: "Enrollments", icon: ClipboardList },
-  { href: "/corporate/analytics",   label: "Analytics",   icon: BarChart3 },
+  { href: "/corporate/trainers",    label: "Trainers",    icon: GraduationCap },
+  { href: "/corporate/tasks",       label: "Tasks",       icon: CheckSquare },
+  { href: "/corporate/calendar",    label: "Calendar",    icon: CalendarDays },
+  { href: "/corporate/reports",     label: "Reports",     icon: BarChart3 },
+  { href: "/corporate/ai-tools",    label: "AI Tools",    icon: Sparkles },
+  { href: "/corporate/files",       label: "Files",       icon: FolderOpen },
   { href: "/corporate/website",     label: "Website",     icon: Globe },
   { href: "/corporate/settings",    label: "Settings",    icon: Settings },
 ];

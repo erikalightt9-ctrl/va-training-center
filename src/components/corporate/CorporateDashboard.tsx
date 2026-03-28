@@ -1,11 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import {
   Users,
   BookOpen,
   Award,
   TrendingUp,
   ClipboardList,
+  GraduationCap,
+  CheckSquare,
+  CalendarDays,
+  BarChart3,
+  Sparkles,
+  FolderOpen,
+  Globe,
+  Settings,
+  ArrowRight,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -86,57 +96,134 @@ function StatusBadge({ status }: { readonly status: string }) {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+// ---------------------------------------------------------------------------
+// Module hub card
+// ---------------------------------------------------------------------------
+
+function ModuleCard({
+  href,
+  icon: Icon,
+  label,
+  description,
+  color,
+  badge,
+}: {
+  readonly href: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly description: string;
+  readonly color: string;
+  readonly badge?: string | number;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group bg-white rounded-xl border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md hover:border-blue-200 transition-all"
+    >
+      <div className="flex items-start justify-between">
+        <div className={`p-2.5 rounded-xl ${color}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        {badge !== undefined && (
+          <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+            {badge}
+          </span>
+        )}
+      </div>
+      <div>
+        <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+          {label}
+        </p>
+        <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>
+      </div>
+      <div className="flex items-center gap-1 text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+        Open <ArrowRight className="h-3 w-3" />
+      </div>
+    </Link>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
 export function CorporateDashboard({
   stats,
 }: {
   readonly stats: DashboardStats;
 }) {
+  const seatPct = Math.min(100, Math.round((stats.totalEmployees / stats.maxSeats) * 100));
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          {stats.organizationName}
-        </h1>
-        <p className="text-sm text-gray-500">
-          Corporate Upskilling Dashboard
-          {stats.industry ? ` \u2022 ${stats.industry}` : ""}
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{stats.organizationName}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Tenant Dashboard{stats.industry ? ` · ${stats.industry}` : ""}
+          </p>
+        </div>
+        {stats.logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={stats.logoUrl} alt="Logo" className="h-10 object-contain" />
+        )}
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="Total Employees"
-          value={stats.totalEmployees}
-          icon={Users}
-          color="bg-blue-100 text-blue-600"
-        />
-        <StatCard
-          label="Active Enrollments"
-          value={stats.activeEnrollments}
-          icon={BookOpen}
-          color="bg-green-100 text-green-600"
-        />
-        <StatCard
-          label="Certificates Earned"
-          value={stats.certificatesEarned}
-          icon={Award}
-          color="bg-purple-100 text-purple-600"
-        />
-        <StatCard
-          label="Seats Available"
-          value={`${stats.totalEmployees} / ${stats.maxSeats}`}
-          icon={TrendingUp}
-          color="bg-amber-100 text-amber-600"
-        />
+        <StatCard label="Team Members"       value={stats.totalEmployees}  icon={Users}   color="bg-blue-100 text-blue-600" />
+        <StatCard label="Active Enrollments" value={stats.activeEnrollments} icon={BookOpen} color="bg-green-100 text-green-600" />
+        <StatCard label="Certificates"       value={stats.certificatesEarned} icon={Award}   color="bg-purple-100 text-purple-600" />
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 rounded-lg bg-amber-100 text-amber-600">
+              <TrendingUp className="h-5 w-5" />
+            </div>
+            <span className="text-xs font-medium text-gray-400">{seatPct}% used</span>
+          </div>
+          <div className="text-2xl font-bold text-gray-900">
+            {stats.totalEmployees} / {stats.maxSeats}
+          </div>
+          <div className="text-sm text-gray-500 mb-2">Seats Used</div>
+          <div className="w-full bg-gray-100 rounded-full h-1.5">
+            <div
+              className={`h-1.5 rounded-full transition-all ${seatPct >= 90 ? "bg-red-500" : "bg-amber-500"}`}
+              style={{ width: `${seatPct}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Module hub grid */}
+      <div>
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">
+          Modules
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <ModuleCard href="/corporate/employees"   icon={Users}        label="Team"         description="Manage employees and seat assignments"           color="bg-blue-100 text-blue-600"   badge={stats.totalEmployees} />
+          <ModuleCard href="/corporate/enrollments" icon={BookOpen}     label="Enrollments"  description="Track course enrollments and progress"          color="bg-green-100 text-green-600"  badge={stats.activeEnrollments} />
+          <ModuleCard href="/corporate/trainers"    icon={GraduationCap} label="Trainers"    description="View and manage assigned trainers"              color="bg-indigo-100 text-indigo-600" />
+          <ModuleCard href="/corporate/tasks"       icon={CheckSquare}  label="Tasks"        description="Assign and track team tasks with deadlines"     color="bg-orange-100 text-orange-600" />
+          <ModuleCard href="/corporate/calendar"    icon={CalendarDays} label="Calendar"     description="Sessions, deadlines, and team events"           color="bg-cyan-100 text-cyan-600" />
+          <ModuleCard href="/corporate/reports"     icon={BarChart3}    label="Reports"      description="Analytics, completion rates, and exports"       color="bg-purple-100 text-purple-600" />
+          <ModuleCard href="/corporate/ai-tools"    icon={Sparkles}     label="AI Tools"     description="Summarize, grammar check, and quiz generation"  color="bg-pink-100 text-pink-600" />
+          <ModuleCard href="/corporate/files"       icon={FolderOpen}   label="Files"        description="Manage documents and training materials"        color="bg-yellow-100 text-yellow-600" />
+          <ModuleCard href="/corporate/website"     icon={Globe}        label="Website"      description="Customize your public portal and branding"      color="bg-teal-100 text-teal-600" />
+          <ModuleCard href="/corporate/settings"    icon={Settings}     label="Settings"     description="Organization details, billing, and branding"    color="bg-gray-100 text-gray-600" />
+        </div>
       </div>
 
       {/* Recent enrollments */}
       <div className="bg-white rounded-xl border border-gray-200">
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-200">
-          <ClipboardList className="h-5 w-5 text-gray-500" />
-          <h2 className="font-semibold text-gray-900">Recent Enrollments</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-gray-500" />
+            <h2 className="font-semibold text-gray-900">Recent Enrollments</h2>
+          </div>
+          <Link href="/corporate/enrollments" className="text-xs text-blue-600 hover:underline">
+            View all →
+          </Link>
         </div>
 
         {stats.recentEnrollments.length === 0 ? (
@@ -146,16 +233,13 @@ export function CorporateDashboard({
         ) : (
           <div className="divide-y divide-gray-100">
             {stats.recentEnrollments.map((enrollment) => (
-              <div
-                key={enrollment.id}
-                className="flex items-center justify-between px-5 py-3"
-              >
+              <div key={enrollment.id} className="flex items-center justify-between px-5 py-3">
                 <div>
                   <div className="text-sm font-medium text-gray-900">
                     {enrollment.student?.name ?? "Unknown"}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {enrollment.course.title} \u2022 {enrollment.courseTier}
+                    {enrollment.course.title} · {enrollment.courseTier}
                   </div>
                 </div>
                 <StatusBadge status={enrollment.status} />
