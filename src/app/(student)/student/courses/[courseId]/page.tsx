@@ -14,6 +14,7 @@ import { COURSE_TIER_LABELS, COURSE_TIER_COLORS } from "@/lib/constants/course-t
 import type { CourseTier } from "@prisma/client";
 import Link from "next/link";
 import { CourseAttendanceButtons } from "@/components/student/CourseAttendanceButtons";
+import { CheckCircle2, Clock, BookOpen } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,6 @@ export default async function CourseOverviewPage({
 
   const { courseId } = await params;
 
-  // Fetch student's enrolled tier
   const student = await prisma.student.findUnique({
     where: { id: studentId },
     select: { courseTier: true },
@@ -51,78 +51,107 @@ export default async function CourseOverviewPage({
   if (!course) redirect("/student/dashboard");
   const completedSet = new Set(completedIds);
 
-  const tierColors = studentTier ? COURSE_TIER_COLORS[studentTier] : null;
   const tierLabel = studentTier ? COURSE_TIER_LABELS[studentTier] : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 max-w-3xl">
+
+      {/* Title */}
       <div>
-        <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
-          {tierLabel && tierColors && (
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${tierColors.bg} ${tierColors.text}`}
-            >
+        <div className="flex items-center gap-3 mb-1 flex-wrap">
+          <h1 className="text-xl font-bold text-ds-text">{course.title}</h1>
+          {tierLabel && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-900/40 text-blue-300 border border-blue-800">
               {tierLabel} Tier
             </span>
           )}
         </div>
-        <p className="text-gray-500 text-sm mt-1">{course.description}</p>
+        <p className="text-ds-muted text-sm mt-1 leading-relaxed">{course.description}</p>
       </div>
 
       {/* Attendance */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-gray-900">Attendance</h2>
-        </div>
+      <div className="bg-ds-card rounded-xl border border-ds-border p-5">
+        <h2 className="font-semibold text-ds-text mb-3">Attendance</h2>
         <CourseAttendanceButtons courseId={courseId} />
       </div>
 
-      {/* Progress Bar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      {/* Progress */}
+      <div className="bg-ds-card rounded-xl border border-ds-border p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-600">Progress</span>
-          <span className="text-sm font-bold text-blue-600">{progress.percent}%</span>
+          <span className="text-sm font-medium text-ds-muted">Progress</span>
+          <span className="text-sm font-bold text-ds-primary">{progress.percent}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div className="bg-blue-600 h-3 rounded-full transition-all" style={{ width: `${progress.percent}%` }} />
+        <div className="w-full bg-ds-surface rounded-full h-2">
+          <div
+            className="bg-ds-primary h-2 rounded-full transition-all"
+            style={{ width: `${progress.percent}%` }}
+          />
         </div>
-        <p className="text-xs text-gray-500 mt-1">{progress.completed} of {progress.total} lessons completed</p>
+        <p className="text-xs text-ds-muted mt-2">
+          {progress.completed} of {progress.total} lessons completed
+        </p>
       </div>
 
       {/* Lessons */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Lessons</h2>
+      <div className="bg-ds-card rounded-xl border border-ds-border p-5">
+        <h2 className="font-semibold text-ds-text mb-4 flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-ds-primary" />
+          Lessons
+        </h2>
         {lessons.length === 0 ? (
-          <p className="text-gray-400 text-sm">No lessons published yet.</p>
+          <p className="text-ds-muted text-sm">No lessons published yet.</p>
         ) : (
           <div className="space-y-2">
-            {lessons.map((lesson, idx) => (
-              <Link key={lesson.id} href={`/student/courses/${courseId}/lessons/${lesson.id}`}
-                className="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-300 hover:bg-blue-50 transition">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${completedSet.has(lesson.id) ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
-                  {completedSet.has(lesson.id) ? "\u2713" : idx + 1}
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-800">{lesson.title}</div>
-                  {lesson.durationMin > 0 && <div className="text-xs text-gray-400">{lesson.durationMin} min</div>}
-                </div>
-              </Link>
-            ))}
+            {lessons.map((lesson, idx) => {
+              const done = completedSet.has(lesson.id);
+              return (
+                <Link
+                  key={lesson.id}
+                  href={`/student/courses/${courseId}/lessons/${lesson.id}`}
+                  className="flex items-center gap-3 p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-surface/50 transition-all group"
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                    done
+                      ? "bg-emerald-900/40 text-emerald-400"
+                      : "bg-ds-surface text-ds-muted"
+                  }`}>
+                    {done ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-ds-text group-hover:text-blue-300 transition-colors truncate">
+                      {lesson.title}
+                    </div>
+                    {lesson.durationMin > 0 && (
+                      <div className="text-xs text-ds-muted flex items-center gap-1 mt-0.5">
+                        <Clock className="h-3 w-3" />{lesson.durationMin} min
+                      </div>
+                    )}
+                  </div>
+                  {done && (
+                    <span className="text-xs text-emerald-400 font-medium shrink-0">Done</span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
 
       {/* Quizzes */}
       {quizzes.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Quizzes</h2>
+        <div className="bg-ds-card rounded-xl border border-ds-border p-5">
+          <h2 className="font-semibold text-ds-text mb-3">Quizzes</h2>
           <div className="space-y-2">
             {quizzes.map((quiz) => (
-              <Link key={quiz.id} href={`/student/courses/${courseId}/quizzes/${quiz.id}`}
-                className="flex items-center justify-between p-3 border rounded-lg hover:border-blue-300 transition">
-                <span className="text-sm font-medium">{quiz.title}</span>
-                <span className="text-xs text-gray-400">{quiz._count.questions} questions</span>
+              <Link
+                key={quiz.id}
+                href={`/student/courses/${courseId}/quizzes/${quiz.id}`}
+                className="flex items-center justify-between p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-surface/50 transition-all group"
+              >
+                <span className="text-sm font-medium text-ds-text group-hover:text-blue-300 transition-colors">
+                  {quiz.title}
+                </span>
+                <span className="text-xs text-ds-muted">{quiz._count.questions} questions</span>
               </Link>
             ))}
           </div>

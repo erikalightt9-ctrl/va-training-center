@@ -116,8 +116,8 @@ export function CourseAttendanceButtons({
   /* Render states */
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-gray-400">
-        <Loader2 className="h-4 w-4 animate-spin" />
+      <div className="flex items-center gap-2 text-sm text-ds-muted">
+        <Loader2 className="h-4 w-4 animate-spin text-ds-primary" />
         Loading attendance…
       </div>
     );
@@ -130,18 +130,15 @@ export function CourseAttendanceButtons({
     <div className="flex items-center gap-3 flex-wrap">
       {/* Status indicator */}
       {isClockedIn && session ? (
-        <div className="flex items-center gap-1.5 text-sm text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <div className="flex items-center gap-1.5 text-sm text-emerald-400 bg-emerald-900/30 border border-emerald-800 px-3 py-1.5 rounded-xl">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <Clock className="h-3.5 w-3.5" />
-          {/* tick referenced to trigger re-render */}
-          <span className="tabular-nums">
-            {formatElapsed(session.clockIn)}
-          </span>
-          <span className="text-green-600 opacity-0 select-none">{tick}</span>
+          <span className="tabular-nums">{formatElapsed(session.clockIn)}</span>
+          <span className="opacity-0 select-none">{tick}</span>
         </div>
       ) : (
-        <div className="flex items-center gap-1.5 text-sm text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg">
-          <span className="w-2 h-2 rounded-full bg-gray-300" />
+        <div className="flex items-center gap-1.5 text-sm text-ds-muted bg-ds-surface border border-ds-border px-3 py-1.5 rounded-xl">
+          <span className="w-2 h-2 rounded-full bg-ds-muted/40" />
           Not clocked in
         </div>
       )}
@@ -151,7 +148,7 @@ export function CourseAttendanceButtons({
         <button
           onClick={() => handleAction("clock-out")}
           disabled={actionLoading}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-sm font-medium bg-red-900/30 text-red-400 border border-red-800 hover:bg-red-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {actionLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -164,7 +161,7 @@ export function CourseAttendanceButtons({
         <button
           onClick={() => handleAction("clock-in")}
           disabled={actionLoading}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-sm font-medium bg-blue-900/30 text-blue-300 border border-blue-800 hover:bg-blue-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {actionLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -177,7 +174,7 @@ export function CourseAttendanceButtons({
 
       {/* Error message */}
       {error && (
-        <p className="text-xs text-red-600 w-full">{error}</p>
+        <p className="text-xs text-red-400 w-full">{error}</p>
       )}
     </div>
   );

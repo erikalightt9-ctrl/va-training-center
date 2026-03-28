@@ -1,6 +1,6 @@
 import { getQuizzesByCourse } from "@/lib/repositories/quiz.repository";
 import Link from "next/link";
-import { Clock } from "lucide-react";
+import { Clock, HelpCircle } from "lucide-react";
 import { QuizLeaderboard } from "@/components/student/QuizLeaderboard";
 
 export const dynamic = "force-dynamic";
@@ -16,25 +16,26 @@ export default async function QuizListPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Quizzes</h1>
-        <p className="text-gray-500 text-sm mt-1">Test your knowledge</p>
+        <h1 className="text-xl font-bold text-ds-text">Quizzes</h1>
+        <p className="text-ds-muted text-sm mt-0.5">Test your knowledge</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quiz list */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-3">
           {quizzes.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400">
-              No quizzes available yet.
+            <div className="bg-ds-card rounded-xl border border-ds-border p-10 text-center">
+              <HelpCircle className="h-10 w-10 text-ds-muted/30 mx-auto mb-3" />
+              <p className="text-ds-muted text-sm">No quizzes available yet.</p>
             </div>
           ) : (
             quizzes.map((quiz) => (
-              <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="font-semibold text-gray-800 text-lg">{quiz.title}</h2>
+              <div key={quiz.id} className="bg-ds-card rounded-xl border border-ds-border p-5">
+                <h2 className="font-semibold text-ds-text text-base">{quiz.title}</h2>
                 {quiz.description && (
-                  <p className="text-gray-500 text-sm mt-1">{quiz.description}</p>
+                  <p className="text-ds-muted text-sm mt-1">{quiz.description}</p>
                 )}
-                <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
+                <div className="mt-3 flex items-center gap-4 text-sm text-ds-muted">
                   <span>{quiz._count.questions} questions</span>
                   <span>Pass: {quiz.passingScore}%</span>
                   {(quiz as { duration?: number | null }).duration && (
@@ -46,7 +47,7 @@ export default async function QuizListPage({
                 </div>
                 <Link
                   href={`/student/courses/${courseId}/quizzes/${quiz.id}`}
-                  className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+                  className="mt-4 inline-block bg-ds-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   Take Quiz
                 </Link>
