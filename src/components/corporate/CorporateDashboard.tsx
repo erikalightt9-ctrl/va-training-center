@@ -15,8 +15,11 @@ import {
   FolderOpen,
   Globe,
   Settings,
-  ArrowRight,
+  MessageSquare,
+  Bell,
+  Headphones,
 } from "lucide-react";
+import { FeatureCard } from "@/components/corporate/FeatureCard";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -96,52 +99,8 @@ function StatusBadge({ status }: { readonly status: string }) {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-// ---------------------------------------------------------------------------
-// Module hub card
-// ---------------------------------------------------------------------------
-
-function ModuleCard({
-  href,
-  icon: Icon,
-  label,
-  description,
-  color,
-  badge,
-}: {
-  readonly href: string;
-  readonly icon: React.ComponentType<{ className?: string }>;
-  readonly label: string;
-  readonly description: string;
-  readonly color: string;
-  readonly badge?: string | number;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group bg-white rounded-xl border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md hover:border-blue-200 transition-all"
-    >
-      <div className="flex items-start justify-between">
-        <div className={`p-2.5 rounded-xl ${color}`}>
-          <Icon className="h-5 w-5" />
-        </div>
-        {badge !== undefined && (
-          <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-            {badge}
-          </span>
-        )}
-      </div>
-      <div>
-        <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-          {label}
-        </p>
-        <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>
-      </div>
-      <div className="flex items-center gap-1 text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
-        Open <ArrowRight className="h-3 w-3" />
-      </div>
-    </Link>
-  );
-}
+// ModuleCard is replaced by the state-aware FeatureCard component.
+// FeatureCard is imported from @/components/corporate/FeatureCard.
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -201,17 +160,23 @@ export function CorporateDashboard({
           Modules
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          <ModuleCard href="/corporate/employees"   icon={Users}        label="Team"         description="Manage employees and seat assignments"           color="bg-blue-100 text-blue-600"   badge={stats.totalEmployees} />
-          <ModuleCard href="/corporate/courses"     icon={BookOpen}     label="Courses"      description="Browse and assign courses to your team"         color="bg-emerald-100 text-emerald-600" />
-          <ModuleCard href="/corporate/enrollments" icon={ClipboardList} label="Enrollments" description="Track course enrollments and progress"          color="bg-green-100 text-green-600"  badge={stats.activeEnrollments} />
-          <ModuleCard href="/corporate/trainers"    icon={GraduationCap} label="Trainers"    description="View and manage assigned trainers"              color="bg-indigo-100 text-indigo-600" />
-          <ModuleCard href="/corporate/tasks"       icon={CheckSquare}  label="Tasks"        description="Assign and track team tasks with deadlines"     color="bg-orange-100 text-orange-600" />
-          <ModuleCard href="/corporate/calendar"    icon={CalendarDays} label="Calendar"     description="Sessions, deadlines, and team events"           color="bg-cyan-100 text-cyan-600" />
-          <ModuleCard href="/corporate/reports"     icon={BarChart3}    label="Reports"      description="Analytics, completion rates, and exports"       color="bg-purple-100 text-purple-600" />
-          <ModuleCard href="/corporate/ai-tools"    icon={Sparkles}     label="AI Tools"     description="Summarize, grammar check, and quiz generation"  color="bg-pink-100 text-pink-600" />
-          <ModuleCard href="/corporate/files"       icon={FolderOpen}   label="Files"        description="Manage documents and training materials"        color="bg-yellow-100 text-yellow-600" />
-          <ModuleCard href="/corporate/website"     icon={Globe}        label="Website"      description="Customize your public portal and branding"      color="bg-teal-100 text-teal-600" />
-          <ModuleCard href="/corporate/settings"    icon={Settings}     label="Settings"     description="Organization details, billing, and branding"    color="bg-gray-100 text-gray-600" />
+          {/* ── Core (live) ──────────────────────────────────────────── */}
+          <FeatureCard href="/corporate/employees"    icon={Users}         label="Team"          description="Manage employees and seat assignments"          color="bg-blue-100 text-blue-600"    badge={stats.totalEmployees} />
+          <FeatureCard href="/corporate/courses"      icon={BookOpen}      label="Courses"       description="Browse and assign courses to your team"         color="bg-emerald-100 text-emerald-600" />
+          <FeatureCard href="/corporate/enrollments"  icon={ClipboardList} label="Enrollments"   description="Track course enrollments and progress"          color="bg-green-100 text-green-600"   badge={stats.activeEnrollments} />
+          <FeatureCard href="/corporate/tasks"        icon={CheckSquare}   label="Tasks"         description="Assign and track team tasks with deadlines"     color="bg-orange-100 text-orange-600" />
+          <FeatureCard href="/corporate/settings"     icon={Settings}      label="Settings"      description="Organization details, billing, and branding"    color="bg-gray-100 text-gray-600" />
+          {/* ── Secondary (beta) ─────────────────────────────────────── */}
+          <FeatureCard href="/corporate/trainers"     icon={GraduationCap} label="Trainers"      description="View and manage assigned trainers"              color="bg-indigo-100 text-indigo-600" />
+          <FeatureCard href="/corporate/calendar"     icon={CalendarDays}  label="Calendar"      description="Sessions, deadlines, and team events"           color="bg-cyan-100 text-cyan-600" />
+          <FeatureCard href="/corporate/reports"      icon={BarChart3}     label="Reports"       description="Analytics, completion rates, and exports"       color="bg-purple-100 text-purple-600" />
+          {/* ── Advanced (planned / coming soon) ─────────────────────── */}
+          <FeatureCard href="/corporate/ai-tools"     icon={Sparkles}      label="AI Tools"      description="Summarize, grammar check, and quiz generation"  color="bg-pink-100 text-pink-600" />
+          <FeatureCard href="/corporate/files"        icon={FolderOpen}    label="Files"         description="Manage documents and training materials"        color="bg-yellow-100 text-yellow-600" />
+          <FeatureCard href="/corporate/website"      icon={Globe}         label="Website"       description="Customize your public portal and branding"      color="bg-teal-100 text-teal-600" />
+          <FeatureCard href="/corporate/messages"     icon={MessageSquare} label="Messages"      description="Internal messaging between team members"        color="bg-violet-100 text-violet-600" />
+          <FeatureCard href="/corporate/announcements" icon={Bell}         label="Announcements" description="Broadcast updates to your entire organization"  color="bg-rose-100 text-rose-600" />
+          <FeatureCard href="/corporate/support"      icon={Headphones}    label="Support"       description="Submit and track support requests"              color="bg-sky-100 text-sky-600" />
         </div>
       </div>
 

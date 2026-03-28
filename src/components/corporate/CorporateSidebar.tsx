@@ -20,9 +20,12 @@ import {
   Bell,
   Headphones,
   BookOpen,
+  Lock,
+  FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { getModuleState } from "@/lib/feature-states";
 
 /* ------------------------------------------------------------------ */
 /*  Navigation items                                                   */
@@ -96,6 +99,44 @@ export function CorporateSidebar() {
       <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
           const active = isActive(item);
+          const state = getModuleState(item.href);
+
+          // Planned items: non-clickable, muted, lock icon
+          if (state === "planned") {
+            return (
+              <div
+                key={item.href}
+                title="Coming soon"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 cursor-not-allowed select-none"
+              >
+                <item.icon className="h-4 w-4 shrink-0 opacity-50" />
+                <span className="flex-1 opacity-50">{item.label}</span>
+                <Lock className="h-3 w-3 opacity-40" />
+              </div>
+            );
+          }
+
+          // Beta items: clickable with small amber badge
+          if (state === "beta") {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  active
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                )}
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                <FlaskConical className="h-3 w-3 opacity-60 text-amber-400" />
+              </Link>
+            );
+          }
+
+          // Live items: normal
           return (
             <Link
               key={item.href}
