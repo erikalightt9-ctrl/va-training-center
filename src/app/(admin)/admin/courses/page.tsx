@@ -1,37 +1,79 @@
 import type { Metadata } from "next";
-export const dynamic = "force-dynamic";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { CourseManager } from "@/components/admin/CourseManager";
-import { BookOpen } from "lucide-react";
+import {
+  BookOpen,
+  FileText,
+  CalendarClock,
+  ClipboardList,
+  UserCog,
+  PlusCircle,
+} from "lucide-react";
+import { authOptions } from "@/lib/auth";
+import { ModuleDashboard } from "@/components/shared/ModuleDashboard";
+import type { DashboardCardProps } from "@/components/shared/DashboardCard";
 
 export const metadata: Metadata = { title: "Courses | HUMI Admin" };
 
-export default async function CoursesPage() {
+const COURSES_CARDS: ReadonlyArray<Omit<DashboardCardProps, "currentRole">> = [
+  {
+    href: "/admin/courses/list",
+    label: "All Courses",
+    description: "View, edit, and manage every course in the platform.",
+    icon: BookOpen,
+    colorClass: "bg-blue-100 text-blue-700",
+  },
+  {
+    href: "/admin/courses/create",
+    label: "Create Course",
+    description: "Add a new course and configure its tiers and content.",
+    icon: PlusCircle,
+    colorClass: "bg-green-100 text-green-700",
+  },
+  {
+    href: "/admin/lessons",
+    label: "Lessons",
+    description: "Manage all lessons and lesson content across courses.",
+    icon: FileText,
+    colorClass: "bg-purple-100 text-purple-700",
+  },
+  {
+    href: "/admin/schedules",
+    label: "Training Schedule",
+    description: "Set up and view batch training schedules and cohorts.",
+    icon: CalendarClock,
+    colorClass: "bg-orange-100 text-orange-700",
+  },
+  {
+    href: "/admin/assignments",
+    label: "Assignments",
+    description: "Create and review assignments for all courses.",
+    icon: ClipboardList,
+    colorClass: "bg-yellow-100 text-yellow-700",
+  },
+  {
+    href: "/admin/trainers",
+    label: "Trainers",
+    description: "Manage trainers and their course assignments.",
+    icon: UserCog,
+    colorClass: "bg-teal-100 text-teal-700",
+  },
+];
+
+export default async function CoursesHubPage() {
   const session = await getServerSession(authOptions);
   if (!session || (session.user as { role?: string })?.role !== "admin") {
     redirect("/portal?tab=admin");
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-blue-100 rounded-lg p-2">
-            <BookOpen className="h-5 w-5 text-blue-700" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Course Management
-            </h1>
-            <p className="text-sm text-gray-500">
-              Create, customize, update, or delete courses
-            </p>
-          </div>
-        </div>
-      </div>
-      <CourseManager />
-    </div>
+    <ModuleDashboard
+      title="Courses"
+      description="Manage course content, schedules, lessons, assignments, and trainers."
+      icon={BookOpen}
+      iconColorClass="bg-blue-100 text-blue-700"
+      cards={COURSES_CARDS}
+      currentRole="admin"
+    />
   );
 }

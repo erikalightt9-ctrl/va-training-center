@@ -1,69 +1,65 @@
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Users } from "lucide-react";
+import {
+  Users,
+  ClipboardCheck,
+  Mail,
+  TrendingUp,
+} from "lucide-react";
 import { authOptions } from "@/lib/auth";
-import { getTrainerStudents } from "@/lib/repositories/trainer.repository";
-import { StudentProgressTable } from "@/components/trainer/StudentProgressTable";
+import { ModuleDashboard } from "@/components/shared/ModuleDashboard";
+import type { DashboardCardProps } from "@/components/shared/DashboardCard";
 
-export const metadata: Metadata = {
-  title: "My Students | HUMI Trainer Portal",
-};
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Students | HUMI Trainer Portal" };
 
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
+const STUDENTS_CARDS: ReadonlyArray<Omit<DashboardCardProps, "currentRole">> = [
+  {
+    href: "/trainer/students/list",
+    label: "My Students",
+    description: "View all students assigned to your training batches.",
+    icon: Users,
+    colorClass: "bg-blue-100 text-blue-700",
+  },
+  {
+    href: "/trainer/submissions",
+    label: "Grading Queue",
+    description: "Review and grade student assignment submissions.",
+    icon: ClipboardCheck,
+    colorClass: "bg-green-100 text-green-700",
+  },
+  {
+    href: "/trainer/messages",
+    label: "Messages",
+    description: "Send and receive messages with your students.",
+    icon: Mail,
+    colorClass: "bg-purple-100 text-purple-700",
+  },
+  {
+    href: "/trainer/engagement",
+    label: "Progress",
+    description: "Track student progress and learning engagement.",
+    icon: TrendingUp,
+    colorClass: "bg-orange-100 text-orange-700",
+  },
+];
 
-export default async function TrainerStudentsPage() {
+export default async function TrainerStudentsHubPage() {
   const session = await getServerSession(authOptions);
-  const user = session?.user as
-    | (typeof session & { user: { id: string; role: string } })["user"]
-    | undefined;
+  const user = session?.user as { id: string; role: string } | undefined;
 
   if (!user || user.role !== "trainer") {
     redirect("/trainer/login");
   }
 
-  const students = await getTrainerStudents(user.id);
-
-  // Serialize for client component
-  const serialized = students.map((student) => ({
-    id: student.id,
-    name: student.name,
-    email: student.enrollment?.email ?? student.email,
-    fullName: student.enrollment?.fullName ?? student.name,
-    courseTitle: student.enrollment?.course?.title ?? "N/A",
-    completionCount: student._count.completions,
-    submissionCount: student._count.submissions,
-  }));
-
   return (
-    <>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">My Students</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Students assigned to your training batches. Click a row to view
-          detailed progress.
-        </p>
-      </div>
-
-      {serialized.length > 0 ? (
-        <StudentProgressTable students={serialized} />
-      ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Users className="h-8 w-8 text-blue-600" />
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            No Students Yet
-          </h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
-            You do not have any students assigned to you yet. Students will
-            appear here once they are enrolled in your training batches.
-          </p>
-        </div>
-      )}
-    </>
+    <ModuleDashboard
+      title="Students"
+      description="Manage your students, grade submissions, and track learning progress."
+      icon={Users}
+      iconColorClass="bg-blue-100 text-blue-700"
+      cards={STUDENTS_CARDS}
+      currentRole="trainer"
+    />
   );
 }
