@@ -55,6 +55,17 @@ export const authOptions: NextAuthOptions = {
 
         const student = await prisma.student.findUnique({
           where: { email: credentials.email.toLowerCase() },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            passwordHash: true,
+            accessGranted: true,
+            accessExpiry: true,
+            mustChangePassword: true,
+            organizationId: true,
+            createdAt: true,
+          },
         });
 
         if (!student) {
@@ -75,6 +86,49 @@ export const authOptions: NextAuthOptions = {
         // Access control: check if access has expired
         if (student.accessExpiry && new Date(student.accessExpiry) < new Date()) {
           throw new Error("Your access has expired. Please contact admin to renew.");
+        }
+
+        // Seat enforcement: verify the organization is still active and within plan limits
+        if (student.organizationId) {
+          const org = await prisma.organization.findUnique({
+            where: { id: student.organizationId },
+            select: { isActive: true, maxSeats: true, planExpiresAt: true },
+          });
+
+          if (!org?.isActive) {
+            throw new Error(
+              "Your organization account has been suspended. Please contact your administrator.",
+            );
+          }
+
+          if (org.planExpiresAt && new Date(org.planExpiresAt) < new Date()) {
+            throw new Error(
+              "Your organization's subscription has expired. Please contact your administrator.",
+            );
+          }
+
+          // If org has exceeded its seat limit (e.g. after a plan downgrade),
+          // count active students. Students are ordered by creation date — those
+          // added first retain access; latecomers are blocked.
+          const activeStudentCount = await prisma.student.count({
+            where: { organizationId: student.organizationId, accessGranted: true },
+          });
+
+          if (activeStudentCount > org.maxSeats) {
+            // Check if this student is within the allowed seat window
+            const rank = await prisma.student.count({
+              where: {
+                organizationId: student.organizationId,
+                accessGranted: true,
+                createdAt: { lte: student.createdAt },
+              },
+            });
+            if (rank > org.maxSeats) {
+              throw new Error(
+                "Your organization's seat limit has been reached. Please contact your administrator to upgrade your plan.",
+              );
+            }
+          }
         }
 
         return {

@@ -14,6 +14,7 @@ import {
   LogOut,
   Building2,
   Loader2,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ const PRIMARY_NAV: ReadonlyArray<PrimaryNavItem> = [
   { href: "/corporate/employees",   label: "Employees",   icon: Users },
   { href: "/corporate/enrollments", label: "Enrollments", icon: ClipboardList },
   { href: "/corporate/analytics",   label: "Analytics",   icon: BarChart3 },
+  { href: "/corporate/website",     label: "Website",     icon: Globe },
   { href: "/corporate/settings",    label: "Settings",    icon: Settings },
 ];
 
