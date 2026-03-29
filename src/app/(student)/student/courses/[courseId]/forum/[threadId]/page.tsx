@@ -75,7 +75,7 @@ export default function ThreadViewPage({
   return (
     <div className="space-y-6">
       <div>
-        <Link href={`/student/courses/${courseId}/forum`} className="text-blue-600 hover:text-blue-800 text-sm">
+        <Link href={`/student/courses/${courseId}/forum`} className="text-blue-700 hover:text-blue-800 text-sm">
           &larr; Back to Forum
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mt-2">{thread.title}</h1>
@@ -84,7 +84,7 @@ export default function ThreadViewPage({
       {thread.posts.map((post) => (
         <div key={post.id} className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-sm">
+            <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 font-bold text-sm">
               {post.student.name[0]}
             </div>
             <div>

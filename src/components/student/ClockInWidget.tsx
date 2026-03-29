@@ -173,7 +173,7 @@ export function ClockInWidget() {
       {/* Right: Action */}
       <div className="flex items-center gap-3">
         {error && (
-          <span className="text-xs text-red-600">{error}</span>
+          <span className="text-xs text-red-700">{error}</span>
         )}
         <Button
           size="sm"

@@ -51,14 +51,14 @@ export default async function SchedulesPage({ searchParams }: PageProps) {
           title="Active Batches"
           value={stats.totalActive}
           icon={CalendarClock}
-          colorClass="text-blue-600 bg-blue-100"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="Open + Full"
         />
         <AnalyticsCard
           title="Students Enrolled"
           value={stats.totalStudents}
           icon={Users}
-          colorClass="text-indigo-600 bg-indigo-100"
+          colorClass="text-indigo-700 bg-indigo-50"
           subtitle="Assigned"
         />
         <AnalyticsCard
@@ -72,7 +72,7 @@ export default async function SchedulesPage({ searchParams }: PageProps) {
           title="Upcoming Starts"
           value={stats.upcomingStarts}
           icon={Clock}
-          colorClass="text-amber-600 bg-amber-100"
+          colorClass="text-amber-600 bg-amber-50"
           subtitle="Within 7 days"
         />
         <AnalyticsCard
@@ -86,7 +86,7 @@ export default async function SchedulesPage({ searchParams }: PageProps) {
           title="Seat Utilization"
           value={`${stats.seatUtilizationPct}%`}
           icon={BarChart2}
-          colorClass="text-violet-600 bg-violet-100"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="Active batches"
         />
       </div>

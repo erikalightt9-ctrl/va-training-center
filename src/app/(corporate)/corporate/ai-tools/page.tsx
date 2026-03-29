@@ -95,7 +95,7 @@ function SummarizeTool() {
       </button>
 
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-3">
+        <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 rounded-lg p-3">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           {error}
         </div>
@@ -167,7 +167,7 @@ function GrammarTool() {
       </button>
 
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-3">
+        <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 rounded-lg p-3">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           {error}
         </div>
@@ -270,7 +270,7 @@ function QuizTool() {
       </button>
 
       {error && (
-        <div className="flex items-start gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-3">
+        <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 rounded-lg p-3">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           {error}
         </div>
@@ -350,7 +350,7 @@ export default function CorporateAiToolsPage() {
           ))}
 
           {/* AI badge */}
-          <div className="flex items-center gap-2 mt-4 px-3 py-2 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-100">
+          <div className="flex items-center gap-2 mt-4 px-3 py-2 bg-gradient-to-r from-pink-50 to-blue-50 rounded-xl border border-pink-100">
             <Sparkles className="h-3.5 w-3.5 text-pink-500 shrink-0" />
             <p className="text-xs text-gray-500">Powered by AI — results may vary</p>
           </div>

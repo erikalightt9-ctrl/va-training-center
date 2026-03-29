@@ -214,7 +214,7 @@ export function JobMatchBoard() {
             >
               <div>
                 <h3 className="text-base font-semibold text-gray-900">{job.title}</h3>
-                <p className="text-sm font-medium text-blue-600 mt-0.5">{job.company}</p>
+                <p className="text-sm font-medium text-blue-700 mt-0.5">{job.company}</p>
               </div>
 
               <div className="flex flex-wrap gap-3 text-xs text-gray-500">
@@ -235,7 +235,7 @@ export function JobMatchBoard() {
                   {job.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="inline-block rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs px-2.5 py-0.5 font-medium"
+                      className="inline-block rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs px-2.5 py-0.5 font-medium"
                     >
                       {skill}
                     </span>

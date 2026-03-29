@@ -122,12 +122,12 @@ export function VerifyForm() {
         {state.status === "not-found" && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-6">
             <div className="flex items-center gap-3">
-              <div className="bg-red-100 rounded-full p-2">
+              <div className="bg-red-900/40 rounded-full p-2">
                 <XCircle className="h-6 w-6 text-red-500" />
               </div>
               <div>
                 <h3 className="font-bold text-red-800">Certificate Not Found</h3>
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-red-400">
                   No certificate matches this number. Please double-check and try again.
                 </p>
               </div>

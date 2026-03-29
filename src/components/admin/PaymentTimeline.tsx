@@ -156,9 +156,9 @@ export function PaymentTimeline({
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       step.highlight === "amber"
-                        ? "bg-amber-100 text-amber-700"
+                        ? "bg-amber-50 text-amber-700"
                         : step.highlight === "red"
-                          ? "bg-red-100 text-red-700"
+                          ? "bg-red-50 text-red-700"
                           : "bg-green-100 text-green-700"
                     }`}
                   >
@@ -178,7 +178,7 @@ export function PaymentTimeline({
                   <p
                     className={`text-xs mt-0.5 font-mono ${
                       step.highlight === "amber"
-                        ? "text-amber-700 font-bold"
+                        ? "text-amber-600 font-bold"
                         : "text-gray-500"
                     }`}
                   >

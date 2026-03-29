@@ -245,7 +245,7 @@ export function AIInterviewSimulator() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -262,11 +262,11 @@ export function AIInterviewSimulator() {
           {roles.map((role) => (
             <div
               key={role.id}
-              className="bg-white rounded-xl border border-gray-200 p-5 hover:border-purple-300 transition-colors"
+              className="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 transition-colors"
             >
               <div className="flex items-start gap-3 mb-3">
-                <div className="bg-purple-50 rounded-lg p-2 mt-0.5">
-                  <Briefcase className="h-4 w-4 text-purple-600" />
+                <div className="bg-blue-50 rounded-lg p-2 mt-0.5">
+                  <Briefcase className="h-4 w-4 text-blue-700" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">
@@ -379,9 +379,9 @@ export function AIInterviewSimulator() {
                   key={i}
                   className={`h-2.5 w-2.5 rounded-full transition-colors ${
                     isAnswered
-                      ? "bg-purple-600"
+                      ? "bg-blue-600"
                       : isCurrent
-                        ? "bg-purple-300 animate-pulse"
+                        ? "bg-blue-300 animate-pulse"
                         : "bg-gray-200"
                   }`}
                 />
@@ -396,8 +396,8 @@ export function AIInterviewSimulator() {
           {activeSession.questions.slice(0, -1).map((q, i) => (
             <div key={i} className="space-y-2 pb-4 border-b border-gray-100">
               <div className="flex items-start gap-2">
-                <div className="bg-purple-50 rounded-full p-1 mt-0.5">
-                  <Briefcase className="h-3 w-3 text-purple-600" />
+                <div className="bg-blue-50 rounded-full p-1 mt-0.5">
+                  <Briefcase className="h-3 w-3 text-blue-700" />
                 </div>
                 <p className="text-sm text-gray-800 font-medium">
                   Q{i + 1}: {q.question}
@@ -410,7 +410,7 @@ export function AIInterviewSimulator() {
                 </div>
               )}
               {q.aiFollowUp && (
-                <p className="text-xs text-purple-600 ml-6 italic">
+                <p className="text-xs text-blue-700 ml-6 italic">
                   {q.aiFollowUp}
                 </p>
               )}
@@ -426,11 +426,11 @@ export function AIInterviewSimulator() {
           {currentQuestion && currentQuestion.answer === null && (
             <div className="space-y-4">
               <div className="flex items-start gap-2">
-                <div className="bg-purple-100 rounded-full p-1.5 mt-0.5">
-                  <Briefcase className="h-3.5 w-3.5 text-purple-700" />
+                <div className="bg-blue-50 rounded-full p-1.5 mt-0.5">
+                  <Briefcase className="h-3.5 w-3.5 text-blue-700" />
                 </div>
                 <div>
-                  <p className="text-xs text-purple-600 font-medium mb-1">
+                  <p className="text-xs text-blue-700 font-medium mb-1">
                     Question {currentQuestionIndex} of 5
                   </p>
                   <p className="text-gray-900 font-medium">
@@ -445,14 +445,14 @@ export function AIInterviewSimulator() {
                 placeholder="Type your answer here... (minimum 10 characters)"
                 rows={4}
                 disabled={submitting}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 resize-none"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-blue-300 focus:ring-1 focus:ring-blue-200 resize-none"
               />
 
               <div className="flex items-center justify-between">
                 <p className="text-xs text-gray-400">
                   {answer.length} characters
                   {answer.length > 0 && answer.length < 10 && (
-                    <span className="text-red-400">
+                    <span className="text-red-700">
                       {" "}
                       (minimum 10)
                     </span>
@@ -536,7 +536,7 @@ export function AIInterviewSimulator() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           {/* Results header */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-amber-100 rounded-lg p-2">
+            <div className="bg-amber-50 rounded-lg p-2">
               <Trophy className="h-5 w-5 text-amber-600" />
             </div>
             <div>
@@ -602,11 +602,11 @@ export function AIInterviewSimulator() {
 
           {/* AI Feedback */}
           {activeSession.aiFeedback && (
-            <div className="bg-purple-50 rounded-lg p-4 border border-purple-100 mb-4">
-              <h4 className="text-sm font-semibold text-purple-900 mb-1">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 mb-4">
+              <h4 className="text-sm font-semibold text-blue-900 mb-1">
                 AI Feedback
               </h4>
-              <p className="text-sm text-purple-800 leading-relaxed">
+              <p className="text-sm text-blue-800 leading-relaxed">
                 {activeSession.aiFeedback}
               </p>
             </div>

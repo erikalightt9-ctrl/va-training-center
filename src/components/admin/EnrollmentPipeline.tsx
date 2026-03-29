@@ -32,7 +32,7 @@ export function EnrollmentPipeline({ pipeline }: EnrollmentPipelineProps) {
     {
       label: "Payment Submitted",
       count: pipeline.paymentSubmitted,
-      colorClass: "bg-amber-50 border-amber-200 text-amber-700",
+      colorClass: "bg-amber-50 border-amber-200 text-amber-600",
       href: "/admin/enrollees?status=PAYMENT_SUBMITTED",
     },
     {
@@ -44,7 +44,7 @@ export function EnrollmentPipeline({ pipeline }: EnrollmentPipelineProps) {
     {
       label: "Enrolled",
       count: pipeline.enrolled,
-      colorClass: "bg-emerald-50 border-emerald-200 text-emerald-700",
+      colorClass: "bg-emerald-50 border-emerald-200 text-emerald-600",
       href: "/admin/enrollees?status=ENROLLED",
     },
   ];

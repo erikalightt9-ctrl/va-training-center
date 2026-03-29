@@ -106,7 +106,7 @@ export function AIAssessmentCard({ submission }: AIAssessmentCardProps) {
             submission.status === "GRADED"
               ? "bg-green-100 text-green-700"
               : submission.status === "RETURNED"
-                ? "bg-yellow-100 text-yellow-700"
+                ? "bg-yellow-100 text-yellow-600"
                 : "bg-gray-100 text-gray-600"
           }`}
         >
@@ -118,7 +118,7 @@ export function AIAssessmentCard({ submission }: AIAssessmentCardProps) {
       {assessment ? (
         <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-4 w-4 text-purple-600" />
+            <Sparkles className="h-4 w-4 text-blue-700" />
             <span className="text-sm font-semibold text-gray-900">
               AI Assessment
             </span>
@@ -217,7 +217,7 @@ export function AIAssessmentCard({ submission }: AIAssessmentCardProps) {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 text-purple-700 border-purple-200 hover:bg-purple-50"
+            className="gap-1.5 text-blue-700 border-blue-200 hover:bg-blue-50"
             onClick={handleRequestReview}
             disabled={loading}
           >

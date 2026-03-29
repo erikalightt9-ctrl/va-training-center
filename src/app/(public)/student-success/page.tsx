@@ -185,7 +185,7 @@ export default async function StudentSuccessPage() {
 
                 <div className="p-6">
                   <div className="mb-4">
-                    <Quote className="h-5 w-5 text-amber-400 mb-2" />
+                    <Quote className="h-5 w-5 text-amber-600 mb-2" />
                     <p className="text-sm text-gray-600 leading-relaxed italic">
                       &ldquo;{story.quote}&rdquo;
                     </p>

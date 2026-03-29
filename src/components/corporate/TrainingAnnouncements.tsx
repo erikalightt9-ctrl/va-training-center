@@ -177,7 +177,7 @@ export function TrainingAnnouncements({ actorId }: Props) {
             <div key={ann.id} className="bg-white rounded-xl shadow p-5 space-y-2">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <Megaphone className="h-4 w-4 text-blue-600 shrink-0" />
+                  <Megaphone className="h-4 w-4 text-blue-700 shrink-0" />
                   <h3 className="font-semibold text-gray-900">
                     {ann.title ?? "Announcement"}
                   </h3>

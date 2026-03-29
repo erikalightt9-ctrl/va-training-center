@@ -1,22 +1,17 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import {
-  CheckSquare,
-  Square,
-  Plus,
-  Loader2,
-  CalendarDays,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
+  CheckSquare, Square, Plus, Loader2, CalendarDays,
+  AlertCircle, CheckCircle2, Clock, X, ArrowRight, Lock,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
+type TaskStatus   = "TODO" | "IN_PROGRESS" | "DONE";
 type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
 
 interface Task {
@@ -31,32 +26,26 @@ interface Task {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
+/*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const STATUS_COLS: ReadonlyArray<{ status: TaskStatus; label: string; color: string; icon: React.ReactNode }> = [
-  { status: "TODO",        label: "To Do",      color: "border-gray-200",  icon: <Square      className="h-4 w-4 text-gray-400" /> },
-  { status: "IN_PROGRESS", label: "In Progress", color: "border-blue-300",  icon: <Clock       className="h-4 w-4 text-blue-500" /> },
-  { status: "DONE",        label: "Done",        color: "border-green-300", icon: <CheckCircle2 className="h-4 w-4 text-green-500" /> },
+const STATUS_COLS: ReadonlyArray<{ status: TaskStatus; label: string; border: string; icon: React.ReactNode }> = [
+  { status: "TODO",        label: "To Do",      border: "border-ds-border",  icon: <Square       className="h-4 w-4 text-ds-muted" /> },
+  { status: "IN_PROGRESS", label: "In Progress", border: "border-blue-200",   icon: <Clock        className="h-4 w-4 text-blue-700" /> },
+  { status: "DONE",        label: "Done",        border: "border-emerald-200", icon: <CheckCircle2 className="h-4 w-4 text-emerald-600" /> },
 ];
 
-const PRIORITY_COLOR: Record<TaskPriority, string> = {
-  LOW:    "bg-gray-100 text-gray-500",
-  MEDIUM: "bg-yellow-100 text-yellow-700",
-  HIGH:   "bg-red-100 text-red-600",
+const PRIORITY_STYLE: Record<TaskPriority, string> = {
+  LOW:    "bg-slate-50 text-ds-muted border border-ds-border",
+  MEDIUM: "bg-amber-50 text-amber-700 border border-amber-200",
+  HIGH:   "bg-red-50 text-red-700 border border-red-200",
 };
 
-function isOverdue(dueDate: string | null): boolean {
-  if (!dueDate) return false;
-  return new Date(dueDate) < new Date();
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
+function isOverdue(d: string | null) { return !!d && new Date(d) < new Date(); }
+function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
 
 /* ------------------------------------------------------------------ */
-/*  Task Card                                                           */
+/*  Task Card                                                          */
 /* ------------------------------------------------------------------ */
 
 function TaskCard({ task, onStatusChange }: {
@@ -66,38 +55,37 @@ function TaskCard({ task, onStatusChange }: {
   const overdue = task.status !== "DONE" && isOverdue(task.dueDate);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3.5 space-y-2.5 hover:shadow-sm transition-shadow">
+    <div className="bg-ds-bg rounded-xl border border-ds-border p-3.5 space-y-2.5 hover:border-ds-primary/40 transition-colors">
       <div className="flex items-start justify-between gap-2">
-        <p className={`text-sm font-medium leading-snug ${task.status === "DONE" ? "line-through text-gray-400" : "text-gray-900"}`}>
+        <p className={`text-sm font-medium leading-snug ${task.status === "DONE" ? "line-through text-ds-muted" : "text-ds-text"}`}>
           {task.title}
         </p>
-        <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded font-medium ${PRIORITY_COLOR[task.priority]}`}>
+        <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded-lg font-medium ${PRIORITY_STYLE[task.priority]}`}>
           {task.priority}
         </span>
       </div>
 
       {task.description && (
-        <p className="text-xs text-gray-500 line-clamp-2">{task.description}</p>
+        <p className="text-xs text-ds-muted line-clamp-2">{task.description}</p>
       )}
 
-      <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+      <div className="flex items-center justify-between gap-2 pt-1 border-t border-ds-border">
         <div className="flex items-center gap-2">
           {task.dueDate && (
-            <span className={`flex items-center gap-1 text-xs ${overdue ? "text-red-500 font-medium" : "text-gray-400"}`}>
+            <span className={`flex items-center gap-1 text-xs ${overdue ? "text-red-700 font-medium" : "text-ds-muted"}`}>
               {overdue ? <AlertCircle className="h-3 w-3" /> : <CalendarDays className="h-3 w-3" />}
-              {formatDate(task.dueDate)}
+              {fmt(task.dueDate)}
             </span>
           )}
           {task.assigneeName && (
-            <span className="text-xs text-gray-400">{task.assigneeName}</span>
+            <span className="text-xs text-ds-muted truncate max-w-[80px]">{task.assigneeName}</span>
           )}
         </div>
 
-        {/* Quick status toggle */}
         <select
           value={task.status}
           onChange={(e) => onStatusChange(task.id, e.target.value as TaskStatus)}
-          className="text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+          className="text-xs bg-slate-50 border border-gray-200 text-ds-muted rounded-lg px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-ds-primary cursor-pointer"
         >
           <option value="TODO">To Do</option>
           <option value="IN_PROGRESS">In Progress</option>
@@ -116,61 +104,56 @@ function AddTaskModal({ onClose, onAdd }: {
   readonly onClose: () => void;
   readonly onAdd: (task: Omit<Task, "id" | "createdAt">) => Promise<void>;
 }) {
-  const [title, setTitle] = useState("");
+  const [title, setTitle]             = useState("");
   const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<TaskPriority>("MEDIUM");
-  const [dueDate, setDueDate] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [priority, setPriority]       = useState<TaskPriority>("MEDIUM");
+  const [dueDate, setDueDate]         = useState("");
+  const [saving, setSaving]           = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
     setSaving(true);
-    await onAdd({
-      title: title.trim(),
-      description: description.trim() || null,
-      status: "TODO",
-      priority,
-      dueDate: dueDate || null,
-      assigneeName: null,
-    });
+    await onAdd({ title: title.trim(), description: description.trim() || null, status: "TODO", priority, dueDate: dueDate || null, assigneeName: null });
     setSaving(false);
     onClose();
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">New Task</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+      <div className="bg-ds-card rounded-xl border border-ds-border shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ds-border">
+          <h2 className="text-base font-semibold text-ds-text">New Task</h2>
+          <button onClick={onClose} className="text-ds-muted hover:text-ds-text transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+            <label className="block text-xs font-medium text-ds-muted mb-1">Title *</label>
             <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Task title…"
+              type="text" required value={title} onChange={(e) => setTitle(e.target.value)} autoFocus
+              placeholder="What needs to be done?"
+              className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
             />
           </div>
+
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-xs font-medium text-ds-muted mb-1">Description</label>
             <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
               placeholder="Optional details…"
+              className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50 resize-none"
             />
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Priority</label>
+              <label className="block text-xs font-medium text-ds-muted mb-1">Priority</label>
               <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
               >
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
@@ -178,23 +161,21 @@ function AddTaskModal({ onClose, onAdd }: {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
+              <label className="block text-xs font-medium text-ds-muted mb-1">Due Date</label>
               <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
               />
             </div>
           </div>
+
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-ds-muted hover:text-ds-text transition-colors">
               Cancel
             </button>
             <button
-              type="submit"
-              disabled={saving}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+              type="submit" disabled={saving || !title.trim()}
+              className="px-4 py-2 text-sm bg-ds-primary text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2 transition-colors"
             >
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               Create Task
@@ -211,7 +192,7 @@ function AddTaskModal({ onClose, onAdd }: {
 /* ------------------------------------------------------------------ */
 
 export default function CorporateTasksPage() {
-  const [tasks, setTasks] = useState<ReadonlyArray<Task>>([]);
+  const [tasks, setTasks]     = useState<ReadonlyArray<Task>>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
 
@@ -220,17 +201,13 @@ export default function CorporateTasksPage() {
       const r = await fetch("/api/corporate/tasks");
       const json = await r.json();
       if (json.success) setTasks(json.data ?? []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   }, []);
 
   useEffect(() => { void loadTasks(); }, [loadTasks]);
 
   async function handleStatusChange(id: string, status: TaskStatus) {
-    // Optimistic update
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
     try {
       await fetch(`/api/corporate/tasks/${id}`, {
@@ -238,10 +215,7 @@ export default function CorporateTasksPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-    } catch (err) {
-      console.error(err);
-      void loadTasks(); // rollback on error
-    }
+    } catch (err) { console.error(err); void loadTasks(); }
   }
 
   async function handleAdd(data: Omit<Task, "id" | "createdAt">) {
@@ -252,81 +226,160 @@ export default function CorporateTasksPage() {
         body: JSON.stringify(data),
       });
       const json = await r.json();
-      if (json.success && json.data) {
-        setTasks((prev) => [json.data as Task, ...prev]);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+      if (json.success && json.data) setTasks((prev) => [json.data as Task, ...prev]);
+    } catch (err) { console.error(err); }
   }
 
-  const counts = STATUS_COLS.reduce(
-    (acc, col) => ({ ...acc, [col.status]: tasks.filter((t) => t.status === col.status).length }),
-    {} as Record<TaskStatus, number>,
-  );
+  const counts = {
+    TODO:        tasks.filter((t) => t.status === "TODO").length,
+    IN_PROGRESS: tasks.filter((t) => t.status === "IN_PROGRESS").length,
+    DONE:        tasks.filter((t) => t.status === "DONE").length,
+  };
+  const overdueCount = tasks.filter((t) => t.status !== "DONE" && isOverdue(t.dueDate)).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl">
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Assign and track team tasks with deadlines</p>
+          <h1 className="text-xl font-bold text-ds-text">Tasks</h1>
+          <p className="text-sm text-ds-muted mt-0.5">Assign and track team tasks with deadlines</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-ds-primary text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           New Task
         </button>
       </div>
 
-      {/* Kanban board */}
+      {/* Quick action cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button
+          onClick={() => setShowAdd(true)}
+          className="group bg-ds-card rounded-xl border border-ds-border p-4 flex flex-col gap-2 hover:border-ds-primary/50 hover:shadow-lg hover:shadow-black/20 transition-all text-left"
+        >
+          <div className="p-2 rounded-xl w-fit bg-blue-50 text-blue-700">
+            <Plus className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-700 transition-colors">New Task</p>
+            <p className="text-xs text-ds-muted mt-0.5">Create a to-do item</p>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+            Create <ArrowRight className="h-3 w-3" />
+          </div>
+        </button>
+
+        <Link
+          href="/corporate/employees"
+          className="group bg-ds-card rounded-xl border border-ds-border p-4 flex flex-col gap-2 hover:border-ds-primary/50 hover:shadow-lg hover:shadow-black/20 transition-all"
+        >
+          <div className="p-2 rounded-xl w-fit bg-emerald-50 text-emerald-700">
+            <CheckSquare className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-700 transition-colors">Assign to Student</p>
+            <p className="text-xs text-ds-muted mt-0.5">Link tasks to team members</p>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+            Open <ArrowRight className="h-3 w-3" />
+          </div>
+        </Link>
+
+        <div title="Coming soon" className="bg-ds-card/40 rounded-xl border border-dashed border-ds-border p-4 flex flex-col gap-2 opacity-50 cursor-not-allowed">
+          <div className="p-2 rounded-xl w-fit bg-amber-50 text-amber-700 opacity-60">
+            <CalendarDays className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ds-muted">Deadlines View</p>
+            <p className="text-xs text-ds-muted/70 mt-0.5">Calendar view of due dates</p>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-ds-muted font-medium mt-auto">
+            <Lock className="h-3 w-3" /> Coming Soon
+          </div>
+        </div>
+
+        <div title="Coming soon" className="bg-ds-card/40 rounded-xl border border-dashed border-ds-border p-4 flex flex-col gap-2 opacity-50 cursor-not-allowed">
+          <div className="p-2 rounded-xl w-fit bg-blue-50 text-blue-700 opacity-60">
+            <CheckCircle2 className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ds-muted">Reports</p>
+            <p className="text-xs text-ds-muted/70 mt-0.5">Task completion analytics</p>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-ds-muted font-medium mt-auto">
+            <Lock className="h-3 w-3" /> Coming Soon
+          </div>
+        </div>
+      </div>
+
+      {/* Summary bar */}
+      <div className="flex items-center gap-6 text-sm bg-ds-card rounded-xl border border-ds-border px-5 py-3">
+        <span className="font-medium text-ds-text">{tasks.length} tasks</span>
+        <span className="flex items-center gap-1.5 text-ds-muted">
+          <Square className="h-3.5 w-3.5" />{counts.TODO} to do
+        </span>
+        <span className="flex items-center gap-1.5 text-ds-muted">
+          <Clock className="h-3.5 w-3.5 text-blue-700" />{counts.IN_PROGRESS} in progress
+        </span>
+        <span className="flex items-center gap-1.5 text-ds-muted">
+          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />{counts.DONE} done
+        </span>
+        {overdueCount > 0 && (
+          <span className="flex items-center gap-1.5 text-red-700 font-medium ml-auto">
+            <AlertCircle className="h-3.5 w-3.5" />{overdueCount} overdue
+          </span>
+        )}
+      </div>
+
+      {/* Kanban */}
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-ds-primary" />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {STATUS_COLS.map((col) => {
             const colTasks = tasks.filter((t) => t.status === col.status);
             return (
-              <div key={col.status} className={`bg-gray-50 rounded-xl border-2 ${col.color} p-4 space-y-3`}>
+              <div key={col.status} className={`bg-ds-card rounded-xl border-2 ${col.border} p-4 space-y-3`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {col.icon}
-                    <span className="text-sm font-semibold text-gray-700">{col.label}</span>
+                    <span className="text-sm font-semibold text-ds-text">{col.label}</span>
                   </div>
-                  <span className="text-xs bg-white border border-gray-200 text-gray-500 rounded-full px-2 py-0.5">
-                    {counts[col.status] ?? 0}
+                  <span className="text-xs bg-slate-50 border border-gray-200 text-ds-muted rounded-full px-2 py-0.5">
+                    {colTasks.length}
                   </span>
                 </div>
 
-                <div className="space-y-2.5 min-h-[200px]">
+                <div className="space-y-2.5 min-h-[180px]">
                   {colTasks.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-32 text-gray-300">
+                    <div className="flex flex-col items-center justify-center h-32 text-ds-muted/40">
                       <CheckSquare className="h-8 w-8 mb-2" />
-                      <p className="text-xs">No tasks</p>
+                      <p className="text-xs">No tasks here</p>
                     </div>
-                  ) : (
-                    colTasks.map((task) => (
-                      <TaskCard key={task.id} task={task} onStatusChange={handleStatusChange} />
-                    ))
-                  )}
+                  ) : colTasks.map((task) => (
+                    <TaskCard key={task.id} task={task} onStatusChange={handleStatusChange} />
+                  ))}
                 </div>
+
+                {col.status === "TODO" && (
+                  <button
+                    onClick={() => setShowAdd(true)}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-ds-muted hover:text-ds-text hover:bg-slate-100 rounded-xl border border-dashed border-ds-border hover:border-ds-primary/50 transition-colors"
+                  >
+                    <Plus className="h-3.5 w-3.5" />Add task
+                  </button>
+                )}
               </div>
             );
           })}
         </div>
       )}
-
-      {/* Stats bar */}
-      <div className="flex items-center gap-6 text-xs text-gray-400">
-        <span>{tasks.length} total tasks</span>
-        <span>{tasks.filter((t) => t.status !== "DONE" && isOverdue(t.dueDate)).length} overdue</span>
-        <span>{tasks.filter((t) => t.status === "DONE").length} completed</span>
-      </div>
 
       {showAdd && <AddTaskModal onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
     </div>

@@ -70,12 +70,12 @@ const TYPE_LABELS: Record<RevenueType, string> = {
 };
 
 const TYPE_COLORS: Record<RevenueType, string> = {
-  PLATFORM_FEE: "bg-blue-900/40 text-blue-300",
-  TENANT_SUBSCRIPTION: "bg-purple-900/40 text-purple-300",
-  ENROLLMENT_PAYMENT: "bg-green-900/40 text-green-300",
-  TRAINER_EARNING: "bg-yellow-900/40 text-yellow-300",
-  REFUND: "bg-red-900/40 text-red-300",
-  MANUAL: "bg-gray-700/60 text-gray-300",
+  PLATFORM_FEE: "bg-blue-50 text-blue-700",
+  TENANT_SUBSCRIPTION: "bg-blue-50 text-blue-700",
+  ENROLLMENT_PAYMENT: "bg-emerald-50 text-emerald-700",
+  TRAINER_EARNING: "bg-yellow-50 text-yellow-600",
+  REFUND: "bg-red-50 text-red-700",
+  MANUAL: "bg-gray-100 text-gray-700",
 };
 
 function formatAmount(amount: number, currency: string) {
@@ -340,29 +340,29 @@ export default function SuperadminRevenuePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1623] text-white p-6">
+    <div className="min-h-screen bg-ds-bg text-ds-text p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-blue-400" />
-            <h1 className="text-2xl font-bold text-white">
+            <Globe className="w-5 h-5 text-blue-700" />
+            <h1 className="text-2xl font-bold text-ds-text">
               Platform Revenue — All Tenants
             </h1>
           </div>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-ds-muted text-sm mt-1">
             Platform-wide revenue across all tenants and users
           </p>
         </div>
         <div className="flex gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1e2d45] hover:bg-[#263a59] text-gray-300 rounded-lg text-sm transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-ds-card hover:bg-slate-100 text-ds-muted border border-ds-border rounded-lg text-sm transition-colors"
           >
             <Download className="w-4 h-4" />
             Export
           </button>
-          <label className="flex items-center gap-2 px-4 py-2 bg-[#1e2d45] hover:bg-[#263a59] text-gray-300 rounded-lg text-sm cursor-pointer transition-colors">
+          <label className="flex items-center gap-2 px-4 py-2 bg-ds-card hover:bg-slate-100 text-ds-muted border border-ds-border rounded-lg text-sm cursor-pointer transition-colors">
             <Upload className="w-4 h-4" />
             Import
             <input
@@ -387,7 +387,7 @@ export default function SuperadminRevenuePage() {
       {(error || successMsg || importResult) && (
         <div className="mb-4 space-y-2">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-900/40 border border-red-800 rounded-lg text-red-300 text-sm">
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               <AlertCircle className="w-4 h-4 shrink-0" />
               {error}
               <button onClick={clearMessages} className="ml-auto">
@@ -396,7 +396,7 @@ export default function SuperadminRevenuePage() {
             </div>
           )}
           {successMsg && (
-            <div className="flex items-center gap-2 p-3 bg-green-900/40 border border-green-800 rounded-lg text-green-300 text-sm">
+            <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 text-sm">
               <CheckCircle className="w-4 h-4 shrink-0" />
               {successMsg}
               <button onClick={clearMessages} className="ml-auto">
@@ -405,12 +405,12 @@ export default function SuperadminRevenuePage() {
             </div>
           )}
           {importResult && (
-            <div className="p-3 bg-blue-900/40 border border-blue-800 rounded-lg text-sm">
-              <p className="text-blue-300 font-medium">
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+              <p className="text-blue-700 font-medium">
                 Import complete: {importResult.created} records created
               </p>
               {importResult.errors.length > 0 && (
-                <ul className="mt-1 text-red-300 list-disc list-inside">
+                <ul className="mt-1 text-red-700 list-disc list-inside">
                   {importResult.errors.slice(0, 5).map((e, i) => (
                     <li key={i}>{e}</li>
                   ))}
@@ -421,7 +421,7 @@ export default function SuperadminRevenuePage() {
               )}
               <button
                 onClick={clearMessages}
-                className="mt-1 text-blue-400 text-xs underline"
+                className="mt-1 text-blue-700 text-xs underline"
               >
                 Dismiss
               </button>
@@ -432,54 +432,54 @@ export default function SuperadminRevenuePage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#1a2535] rounded-xl p-5 border border-[#243047]">
+        <div className="bg-ds-card rounded-xl p-5 border border-ds-border">
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-sm">Platform Revenue</span>
-            <div className="p-2 bg-blue-900/40 rounded-lg">
-              <DollarSign className="w-4 h-4 text-blue-400" />
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <DollarSign className="w-4 h-4 text-blue-700" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold text-ds-text">
             {formatAmount(totalRevenue, "PHP")}
           </p>
           <p className="text-xs text-gray-500 mt-1">All tenants, excl. refunds</p>
         </div>
-        <div className="bg-[#1a2535] rounded-xl p-5 border border-[#243047]">
+        <div className="bg-ds-card rounded-xl p-5 border border-ds-border">
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-sm">Platform Fees</span>
-            <div className="p-2 bg-purple-900/40 rounded-lg">
-              <TrendingUp className="w-4 h-4 text-purple-400" />
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <TrendingUp className="w-4 h-4 text-blue-700" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold text-ds-text">
             {formatAmount(platformFeeTotal, "PHP")}
           </p>
           <p className="text-xs text-gray-500 mt-1">
             {records.filter((r) => r.type === "PLATFORM_FEE").length} records
           </p>
         </div>
-        <div className="bg-[#1a2535] rounded-xl p-5 border border-[#243047]">
+        <div className="bg-ds-card rounded-xl p-5 border border-ds-border">
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-sm">Subscriptions</span>
-            <div className="p-2 bg-green-900/40 rounded-lg">
-              <BarChart2 className="w-4 h-4 text-green-400" />
+            <div className="p-2 bg-emerald-50 rounded-lg">
+              <BarChart2 className="w-4 h-4 text-emerald-600" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold text-ds-text">
             {formatAmount(subscriptionTotal, "PHP")}
           </p>
           <p className="text-xs text-gray-500 mt-1">
             {tenantCount} active tenants
           </p>
         </div>
-        <div className="bg-[#1a2535] rounded-xl p-5 border border-[#243047]">
+        <div className="bg-ds-card rounded-xl p-5 border border-ds-border">
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-sm">Total Refunds</span>
-            <div className="p-2 bg-red-900/40 rounded-lg">
-              <TrendingDown className="w-4 h-4 text-red-400" />
+            <div className="p-2 bg-red-50 rounded-lg">
+              <TrendingDown className="w-4 h-4 text-red-700" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl font-bold text-ds-text">
             {formatAmount(refundsTotal, "PHP")}
           </p>
           <p className="text-xs text-gray-500 mt-1">
@@ -489,11 +489,11 @@ export default function SuperadminRevenuePage() {
       </div>
 
       {/* Table */}
-      <div className="bg-[#1a2535] rounded-xl border border-[#243047] overflow-hidden">
+      <div className="bg-ds-card rounded-xl border border-ds-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#243047] bg-[#152030]">
+              <tr className="border-b border-ds-border bg-slate-50">
                 <th className="text-left py-3 px-4 text-gray-400 font-medium">
                   Type
                 </th>
@@ -543,7 +543,7 @@ export default function SuperadminRevenuePage() {
                 records.map((record) => (
                   <tr
                     key={record.id}
-                    className="border-b border-[#1e2d45] hover:bg-[#1e2d45]/50 transition-colors"
+                    className="border-b border-ds-border hover:bg-ds-card transition-colors"
                   >
                     <td className="py-3 px-4">
                       <span
@@ -552,7 +552,7 @@ export default function SuperadminRevenuePage() {
                         {TYPE_LABELS[record.type]}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right font-mono text-white">
+                    <td className="py-3 px-4 text-right font-mono text-ds-text">
                       {formatAmount(Number(record.amount), record.currency)}
                     </td>
                     <td className="py-3 px-4 text-gray-300 max-w-[160px] truncate">
@@ -585,7 +585,7 @@ export default function SuperadminRevenuePage() {
                       {formatDate(record.createdAt)}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="inline-block px-2 py-0.5 rounded text-xs bg-green-900/30 text-green-400">
+                      <span className="inline-block px-2 py-0.5 rounded text-xs bg-emerald-50 text-emerald-700">
                         {record.status}
                       </span>
                     </td>
@@ -593,14 +593,14 @@ export default function SuperadminRevenuePage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEdit(record)}
-                          className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-900/20 rounded transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-blue-700 hover:bg-ds-card rounded transition-colors"
                           title="Edit"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => openDelete(record)}
-                          className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-red-700 hover:bg-ds-card rounded transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -616,7 +616,7 @@ export default function SuperadminRevenuePage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-[#243047]">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-ds-border">
             <span className="text-xs text-gray-500">
               Page {page} of {totalPages} ({total} records)
             </span>
@@ -624,14 +624,14 @@ export default function SuperadminRevenuePage() {
               <button
                 onClick={() => fetchRecords(page - 1)}
                 disabled={page <= 1}
-                className="px-3 py-1.5 text-xs bg-[#152030] text-gray-400 rounded disabled:opacity-40 hover:bg-[#1e2d45] transition-colors"
+                className="px-3 py-1.5 text-xs bg-slate-50 text-ds-muted rounded border border-ds-border disabled:opacity-40 hover:bg-ds-card transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => fetchRecords(page + 1)}
                 disabled={page >= totalPages}
-                className="px-3 py-1.5 text-xs bg-[#152030] text-gray-400 rounded disabled:opacity-40 hover:bg-[#1e2d45] transition-colors"
+                className="px-3 py-1.5 text-xs bg-slate-50 text-ds-muted rounded border border-ds-border disabled:opacity-40 hover:bg-ds-card transition-colors"
               >
                 Next
               </button>
@@ -643,9 +643,9 @@ export default function SuperadminRevenuePage() {
       {/* Create Modal */}
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#1a2535] rounded-xl p-6 w-full max-w-md border border-[#243047] shadow-2xl">
+          <div className="bg-ds-card rounded-xl p-6 w-full max-w-md border border-ds-border shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-ds-text">
                 Add Revenue Record
               </h2>
               <button
@@ -668,7 +668,7 @@ export default function SuperadminRevenuePage() {
                       type: e.target.value as RevenueType,
                     })
                   }
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 >
                   {REVENUE_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -691,7 +691,7 @@ export default function SuperadminRevenuePage() {
                       setCreateForm({ ...createForm, amount: e.target.value })
                     }
                     placeholder="0.00"
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
@@ -708,7 +708,7 @@ export default function SuperadminRevenuePage() {
                       })
                     }
                     placeholder="PHP"
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -724,7 +724,7 @@ export default function SuperadminRevenuePage() {
                     setCreateForm({ ...createForm, tenantId: e.target.value })
                   }
                   placeholder="Leave blank for platform-level"
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div>
@@ -741,7 +741,7 @@ export default function SuperadminRevenuePage() {
                     })
                   }
                   placeholder="Optional description"
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -756,7 +756,7 @@ export default function SuperadminRevenuePage() {
                       setCreateForm({ ...createForm, userId: e.target.value })
                     }
                     placeholder="Optional"
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
@@ -773,7 +773,7 @@ export default function SuperadminRevenuePage() {
                       })
                     }
                     placeholder="e.g. student"
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -781,7 +781,7 @@ export default function SuperadminRevenuePage() {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowCreate(false)}
-                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-ds-muted hover:text-ds-text transition-colors"
               >
                 Cancel
               </button>
@@ -800,9 +800,9 @@ export default function SuperadminRevenuePage() {
       {/* Edit Modal */}
       {showEdit && selectedRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#1a2535] rounded-xl p-6 w-full max-w-md border border-[#243047] shadow-2xl">
+          <div className="bg-ds-card rounded-xl p-6 w-full max-w-md border border-ds-border shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-ds-text">
                 Edit Revenue Record
               </h2>
               <button
@@ -825,7 +825,7 @@ export default function SuperadminRevenuePage() {
                       type: e.target.value as RevenueType,
                     })
                   }
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 >
                   {REVENUE_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -847,7 +847,7 @@ export default function SuperadminRevenuePage() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, amount: e.target.value })
                     }
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
@@ -860,7 +860,7 @@ export default function SuperadminRevenuePage() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, currency: e.target.value })
                     }
-                    className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -874,13 +874,13 @@ export default function SuperadminRevenuePage() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, description: e.target.value })
                   }
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">
                   Reason for edit{" "}
-                  <span className="text-red-400">*</span>
+                  <span className="text-red-700">*</span>
                 </label>
                 <input
                   type="text"
@@ -889,11 +889,11 @@ export default function SuperadminRevenuePage() {
                     setEditForm({ ...editForm, reason: e.target.value })
                   }
                   placeholder="Describe why you are editing this record"
-                  className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-blue-500"
                 />
               </div>
               {selectedRecord.tenantId && (
-                <div className="p-2 bg-[#0f1623] rounded text-xs text-gray-500">
+                <div className="p-2 bg-slate-50 rounded text-xs text-ds-muted">
                   Tenant: {selectedRecord.tenantId}
                 </div>
               )}
@@ -922,7 +922,7 @@ export default function SuperadminRevenuePage() {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowEdit(false)}
-                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-ds-muted hover:text-ds-text transition-colors"
               >
                 Cancel
               </button>
@@ -941,12 +941,12 @@ export default function SuperadminRevenuePage() {
       {/* Delete Modal */}
       {showDelete && selectedRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#1a2535] rounded-xl p-6 w-full max-w-sm border border-[#243047] shadow-2xl">
+          <div className="bg-ds-card rounded-xl p-6 w-full max-w-sm border border-ds-border shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-900/40 rounded-lg">
-                <Trash2 className="w-5 h-5 text-red-400" />
+              <div className="p-2 bg-red-50 rounded-lg">
+                <Trash2 className="w-5 h-5 text-red-700" />
               </div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-ds-text">
                 Delete Record
               </h2>
             </div>
@@ -968,13 +968,13 @@ export default function SuperadminRevenuePage() {
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
                 placeholder="Reason for deletion"
-                className="w-full bg-[#152030] border border-[#243047] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-red-500"
               />
             </div>
             <div className="flex justify-end gap-3 mt-5">
               <button
                 onClick={() => setShowDelete(false)}
-                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-ds-muted hover:text-ds-text transition-colors"
               >
                 Cancel
               </button>

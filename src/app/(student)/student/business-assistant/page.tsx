@@ -23,7 +23,7 @@ export default async function BusinessAssistantPage() {
         {/* Header */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-indigo-100 rounded-lg p-2">
+            <div className="bg-indigo-50 rounded-lg p-2">
               <Briefcase className="h-5 w-5 text-indigo-700" />
             </div>
             <div>

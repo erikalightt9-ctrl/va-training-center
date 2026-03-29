@@ -22,7 +22,7 @@ export default async function JobApplicationsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-blue-100 rounded-lg p-2">
+          <div className="bg-blue-50 rounded-lg p-2">
             <ClipboardCheck className="h-5 w-5 text-blue-700" />
           </div>
           <div>

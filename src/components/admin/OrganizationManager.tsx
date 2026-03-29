@@ -379,7 +379,7 @@ function OrgStatusBadge({ isActive }: { readonly isActive: boolean }) {
       Active
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
       <XCircle className="h-3 w-3" />
       Inactive
     </span>
@@ -474,8 +474,8 @@ export function OrganizationManager() {
       {/* Organization list */}
       {organizations.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Building2 className="h-8 w-8 text-purple-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Building2 className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Organizations Yet
@@ -498,8 +498,8 @@ export function OrganizationManager() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 rounded-lg p-2 mt-0.5">
-                    <Building2 className="h-5 w-5 text-blue-600" />
+                  <div className="bg-blue-50 rounded-lg p-2 mt-0.5">
+                    <Building2 className="h-5 w-5 text-blue-700" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

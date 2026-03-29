@@ -28,39 +28,39 @@ export function PlacementStats({
       label: "Applications Sent",
       value: <span className="text-2xl font-bold text-blue-700">{totalApplications}</span>,
       bg: "bg-blue-50 border-blue-200",
-      iconBg: "bg-blue-100",
-      icon: <Send className="w-5 h-5 text-blue-600" />,
+      iconBg: "bg-blue-50",
+      icon: <Send className="w-5 h-5 text-blue-700" />,
     },
     {
       label: "Interviews Done",
       value: <span className="text-2xl font-bold text-indigo-700">{interviewsCompleted}</span>,
       bg: "bg-indigo-50 border-indigo-200",
-      iconBg: "bg-indigo-100",
-      icon: <MessageSquare className="w-5 h-5 text-indigo-600" />,
+      iconBg: "bg-indigo-50",
+      icon: <MessageSquare className="w-5 h-5 text-indigo-700" />,
     },
     {
       label: "Resume Ready",
       value: resumeUploaded ? (
         <CheckCircle className="w-7 h-7 text-green-600" />
       ) : (
-        <XCircle className="w-7 h-7 text-red-400" />
+        <XCircle className="w-7 h-7 text-red-700" />
       ),
       bg: resumeUploaded
         ? "bg-green-50 border-green-200"
         : "bg-red-50 border-red-200",
-      iconBg: resumeUploaded ? "bg-green-100" : "bg-red-100",
+      iconBg: resumeUploaded ? "bg-green-100" : "bg-red-50",
       icon: resumeUploaded ? (
         <CheckCircle className="w-5 h-5 text-green-600" />
       ) : (
-        <XCircle className="w-5 h-5 text-red-400" />
+        <XCircle className="w-5 h-5 text-red-700" />
       ),
     },
     {
       label: "Coaching Sessions",
       value: <span className="text-2xl font-bold text-teal-700">{coachingBooked}</span>,
       bg: "bg-teal-50 border-teal-200",
-      iconBg: "bg-teal-100",
-      icon: <Calendar className="w-5 h-5 text-teal-600" />,
+      iconBg: "bg-teal-50",
+      icon: <Calendar className="w-5 h-5 text-teal-700" />,
     },
   ];
 

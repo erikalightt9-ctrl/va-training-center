@@ -101,7 +101,7 @@ export function BroadcastMessageComposer() {
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <span className={`mt-0.5 shrink-0 ${targetRole === opt.value ? "text-blue-600" : "text-gray-400"}`}>
+                <span className={`mt-0.5 shrink-0 ${targetRole === opt.value ? "text-blue-700" : "text-gray-400"}`}>
                   {opt.icon}
                 </span>
                 <div>
@@ -147,7 +147,7 @@ export function BroadcastMessageComposer() {
         </div>
 
         {error && (
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-700">{error}</p>
         )}
 
         {result && (

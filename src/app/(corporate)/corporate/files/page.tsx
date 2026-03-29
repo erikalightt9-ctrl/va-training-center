@@ -160,7 +160,7 @@ export default function CorporateFilesPage() {
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
@@ -222,7 +222,7 @@ export default function CorporateFilesPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   download
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-blue-700 hover:bg-ds-card transition-colors"
                   title="Download"
                 >
                   <Download className="h-4 w-4" />
@@ -230,7 +230,7 @@ export default function CorporateFilesPage() {
                 <button
                   onClick={() => handleDelete(file.id)}
                   disabled={deletingId === file.id}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-700 hover:bg-ds-card transition-colors disabled:opacity-50"
                   title="Delete"
                 >
                   {deletingId === file.id

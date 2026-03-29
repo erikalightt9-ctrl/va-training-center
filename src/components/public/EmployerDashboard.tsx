@@ -65,7 +65,7 @@ const COURSE_TABS: readonly CourseTab[] = [
 
 function getScoreColor(score: number): string {
   if (score >= 80) return "text-green-600";
-  if (score >= 60) return "text-blue-600";
+  if (score >= 60) return "text-blue-400";
   if (score >= 40) return "text-yellow-600";
   return "text-red-500";
 }
@@ -82,11 +82,11 @@ function getCourseBadgeColor(slug: string): string {
     case "MEDICAL_VA":
       return "bg-rose-50 text-rose-700";
     case "REAL_ESTATE_VA":
-      return "bg-amber-50 text-amber-700";
+      return "bg-amber-900/40 text-amber-400";
     case "US_BOOKKEEPING_VA":
-      return "bg-emerald-50 text-emerald-700";
+      return "bg-emerald-900/40 text-emerald-400";
     default:
-      return "bg-blue-50 text-blue-700";
+      return "bg-blue-900/40 text-blue-400";
   }
 }
 
@@ -213,7 +213,7 @@ export function EmployerDashboard() {
           {/* Loading */}
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+              <Loader2 className="h-6 w-6 animate-spin text-blue-400 mr-2" />
               <span className="text-gray-500">Loading graduates...</span>
             </div>
           )}
@@ -221,11 +221,11 @@ export function EmployerDashboard() {
           {/* Error */}
           {!loading && error && (
             <div className="text-center py-20">
-              <p className="text-red-600 font-medium">{error}</p>
+              <p className="text-red-400 font-medium">{error}</p>
               <button
                 type="button"
                 onClick={() => fetchGraduates(activeTab)}
-                className="mt-4 text-sm text-blue-600 hover:underline"
+                className="mt-4 text-sm text-blue-400 hover:underline"
               >
                 Try again
               </button>
@@ -345,7 +345,7 @@ export function EmployerDashboard() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center px-8 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition-colors"
+            className="inline-flex items-center px-8 py-3 bg-white text-blue-400 font-bold rounded-lg hover:bg-ds-card transition-colors"
           >
             Contact Us
           </Link>

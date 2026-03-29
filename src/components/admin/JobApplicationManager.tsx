@@ -97,10 +97,10 @@ const ADMIN_STATUS_OPTIONS = ["PENDING", "REVIEWED", "SHORTLISTED", "ACCEPTED", 
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  REVIEWED: "bg-blue-100 text-blue-800",
-  SHORTLISTED: "bg-purple-100 text-purple-800",
+  REVIEWED: "bg-blue-50 text-blue-800",
+  SHORTLISTED: "bg-blue-50 text-blue-800",
   ACCEPTED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+  REJECTED: "bg-red-50 text-red-800",
   WITHDRAWN: "bg-gray-100 text-gray-600",
 };
 
@@ -310,7 +310,7 @@ export function JobApplicationManager() {
   if (error && applications.length === 0) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button
           variant="outline"
           size="sm"
@@ -421,8 +421,8 @@ export function JobApplicationManager() {
             >
               <div className="flex items-center gap-4">
                 {/* Avatar placeholder */}
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <User className="h-5 w-5 text-blue-600" />
+                <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                  <User className="h-5 w-5 text-blue-700" />
                 </div>
 
                 {/* Student info */}
@@ -539,7 +539,7 @@ export function JobApplicationManager() {
                         href={`/portfolio/${selectedApp.student.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1"
+                        className="text-blue-700 hover:text-blue-700 text-sm flex items-center gap-1"
                       >
                         <ExternalLink className="h-3 w-3" />
                         View Portfolio
@@ -664,7 +664,7 @@ export function JobApplicationManager() {
                     value={editNotes}
                     onChange={(e) => setEditNotes(e.target.value)}
                   />
-                  <p className="text-xs text-blue-400 mt-1">
+                  <p className="text-xs text-blue-700 mt-1">
                     {editNotes.length}/2000 characters
                   </p>
                 </div>

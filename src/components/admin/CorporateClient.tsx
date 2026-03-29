@@ -26,9 +26,9 @@ interface CorporateData {
 
 const PLAN_COLORS: Record<string, string> = {
   TRIAL: "bg-gray-100 text-gray-600",
-  STARTER: "bg-blue-100 text-blue-700",
-  PROFESSIONAL: "bg-purple-100 text-purple-700",
-  ENTERPRISE: "bg-amber-100 text-amber-700",
+  STARTER: "bg-blue-50 text-blue-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ENTERPRISE: "bg-amber-50 text-amber-700",
 };
 
 export function CorporateClient() {
@@ -184,8 +184,8 @@ export function CorporateClient() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                          <Building2 className="h-4 w-4 text-blue-600" />
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                          <Building2 className="h-4 w-4 text-blue-700" />
                         </div>
                         <span className="font-medium text-gray-900">{org.name}</span>
                       </div>
@@ -201,7 +201,7 @@ export function CorporateClient() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${org.isActive ? "text-emerald-700" : "text-gray-400"}`}>
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${org.isActive ? "text-emerald-600" : "text-gray-400"}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${org.isActive ? "bg-emerald-500" : "bg-gray-300"}`} />
                         {org.isActive ? "Active" : "Inactive"}
                       </span>
@@ -253,7 +253,7 @@ export function CorporateClient() {
             </div>
             <form onSubmit={handleAddCompany} className="px-6 py-5 space-y-4">
               {formError && (
-                <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{formError}</p>
+                <p className="text-sm text-red-700 bg-red-50 px-3 py-2 rounded-lg">{formError}</p>
               )}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Company Name <span className="text-red-500">*</span></label>

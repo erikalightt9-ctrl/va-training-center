@@ -31,10 +31,10 @@ interface CalendarEvent {
 /* ------------------------------------------------------------------ */
 
 const TYPE_CONFIG: Record<EventType, { color: string; bg: string; icon: React.ReactNode }> = {
-  SESSION:      { color: "text-blue-700",   bg: "bg-blue-100",   icon: <BookOpen   className="h-3 w-3" /> },
-  DEADLINE:     { color: "text-red-700",    bg: "bg-red-100",    icon: <Clock      className="h-3 w-3" /> },
-  TASK:         { color: "text-orange-700", bg: "bg-orange-100", icon: <CheckSquare className="h-3 w-3" /> },
-  ANNOUNCEMENT: { color: "text-purple-700", bg: "bg-purple-100", icon: <Bell       className="h-3 w-3" /> },
+  SESSION:      { color: "text-blue-700",   bg: "bg-blue-50",   icon: <BookOpen   className="h-3 w-3" /> },
+  DEADLINE:     { color: "text-red-700",    bg: "bg-red-50",    icon: <Clock      className="h-3 w-3" /> },
+  TASK:         { color: "text-orange-700", bg: "bg-orange-50", icon: <CheckSquare className="h-3 w-3" /> },
+  ANNOUNCEMENT: { color: "text-blue-700", bg: "bg-blue-50", icon: <Bell       className="h-3 w-3" /> },
 };
 
 function getDaysInMonth(year: number, month: number): number {

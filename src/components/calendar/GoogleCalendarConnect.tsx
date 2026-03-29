@@ -187,7 +187,7 @@ export function GoogleCalendarConnect({
     return (
       <button
         onClick={handleConnect}
-        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg px-2.5 py-1.5 transition-colors"
+        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-blue-700 border border-gray-200 hover:border-blue-300 rounded-lg px-2.5 py-1.5 transition-colors"
         title="Connect Google Calendar"
       >
         <GoogleIcon size={13} />

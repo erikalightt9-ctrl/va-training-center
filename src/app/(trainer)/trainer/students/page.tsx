@@ -19,28 +19,28 @@ const STUDENTS_CARDS: ReadonlyArray<Omit<DashboardCardProps, "currentRole">> = [
     label: "My Students",
     description: "View all students assigned to your training batches.",
     icon: Users,
-    colorClass: "bg-blue-100 text-blue-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/trainer/submissions",
     label: "Grading Queue",
     description: "Review and grade student assignment submissions.",
     icon: ClipboardCheck,
-    colorClass: "bg-green-100 text-green-700",
+    colorClass: "bg-emerald-50 text-emerald-700",
   },
   {
     href: "/trainer/messages",
     label: "Messages",
     description: "Send and receive messages with your students.",
     icon: Mail,
-    colorClass: "bg-purple-100 text-purple-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/trainer/engagement",
     label: "Progress",
     description: "Track student progress and learning engagement.",
     icon: TrendingUp,
-    colorClass: "bg-orange-100 text-orange-700",
+    colorClass: "bg-amber-50 text-amber-700",
   },
 ];
 
@@ -57,7 +57,7 @@ export default async function TrainerStudentsHubPage() {
       title="Students"
       description="Manage your students, grade submissions, and track learning progress."
       icon={Users}
-      iconColorClass="bg-blue-100 text-blue-700"
+      iconColorClass="bg-blue-50 text-blue-700"
       cards={STUDENTS_CARDS}
       currentRole="trainer"
     />

@@ -58,9 +58,9 @@ interface InsightsData {
 
 function SeverityBadge({ severity }: { readonly severity: string }) {
   const styles: Record<string, string> = {
-    low: "bg-yellow-100 text-yellow-700",
-    medium: "bg-orange-100 text-orange-700",
-    high: "bg-red-100 text-red-700",
+    low: "bg-yellow-100 text-yellow-600",
+    medium: "bg-orange-50 text-orange-700",
+    high: "bg-red-50 text-red-700",
   };
 
   return (
@@ -131,7 +131,7 @@ export function AIInsightsDashboard() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button variant="outline" size="sm" className="mt-3" onClick={fetchData}>
           Retry
         </Button>
@@ -146,8 +146,8 @@ export function AIInsightsDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="bg-purple-100 rounded-lg p-2">
-            <Brain className="h-5 w-5 text-purple-700" />
+          <div className="bg-blue-50 rounded-lg p-2">
+            <Brain className="h-5 w-5 text-blue-700" />
           </div>
           <div>
             <h2 className="font-semibold text-gray-900">
@@ -183,12 +183,12 @@ export function AIInsightsDashboard() {
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       {/* Platform Summary */}
-      <div className="bg-gradient-to-r from-purple-700 to-blue-800 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-700 to-blue-800 rounded-xl p-6 text-white">
         <div className="flex items-center gap-2 mb-3">
-          <BarChart3 className="h-5 w-5 text-purple-200" />
+          <BarChart3 className="h-5 w-5 text-blue-200" />
           <h3 className="font-semibold">Platform Health</h3>
         </div>
-        <p className="text-sm text-purple-100 leading-relaxed">
+        <p className="text-sm text-blue-100 leading-relaxed">
           {data.platformSummary}
         </p>
       </div>
@@ -253,7 +253,7 @@ export function AIInsightsDashboard() {
                     <p className="text-sm font-medium text-gray-900">
                       {s.studentName}
                     </p>
-                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded-full">
                       {s.daysSinceActive}d inactive
                     </span>
                   </div>
@@ -269,7 +269,7 @@ export function AIInsightsDashboard() {
             </div>
           ) : (
             <div className="text-center py-4">
-              <Users className="h-8 w-8 text-green-400 mx-auto mb-2" />
+              <Users className="h-8 w-8 text-green-700 mx-auto mb-2" />
               <p className="text-sm text-green-600 font-medium">
                 All students are active!
               </p>
@@ -282,7 +282,7 @@ export function AIInsightsDashboard() {
       {data.skillGaps.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BookOpen className="h-5 w-5 text-orange-600" />
+            <BookOpen className="h-5 w-5 text-orange-700" />
             <h3 className="font-semibold text-gray-900">Skill Gaps</h3>
           </div>
           <div className="space-y-2">

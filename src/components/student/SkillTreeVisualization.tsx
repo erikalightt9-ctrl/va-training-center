@@ -38,15 +38,15 @@ interface SkillTreeVisualizationProps {
 
 const LEVEL_BADGE_STYLES: Record<SkillLevel, string> = {
   Beginner: "bg-gray-100 text-gray-700",
-  Intermediate: "bg-blue-100 text-blue-700",
-  Advanced: "bg-purple-100 text-purple-700",
-  Expert: "bg-amber-100 text-amber-700",
+  Intermediate: "bg-blue-50 text-blue-700",
+  Advanced: "bg-blue-50 text-blue-700",
+  Expert: "bg-amber-50 text-amber-700",
 };
 
 const LEVEL_BAR_COLORS: Record<SkillLevel, string> = {
   Beginner: "bg-gray-400",
   Intermediate: "bg-blue-500",
-  Advanced: "bg-purple-500",
+  Advanced: "bg-blue-500",
   Expert: "bg-amber-500",
 };
 
@@ -64,10 +64,10 @@ const SKILL_ICONS: Record<string, ReactNode> = {
 };
 
 const SKILL_ICON_BG: Record<string, string> = {
-  Communication: "bg-blue-100 text-blue-600",
+  Communication: "bg-blue-50 text-blue-700",
   "Technical Skills": "bg-green-100 text-green-600",
-  "AI Tools": "bg-violet-100 text-violet-600",
-  "Industry Knowledge": "bg-orange-100 text-orange-600",
+  "AI Tools": "bg-blue-50 text-blue-700",
+  "Industry Knowledge": "bg-orange-50 text-orange-700",
   Professionalism: "bg-rose-100 text-rose-600",
   Speed: "bg-cyan-100 text-cyan-600",
 };
@@ -78,14 +78,14 @@ const SKILL_ICON_BG: Record<string, string> = {
 
 function overallScoreColor(score: number): string {
   if (score >= 76) return "text-amber-600";
-  if (score >= 51) return "text-purple-600";
-  if (score >= 26) return "text-blue-600";
+  if (score >= 51) return "text-blue-700";
+  if (score >= 26) return "text-blue-700";
   return "text-gray-600";
 }
 
 function overallScoreBg(score: number): string {
   if (score >= 76) return "bg-amber-50 border-amber-200";
-  if (score >= 51) return "bg-purple-50 border-purple-200";
+  if (score >= 51) return "bg-blue-50 border-blue-200";
   if (score >= 26) return "bg-blue-50 border-blue-200";
   return "bg-gray-50 border-gray-200";
 }
@@ -146,8 +146,8 @@ function SkillCard({ skill }: { readonly skill: SkillScore }) {
 function EmptyState() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-      <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-        <Wrench className="h-8 w-8 text-purple-600" />
+      <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+        <Wrench className="h-8 w-8 text-blue-700" />
       </div>
       <h2 className="text-lg font-semibold text-gray-900 mb-2">
         No Skill Data Available

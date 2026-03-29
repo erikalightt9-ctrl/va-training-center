@@ -9,7 +9,7 @@ export interface ModuleDashboardProps {
   readonly description?: string;
   /** Large icon rendered beside the title */
   readonly icon: React.ComponentType<{ className?: string }>;
-  /** Color classes for the header icon e.g. "bg-blue-100 text-blue-700" */
+  /** Color classes for the header icon e.g. "bg-blue-50 text-blue-700" */
   readonly iconColorClass?: string;
   /** Cards to display in the grid */
   readonly cards: ReadonlyArray<Omit<DashboardCardProps, "currentRole"> & { currentRole?: string }>;
@@ -36,7 +36,7 @@ export function ModuleDashboard({
   title,
   description,
   icon: HeaderIcon,
-  iconColorClass = "bg-blue-100 text-blue-700",
+  iconColorClass = "bg-blue-50 text-blue-700",
   cards,
   currentRole,
   children,
@@ -50,9 +50,9 @@ export function ModuleDashboard({
           <HeaderIcon className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+          <h1 className="text-2xl font-bold text-ds-text">{title}</h1>
           {description && (
-            <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+            <p className="text-sm text-ds-muted mt-0.5">{description}</p>
           )}
         </div>
       </div>

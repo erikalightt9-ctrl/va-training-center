@@ -21,42 +21,42 @@ const STUDENTS_CARDS: ReadonlyArray<Omit<DashboardCardProps, "currentRole">> = [
     label: "Student Directory",
     description: "Browse all students, enrollments, and their statuses.",
     icon: Users,
-    colorClass: "bg-blue-100 text-blue-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/admin/enrollees",
     label: "Applications",
     description: "Review and process new enrollment applications.",
     icon: UserCheck,
-    colorClass: "bg-green-100 text-green-700",
+    colorClass: "bg-green-50 text-green-700",
   },
   {
     href: "/admin/attendance",
     label: "Attendance",
     description: "Track student clock-in records and attendance patterns.",
     icon: ClipboardCheck,
-    colorClass: "bg-yellow-100 text-yellow-700",
+    colorClass: "bg-yellow-100 text-yellow-600",
   },
   {
     href: "/admin/engagement",
     label: "Progress",
     description: "Monitor student progress, completions, and engagement.",
     icon: TrendingUp,
-    colorClass: "bg-purple-100 text-purple-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/admin/certificates",
     label: "Certificates",
     description: "Issue and manage student completion certificates.",
     icon: Award,
-    colorClass: "bg-orange-100 text-orange-700",
+    colorClass: "bg-orange-50 text-orange-700",
   },
   {
     href: "/admin/student-ranking",
     label: "Ranking",
     description: "View and publish the public student leaderboard.",
     icon: Trophy,
-    colorClass: "bg-amber-100 text-amber-700",
+    colorClass: "bg-amber-50 text-amber-700",
   },
 ];
 
@@ -71,7 +71,7 @@ export default async function StudentsHubPage() {
       title="Students"
       description="Manage student enrollments, attendance, progress, and achievements."
       icon={Users}
-      iconColorClass="bg-blue-100 text-blue-700"
+      iconColorClass="bg-blue-50 text-blue-700"
       cards={STUDENTS_CARDS}
       currentRole="admin"
     />

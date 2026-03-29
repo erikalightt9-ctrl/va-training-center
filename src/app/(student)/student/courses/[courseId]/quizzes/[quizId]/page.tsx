@@ -260,11 +260,11 @@ export default function TakeQuizPage({
     return (
       <div className="flex items-center justify-center py-16">
         <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-sm text-center">
-          <AlertTriangle className="h-10 w-10 text-red-400 mx-auto mb-3" />
+          <AlertTriangle className="h-10 w-10 text-red-700 mx-auto mb-3" />
           <p className="text-gray-700 mb-4">{error}</p>
           <Link
             href={`/student/courses/${courseId}/quizzes`}
-            className="text-blue-600 text-sm hover:underline"
+            className="text-blue-700 text-sm hover:underline"
           >
             ← Back to Quizzes
           </Link>
@@ -304,7 +304,7 @@ export default function TakeQuizPage({
         <div>
           <Link
             href={`/student/courses/${courseId}/quizzes`}
-            className="text-blue-600 hover:text-blue-800 text-sm"
+            className="text-blue-700 hover:text-blue-800 text-sm"
           >
             ← Back to Quizzes
           </Link>
@@ -361,7 +361,7 @@ export default function TakeQuizPage({
         <div>
           <Link
             href={`/student/courses/${courseId}/quizzes`}
-            className="text-blue-600 hover:text-blue-800 text-sm"
+            className="text-blue-700 hover:text-blue-800 text-sm"
           >
             ← Back to Quizzes
           </Link>
@@ -373,7 +373,7 @@ export default function TakeQuizPage({
 
         <div className="flex items-center gap-3 mt-1 shrink-0">
           {violations > 0 && (
-            <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full">
               <AlertTriangle className="h-3.5 w-3.5" />
               {violations}/3 violations
             </div>
@@ -381,7 +381,7 @@ export default function TakeQuizPage({
           {remainingMs !== null && (
             <div
               className={`flex items-center gap-1.5 font-mono font-bold text-lg ${
-                timerUrgent ? "text-red-600 animate-pulse" : "text-gray-700"
+                timerUrgent ? "text-red-700 animate-pulse" : "text-gray-700"
               }`}
             >
               <Clock className="h-5 w-5" />
@@ -410,14 +410,14 @@ export default function TakeQuizPage({
                 {q.options.map((opt, oi) => (
                   <label
                     key={oi}
-                    className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
+                    className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-ds-card has-[:checked]:border-blue-500 has-[:checked]:bg-ds-card"
                   >
                     <input
                       type="radio"
                       name={q.id}
                       value={String(oi)}
                       onChange={(e) => setAnswer(q.id, e.target.value)}
-                      className="text-blue-600"
+                      className="text-blue-700"
                     />
                     <span className="text-sm">{opt}</span>
                   </label>
@@ -430,7 +430,7 @@ export default function TakeQuizPage({
                 {["true", "false"].map((val) => (
                   <label
                     key={val}
-                    className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
+                    className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-ds-card"
                   >
                     <input
                       type="radio"

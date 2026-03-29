@@ -62,10 +62,10 @@ interface MentorshipData {
 /* ------------------------------------------------------------------ */
 
 const STATUS_STYLES: Record<string, string> = {
-  PENDING: "bg-yellow-100 text-yellow-700",
+  PENDING: "bg-yellow-100 text-yellow-600",
   ACCEPTED: "bg-green-100 text-green-700",
-  DECLINED: "bg-red-100 text-red-700",
-  COMPLETED: "bg-blue-100 text-blue-700",
+  DECLINED: "bg-red-50 text-red-700",
+  COMPLETED: "bg-blue-50 text-blue-700",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -218,7 +218,7 @@ function MentorCard({
             {mentor.specializations.map((spec) => (
               <span
                 key={spec}
-                className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full"
+                className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full"
               >
                 {spec}
               </span>
@@ -348,7 +348,7 @@ export function MentorshipHub() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -382,7 +382,7 @@ export function MentorshipHub() {
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <Award className="h-4 w-4 text-purple-500 mt-0.5 shrink-0" />
+            <Award className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
             <div>
               <p className="font-medium text-gray-900">Career Growth</p>
               <p>
@@ -396,7 +396,7 @@ export function MentorshipHub() {
       {/* Error banner */}
       {error && (
         <div className="bg-red-50 rounded-xl border border-red-200 p-4">
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 

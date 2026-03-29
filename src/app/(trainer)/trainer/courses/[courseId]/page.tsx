@@ -52,7 +52,7 @@ export default async function TrainerCourseDetailPage({
       <div className="mb-8">
         <Link
           href="/trainer/courses"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-700 transition-colors mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Courses
@@ -68,8 +68,8 @@ export default async function TrainerCourseDetailPage({
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
-          <div className="bg-blue-100 rounded-lg p-2.5">
-            <FileText className="h-5 w-5 text-blue-600" />
+          <div className="bg-blue-50 rounded-lg p-2.5">
+            <FileText className="h-5 w-5 text-blue-700" />
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">
@@ -79,7 +79,7 @@ export default async function TrainerCourseDetailPage({
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
-          <div className="bg-amber-100 rounded-lg p-2.5">
+          <div className="bg-amber-50 rounded-lg p-2.5">
             <ClipboardCheck className="h-5 w-5 text-amber-600" />
           </div>
           <div>

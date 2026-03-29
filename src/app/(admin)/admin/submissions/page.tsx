@@ -75,7 +75,7 @@ export default function AdminSubmissionsPage() {
                   {s.fileName} • {Math.round(s.fileSize / 1024)}KB • Submitted {new Date(s.submittedAt).toLocaleString()}
                 </p>
               </div>
-              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">
+              <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
                 {s.status}
               </span>
             </div>

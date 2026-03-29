@@ -19,7 +19,7 @@ export function PaymentProofModal({ proofFilePath, proofFileName }: PaymentProof
         href={proofFilePath}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs"
+        className="inline-flex items-center gap-1 text-blue-700 hover:underline text-xs"
       >
         View PDF
         <ExternalLink className="h-3 w-3" />

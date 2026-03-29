@@ -47,14 +47,14 @@ export function formatMinutes(mins: number): string {
 }
 
 export const TYPE_COLORS: Record<EventTypeKey, { bg: string; border: string; text: string }> = {
-  ANNOUNCEMENT: { bg: "bg-blue-100",   border: "border-blue-400",   text: "text-blue-800" },
-  DEADLINE:     { bg: "bg-red-100",    border: "border-red-400",    text: "text-red-800" },
-  ORIENTATION:  { bg: "bg-purple-100", border: "border-purple-400", text: "text-purple-800" },
-  HOLIDAY:      { bg: "bg-green-100",  border: "border-green-400",  text: "text-green-800" },
-  CUSTOM:       { bg: "bg-gray-100",   border: "border-gray-400",   text: "text-gray-800" },
-  CLASS:        { bg: "bg-indigo-100", border: "border-indigo-400", text: "text-indigo-800" },
-  MEETING:      { bg: "bg-orange-100", border: "border-orange-400", text: "text-orange-800" },
-  ASSIGNMENT:   { bg: "bg-yellow-100", border: "border-yellow-400", text: "text-yellow-800" },
+  ANNOUNCEMENT: { bg: "bg-blue-900/40",   border: "border-blue-700",   text: "text-blue-300" },
+  DEADLINE:     { bg: "bg-red-900/40",    border: "border-red-700",    text: "text-red-300" },
+  ORIENTATION:  { bg: "bg-purple-900/40", border: "border-purple-700", text: "text-purple-300" },
+  HOLIDAY:      { bg: "bg-green-900/40",  border: "border-green-700",  text: "text-green-300" },
+  CUSTOM:       { bg: "bg-gray-800/40",   border: "border-gray-600",   text: "text-gray-300" },
+  CLASS:        { bg: "bg-indigo-900/40", border: "border-indigo-700", text: "text-indigo-300" },
+  MEETING:      { bg: "bg-orange-900/40", border: "border-orange-700", text: "text-orange-300" },
+  ASSIGNMENT:   { bg: "bg-yellow-900/40", border: "border-yellow-700", text: "text-yellow-300" },
 };
 
 export const TYPE_LABELS: Record<EventTypeKey, string> = {

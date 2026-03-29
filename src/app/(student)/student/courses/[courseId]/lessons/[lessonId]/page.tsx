@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ArrowLeft, Clock, CheckCircle2 } from "lucide-react";
 import { LessonDiscussionThread } from "@/components/shared/LessonDiscussionThread";
 import LessonAssignments from "@/components/student/LessonAssignments";
 
@@ -44,7 +45,6 @@ export default function LessonViewerPage({
         });
     });
 
-    // Fetch current user identity for the discussion thread
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((session) => {
@@ -77,8 +77,8 @@ export default function LessonViewerPage({
   if (!lesson) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="text-center text-gray-400">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
+        <div className="text-center text-ds-muted">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary mx-auto mb-3" />
           <p className="text-sm">Loading lesson...</p>
         </div>
       </div>
@@ -86,21 +86,26 @@ export default function LessonViewerPage({
   }
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
-      {/* Breadcrumb */}
+    <div className="space-y-5 max-w-3xl mx-auto">
+
+      {/* Breadcrumb + title */}
       <div>
         <Link
           href={`/student/courses/${courseId}`}
-          className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
+          className="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:text-blue-700 transition-colors mb-2"
         >
-          ← Back to Course
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to Course
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">{lesson.title}</h1>
-        <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
-          {lesson.durationMin > 0 && <span>{lesson.durationMin} min</span>}
+        <h1 className="text-xl font-bold text-ds-text">{lesson.title}</h1>
+        <div className="flex items-center gap-3 mt-1 text-sm text-ds-muted">
+          {lesson.durationMin > 0 && (
+            <span className="flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />{lesson.durationMin} min
+            </span>
+          )}
           {completed && (
-            <span className="flex items-center gap-1 text-green-600 font-medium text-xs bg-green-50 px-2 py-0.5 rounded-full">
-              ✓ Completed
+            <span className="flex items-center gap-1 text-emerald-600 font-medium text-xs bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <CheckCircle2 className="h-3 w-3" /> Completed
             </span>
           )}
         </div>
@@ -118,24 +123,24 @@ export default function LessonViewerPage({
         </div>
       )}
 
-      {/* Lesson Content */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
-        <div className="prose max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">
+      {/* Lesson content */}
+      <div className="bg-ds-card rounded-xl border border-ds-border p-6">
+        <div className="text-ds-text text-sm leading-relaxed whitespace-pre-wrap">
           {lesson.content}
         </div>
 
-        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+        {error && <p className="text-red-700 text-sm mt-4">{error}</p>}
 
         {/* Certificate banner */}
         {certificate && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-center">
-            <p className="text-xl mb-1">🎉</p>
-            <p className="font-semibold text-green-700">
+          <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+            <p className="text-2xl mb-1">🎉</p>
+            <p className="font-semibold text-emerald-600">
               Congratulations! You&apos;ve earned a certificate!
             </p>
             <a
               href={`/api/student/certificates/${certificate.certNumber}/download`}
-              className="mt-3 inline-block bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              className="mt-3 inline-block bg-emerald-600 text-white px-5 py-2 rounded-xl text-sm font-medium hover:bg-emerald-700 transition-colors"
             >
               Download Certificate
             </a>
@@ -145,14 +150,14 @@ export default function LessonViewerPage({
         {/* Complete button */}
         <div className="mt-8 flex justify-end">
           {completed ? (
-            <div className="flex items-center gap-2 text-green-600 font-medium">
-              <span className="text-xl">✓</span> Lesson Completed
+            <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm">
+              <CheckCircle2 className="h-4 w-4" /> Lesson Completed
             </div>
           ) : (
             <button
               onClick={markComplete}
               disabled={completing}
-              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="bg-ds-primary text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               {completing ? "Marking Complete..." : "Mark as Complete"}
             </button>
@@ -160,10 +165,10 @@ export default function LessonViewerPage({
         </div>
       </div>
 
-      {/* Assignments linked to this lesson */}
+      {/* Linked assignments */}
       {lessonId && <LessonAssignments lessonId={lessonId} />}
 
-      {/* Lesson Q&A Discussion Thread */}
+      {/* Discussion thread */}
       {courseId && lessonId && actorId && (
         <LessonDiscussionThread
           courseId={courseId}

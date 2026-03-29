@@ -25,8 +25,8 @@ export default async function CommunicationsPage() {
 
       {/* Forum stats */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <div className="bg-blue-100 rounded-lg p-2">
-          <MessageSquare className="h-5 w-5 text-blue-600" />
+        <div className="bg-blue-50 rounded-lg p-2">
+          <MessageSquare className="h-5 w-5 text-blue-700" />
         </div>
         <p className="text-sm text-blue-800">
           <span className="font-semibold">{forumStats}</span> forum threads across all courses

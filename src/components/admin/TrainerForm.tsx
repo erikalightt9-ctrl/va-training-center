@@ -408,7 +408,7 @@ export function TrainerForm({
             }
             placeholder="e.g. Google Analytics Certified"
             chipColor="bg-emerald-50"
-            chipTextColor="text-emerald-700"
+            chipTextColor="text-emerald-600"
           />
         </div>
 

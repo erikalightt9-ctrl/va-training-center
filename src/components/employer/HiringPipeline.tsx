@@ -21,11 +21,11 @@ interface Application {
 
 const STAGES: { key: HiringStage; label: string; color: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "APPLIED", label: "Applied", color: "bg-gray-100 text-gray-700", icon: Clock },
-  { key: "REVIEWED", label: "Reviewed", color: "bg-blue-100 text-blue-700", icon: Search },
-  { key: "INTERVIEW", label: "Interview", color: "bg-purple-100 text-purple-700", icon: Video },
-  { key: "OFFER", label: "Offer", color: "bg-amber-100 text-amber-700", icon: Star },
+  { key: "REVIEWED", label: "Reviewed", color: "bg-blue-50 text-blue-700", icon: Search },
+  { key: "INTERVIEW", label: "Interview", color: "bg-blue-50 text-blue-700", icon: Video },
+  { key: "OFFER", label: "Offer", color: "bg-amber-50 text-amber-700", icon: Star },
   { key: "HIRED", label: "Hired", color: "bg-green-100 text-green-700", icon: CheckCircle2 },
-  { key: "REJECTED", label: "Rejected", color: "bg-red-100 text-red-700", icon: XCircle },
+  { key: "REJECTED", label: "Rejected", color: "bg-red-50 text-red-700", icon: XCircle },
 ];
 
 function StageBadge({ stage }: { stage: HiringStage }) {
@@ -67,14 +67,14 @@ function ApplicationCard({ app, onStageChange }: {
           </div>
           <p className="text-sm text-gray-500">{app.applicantEmail}</p>
           {app.jobPosting && (
-            <p className="text-xs text-blue-600 mt-1">{app.jobPosting.title}</p>
+            <p className="text-xs text-blue-700 mt-1">{app.jobPosting.title}</p>
           )}
           {app.zoomJoinUrl && (
             <a
               href={app.zoomJoinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-purple-600 font-semibold mt-1 hover:underline"
+              className="inline-flex items-center gap-1 text-xs text-blue-700 font-semibold mt-1 hover:underline"
             >
               <Video className="h-3 w-3" /> Join Zoom Interview
             </a>

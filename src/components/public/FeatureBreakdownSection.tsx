@@ -138,7 +138,7 @@ export function FeatureBreakdownSection() {
     <section id="features" className="py-20 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Platform Features
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -213,7 +213,7 @@ function FeatureMockup({
     <div key="courses" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-semibold text-gray-900 text-sm">Active Courses</h4>
-        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">12 courses</span>
+        <span className="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full font-medium">12 courses</span>
       </div>
       <div className="space-y-3">
         {["Healthcare VA Training", "Real Estate VA Program", "Legal VA Specialization"].map((name) => (
@@ -266,7 +266,7 @@ function FeatureMockup({
     <div key="student" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-semibold text-gray-900 text-sm">Student Dashboard</h4>
-        <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Active</span>
+        <span className="text-xs bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded-full font-medium">Active</span>
       </div>
       <div className="grid grid-cols-3 gap-3 mb-4">
         {[
@@ -294,12 +294,12 @@ function FeatureMockup({
     <div key="support" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-semibold text-gray-900 text-sm">Support Tickets</h4>
-        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">3 open</span>
+        <span className="text-xs bg-amber-900/40 text-amber-400 px-2 py-0.5 rounded-full font-medium">3 open</span>
       </div>
       <div className="space-y-2">
         {[
-          { title: "Can't access Module 3", priority: "High", status: "In Progress", statusColor: "bg-amber-100 text-amber-700" },
-          { title: "Certificate not received", priority: "Medium", status: "AI Replied", statusColor: "bg-blue-100 text-blue-700" },
+          { title: "Can't access Module 3", priority: "High", status: "In Progress", statusColor: "bg-amber-900/40 text-amber-400" },
+          { title: "Certificate not received", priority: "Medium", status: "AI Replied", statusColor: "bg-blue-900/40 text-blue-400" },
           { title: "Payment confirmation", priority: "Low", status: "Resolved", statusColor: "bg-green-100 text-green-700" },
         ].map((t) => (
           <div key={t.title} className="bg-white rounded-xl p-3 border border-gray-100">

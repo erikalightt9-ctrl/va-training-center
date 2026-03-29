@@ -165,7 +165,7 @@ export default function LessonAssignments({ lessonId }: LessonAssignmentsProps) 
                   <span className="text-lg">{typeConfig?.icon}</span>
                   <h3 className="font-semibold text-gray-900">{a.title}</h3>
                   {a.isRequired && (
-                    <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded-full font-medium">
                       Required
                     </span>
                   )}
@@ -198,9 +198,9 @@ export default function LessonAssignments({ lessonId }: LessonAssignmentsProps) 
                 isGraded
                   ? passed
                     ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-600"
+                    : "bg-red-50 text-red-700"
                   : isPending
-                  ? "bg-yellow-100 text-yellow-700"
+                  ? "bg-yellow-100 text-yellow-600"
                   : "bg-gray-100 text-gray-500"
               }`}>
                 {isGraded
@@ -215,12 +215,12 @@ export default function LessonAssignments({ lessonId }: LessonAssignmentsProps) 
             <div className="mt-3">
               <button
                 onClick={() => setExpandedInstructions((prev) => ({ ...prev, [a.id]: !prev[a.id] }))}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                className="text-xs text-blue-700 hover:text-blue-800 font-medium flex items-center gap-1"
               >
                 {expandedInstructions[a.id] ? "▲ Hide" : "▼ Show"} Instructions
               </button>
               {expandedInstructions[a.id] && (
-                <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm text-gray-700 whitespace-pre-wrap">
+                <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm text-ds-muted whitespace-pre-wrap">
                   {a.instructions}
                 </div>
               )}

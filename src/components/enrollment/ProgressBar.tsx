@@ -30,7 +30,7 @@ export function ProgressBar({ currentStep, totalSteps, stepLabels }: ProgressBar
                   isCompleted
                     ? "bg-blue-600 border-blue-600 text-white"
                     : isCurrent
-                    ? "bg-white border-blue-600 text-blue-600"
+                    ? "bg-white border-blue-600 text-blue-700"
                     : "bg-white border-gray-300 text-gray-400"
                 }`}
               >

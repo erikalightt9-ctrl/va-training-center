@@ -101,7 +101,7 @@ export function ContactForm() {
       </div>
 
       {status === "error" && (
-        <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {errorMsg}
         </div>

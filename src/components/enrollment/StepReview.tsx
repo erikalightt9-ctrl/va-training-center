@@ -289,7 +289,7 @@ export function StepReview({ form, courses }: StepReviewProps) {
                   <span className="line-through text-gray-400">
                     ₱{baseTierPrice.toLocaleString()}
                   </span>
-                  <span className="text-xs font-semibold bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold bg-red-50 text-red-700 px-1.5 py-0.5 rounded-full">
                     {formatDiscountLabel(tierDiscount)}
                   </span>
                   <span className="font-semibold">₱{finalTierPrice.toLocaleString()}</span>

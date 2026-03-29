@@ -105,9 +105,9 @@ const TYPE_LABELS: Record<PlacementType, string> = {
 
 const TYPE_COLORS: Record<PlacementType, string> = {
   FULL_TIME: "bg-green-100 text-green-800",
-  PART_TIME: "bg-blue-100 text-blue-800",
-  CONTRACT: "bg-amber-100 text-amber-800",
-  FREELANCE: "bg-purple-100 text-purple-800",
+  PART_TIME: "bg-blue-50 text-blue-800",
+  CONTRACT: "bg-amber-50 text-amber-800",
+  FREELANCE: "bg-blue-50 text-blue-800",
 };
 
 const EMPTY_FORM: FormState = {
@@ -128,8 +128,8 @@ const EMPTY_FORM: FormState = {
 function StatsBanner({ stats }: { readonly stats: PlacementStats }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-        <Trophy className="h-5 w-5 text-blue-600 mb-2" />
+      <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+        <Trophy className="h-5 w-5 text-blue-700 mb-2" />
         <p className="text-2xl font-bold text-blue-900">{stats.placementRate}%</p>
         <p className="text-xs text-gray-500 mt-0.5">Placement Rate</p>
       </div>
@@ -143,9 +143,9 @@ function StatsBanner({ stats }: { readonly stats: PlacementStats }) {
         <p className="text-2xl font-bold text-amber-900">{stats.totalGraduates}</p>
         <p className="text-xs text-gray-500 mt-0.5">Total Graduates</p>
       </div>
-      <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
-        <DollarSign className="h-5 w-5 text-purple-600 mb-2" />
-        <p className="text-2xl font-bold text-purple-900">
+      <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+        <DollarSign className="h-5 w-5 text-blue-700 mb-2" />
+        <p className="text-2xl font-bold text-blue-900">
           {stats.avgMonthlyRate
             ? `$${Math.round(stats.avgMonthlyRate).toLocaleString()}`
             : "—"}
@@ -236,7 +236,7 @@ function PlacementFormDialog({ editing, onClose, onSaved }: PlacementFormProps) 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-blue-600" />
+            <Briefcase className="h-5 w-5 text-blue-700" />
             <h2 className="text-lg font-bold text-gray-900">
               {editing ? "Edit Placement" : "Record Placement"}
             </h2>
@@ -587,7 +587,7 @@ export function PlacementManager() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(p)}
-                        className="text-gray-400 hover:text-blue-600 transition-colors"
+                        className="text-gray-400 hover:text-blue-700 transition-colors"
                         aria-label="Edit placement"
                       >
                         <Edit2 className="h-4 w-4" />
@@ -595,7 +595,7 @@ export function PlacementManager() {
                       <button
                         onClick={() => handleDelete(p.id)}
                         disabled={deleting === p.id}
-                        className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                        className="text-gray-400 hover:text-red-700 transition-colors disabled:opacity-50"
                         aria-label="Delete placement"
                       >
                         {deleting === p.id ? (

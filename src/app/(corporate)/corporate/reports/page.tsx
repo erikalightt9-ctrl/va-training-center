@@ -145,7 +145,7 @@ export default function CorporateReportsPage() {
           label="Team Members"
           value={stats.totalEmployees}
           icon={Users}
-          color="bg-blue-100 text-blue-600"
+          color="bg-blue-50 text-blue-700"
         />
         <StatCard
           label="Active Enrollments"
@@ -157,13 +157,13 @@ export default function CorporateReportsPage() {
           label="Certificates Earned"
           value={stats.certificatesEarned}
           icon={Award}
-          color="bg-purple-100 text-purple-600"
+          color="bg-blue-50 text-blue-700"
         />
         <StatCard
           label="Completion Rate"
           value={`${stats.completionRate}%`}
           icon={TrendingUp}
-          color="bg-amber-100 text-amber-600"
+          color="bg-amber-50 text-amber-700"
           sub={`${stats.completedEnrollments} of ${stats.completedEnrollments + stats.activeEnrollments} completed`}
         />
       </div>
@@ -225,11 +225,11 @@ export default function CorporateReportsPage() {
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.statusBreakdown).map(([status, count]) => {
               const colors: Record<string, string> = {
-                APPROVED: "bg-green-100 text-green-700",
-                ACTIVE:   "bg-blue-100 text-blue-700",
-                PENDING:  "bg-yellow-100 text-yellow-700",
-                REJECTED: "bg-red-100 text-red-700",
-                COMPLETED: "bg-purple-100 text-purple-700",
+                APPROVED: "bg-green-50 text-green-700",
+                ACTIVE:   "bg-blue-50 text-blue-700",
+                PENDING:  "bg-yellow-100 text-yellow-600",
+                REJECTED: "bg-red-50 text-red-700",
+                COMPLETED: "bg-blue-50 text-blue-700",
               };
               return (
                 <div

@@ -48,7 +48,7 @@ export default async function PaymentsPage({
             href={s.value ? `/admin/payments?status=${s.value}` : "/admin/payments"}
             className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
               (status ?? "") === s.value
-                ? "bg-blue-50 border-blue-200 text-blue-800 font-medium"
+                ? "bg-blue-50 border-blue-200 text-blue-200 font-medium"
                 : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -96,7 +96,7 @@ export default async function PaymentsPage({
                     </td>
                     <td className="px-4 py-3">
                       {payment.enrollment.referenceCode ? (
-                        <span className="font-mono text-xs text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                        <span className="font-mono text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
                           {payment.enrollment.referenceCode}
                         </span>
                       ) : (
@@ -106,8 +106,8 @@ export default async function PaymentsPage({
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         payment.method === "GCASH"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-purple-100 text-purple-800"
+                          ? "bg-blue-50 text-blue-800"
+                          : "bg-blue-50 text-blue-800"
                       }`}>
                         {payment.method === "GCASH" ? "GCash" : "Bank Transfer"}
                       </span>

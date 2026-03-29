@@ -14,8 +14,8 @@ import type { TrainerTierConfig } from "@/lib/repositories/trainer-tier.reposito
 
 const TIER_META: Record<string, { color: string; badge: string }> = {
   BASIC: { color: "border-gray-300 bg-gray-50", badge: "bg-gray-100 text-gray-700" },
-  PROFESSIONAL: { color: "border-blue-300 bg-blue-50", badge: "bg-blue-100 text-blue-700" },
-  PREMIUM: { color: "border-amber-300 bg-amber-50", badge: "bg-amber-100 text-amber-700" },
+  PROFESSIONAL: { color: "border-blue-200 bg-blue-50", badge: "bg-blue-50 text-blue-700" },
+  PREMIUM: { color: "border-amber-300 bg-amber-50", badge: "bg-amber-50 text-amber-700" },
 };
 
 function toNumber(v: unknown): number {
@@ -218,7 +218,7 @@ function TierCard({ config }: TierCardProps) {
 
       {/* Save */}
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+        <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
       )}
       <div className="flex items-center gap-3 pt-1">
         {saved && (

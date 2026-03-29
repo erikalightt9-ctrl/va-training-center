@@ -30,7 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
   ORIENTATION: "bg-green-500",
   HOLIDAY: "bg-amber-500",
   CUSTOM: "bg-gray-500",
-  ASSIGNMENT: "bg-purple-500",
+  ASSIGNMENT: "bg-blue-500",
 };
 
 // ── Component ──────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ export function CalendarWidget({ items, month, onMonthChange, onEventClick, onAd
           <button
             type="button"
             onClick={() => onAddEvent()}
-            className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md px-2 py-1 transition-colors"
+            className="flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-ds-text hover:bg-ds-card rounded-md px-2 py-1 transition-colors"
           >
             <span className="text-base leading-none">+</span> Add Event
           </button>

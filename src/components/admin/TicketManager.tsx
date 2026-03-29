@@ -133,7 +133,7 @@ function KpiCards({ stats, loading }: { stats: KpiStats | null; loading: boolean
       value: stats?.inProgress ?? 0,
       icon: Activity,
       bg: "bg-amber-50",
-      text: "text-amber-700",
+      text: "text-amber-600",
       ring: "ring-amber-100",
     },
     {
@@ -384,7 +384,7 @@ export function TicketManager() {
                 {sla && (
                   <>
                     <span>·</span>
-                    <span className={`flex items-center gap-1 ${overdue ? "text-red-600 font-medium" : "text-amber-600"}`}>
+                    <span className={`flex items-center gap-1 ${overdue ? "text-red-700 font-medium" : "text-amber-600"}`}>
                       {overdue && <AlertTriangle className="h-3 w-3" />}
                       SLA: {sla}
                     </span>
@@ -423,11 +423,11 @@ export function TicketManager() {
             <span className={`text-xs px-2 py-0.5 rounded-full ${priorityBadge(selectedTicket.priority)}`}>
               {label(selectedTicket.priority, TICKET_PRIORITIES)}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
               {label(selectedTicket.category, TICKET_CATEGORIES)}
             </span>
             {overdue && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-700 flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" /> Overdue
               </span>
             )}
@@ -667,7 +667,7 @@ export function TicketManager() {
                           {label(ticket.status, TICKET_STATUSES)}
                         </span>
                       </td>
-                      <td className={`px-4 py-3 text-xs ${overdueRow ? "text-red-600 font-medium" : "text-amber-600"}`}>
+                      <td className={`px-4 py-3 text-xs ${overdueRow ? "text-red-700 font-medium" : "text-amber-600"}`}>
                         {sla ?? "—"}
                       </td>
                       <td className="px-4 py-3 text-gray-500 text-xs">
@@ -676,7 +676,7 @@ export function TicketManager() {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => fetchTicketDetail(ticket.id)}
-                          className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                          className="text-blue-700 hover:text-blue-800 text-xs font-medium"
                         >
                           View
                         </button>

@@ -124,7 +124,7 @@ export default function SubmissionGrader({ role }: { role: "admin" | "trainer" }
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-semibold text-gray-900">{s.assignment.title}</h3>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
                     {typeLabel[s.assignment.submissionType] ?? s.assignment.submissionType}
                   </span>
                   {s.assignment.lesson && (
@@ -140,7 +140,7 @@ export default function SubmissionGrader({ role }: { role: "admin" | "trainer" }
                   Submitted {new Date(s.submittedAt).toLocaleString()}
                 </p>
               </div>
-              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">
+              <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
                 {s.status}
               </span>
             </div>
@@ -154,7 +154,7 @@ export default function SubmissionGrader({ role }: { role: "admin" | "trainer" }
                     href={`/uploads/submissions/${s.fileName}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-700 hover:underline"
                   >
                     {s.fileName}
                   </a>
@@ -180,7 +180,7 @@ export default function SubmissionGrader({ role }: { role: "admin" | "trainer" }
                     href={s.linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline break-all"
+                    className="text-blue-700 hover:underline break-all"
                   >
                     {s.linkUrl}
                   </a>

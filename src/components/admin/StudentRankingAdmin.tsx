@@ -149,8 +149,8 @@ function getMedalColor(rank: number): string {
 function getScoreCellColor(score: number): string {
   if (score >= 80) return "text-green-700 bg-green-50";
   if (score >= 60) return "text-blue-700 bg-blue-50";
-  if (score >= 40) return "text-yellow-700 bg-yellow-50";
-  return "text-red-600 bg-red-50";
+  if (score >= 40) return "text-yellow-600 bg-yellow-50";
+  return "text-red-700 bg-red-50";
 }
 
 /* ------------------------------------------------------------------ */
@@ -229,7 +229,7 @@ export function StudentRankingAdmin() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-blue-600" />
+            <Trophy className="h-6 w-6 text-blue-700" />
             Student Ranking
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -260,7 +260,7 @@ export function StudentRankingAdmin() {
       {/* Loading */}
       {loading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-blue-700 mr-2" />
           <span className="text-gray-500">Loading student ranking...</span>
         </div>
       )}
@@ -268,11 +268,11 @@ export function StudentRankingAdmin() {
       {/* Error */}
       {!loading && error && (
         <div className="text-center py-20">
-          <p className="text-red-600 font-medium">{error}</p>
+          <p className="text-red-700 font-medium">{error}</p>
           <button
             type="button"
             onClick={() => fetchRanking(courseFilter)}
-            className="mt-4 text-sm text-blue-600 hover:underline"
+            className="mt-4 text-sm text-blue-700 hover:underline"
           >
             Try again
           </button>

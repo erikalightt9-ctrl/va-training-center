@@ -474,7 +474,7 @@ function MonthView({ currentDate, events, today, onEventClick }: MonthViewProps)
             <div
               key={ds}
               className={`border-b border-r border-gray-100 p-1 overflow-hidden
-                ${isToday ? "bg-blue-50/40" : ""}`}
+                ${isToday ? "bg-blue-500/20" : ""}`}
             >
               <div
                 className={`w-6 h-6 flex items-center justify-center text-xs font-semibold rounded-full mb-1

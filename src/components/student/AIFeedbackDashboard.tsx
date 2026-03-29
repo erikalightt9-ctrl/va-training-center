@@ -101,10 +101,10 @@ const FEATURE_CONFIG: Record<
   },
   "Mock Interviews": {
     icon: Users,
-    color: "text-purple-700",
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-200",
-    barColor: "bg-purple-500",
+    color: "text-blue-700",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
+    barColor: "bg-blue-500",
     href: "/student/ai-interviews",
   },
   "Email Practice": {
@@ -352,7 +352,7 @@ function ScoreTimeline({
               className="flex-1 flex flex-col items-center gap-1 group relative"
             >
               {/* Tooltip */}
-              <div className="hidden group-hover:block absolute -top-16 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap z-10 shadow-lg">
+              <div className="hidden group-hover:block absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-50 text-ds-text border border-ds-border shadow text-xs rounded-lg px-3 py-2 whitespace-nowrap z-10 shadow-lg">
                 <p className="font-semibold">{entry.score}/100</p>
                 <p className="text-gray-300">{entry.feature}</p>
                 <p className="text-gray-400">{formatDate(entry.date)}</p>
@@ -452,8 +452,8 @@ function AssessmentPanel({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {assessment.improvementAreas.map((area, i) => {
               const priorityStyles: Record<string, string> = {
-                high: "bg-red-100 text-red-700",
-                medium: "bg-yellow-100 text-yellow-700",
+                high: "bg-red-50 text-red-700",
+                medium: "bg-yellow-100 text-yellow-600",
                 low: "bg-green-100 text-green-700",
               };
 
@@ -503,7 +503,7 @@ function AssessmentPanel({
           <ol className="space-y-2">
             {assessment.nextSteps.map((step, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center mt-0.5">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold flex items-center justify-center mt-0.5">
                   {i + 1}
                 </span>
                 <span className="text-sm text-gray-700">{step}</span>
@@ -592,7 +592,7 @@ export function AIFeedbackDashboard() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -601,8 +601,8 @@ export function AIFeedbackDashboard() {
   if (!data || data.totalAISessions === 0) {
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-        <div className="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <BarChart2 className="h-8 w-8 text-indigo-600" />
+        <div className="bg-indigo-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <BarChart2 className="h-8 w-8 text-indigo-700" />
         </div>
         <h2 className="text-lg font-semibold text-gray-900 mb-2">
           No AI Feedback Data Yet
@@ -635,7 +635,7 @@ export function AIFeedbackDashboard() {
               Weighted average across all AI-evaluated features
             </p>
             <div className="mt-3 inline-flex items-center gap-2 bg-indigo-50 rounded-lg px-3 py-1.5">
-              <Sparkles className="h-4 w-4 text-indigo-600" />
+              <Sparkles className="h-4 w-4 text-indigo-700" />
               <span className="text-sm font-medium text-indigo-700">
                 {data.totalAISessions} total AI session{data.totalAISessions !== 1 ? "s" : ""}
               </span>
@@ -663,7 +663,7 @@ export function AIFeedbackDashboard() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-indigo-600" />
+            <Sparkles className="h-5 w-5 text-indigo-700" />
             <h3 className="font-semibold text-gray-900">
               Full AI Assessment
             </h3>

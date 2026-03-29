@@ -209,7 +209,7 @@ export function CareerReadinessCard() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -224,7 +224,7 @@ export function CareerReadinessCard() {
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="bg-blue-100 rounded-lg p-2">
+                <div className="bg-blue-50 rounded-lg p-2">
                   <Target className="h-5 w-5 text-blue-700" />
                 </div>
                 <div>
@@ -333,7 +333,7 @@ export function CareerReadinessCard() {
           {data && data.history.length > 1 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-blue-700" />
                 <h3 className="font-semibold text-gray-900">Score History</h3>
               </div>
               <div className="space-y-2">
@@ -362,8 +362,8 @@ export function CareerReadinessCard() {
       ) : (
         /* No score yet */
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Target className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Target className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Career Readiness Score Yet

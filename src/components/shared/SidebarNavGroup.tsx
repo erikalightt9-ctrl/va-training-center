@@ -41,7 +41,7 @@ export function SidebarNavGroup({ label, icon: GroupIcon, items, onNavigate }: S
         className={cn(
           "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
           hasActiveChild
-            ? "text-white bg-blue-900/50"
+            ? "text-white bg-blue-600"
             : "text-blue-300 hover:bg-blue-800 hover:text-white"
         )}
       >
@@ -56,7 +56,7 @@ export function SidebarNavGroup({ label, icon: GroupIcon, items, onNavigate }: S
       </button>
 
       {isOpen && (
-        <div className="ml-4 mt-1 space-y-0.5 border-l border-blue-800 pl-3">
+        <div className="ml-4 mt-1 space-y-0.5 border-l border-blue-200 pl-3">
           {items.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(item.href + "/");

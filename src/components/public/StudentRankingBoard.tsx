@@ -48,7 +48,7 @@ function getMedalColor(rank: number): string {
     case 2:
       return "text-gray-400";
     case 3:
-      return "text-amber-600";
+      return "text-amber-400";
     default:
       return "text-gray-300";
   }
@@ -70,11 +70,11 @@ function getCourseBadgeColor(slug: string): string {
     case "MEDICAL_VA":
       return "bg-rose-50 text-rose-700";
     case "REAL_ESTATE_VA":
-      return "bg-amber-50 text-amber-700";
+      return "bg-amber-900/40 text-amber-400";
     case "US_BOOKKEEPING_VA":
-      return "bg-emerald-50 text-emerald-700";
+      return "bg-emerald-900/40 text-emerald-400";
     default:
-      return "bg-blue-50 text-blue-700";
+      return "bg-blue-900/40 text-blue-400";
   }
 }
 
@@ -173,7 +173,7 @@ export function StudentRankingBoard() {
           {/* Loading */}
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+              <Loader2 className="h-6 w-6 animate-spin text-blue-400 mr-2" />
               <span className="text-gray-500">Loading ranking...</span>
             </div>
           )}
@@ -181,11 +181,11 @@ export function StudentRankingBoard() {
           {/* Error */}
           {!loading && error && (
             <div className="text-center py-20">
-              <p className="text-red-600 font-medium">{error}</p>
+              <p className="text-red-400 font-medium">{error}</p>
               <button
                 type="button"
                 onClick={() => fetchRanking(activeTab)}
-                className="mt-4 text-sm text-blue-600 hover:underline"
+                className="mt-4 text-sm text-blue-400 hover:underline"
               >
                 Try again
               </button>

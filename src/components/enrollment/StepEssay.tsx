@@ -49,7 +49,7 @@ export function StepEssay({ form }: StepEssayProps) {
               charCount < MIN
                 ? "text-amber-600"
                 : charCount > MAX
-                ? "text-red-600"
+                ? "text-red-700"
                 : "text-green-600"
             }`}
           >

@@ -53,12 +53,12 @@ export function HowItWorksSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             How It Works
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             Your Path to a{" "}
-            <span className="text-blue-700">New Career</span>
+            <span className="text-blue-400">New Career</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             From enrollment to employment — a clear, structured journey to
@@ -72,14 +72,14 @@ export function HowItWorksSection() {
             <div key={item.title} className="relative group">
               {/* Connector line (hidden on last item) */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-[calc(50%+32px)] w-[calc(100%-64px)] h-0.5 bg-blue-100" />
+                <div className="hidden lg:block absolute top-10 left-[calc(50%+32px)] w-[calc(100%-64px)] h-0.5 bg-blue-900/40" />
               )}
 
               <div className="text-center">
                 {/* Step number + icon */}
                 <div className="relative inline-flex items-center justify-center mb-5">
-                  <div className="w-20 h-20 rounded-2xl bg-blue-50 border-2 border-blue-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                    <item.icon className="h-8 w-8 text-blue-700" />
+                  <div className="w-20 h-20 rounded-2xl bg-blue-50 border-2 border-blue-100 flex items-center justify-center group-hover:bg-blue-900/40 transition-colors">
+                    <item.icon className="h-8 w-8 text-blue-400" />
                   </div>
                   <span className="absolute -top-2 -right-2 w-8 h-8 bg-blue-700 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">
                     {item.step}

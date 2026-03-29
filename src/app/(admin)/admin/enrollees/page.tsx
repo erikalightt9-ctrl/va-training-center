@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 import { AnalyticsCard } from "@/components/admin/AnalyticsCard";
-import { EnrolleesTabs } from "@/components/admin/EnrolleesTabs";
+import { TasksPageTabs } from "@/components/admin/TasksPageTabs";
 import { listEnrollments } from "@/lib/repositories/enrollment.repository";
 import { listEnrollees, getEnrolleeStats } from "@/lib/repositories/enrollee.repository";
 import { Button } from "@/components/ui/button";
@@ -82,8 +82,8 @@ export default async function EnrolleesPage({ searchParams }: PageProps) {
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Enrollees</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-ds-text">Enrollees</h1>
+          <p className="text-ds-muted text-sm mt-1">
             Manage applications, enrollees, payments, and access
           </p>
         </div>
@@ -100,41 +100,41 @@ export default async function EnrolleesPage({ searchParams }: PageProps) {
           title="Applications"
           value={applications.total}
           icon={ClipboardList}
-          colorClass="text-blue-600 bg-blue-100"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="All submissions"
         />
         <AnalyticsCard
           title="Active Enrollees"
           value={stats.total}
           icon={Users}
-          colorClass="text-indigo-600 bg-indigo-100"
+          colorClass="text-indigo-700 bg-indigo-50"
           subtitle="Approved"
         />
         <AnalyticsCard
           title="Paid"
           value={stats.paid}
           icon={CreditCard}
-          colorClass="text-green-600 bg-green-100"
+          colorClass="text-emerald-600 bg-emerald-50"
           subtitle="Fully paid"
         />
         <AnalyticsCard
           title="Unpaid / Partial"
           value={stats.unpaid + stats.partial}
           icon={AlertCircle}
-          colorClass="text-amber-600 bg-amber-100"
+          colorClass="text-amber-600 bg-amber-50"
           subtitle={`${stats.partial} partial, ${stats.unpaid} unpaid`}
         />
         <AnalyticsCard
           title="Access Granted"
           value={stats.accessGranted}
           icon={ShieldCheck}
-          colorClass="text-purple-600 bg-purple-100"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="Active access"
         />
       </div>
 
-      <Suspense fallback={<div className="h-12 bg-gray-100 rounded animate-pulse mb-6" />}>
-        <EnrolleesTabs
+      <Suspense fallback={<div className="h-12 bg-slate-50 rounded animate-pulse mb-6" />}>
+        <TasksPageTabs
           applications={applications}
           enrollees={enrollees}
         />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Loader2, ClipboardList } from "lucide-react";
 
 interface Submission {
   id: string;
@@ -28,7 +29,7 @@ interface Assignment {
   submission: Submission | null;
 }
 
-const TYPE_ICON: Record<string, string> = {
+const TYPE_LABEL: Record<string, string> = {
   FILE_UPLOAD: "📎",
   TEXT_RESPONSE: "✏️",
   EXTERNAL_LINK: "🔗",
@@ -108,38 +109,38 @@ export default function StudentAssignmentsPage({
     }
   }
 
-  const pending = assignments.filter((a) => !a.submission);
+  const pending   = assignments.filter((a) => !a.submission);
   const submitted = assignments.filter((a) => a.submission?.status === "PENDING");
-  const graded = assignments.filter((a) => a.submission?.status === "GRADED");
+  const graded    = assignments.filter((a) => a.submission?.status === "GRADED");
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-ds-primary" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="space-y-5 max-w-3xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Assignments</h1>
-        <p className="text-gray-500 text-sm mt-1">Submit your work and view your grades</p>
+        <h1 className="text-xl font-bold text-ds-text">Assignments</h1>
+        <p className="text-ds-muted text-sm mt-0.5">Submit your work and view your grades</p>
       </div>
 
       {/* Summary pills */}
       {assignments.length > 0 && (
-        <div className="flex gap-3 flex-wrap">
-          <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full font-medium">
+        <div className="flex gap-2 flex-wrap">
+          <span className="text-xs bg-slate-50 text-ds-muted border border-ds-border px-3 py-1.5 rounded-full font-medium">
             {pending.length} to submit
           </span>
           {submitted.length > 0 && (
-            <span className="text-sm bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full font-medium">
               {submitted.length} awaiting grade
             </span>
           )}
           {graded.length > 0 && (
-            <span className="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded-full font-medium">
+            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-full font-medium">
               {graded.length} graded
             </span>
           )}
@@ -147,66 +148,56 @@ export default function StudentAssignmentsPage({
       )}
 
       {assignments.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center text-gray-400">
-          <p className="text-xl mb-2">📋</p>
-          <p className="font-medium">No assignments posted yet</p>
-          <p className="text-sm mt-1">Check back later or look inside individual lessons</p>
+        <div className="bg-ds-card rounded-xl border border-ds-border p-10 text-center">
+          <ClipboardList className="h-10 w-10 text-ds-muted/30 mx-auto mb-3" />
+          <p className="text-ds-muted font-medium">No assignments posted yet</p>
+          <p className="text-xs text-ds-muted/60 mt-1">Check back later or look inside individual lessons</p>
         </div>
       ) : (
         assignments.map((a) => {
-          const isGraded = a.submission?.status === "GRADED";
+          const isGraded  = a.submission?.status === "GRADED";
           const isPending = a.submission?.status === "PENDING";
-          const passed =
-            isGraded &&
-            a.submission?.grade != null &&
-            a.submission.grade >= a.passingScore;
+          const passed    = isGraded && a.submission?.grade != null && a.submission.grade >= a.passingScore;
+
+          const borderColor = isGraded
+            ? passed ? "border-emerald-200" : "border-red-200"
+            : isPending ? "border-amber-200" : "border-ds-border";
 
           return (
-            <div
-              key={a.id}
-              className={`bg-white rounded-xl border-2 p-6 transition-all ${
-                isGraded
-                  ? passed
-                    ? "border-green-200"
-                    : "border-red-200"
-                  : isPending
-                  ? "border-yellow-200"
-                  : "border-gray-200"
-              }`}
-            >
+            <div key={a.id} className={`bg-ds-card rounded-xl border-2 p-5 transition-all ${borderColor}`}>
+
               {/* Header */}
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-lg">{TYPE_ICON[a.submissionType] ?? "📋"}</span>
-                    <h3 className="font-semibold text-gray-900">{a.title}</h3>
+                    <span className="text-base">{TYPE_LABEL[a.submissionType] ?? "📋"}</span>
+                    <h3 className="font-semibold text-ds-text">{a.title}</h3>
                     {a.isRequired && (
-                      <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-xs bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-full font-medium">
                         Required
                       </span>
                     )}
                   </div>
                   {a.lesson && (
-                    <p className="text-xs text-gray-400 mt-0.5">In: {a.lesson.title}</p>
+                    <p className="text-xs text-ds-muted mt-0.5">In: {a.lesson.title}</p>
                   )}
                   {a.dueDate && (
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs text-ds-muted mt-0.5">
                       Due: {new Date(a.dueDate).toLocaleDateString("en-PH", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
+                        month: "short", day: "numeric", year: "numeric",
                       })}
                     </p>
                   )}
                 </div>
-                <span className={`text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap ${
+
+                <span className={`text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap border ${
                   isGraded
                     ? passed
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-red-50 text-red-700 border-red-200"
                     : isPending
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-gray-100 text-gray-600"
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-slate-50 text-ds-muted border-ds-border"
                 }`}>
                   {isGraded
                     ? `${a.submission?.grade}/${a.maxPoints}`
@@ -216,17 +207,20 @@ export default function StudentAssignmentsPage({
                 </span>
               </div>
 
-              <p className="text-gray-600 text-sm mt-3 whitespace-pre-wrap">{a.instructions}</p>
+              <p className="text-ds-muted text-sm mt-3 whitespace-pre-wrap">{a.instructions}</p>
 
               {/* Grade feedback */}
               {isGraded && a.submission?.feedback && (
-                <div className={`mt-3 p-3 rounded-lg text-sm border ${
-                  passed ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
+                <div className={`mt-3 p-3 rounded-xl text-sm border ${
+                  passed
+                    ? "bg-emerald-50 border-emerald-200"
+                    : "bg-red-50 border-red-200"
                 }`}>
-                  <p className={`font-semibold ${passed ? "text-green-700" : "text-red-700"}`}>
-                    Grade: {a.submission.grade}/{a.maxPoints}{passed ? " ✓ Passed" : " — Needs Improvement"}
+                  <p className={`font-semibold ${passed ? "text-emerald-600" : "text-red-700"}`}>
+                    Grade: {a.submission.grade}/{a.maxPoints}
+                    {passed ? " ✓ Passed" : " — Needs Improvement"}
                   </p>
-                  <p className="text-gray-600 mt-1">{a.submission.feedback}</p>
+                  <p className="text-ds-muted mt-1">{a.submission.feedback}</p>
                 </div>
               )}
 
@@ -234,7 +228,7 @@ export default function StudentAssignmentsPage({
               {!a.submission && (
                 <div className="mt-4">
                   {error[a.id] && (
-                    <p className="text-red-500 text-xs mb-2">{error[a.id]}</p>
+                    <p className="text-red-700 text-xs mb-2">{error[a.id]}</p>
                   )}
 
                   {a.submissionType === "FILE_UPLOAD" && (
@@ -252,7 +246,7 @@ export default function StudentAssignmentsPage({
                       <button
                         onClick={() => fileRefs.current[a.id]?.click()}
                         disabled={submitting === a.id}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="flex items-center gap-2 bg-ds-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
                       >
                         <span>📎</span>
                         {submitting === a.id ? "Uploading..." : "Upload File"}
@@ -266,13 +260,13 @@ export default function StudentAssignmentsPage({
                         rows={4}
                         value={textAnswers[a.id] ?? ""}
                         onChange={(e) => setTextAnswers((t) => ({ ...t, [a.id]: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-ds-border bg-slate-50 rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
                         placeholder="Write your response here..."
                       />
                       <button
                         onClick={() => submitJson(a.id, { textAnswer: textAnswers[a.id] })}
                         disabled={submitting === a.id || !(textAnswers[a.id] ?? "").trim()}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="flex items-center gap-2 bg-ds-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
                       >
                         <span>✏️</span>
                         {submitting === a.id ? "Submitting..." : "Submit Response"}
@@ -286,13 +280,13 @@ export default function StudentAssignmentsPage({
                         type="url"
                         value={linkUrls[a.id] ?? ""}
                         onChange={(e) => setLinkUrls((l) => ({ ...l, [a.id]: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-ds-border bg-slate-50 rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
                         placeholder="https://docs.google.com/..."
                       />
                       <button
                         onClick={() => submitJson(a.id, { linkUrl: linkUrls[a.id] })}
                         disabled={submitting === a.id || !(linkUrls[a.id] ?? "").startsWith("http")}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="flex items-center gap-2 bg-ds-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
                       >
                         <span>🔗</span>
                         {submitting === a.id ? "Submitting..." : "Submit Link"}
@@ -304,7 +298,7 @@ export default function StudentAssignmentsPage({
                     <button
                       onClick={() => submitJson(a.id, {})}
                       disabled={submitting === a.id}
-                      className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+                      className="flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
                     >
                       <span>✅</span>
                       {submitting === a.id ? "Marking..." : "Mark Task Complete"}
@@ -314,7 +308,7 @@ export default function StudentAssignmentsPage({
               )}
 
               {isPending && (
-                <p className="text-sm text-yellow-600 mt-3 flex items-center gap-1">
+                <p className="text-sm text-amber-600 mt-3 flex items-center gap-1">
                   <span>⏳</span> Submitted — waiting for review
                 </p>
               )}

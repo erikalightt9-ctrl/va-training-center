@@ -50,29 +50,29 @@ const INDUSTRY_ICON_MAP: ReadonlyArray<{
     keywords: ["HEALTH", "MEDICAL", "HEALTHCARE"],
     icon: Stethoscope,
     color: "bg-red-50 border-red-200 hover:border-red-300",
-    iconBg: "bg-red-100",
-    iconColor: "text-red-600",
+    iconBg: "bg-red-900/40",
+    iconColor: "text-red-400",
   },
   {
     keywords: ["REAL_ESTATE", "REALESTATE", "REAL ESTATE"],
     icon: Home,
     color: "bg-emerald-50 border-emerald-200 hover:border-emerald-300",
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-600",
+    iconBg: "bg-emerald-900/40",
+    iconColor: "text-emerald-400",
   },
   {
     keywords: ["FINANCE", "BOOKKEEPING", "ACCOUNTING"],
     icon: Calculator,
     color: "bg-blue-50 border-blue-200 hover:border-blue-300",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
+    iconBg: "bg-blue-900/40",
+    iconColor: "text-blue-400",
   },
   {
     keywords: ["LEGAL", "COMPLIANCE", "LAW"],
     icon: Scale,
     color: "bg-purple-50 border-purple-200 hover:border-purple-300",
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-600",
+    iconBg: "bg-purple-900/40",
+    iconColor: "text-purple-400",
   },
   {
     keywords: ["TECH", "TECHNOLOGY", "IT", "SOFTWARE"],
@@ -85,8 +85,8 @@ const INDUSTRY_ICON_MAP: ReadonlyArray<{
     keywords: ["ECOMMERCE", "E-COMMERCE", "E_COMMERCE", "RETAIL"],
     icon: ShoppingCart,
     color: "bg-amber-50 border-amber-200 hover:border-amber-300",
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-600",
+    iconBg: "bg-amber-900/40",
+    iconColor: "text-amber-400",
   },
   {
     keywords: ["BUSINESS", "EXECUTIVE"],
@@ -143,11 +143,11 @@ export function BrowseByIndustrySection({ courses }: BrowseByIndustrySectionProp
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Multi-Industry Platform
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
-            Browse by <span className="text-blue-700">Industry</span>
+            Browse by <span className="text-blue-400">Industry</span>
           </h2>
           <p className="text-gray-500 max-w-xl mx-auto">
             Find specialized training programs tailored to your field.

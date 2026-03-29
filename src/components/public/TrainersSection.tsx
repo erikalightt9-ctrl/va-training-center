@@ -26,12 +26,12 @@ export function TrainersSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Expert Trainers
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             Learn From{" "}
-            <span className="text-blue-700">Industry Leaders</span>
+            <span className="text-blue-400">Industry Leaders</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Our trainers are active industry professionals who bring real-world
@@ -46,7 +46,7 @@ export function TrainersSection() {
               key={stat.label}
               className="text-center p-4 rounded-xl bg-blue-50 border border-blue-100"
             >
-              <stat.icon className="h-5 w-5 text-blue-600 mx-auto mb-2" />
+              <stat.icon className="h-5 w-5 text-blue-400 mx-auto mb-2" />
               <p className="text-2xl font-extrabold text-gray-900">
                 {stat.value}
               </p>

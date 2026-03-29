@@ -101,8 +101,8 @@ const SOURCE_LABELS: Readonly<Record<string, string>> = {
 };
 
 const SOURCE_COLORS: Readonly<Record<string, string>> = {
-  remotive: "bg-purple-100 text-purple-700",
-  jsearch: "bg-teal-100 text-teal-700",
+  remotive: "bg-blue-50 text-blue-700",
+  jsearch: "bg-teal-50 text-teal-700",
   manual: "bg-gray-100 text-gray-600",
 };
 
@@ -180,7 +180,7 @@ function SyncModal({
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <RefreshCw className="h-5 w-5 text-blue-600" />
+          <RefreshCw className="h-5 w-5 text-blue-700" />
           <h3 className="font-semibold text-gray-900">Sync External Jobs</h3>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose} disabled={syncing}>
@@ -545,12 +545,12 @@ export function JobPostingManager() {
                 </span>
               )}
               {remotiveCount > 0 && (
-                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
                   {remotiveCount} Remotive
                 </span>
               )}
               {jsearchCount > 0 && (
-                <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">
                   {jsearchCount} JSearch
                 </span>
               )}
@@ -768,8 +768,8 @@ export function JobPostingManager() {
       {/* Job Postings List */}
       {postings.length === 0 && !showForm && !showSyncModal ? (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Briefcase className="h-8 w-8 text-indigo-600" />
+          <div className="bg-indigo-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Briefcase className="h-8 w-8 text-indigo-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Job Postings Yet
@@ -842,7 +842,7 @@ export function JobPostingManager() {
                       href={posting.externalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-blue-600 transition-colors"
+                      className="inline-flex items-center justify-center h-8 w-8 rounded-md text-gray-400 hover:text-blue-700 transition-colors"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>

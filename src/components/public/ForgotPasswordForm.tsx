@@ -46,8 +46,8 @@ function EmailRecoveryPanel({ userType }: { readonly userType: UserType }) {
   return (
     <div className="text-center space-y-5">
       <div className="flex justify-center">
-        <div className="rounded-full bg-blue-100 p-4">
-          <MessageCircle className="h-10 w-10 text-blue-600" />
+        <div className="rounded-full bg-blue-900/40 p-4">
+          <MessageCircle className="h-10 w-10 text-blue-400" />
         </div>
       </div>
 
@@ -63,7 +63,7 @@ function EmailRecoveryPanel({ userType }: { readonly userType: UserType }) {
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 leading-relaxed text-left">
         <p className="font-medium mb-1">To recover your email, please:</p>
-        <ol className="list-decimal list-inside space-y-1 text-blue-700">
+        <ol className="list-decimal list-inside space-y-1 text-blue-400">
           <li>Contact us at <span className="font-medium">info@vatrainingcenter.com</span></li>
           <li>Include your full name and the course you enrolled in</li>
           <li>Our team will verify your identity and send your email</li>
@@ -154,7 +154,7 @@ function ForgotPasswordPanel({ userType }: { readonly userType: UserType }) {
               setSubmitted(false);
               setEmail("");
             }}
-            className="block w-full text-sm text-blue-700 hover:underline text-center"
+            className="block w-full text-sm text-blue-400 hover:underline text-center"
           >
             Try a different email
           </button>
@@ -190,7 +190,7 @@ function ForgotPasswordPanel({ userType }: { readonly userType: UserType }) {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm">
+        <div className="flex items-center gap-2 text-red-400 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
@@ -217,7 +217,7 @@ function ForgotPasswordPanel({ userType }: { readonly userType: UserType }) {
       <div className="pt-1 border-t border-gray-100">
         <Link
           href={`/portal?tab=${PORTAL_TAB_MAP[userType]}`}
-          className="block text-sm text-blue-700 hover:underline text-center"
+          className="block text-sm text-blue-400 hover:underline text-center"
         >
           Back to {LABEL_MAP[userType]} Login
         </Link>
@@ -268,7 +268,7 @@ export function ForgotPasswordForm() {
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
           Need help?{" "}
-          <Link href="/contact" className="text-blue-600 hover:underline">
+          <Link href="/contact" className="text-blue-400 hover:underline">
             Contact us
           </Link>{" "}
           at info@vatrainingcenter.com

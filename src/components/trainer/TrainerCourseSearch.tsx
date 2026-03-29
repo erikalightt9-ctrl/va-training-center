@@ -78,7 +78,7 @@ export function TrainerCourseSearch({ courses }: TrainerCourseSearchProps) {
           <button
             type="button"
             onClick={() => setQuery("")}
-            className="mt-2 text-sm text-blue-600 underline hover:text-blue-700"
+            className="mt-2 text-sm text-blue-700 underline hover:text-blue-700"
           >
             Clear search
           </button>
@@ -86,8 +86,8 @@ export function TrainerCourseSearch({ courses }: TrainerCourseSearchProps) {
       ) : filtered.length === 0 ? (
         /* No courses at all */
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Courses Found
@@ -106,8 +106,8 @@ export function TrainerCourseSearch({ courses }: TrainerCourseSearchProps) {
               className="group bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-blue-200 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="bg-blue-100 rounded-lg p-2.5">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
+                <div className="bg-blue-50 rounded-lg p-2.5">
+                  <BookOpen className="h-5 w-5 text-blue-700" />
                 </div>
                 <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors mt-1" />
               </div>

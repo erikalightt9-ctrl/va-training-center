@@ -19,7 +19,7 @@ export default async function CourseListPage() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/admin/courses" className="hover:text-blue-600 transition-colors">
+        <Link href="/admin/courses" className="hover:text-blue-700 transition-colors">
           Courses
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -28,7 +28,7 @@ export default async function CourseListPage() {
 
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="bg-blue-100 rounded-lg p-2">
+        <div className="bg-blue-50 rounded-lg p-2">
           <BookOpen className="h-5 w-5 text-blue-700" />
         </div>
         <div>

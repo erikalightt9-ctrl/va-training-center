@@ -50,7 +50,7 @@ export function AIPracticeScenarioCard({
       <div className="border-t border-gray-100">
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50 transition-colors"
+          className="w-full flex items-center justify-between px-5 py-3 text-sm font-medium text-blue-700 hover:bg-ds-card transition-colors"
         >
           <span>{expanded ? "Hide Practice Prompt" : "View Practice Prompt"}</span>
           {expanded ? (
@@ -97,7 +97,7 @@ export function AIPracticeScenarioCard({
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-2">
                 Expected Output Format
               </span>
-              <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 leading-relaxed border border-blue-100">
+              <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-300 leading-relaxed border border-blue-200">
                 {expectedOutputFormat}
               </div>
             </div>

@@ -47,10 +47,10 @@ type FilterStatus = "" | "PENDING" | "ACTIVE" | "EXPIRED" | "CANCELLED";
 
 function StatusBadge({ status }: { readonly status: string }) {
   const styles: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-700",
+    PENDING: "bg-yellow-100 text-yellow-600",
     ACTIVE: "bg-green-100 text-green-700",
     EXPIRED: "bg-gray-100 text-gray-500",
-    CANCELLED: "bg-red-100 text-red-600",
+    CANCELLED: "bg-red-50 text-red-700",
   };
 
   const icons: Record<string, React.ReactNode> = {
@@ -161,7 +161,7 @@ export function AdminSubscriptionsPage() {
             onClick={() => setFilter(tab.value)}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
               filter === tab.value
-                ? "bg-gray-900 text-white"
+                ? "bg-slate-50 text-ds-text border border-ds-border"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >

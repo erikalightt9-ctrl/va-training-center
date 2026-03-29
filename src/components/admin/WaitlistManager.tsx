@@ -83,7 +83,7 @@ export function WaitlistManager({ scheduleId, entries: initialEntries }: Waitlis
         <Button
           variant="outline"
           size="sm"
-          className="gap-1 text-indigo-600 border-indigo-300 hover:bg-indigo-50"
+          className="gap-1 text-indigo-700 border-indigo-300 hover:bg-indigo-50"
           disabled={loading === "promote"}
           onClick={() => handleAction("promote")}
         >

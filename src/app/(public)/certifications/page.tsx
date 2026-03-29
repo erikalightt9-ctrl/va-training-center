@@ -150,7 +150,7 @@ export default function CertificationsPage() {
                 {/* Card Header */}
                 <div className="bg-blue-50 p-6 border-b border-blue-100">
                   <div className="bg-amber-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                    <Award className="h-6 w-6 text-amber-700" />
+                    <Award className="h-6 w-6 text-amber-600" />
                   </div>
                   <h3 className="font-bold text-gray-900 text-lg">
                     {cert.name}

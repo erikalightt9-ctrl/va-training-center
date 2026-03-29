@@ -4,7 +4,7 @@ import type { PaymentStatus } from "@prisma/client";
 const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }> = {
   PENDING_PAYMENT: {
     label: "Pending",
-    className: "bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200",
+    className: "bg-amber-50 text-amber-800 hover:bg-amber-50 border-amber-200",
   },
   PAID: {
     label: "Paid",
@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }>
   },
   FAILED: {
     label: "Rejected",
-    className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    className: "bg-red-50 text-red-800 hover:bg-red-50 border-red-200",
   },
   REFUNDED: {
     label: "Refunded",

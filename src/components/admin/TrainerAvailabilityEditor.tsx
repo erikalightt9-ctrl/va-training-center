@@ -138,7 +138,7 @@ export function TrainerAvailabilityEditor({
                 <button
                   type="button"
                   onClick={() => addSlot(dayOfWeek)}
-                  className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                  className="text-indigo-700 hover:text-indigo-800 transition-colors"
                   title="Add slot"
                 >
                   <Plus className="h-4 w-4" />
@@ -176,7 +176,7 @@ export function TrainerAvailabilityEditor({
                       <button
                         type="button"
                         onClick={() => removeSlot(slot.id)}
-                        className="text-red-400 hover:text-red-600 flex-shrink-0"
+                        className="text-red-700 hover:text-red-700 flex-shrink-0"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>

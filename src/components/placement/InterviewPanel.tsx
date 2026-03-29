@@ -172,7 +172,7 @@ export function InterviewPanel() {
           </div>
         )}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-blue-600">
+          <span className="text-sm font-medium text-blue-700">
             Question {currentIndex + 1} of {questions.length}
           </span>
           <div className="flex gap-1">
@@ -187,7 +187,7 @@ export function InterviewPanel() {
           </div>
         </div>
 
-        <div className="rounded-xl bg-blue-50 border border-blue-100 px-5 py-4">
+        <div className="rounded-xl bg-blue-50 border border-blue-200 px-5 py-4">
           <p className="text-gray-800 font-medium leading-relaxed">{currentQuestion.question}</p>
         </div>
 

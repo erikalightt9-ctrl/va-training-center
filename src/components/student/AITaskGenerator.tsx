@@ -42,8 +42,8 @@ type Difficulty = "beginner" | "intermediate" | "advanced";
 
 function difficultyColor(d: string): string {
   if (d === "beginner") return "bg-green-100 text-green-700";
-  if (d === "intermediate") return "bg-yellow-100 text-yellow-700";
-  return "bg-red-100 text-red-700";
+  if (d === "intermediate") return "bg-yellow-100 text-yellow-600";
+  return "bg-red-50 text-red-700";
 }
 
 function scoreColor(score: number): string {
@@ -123,7 +123,7 @@ export function AITaskGenerator() {
       {/* Difficulty Selector + Generate */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="bg-indigo-100 rounded-lg p-2">
+          <div className="bg-indigo-50 rounded-lg p-2">
             <Zap className="h-5 w-5 text-indigo-700" />
           </div>
           <div>
@@ -253,7 +253,7 @@ export function AITaskGenerator() {
             <div className="space-y-4 border-t border-gray-200 pt-4 mt-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-indigo-600" />
+                  <Zap className="h-4 w-4 text-indigo-700" />
                   <h4 className="text-sm font-semibold text-gray-900">
                     AI Feedback
                   </h4>

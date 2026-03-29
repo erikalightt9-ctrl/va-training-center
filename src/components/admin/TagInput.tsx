@@ -23,7 +23,7 @@ export function TagInput({
   onAdd,
   onRemove,
   placeholder = "Type and press Enter to add",
-  chipColor = "bg-blue-50",
+  chipColor = "bg-blue-909/20",
   chipTextColor = "text-blue-700",
 }: TagInputProps) {
   const [input, setInput] = useState("");

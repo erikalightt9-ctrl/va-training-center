@@ -533,7 +533,7 @@ export function ResumeBuilder({
   const actionButtons = (
     <div className="flex items-center gap-2">
       {saveMsg && (
-        <span className={`flex items-center gap-1 text-xs ${saveMsg.type === "ok" ? "text-green-600" : "text-red-600"}`}>
+        <span className={`flex items-center gap-1 text-xs ${saveMsg.type === "ok" ? "text-green-600" : "text-red-700"}`}>
           {saveMsg.type === "ok"
             ? <CheckCircle className="h-3.5 w-3.5" />
             : <AlertCircle className="h-3.5 w-3.5" />}
@@ -613,7 +613,7 @@ export function ResumeBuilder({
                   {photoUploading ? "Uploading…" : "Upload Photo"}
                 </button>
                 <p className="text-[11px] text-gray-400 mt-1">JPG or PNG · max 2 MB · square crop</p>
-                {photoError && <p className="text-[11px] text-red-600 mt-1">{photoError}</p>}
+                {photoError && <p className="text-[11px] text-red-700 mt-1">{photoError}</p>}
               </div>
             </div>
           </Card>
@@ -643,13 +643,13 @@ export function ResumeBuilder({
                     {/* Blur overlay + lock badge for locked premium templates */}
                     {locked && (
                       <div className="absolute inset-0 rounded-[10px] bg-white/60 backdrop-blur-[2px] flex items-start justify-end p-1.5 z-10">
-                        <span className="flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        <span className="flex items-center gap-0.5 bg-yellow-100 text-yellow-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                           <Lock className="h-2.5 w-2.5" /> PRO
                         </span>
                       </div>
                     )}
                     {t.isPremium && !locked && (
-                      <span className="absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-yellow-100 text-yellow-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">
+                      <span className="absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-yellow-100 text-yellow-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">
                         <Sparkles className="h-2.5 w-2.5" /> PRO
                       </span>
                     )}
@@ -723,7 +723,7 @@ export function ResumeBuilder({
             ) : (
               <button
                 onClick={() => setShowGate(true)}
-                className="w-full flex items-center justify-center gap-2 border border-dashed border-yellow-300 bg-yellow-50 rounded-lg py-2 text-xs text-yellow-700 hover:bg-yellow-100 transition-colors"
+                className="w-full flex items-center justify-center gap-2 border border-dashed border-yellow-300 bg-yellow-50 rounded-lg py-2 text-xs text-yellow-600 hover:bg-yellow-100 transition-colors"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Unlock color & font customization with PRO
@@ -771,7 +771,7 @@ export function ResumeBuilder({
           <Card>
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-gray-900 text-sm">Work Experience</h2>
-              <button onClick={addWork} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
+              <button onClick={addWork} className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-800 font-medium">
                 <Plus className="h-3 w-3" /> Add
               </button>
             </div>
@@ -806,7 +806,7 @@ export function ResumeBuilder({
           <Card>
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-gray-900 text-sm">Education</h2>
-              <button onClick={addEducation} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
+              <button onClick={addEducation} className="flex items-center gap-1 text-xs text-blue-700 hover:text-blue-800 font-medium">
                 <Plus className="h-3 w-3" /> Add
               </button>
             </div>

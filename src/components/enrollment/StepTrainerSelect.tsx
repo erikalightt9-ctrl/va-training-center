@@ -60,7 +60,7 @@ interface StepTrainerSelectProps {
 const TIER_STYLES: Readonly<Record<TierValue, Pick<TierConfigEntry, "bg" | "text" | "border" | "ring">>> = {
   BASIC:        { bg: "bg-gray-50",  text: "text-gray-700",  border: "border-gray-200",  ring: "ring-gray-400"  },
   PROFESSIONAL: { bg: "bg-blue-50",  text: "text-blue-700",  border: "border-blue-200",  ring: "ring-blue-500"  },
-  PREMIUM:      { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", ring: "ring-amber-500" },
+  PREMIUM:      { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200", ring: "ring-amber-500" },
 };
 
 const DEFAULT_TIER_CONFIG: Readonly<Record<TierValue, TierConfigEntry>> = {
@@ -135,8 +135,8 @@ function TrainerCard({
             className="h-12 w-12 rounded-full object-cover border-2 border-gray-200 shrink-0"
           />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border-2 border-gray-200">
-            <UserCog className="h-5 w-5 text-blue-400" />
+          <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border-2 border-ds-border">
+            <UserCog className="h-5 w-5 text-blue-700" />
           </div>
         )}
 
@@ -147,7 +147,7 @@ function TrainerCard({
           className="flex-1 min-w-0 text-left group"
         >
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+            <span className="font-semibold text-gray-900 text-sm group-hover:text-blue-700 transition-colors">
               {trainer.name}
             </span>
             {isExpanded ? (
@@ -188,7 +188,7 @@ function TrainerCard({
           <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 pt-3">
             {trainer.totalRatings > 0 && (
               <span className="inline-flex items-center gap-0.5">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                <Star className="h-3 w-3 fill-amber-400 text-amber-600" />
                 {numRating.toFixed(1)} ({trainer.totalRatings})
               </span>
             )}
@@ -448,8 +448,8 @@ export function StepTrainerSelect({ form }: StepTrainerSelectProps) {
       {/* Premium trainers */}
       {premiumTrainers.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-amber-700 mb-2 flex items-center gap-1">
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+          <h3 className="text-sm font-semibold text-amber-600 mb-2 flex items-center gap-1">
+            <Star className="h-4 w-4 fill-amber-400 text-amber-600" />
             Premium Trainers
           </h3>
           <div className="space-y-2">

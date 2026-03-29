@@ -75,7 +75,7 @@ export function AddSectionDialog({ onAdd, onClose, currentCount }: AddSectionDia
         </div>
         <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
           {isAtLimit && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700 mb-3">
+            <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-600 mb-3">
               You have reached the maximum number of sections per page.
             </div>
           )}
@@ -85,7 +85,7 @@ export function AddSectionDialog({ onAdd, onClose, currentCount }: AddSectionDia
               type="button"
               onClick={() => handleAdd(type)}
               disabled={isAtLimit}
-              className="w-full flex items-start gap-4 p-4 rounded-xl border border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200"
+              className="w-full flex items-start gap-4 p-4 rounded-xl border border-gray-200 bg-white hover:border-blue-300 hover:bg-ds-card transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200"
             >
               <span className="text-2xl shrink-0 mt-0.5" aria-hidden="true">{SECTION_ICONS[type]}</span>
               <div className="min-w-0">

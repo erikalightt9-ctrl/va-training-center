@@ -62,8 +62,8 @@ function CollapsibleGroup({
               href={item.href}
               onClick={onClose}
               className={cn(
-                "block rounded-md px-3 py-2 transition-colors hover:bg-blue-50",
-                pathname === item.href ? "text-blue-700 bg-blue-50" : "text-gray-600"
+                "block rounded-md px-3 py-2 transition-colors hover:bg-slate-50/50",
+                pathname === item.href ? "text-blue-400 bg-blue-900/40" : "text-gray-600"
               )}
             >
               <span className="text-sm font-medium">{item.label}</span>
@@ -108,8 +108,8 @@ export function MobileNavMenu({
           href="/enterprise"
           onClick={onClose}
           className={cn(
-            "block py-2 text-sm font-medium transition-colors hover:text-blue-700",
-            pathname === "/enterprise" ? "text-blue-700" : "text-gray-600"
+            "block py-2 text-sm font-medium transition-colors hover:text-blue-400",
+            pathname === "/enterprise" ? "text-blue-400" : "text-gray-600"
           )}
         >
           For Business
@@ -119,8 +119,8 @@ export function MobileNavMenu({
           href="/verify"
           onClick={onClose}
           className={cn(
-            "block py-2 text-sm font-medium transition-colors hover:text-blue-700",
-            pathname === "/verify" ? "text-blue-700" : "text-gray-600"
+            "block py-2 text-sm font-medium transition-colors hover:text-blue-400",
+            pathname === "/verify" ? "text-blue-400" : "text-gray-600"
           )}
         >
           Verify

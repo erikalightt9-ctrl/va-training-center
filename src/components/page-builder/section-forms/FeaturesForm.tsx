@@ -73,7 +73,7 @@ export function FeaturesForm({ content, onChange }: FeaturesFormProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => removeItem(index)}
-                className="h-7 w-7 p-0 text-red-400 hover:text-red-600 hover:bg-red-50"
+                className="h-7 w-7 p-0 text-red-700 hover:text-red-700 hover:bg-ds-card"
                 aria-label={`Remove item ${index + 1}`}
               >
                 <Trash2 className="h-3.5 w-3.5" />

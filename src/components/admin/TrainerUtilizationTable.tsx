@@ -12,8 +12,8 @@ function utilizationBarColor(pct: number): string {
 
 function utilizationTextColor(pct: number): string {
   if (pct >= 90) return "text-red-700";
-  if (pct >= 70) return "text-amber-700";
-  return "text-emerald-700";
+  if (pct >= 70) return "text-amber-600";
+  return "text-emerald-600";
 }
 
 /* ------------------------------------------------------------------ */

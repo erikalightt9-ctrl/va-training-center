@@ -93,7 +93,7 @@ export function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Pricing
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -144,7 +144,7 @@ export function PricingSection() {
               </h3>
               <p
                 className={`text-xs font-medium mt-0.5 mb-5 uppercase tracking-wide ${
-                  tier.highlighted ? "text-blue-300" : "text-blue-600"
+                  tier.highlighted ? "text-blue-300" : "text-blue-400"
                 }`}
               >
                 {tier.tagline}
@@ -181,7 +181,7 @@ export function PricingSection() {
                   <li key={f} className="flex items-start gap-2.5">
                     <Check
                       className={`h-4 w-4 shrink-0 mt-0.5 ${
-                        tier.highlighted ? "text-amber-300" : "text-blue-600"
+                        tier.highlighted ? "text-amber-300" : "text-blue-400"
                       }`}
                     />
                     <span
@@ -200,7 +200,7 @@ export function PricingSection() {
                 asChild
                 className={`w-full font-semibold ${
                   tier.highlighted
-                    ? "bg-white text-blue-900 hover:bg-blue-50"
+                    ? "bg-white text-blue-900 hover:bg-slate-50/50"
                     : "bg-blue-600 text-white hover:bg-blue-700"
                 }`}
               >
@@ -216,7 +216,7 @@ export function PricingSection() {
         <p className="text-center text-sm text-gray-400 mt-8">
           All plans include a 30-day free trial. Prices are in Philippine Peso
           (PHP). Need a custom quote?{" "}
-          <Link href="/contact" className="text-blue-600 hover:underline">
+          <Link href="/contact" className="text-blue-400 hover:underline">
             Contact us
           </Link>
           .

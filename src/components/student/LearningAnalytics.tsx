@@ -145,7 +145,7 @@ export function LearningAnalytics({ data }: LearningAnalyticsProps) {
           value={`${data.totalLessonsCompleted}/${data.totalLessons}`}
           subtitle={`${lessonPercent}% complete`}
           icon={BookOpen}
-          colorClass="text-blue-600 bg-blue-100"
+          colorClass="text-blue-700 bg-blue-50"
         />
         <StatCard
           title="Avg Quiz Score"
@@ -159,14 +159,14 @@ export function LearningAnalytics({ data }: LearningAnalyticsProps) {
           value={`${data.assignmentsCompleted}/${data.totalAssignments}`}
           subtitle="Submitted"
           icon={FileCheck}
-          colorClass="text-purple-600 bg-purple-100"
+          colorClass="text-blue-700 bg-blue-50"
         />
         <StatCard
           title="Study Hours"
           value={`${data.totalStudyHours}`}
           subtitle="Total logged hours"
           icon={Clock}
-          colorClass="text-orange-600 bg-orange-100"
+          colorClass="text-orange-700 bg-orange-50"
         />
         <StatCard
           title="Total Points"
@@ -253,7 +253,7 @@ export function LearningAnalytics({ data }: LearningAnalyticsProps) {
                           ? "text-green-600"
                           : quiz.score >= 60
                             ? "text-yellow-600"
-                            : "text-red-600"
+                            : "text-red-700"
                       }`}
                     >
                       {quiz.score}%

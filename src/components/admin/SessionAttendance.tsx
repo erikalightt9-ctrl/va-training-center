@@ -224,7 +224,7 @@ export function SessionAttendance({
             <Button
               variant="outline"
               size="sm"
-              className="text-red-500 border-red-300 hover:bg-red-50 gap-1"
+              className="text-red-500 border-red-300 hover:bg-ds-card gap-1"
               onClick={() => markAll(false)}
             >
               <XCircle className="h-4 w-4" /> Mark All Absent
@@ -270,7 +270,7 @@ export function SessionAttendance({
                             onClick={() => { setAttendance((p) => ({ ...p, [student.id]: false })); setSaved(false); }}
                             className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                               present === false
-                                ? "bg-red-100 text-red-600 ring-1 ring-red-400"
+                                ? "bg-red-50 text-red-700 ring-1 ring-red-400"
                                 : "bg-gray-100 text-gray-500 hover:bg-red-50"
                             }`}
                           >
@@ -287,7 +287,7 @@ export function SessionAttendance({
 
           {/* Error & save */}
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-4 py-2">
+            <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-4 py-2">
               {error}
             </p>
           )}

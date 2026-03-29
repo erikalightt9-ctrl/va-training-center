@@ -51,7 +51,7 @@ export function ContactForm({ content, onChange }: ContactFormProps) {
           type="checkbox"
           checked={content.showForm}
           onChange={(e) => updateField("showForm", e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500"
         />
         <Label htmlFor="contact-show-form" className="text-sm font-medium text-gray-700 cursor-pointer">
           Show contact form

@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Subdomains that belong to the platform itself — never redirect to tenant login.
+ */
+const PLATFORM_SUBDOMAINS = new Set(["www", "app", "admin", "superadmin"]);
+
 /** Extract the subdomain from the hostname.
  *  e.g. "acme.yoursite.com" with rootDomain "yoursite.com" → "acme"
  *  e.g. "localhost:3000" → null (no subdomain) */
@@ -27,7 +32,29 @@ export async function proxy(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  if (subdomain) {
+  // ── superadmin.domain → /superadmin/* ───────────────────────────────────
+  if (subdomain === "superadmin") {
+    const url = request.nextUrl.clone();
+    if (!pathname.startsWith("/superadmin")) {
+      // /login → dedicated superadmin login page (no sidebar)
+      if (pathname === "/login" || pathname === "/") {
+        url.pathname = "/superadmin/login";
+        return NextResponse.rewrite(url);
+      }
+      url.pathname = `/superadmin${pathname}`;
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
+
+  if (subdomain && !PLATFORM_SUBDOMAINS.has(subdomain)) {
+    // Tenant subdomain: redirect root and /login to branded tenant login page
+    if (pathname === "/" || pathname === "/login") {
+      const tenantLoginUrl = new URL("/tenant-login", request.url);
+      tenantLoginUrl.searchParams.set("slug", subdomain);
+      return NextResponse.rewrite(tenantLoginUrl);
+    }
+
     // Standard subdomain routing: set header for downstream consumption
     response.headers.set("x-tenant-subdomain", subdomain);
   } else {
@@ -69,10 +96,9 @@ export async function proxy(request: NextRequest) {
     : null;
 
   // ── Superadmin protection ────────────────────────────────────────────────
-  if (pathname.startsWith("/superadmin")) {
+  if (pathname.startsWith("/superadmin") && !pathname.startsWith("/superadmin/login")) {
     if (!token?.isSuperAdmin) {
-      const loginUrl = new URL("/portal", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
+      const loginUrl = new URL("/superadmin/login", request.url);
       return NextResponse.redirect(loginUrl);
     }
   }

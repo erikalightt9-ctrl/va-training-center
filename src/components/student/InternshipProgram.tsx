@@ -72,10 +72,10 @@ interface InternshipData {
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  REVIEWED: "bg-blue-100 text-blue-800",
-  SHORTLISTED: "bg-purple-100 text-purple-800",
+  REVIEWED: "bg-blue-50 text-blue-800",
+  SHORTLISTED: "bg-blue-50 text-blue-800",
   ACCEPTED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+  REJECTED: "bg-red-50 text-red-800",
   WITHDRAWN: "bg-gray-100 text-gray-600",
 };
 
@@ -251,7 +251,7 @@ export function InternshipProgram() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button
           variant="outline"
           size="sm"
@@ -324,8 +324,8 @@ export function InternshipProgram() {
         <>
           {listings.length === 0 ? (
             <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <FileText className="h-8 w-8 text-blue-600" />
+              <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <FileText className="h-8 w-8 text-blue-700" />
               </div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
                 No Internships Available

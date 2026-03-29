@@ -26,8 +26,8 @@ export default async function CorporateAnalyticsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-100 rounded-lg p-2">
-            <BarChart3 className="h-5 w-5 text-purple-700" />
+          <div className="bg-blue-50 rounded-lg p-2">
+            <BarChart3 className="h-5 w-5 text-blue-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
@@ -72,7 +72,7 @@ export default async function CorporateAnalyticsPage() {
 
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Award className="h-5 w-5 text-purple-500" />
+            <Award className="h-5 w-5 text-blue-500" />
             <span className="text-sm text-gray-500">Certificates</span>
           </div>
           <div className="text-2xl font-bold text-gray-900">

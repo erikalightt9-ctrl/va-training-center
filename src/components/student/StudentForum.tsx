@@ -72,7 +72,7 @@ function ThreadDetailView({
     <div className="space-y-4">
       <button
         onClick={onBack}
-        className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+        className="text-indigo-700 hover:text-indigo-800 text-sm font-medium"
       >
         &larr; Back to threads
       </button>
@@ -92,7 +92,7 @@ function ThreadDetailView({
           className="bg-white rounded-xl border border-gray-200 p-5"
         >
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm">
+            <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm">
               {post.student.name[0]}
             </div>
             <div>
@@ -399,7 +399,7 @@ export function StudentForum() {
       {/* Error banner */}
       {error && (
         <div className="bg-red-50 rounded-xl border border-red-200 p-4">
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
@@ -442,8 +442,8 @@ export function StudentForum() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="h-8 w-8 text-indigo-600" />
+          <div className="bg-indigo-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <MessageCircle className="h-8 w-8 text-indigo-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Discussions Yet

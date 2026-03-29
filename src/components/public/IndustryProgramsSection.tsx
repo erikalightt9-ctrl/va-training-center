@@ -36,8 +36,8 @@ function getThemeForSlug(industryOrSlug: string): IndustryTheme {
     return {
       icon: Stethoscope,
       color: "bg-red-50 border-red-100 hover:border-red-200",
-      iconBg: "bg-red-100",
-      iconColor: "text-red-600",
+      iconBg: "bg-red-900/40",
+      iconColor: "text-red-400",
       tag: "Healthcare",
     };
 
@@ -45,8 +45,8 @@ function getThemeForSlug(industryOrSlug: string): IndustryTheme {
     return {
       icon: Home,
       color: "bg-emerald-50 border-emerald-100 hover:border-emerald-200",
-      iconBg: "bg-emerald-100",
-      iconColor: "text-emerald-600",
+      iconBg: "bg-emerald-900/40",
+      iconColor: "text-emerald-400",
       tag: "Real Estate",
     };
 
@@ -54,8 +54,8 @@ function getThemeForSlug(industryOrSlug: string): IndustryTheme {
     return {
       icon: Calculator,
       color: "bg-blue-50 border-blue-100 hover:border-blue-200",
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
+      iconBg: "bg-blue-900/40",
+      iconColor: "text-blue-400",
       tag: "Finance",
     };
 
@@ -63,8 +63,8 @@ function getThemeForSlug(industryOrSlug: string): IndustryTheme {
     return {
       icon: Scale,
       color: "bg-purple-50 border-purple-100 hover:border-purple-200",
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
+      iconBg: "bg-purple-900/40",
+      iconColor: "text-purple-400",
       tag: "Legal",
     };
 
@@ -81,8 +81,8 @@ function getThemeForSlug(industryOrSlug: string): IndustryTheme {
     return {
       icon: ShoppingCart,
       color: "bg-amber-50 border-amber-100 hover:border-amber-200",
-      iconBg: "bg-amber-100",
-      iconColor: "text-amber-600",
+      iconBg: "bg-amber-900/40",
+      iconColor: "text-amber-400",
       tag: "E-Commerce",
     };
 
@@ -155,12 +155,12 @@ export function IndustryProgramsSection({
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Industry-Specific Training
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             Programs Designed for{" "}
-            <span className="text-blue-700">Every Industry</span>
+            <span className="text-blue-400">Every Industry</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Choose from specialized training programs aligned with global

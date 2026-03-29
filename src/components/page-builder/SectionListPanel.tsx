@@ -85,7 +85,7 @@ function SortableItem({
       style={style}
       className={`flex items-center gap-1.5 h-11 px-2 rounded-lg border cursor-pointer transition-colors select-none ${
         isSelected
-          ? "border-blue-400 bg-blue-50 text-blue-800"
+          ? "border-blue-400 bg-blue-50 text-blue-300"
           : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 text-gray-700"
       }`}
       onClick={() => onSelect(section.id)}

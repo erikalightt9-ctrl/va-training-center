@@ -167,7 +167,7 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
         {/* Delete button */}
         {confirmDelete ? (
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs text-red-600 font-medium">Confirm?</span>
+            <span className="text-xs text-red-700 font-medium">Confirm?</span>
             <Button
               type="button"
               variant="destructive"
@@ -193,7 +193,7 @@ export function SectionEditor({ section, onUpdate, onDelete, dragHandleProps }: 
             variant="ghost"
             size="sm"
             onClick={handleDelete}
-            className="h-7 w-7 p-0 text-red-400 hover:text-red-600 hover:bg-red-50 shrink-0"
+            className="h-7 w-7 p-0 text-red-700 hover:text-red-700 hover:bg-ds-card shrink-0"
             aria-label={`Delete ${getSectionLabel(section.type)} section`}
           >
             <Trash2 className="h-3.5 w-3.5" />

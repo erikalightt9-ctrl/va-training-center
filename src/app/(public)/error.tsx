@@ -18,7 +18,7 @@ export default function PublicError({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
-      <AlertCircle className="h-12 w-12 text-red-400 mb-4" />
+      <AlertCircle className="h-12 w-12 text-red-700 mb-4" />
       <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
       <p className="text-gray-500 text-sm mb-6 max-w-sm">
         We encountered an unexpected error. Please try again or return to the homepage.

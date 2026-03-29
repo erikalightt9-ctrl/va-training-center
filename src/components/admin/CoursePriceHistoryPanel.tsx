@@ -131,7 +131,7 @@ export function CoursePriceHistoryPanel({ courseId }: CoursePriceHistoryPanelPro
                     <td className="py-2 pr-4">
                       <span
                         className={`inline-flex items-center gap-1 font-medium ${
-                          isIncrease ? "text-red-600" : "text-green-600"
+                          isIncrease ? "text-red-700" : "text-green-600"
                         }`}
                       >
                         {isIncrease ? (

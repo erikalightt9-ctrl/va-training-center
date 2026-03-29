@@ -95,7 +95,7 @@ function InvalidTokenPanel({ userType }: { readonly userType: string }) {
   return (
     <div className="text-center space-y-5">
       <div className="flex justify-center">
-        <div className="rounded-full bg-red-100 p-4">
+        <div className="rounded-full bg-red-900/40 p-4">
           <AlertCircle className="h-10 w-10 text-red-500" />
         </div>
       </div>
@@ -239,7 +239,7 @@ function ResetForm({ token, userType }: ResetFormProps) {
       />
 
       {error && (
-        <div className="flex items-center gap-2 text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm">
+        <div className="flex items-center gap-2 text-red-400 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
@@ -266,7 +266,7 @@ function ResetForm({ token, userType }: ResetFormProps) {
       <div className="pt-1 border-t border-gray-100">
         <Link
           href={`/portal?tab=${tab}`}
-          className="block text-sm text-blue-700 hover:underline text-center"
+          className="block text-sm text-blue-400 hover:underline text-center"
         >
           Cancel — Back to Login
         </Link>
@@ -314,7 +314,7 @@ export function ResetPasswordForm() {
         {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
           Need help?{" "}
-          <Link href="/contact" className="text-blue-600 hover:underline">
+          <Link href="/contact" className="text-blue-400 hover:underline">
             Contact us
           </Link>{" "}
           at info@vatrainingcenter.com

@@ -65,8 +65,8 @@ export default async function AIAssessmentsPage() {
         {/* Header */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-purple-100 rounded-lg p-2">
-              <Sparkles className="h-5 w-5 text-purple-700" />
+            <div className="bg-blue-50 rounded-lg p-2">
+              <Sparkles className="h-5 w-5 text-blue-700" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">AI Review</h1>
@@ -86,8 +86,8 @@ export default async function AIAssessmentsPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="h-8 w-8 text-purple-600" />
+            <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="h-8 w-8 text-blue-700" />
             </div>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               No Submissions Yet

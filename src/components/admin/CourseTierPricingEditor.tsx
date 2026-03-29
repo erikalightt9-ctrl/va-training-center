@@ -105,7 +105,7 @@ function TierCard({
             type="checkbox"
             checked={discountActive}
             onChange={(e) => handleDiscountToggle(e.target.checked)}
-            className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600"
+            className="h-3.5 w-3.5 rounded border-gray-300 text-blue-700"
           />
           <span className="text-gray-600 font-medium">Apply discount</span>
         </label>
@@ -155,7 +155,7 @@ function TierCard({
                 <button
                   type="button"
                   onClick={() => onFeaturesChange(features.filter((_, j) => j !== i))}
-                  className="text-red-400 hover:text-red-600 shrink-0"
+                  className="text-red-700 hover:text-red-700 shrink-0"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -225,7 +225,7 @@ export function CourseTierPricingEditor({ value, onChange }: CourseTierPricingEd
         />
         <TierCard
           label="Professional"
-          colorClass="border-blue-200 bg-blue-50/30"
+          colorClass="border-blue-200 bg-blue-500/10"
           price={value.priceProfessional}
           features={value.featuresProfessional}
           discount={value.discountProfessional}
@@ -235,7 +235,7 @@ export function CourseTierPricingEditor({ value, onChange }: CourseTierPricingEd
         />
         <TierCard
           label="Advanced"
-          colorClass="border-purple-200 bg-purple-50/30"
+          colorClass="border-blue-200 bg-blue-50/30"
           price={value.priceAdvanced}
           features={value.featuresAdvanced}
           discount={value.discountAdvanced}

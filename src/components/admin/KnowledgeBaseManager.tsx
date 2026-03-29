@@ -297,7 +297,7 @@ export function KnowledgeBaseManager() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startEdit(article)}
-                          className="text-blue-600 hover:text-blue-800"
+                          className="text-blue-700 hover:text-blue-800"
                           title="Edit"
                         >
                           <Pencil className="h-4 w-4" />

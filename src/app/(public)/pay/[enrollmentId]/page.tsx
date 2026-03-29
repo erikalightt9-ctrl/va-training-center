@@ -76,7 +76,7 @@ export default async function PaymentPage({
           ) : hasPendingPayment ? (
             <div className="text-center py-8">
               <div className="text-5xl mb-4">&#9203;</div>
-              <h2 className="text-xl font-bold text-amber-700 mb-2">Payment Under Review</h2>
+              <h2 className="text-xl font-bold text-amber-600 mb-2">Payment Under Review</h2>
               <p className="text-gray-600">
                 We received your payment for <strong>{enrollment.course.title}</strong>.
                 We&apos;ll verify it within 24 hours and send you an email once confirmed.
@@ -108,7 +108,7 @@ export default async function PaymentPage({
               {/* Reference Code */}
               {referenceCode && (
                 <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 text-center mb-6">
-                  <p className="text-xs text-amber-700 font-medium uppercase tracking-wide mb-1">
+                  <p className="text-xs text-amber-600 font-medium uppercase tracking-wide mb-1">
                     Your Payment Reference Code
                   </p>
                   <p className="text-2xl font-bold font-mono text-amber-900 tracking-wider">

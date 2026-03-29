@@ -45,19 +45,19 @@ const CATEGORY_CONFIG: Record<
   FeedbackCategory,
   { readonly label: string; readonly color: string }
 > = {
-  COMMUNICATION: { label: "Communication", color: "bg-blue-100 text-blue-700" },
+  COMMUNICATION: { label: "Communication", color: "bg-blue-50 text-blue-700" },
   TECHNICAL_SKILLS: {
     label: "Technical Skills",
-    color: "bg-purple-100 text-purple-700",
+    color: "bg-blue-50 text-blue-700",
   },
   PROFESSIONALISM: {
     label: "Professionalism",
-    color: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 text-amber-700",
   },
   RELIABILITY: { label: "Reliability", color: "bg-green-100 text-green-700" },
   PROBLEM_SOLVING: {
     label: "Problem Solving",
-    color: "bg-red-100 text-red-700",
+    color: "bg-red-50 text-red-700",
   },
   OVERALL: { label: "Overall", color: "bg-gray-100 text-gray-700" },
 };
@@ -83,7 +83,7 @@ function StarRating({ rating }: { readonly rating: number }) {
           key={i}
           className={`h-4 w-4 ${
             i < rating
-              ? "fill-yellow-400 text-yellow-400"
+              ? "fill-yellow-400 text-yellow-600"
               : "text-gray-200"
           }`}
         />

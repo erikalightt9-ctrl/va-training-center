@@ -26,8 +26,8 @@ const PAGE_TYPE_LABELS: Record<PageCardData["type"], string> = {
 };
 
 const PAGE_TYPE_COLORS: Record<PageCardData["type"], string> = {
-  LANDING: "bg-blue-100 text-blue-700",
-  CONTACT: "bg-purple-100 text-purple-700",
+  LANDING: "bg-blue-50 text-blue-700",
+  CONTACT: "bg-blue-50 text-blue-700",
   CUSTOM: "bg-gray-100 text-gray-700",
 };
 
@@ -65,7 +65,7 @@ export function PageCard({ page, onDelete }: PageCardProps) {
                 Published
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
                 <FileText className="h-3 w-3" />
                 Draft
               </span>
@@ -80,7 +80,7 @@ export function PageCard({ page, onDelete }: PageCardProps) {
         <div className="flex items-center gap-2 shrink-0">
           {confirmDelete ? (
             <>
-              <span className="text-xs text-red-600 font-medium">Delete?</span>
+              <span className="text-xs text-red-700 font-medium">Delete?</span>
               <Button type="button" variant="destructive" size="sm" onClick={() => onDelete(page.id)} className="h-8 px-3 text-xs">
                 Yes
               </Button>
@@ -101,7 +101,7 @@ export function PageCard({ page, onDelete }: PageCardProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleDeleteClick}
-                className="h-8 w-8 p-0 text-red-400 hover:text-red-600 hover:bg-red-50"
+                className="h-8 w-8 p-0 text-red-700 hover:text-red-700 hover:bg-ds-card"
                 aria-label={`Delete ${page.title}`}
               >
                 <Trash2 className="h-3.5 w-3.5" />

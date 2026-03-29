@@ -95,7 +95,7 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
               </span>
             )}
           </div>
-          <Button asChild size="lg" className="bg-white text-blue-900 font-bold hover:bg-blue-50">
+          <Button asChild size="lg" className="bg-white text-blue-900 font-bold hover:bg-slate-50/50">
             <Link href="/enroll">
               Enroll Now <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -122,8 +122,8 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
       <section className="py-12 px-4 bg-blue-50">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-blue-100 rounded-lg p-2">
-              <Bot className="h-5 w-5 text-blue-700" />
+            <div className="bg-blue-900/40 rounded-lg p-2">
+              <Bot className="h-5 w-5 text-blue-400" />
             </div>
             <div>
               <h2 className="text-xl font-extrabold text-gray-900">
@@ -140,7 +140,7 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
                 key={tool}
                 className="flex items-center gap-3 bg-white rounded-lg px-4 py-3 border border-blue-100"
               >
-                <Bot className="h-4 w-4 text-blue-600 shrink-0" />
+                <Bot className="h-4 w-4 text-blue-400 shrink-0" />
                 <span className="text-sm text-gray-700">{tool}</span>
               </div>
             ))}
@@ -156,8 +156,8 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
         <section className="py-16 px-4 bg-orange-50">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-2">
-              <div className="bg-orange-100 rounded-lg p-2">
-                <BookOpen className="h-5 w-5 text-orange-600" />
+              <div className="bg-orange-900/40 rounded-lg p-2">
+                <BookOpen className="h-5 w-5 text-orange-400" />
               </div>
               <h2 className="text-2xl font-extrabold text-gray-900">
                 Try Before You Enroll
@@ -175,14 +175,14 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
                   className="group bg-white rounded-xl border border-orange-200 p-5 hover:shadow-md hover:border-orange-300 transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-xs font-medium text-orange-600 bg-orange-100 rounded-full px-2.5 py-0.5">
+                    <span className="text-xs font-medium text-orange-400 bg-orange-900/40 rounded-full px-2.5 py-0.5">
                       Free Lesson
                     </span>
                     <span className="text-xs text-gray-400">
                       Lesson {lesson.order}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-orange-700 transition-colors mb-2">
+                  <h3 className="font-semibold text-gray-900 group-hover:text-orange-400 transition-colors mb-2">
                     {lesson.title}
                   </h3>
                   <div className="flex items-center justify-between">
@@ -192,7 +192,7 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
                         {lesson.durationMin} min
                       </span>
                     )}
-                    <span className="text-xs font-medium text-orange-600 group-hover:text-orange-700 flex items-center gap-1">
+                    <span className="text-xs font-medium text-orange-400 group-hover:text-orange-400 flex items-center gap-1">
                       Preview Free <ArrowRight className="h-3 w-3" />
                     </span>
                   </div>
@@ -208,7 +208,7 @@ export function CourseDetailPage({ course, previewLessons = [] }: CourseDetailPa
         <div className="max-w-lg mx-auto">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Program Investment</h2>
-            <div className="text-5xl font-extrabold text-blue-700 my-4">
+            <div className="text-5xl font-extrabold text-blue-400 my-4">
               ₱{priceNum.toLocaleString()}
             </div>
             <p className="text-gray-500 text-sm mb-6">

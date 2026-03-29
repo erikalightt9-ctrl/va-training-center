@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getStudentCertificates } from "@/lib/repositories/certificate.repository";
+import { Award, Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -13,36 +14,54 @@ export default async function CertificatesPage() {
   const certificates = await getStudentCertificates(studentId);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 max-w-3xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Certificates</h1>
-        <p className="text-gray-500 text-sm mt-1">Download your earned certificates</p>
+        <h1 className="text-xl font-bold text-ds-text">My Certificates</h1>
+        <p className="text-ds-muted text-sm mt-0.5">Download your earned certificates</p>
       </div>
 
       {certificates.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="text-5xl mb-4">{"\uD83C\uDF93"}</div>
-          <p className="text-gray-500">Complete all lessons in a course to earn a certificate!</p>
+        <div className="bg-ds-card rounded-xl border border-ds-border p-10 text-center">
+          <Award className="h-12 w-12 text-ds-muted/30 mx-auto mb-3" />
+          <p className="text-ds-muted font-medium">No certificates yet</p>
+          <p className="text-xs text-ds-muted/60 mt-1">
+            Complete all lessons in a course to earn a certificate!
+          </p>
         </div>
       ) : (
-        certificates.map((cert) => (
-          <div key={cert.id} className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{"\uD83C\uDF93"}</span>
-                <h3 className="font-semibold text-gray-800">{cert.course.title}</h3>
+        <div className="space-y-3">
+          {certificates.map((cert) => (
+            <div
+              key={cert.id}
+              className="bg-ds-card rounded-xl border border-ds-border p-5 flex items-center justify-between gap-4"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                  <Award className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-ds-text truncate">{cert.course.title}</h3>
+                  <p className="text-xs text-ds-muted mt-0.5">
+                    Issued{" "}
+                    {new Date(cert.issuedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <p className="text-xs text-ds-muted/60">Cert #{cert.certNumber}</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
-                Issued {new Date(cert.issuedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-              </p>
-              <p className="text-xs text-gray-400">Cert #{cert.certNumber}</p>
+              <a
+                href={`/api/student/certificates/${cert.certNumber}/download`}
+                className="flex items-center gap-2 bg-ds-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shrink-0"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Download
+              </a>
             </div>
-            <a href={`/api/student/certificates/${cert.certNumber}/download`}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-              Download PDF
-            </a>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

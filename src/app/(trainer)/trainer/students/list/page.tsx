@@ -34,7 +34,7 @@ export default async function TrainerStudentListPage() {
     <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-        <Link href="/trainer/students" className="hover:text-blue-600 transition-colors">
+        <Link href="/trainer/students" className="hover:text-blue-700 transition-colors">
           Students
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -52,8 +52,8 @@ export default async function TrainerStudentListPage() {
         <StudentProgressTable students={serialized} />
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Users className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Users className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">No Students Yet</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">

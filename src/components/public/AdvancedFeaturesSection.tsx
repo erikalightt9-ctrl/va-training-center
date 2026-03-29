@@ -25,7 +25,7 @@ export function AdvancedFeaturesSection() {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Your Competitive Edge
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -43,8 +43,8 @@ export function AdvancedFeaturesSection() {
               key={f.title}
               className="bg-white rounded-xl p-5 border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all duration-200 group"
             >
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
-                <f.icon className="h-5 w-5 text-blue-600" />
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-900/40 transition-colors">
+                <f.icon className="h-5 w-5 text-blue-400" />
               </div>
               <h3 className="font-semibold text-gray-900 text-sm mb-1">{f.title}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">{f.description}</p>

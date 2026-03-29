@@ -54,7 +54,7 @@ export function SkillTagInput({
       {value.map((tag, i) => (
         <span
           key={i}
-          className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-sm px-2 py-0.5 rounded-full"
+          className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 text-sm px-2 py-0.5 rounded-full"
         >
           {tag}
           <button
@@ -63,7 +63,7 @@ export function SkillTagInput({
               e.stopPropagation();
               removeTag(i);
             }}
-            className="hover:text-blue-600"
+            className="hover:text-blue-700"
           >
             <X className="h-3 w-3" />
           </button>
