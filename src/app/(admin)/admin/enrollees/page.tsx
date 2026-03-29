@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 import { AnalyticsCard } from "@/components/admin/AnalyticsCard";
-import { EnrolleesTabs } from "@/components/admin/EnrolleesTabs";
+import { TasksPageTabs } from "@/components/admin/TasksPageTabs";
 import { listEnrollments } from "@/lib/repositories/enrollment.repository";
 import { listEnrollees, getEnrolleeStats } from "@/lib/repositories/enrollee.repository";
 import { Button } from "@/components/ui/button";
@@ -134,7 +134,7 @@ export default async function EnrolleesPage({ searchParams }: PageProps) {
       </div>
 
       <Suspense fallback={<div className="h-12 bg-slate-50 rounded animate-pulse mb-6" />}>
-        <EnrolleesTabs
+        <TasksPageTabs
           applications={applications}
           enrollees={enrollees}
         />
