@@ -209,7 +209,7 @@ export function SettingsPanel() {
   if (pageStatus === "loading") {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+        <Loader2 className="h-6 w-6 animate-spin text-blue-700" />
         <span className="ml-2 text-sm text-gray-500">Loading settings...</span>
       </div>
     );

@@ -169,7 +169,7 @@ export function ProfileEditor() {
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+        <Loader2 className="h-6 w-6 animate-spin text-blue-700" />
         <span className="ml-2 text-sm text-gray-500">Loading profile...</span>
       </div>
     );
@@ -196,7 +196,7 @@ export function ProfileEditor() {
               className="h-16 w-16 rounded-full object-cover"
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-blue-50 flex items-center justify-center">
               <span className="text-xl font-bold text-blue-700">
                 {getInitials(profile.name)}
               </span>
@@ -353,7 +353,7 @@ export function ProfileEditor() {
               {profile.toolsFamiliarity.map((tool) => (
                 <span
                   key={tool}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
                 >
                   {formatToolName(tool)}
                 </span>

@@ -11,11 +11,11 @@ const STATUS_CONFIG: Record<ScheduleStatus, { label: string; className: string }
   },
   FULL: {
     label: "Full",
-    className: "bg-amber-100 text-amber-700",
+    className: "bg-amber-50 text-amber-700",
   },
   COMPLETED: {
     label: "Completed",
-    className: "bg-blue-100 text-blue-700",
+    className: "bg-blue-50 text-blue-700",
   },
 };
 

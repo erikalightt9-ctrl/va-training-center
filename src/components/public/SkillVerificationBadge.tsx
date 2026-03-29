@@ -95,7 +95,7 @@ function SkillBadge({ skill }: { readonly skill: VerifiedSkill }) {
     <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-blue-100 p-4 text-center hover:shadow-md transition-shadow">
       <div className="flex justify-center mb-2">
         <div className="bg-blue-50 rounded-full p-2.5">
-          <Icon className="h-5 w-5 text-blue-600" />
+          <Icon className="h-5 w-5 text-blue-400" />
         </div>
       </div>
       <h3 className="font-semibold text-gray-900 text-sm mb-1.5">

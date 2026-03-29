@@ -41,7 +41,7 @@ function HubCard({
         </p>
         <p className="text-xs text-ds-muted mt-0.5 leading-relaxed">{description}</p>
       </div>
-      <div className="flex items-center gap-1 text-xs text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+      <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
         Open <ArrowRight className="h-3 w-3" />
       </div>
     </Link>
@@ -119,31 +119,31 @@ export default function TrainersHubPage() {
             icon={GraduationCap}
             label="All Trainers"
             description="View trainers assigned to your organization"
-            accent="bg-indigo-900/50 text-indigo-400"
+            accent="bg-indigo-50 text-indigo-700"
           />
           <SoonCard
             icon={UserPlus}
             label="Request Trainer"
             description="Submit a request for a new trainer assignment"
-            accent="bg-blue-900/50 text-blue-400"
+            accent="bg-blue-50 text-blue-700"
           />
           <SoonCard
             icon={Star}
             label="Ratings & Reviews"
             description="See trainer performance and student feedback"
-            accent="bg-amber-900/50 text-amber-400"
+            accent="bg-amber-50 text-amber-700"
           />
         </div>
       </div>
 
       {/* Quick tip */}
-      <div className="bg-ds-surface rounded-xl border border-ds-border px-5 py-4 flex items-start gap-3">
+      <div className="bg-slate-50 rounded-xl border border-ds-border px-5 py-4 flex items-start gap-3">
         <GraduationCap className="h-4 w-4 text-ds-primary mt-0.5 shrink-0" />
         <div>
           <p className="text-sm font-medium text-ds-text">About trainers</p>
           <p className="text-xs text-ds-muted mt-0.5 leading-relaxed">
             Trainers are assigned to your organization by the platform administrator.
-            Contact <span className="text-blue-400">support</span> to request changes or new trainer assignments.
+            Contact <span className="text-blue-700">support</span> to request changes or new trainer assignments.
           </p>
         </div>
       </div>

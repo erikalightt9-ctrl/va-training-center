@@ -51,7 +51,7 @@ export function InterviewFeedback({ feedback, onReset }: InterviewFeedbackProps)
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl bg-blue-50 border border-blue-100 px-5 py-4">
+      <div className="rounded-xl bg-blue-50 border border-blue-200 px-5 py-4">
         <h3 className="text-sm font-semibold text-blue-800 mb-2">AI Feedback</h3>
         <p className="text-gray-700 text-sm leading-relaxed">{feedback.aiFeedback}</p>
       </div>

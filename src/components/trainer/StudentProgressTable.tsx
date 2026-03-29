@@ -123,7 +123,7 @@ export function StudentProgressTable({ students }: StudentProgressTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-ds-border bg-ds-surface">
+            <tr className="border-b border-ds-border bg-slate-50">
               <th className="w-8 px-3 py-3" />
               <th className="text-left px-5 py-3 font-medium text-ds-muted">
                 Name
@@ -197,7 +197,7 @@ function StudentRowGroup({
   return (
     <>
       <tr
-        className="hover:bg-ds-surface/50 transition-colors cursor-pointer"
+        className="hover:bg-slate-50/50 transition-colors cursor-pointer"
         onClick={onToggle}
       >
         <td className="px-3 py-3 text-ds-muted">
@@ -222,10 +222,10 @@ function StudentRowGroup({
 
       {isExpanded && (
         <tr>
-          <td colSpan={6} className="px-5 py-4 bg-ds-surface/50">
+          <td colSpan={6} className="px-5 py-4 bg-slate-50/50">
             {isLoading ? (
               <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
+                <Loader2 className="h-5 w-5 animate-spin text-blue-700" />
                 <span className="ml-2 text-sm text-ds-muted">
                   Loading progress...
                 </span>
@@ -271,7 +271,7 @@ function ProgressDetail({
               {progress.lessonProgress.percent}%
             </span>
           </div>
-          <div className="w-full bg-ds-surface rounded-full h-2">
+          <div className="w-full bg-slate-50 rounded-full h-2">
             <div
               className={cn(
                 "h-2 rounded-full transition-all",
@@ -311,19 +311,19 @@ function ProgressDetail({
                       className={cn(
                         "text-xs font-semibold px-2 py-0.5 rounded-full border",
                         (sub.grade ?? 0) >= 70
-                          ? "bg-emerald-900/40 text-emerald-400 border-emerald-800"
-                          : "bg-red-900/40 text-red-400 border-red-800",
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-red-50 text-red-700 border-red-200",
                       )}
                     >
                       {sub.grade}/{sub.maxPoints}
                     </span>
                   ) : sub.status === "PENDING" ? (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-900/40 text-amber-400 border border-amber-800 flex items-center gap-1">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       Pending
                     </span>
                   ) : (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-ds-surface text-ds-muted border border-ds-border">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-50 text-ds-muted border border-ds-border">
                       {sub.status}
                     </span>
                   )}
@@ -359,15 +359,15 @@ function ProgressDetail({
                   <span
                     className={cn(
                       "text-xs font-semibold",
-                      attempt.passed ? "text-emerald-400" : "text-red-400",
+                      attempt.passed ? "text-emerald-600" : "text-red-700",
                     )}
                   >
                     {attempt.score}%
                   </span>
                   {attempt.passed ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   ) : (
-                    <XCircle className="h-3.5 w-3.5 text-red-400" />
+                    <XCircle className="h-3.5 w-3.5 text-red-700" />
                   )}
                 </div>
               </div>

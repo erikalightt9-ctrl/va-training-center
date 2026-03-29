@@ -108,7 +108,7 @@ function StarRating({
   const numRating = rating ? Number(rating) : 0;
   if (count === 0) {
     return (
-      <span className="text-xs text-gray-400 inline-flex items-center gap-1">
+      <span className="text-xs text-ds-muted inline-flex items-center gap-1">
         <Star className="h-3 w-3" />
         No ratings
       </span>
@@ -116,11 +116,11 @@ function StarRating({
   }
   return (
     <span className="inline-flex items-center gap-1 text-xs">
-      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-      <span className="font-medium text-gray-700">
+      <Star className="h-3 w-3 fill-amber-400 text-amber-600" />
+      <span className="font-medium text-ds-text">
         {numRating.toFixed(1)}
       </span>
-      <span className="text-gray-400">({count})</span>
+      <span className="text-ds-muted">({count})</span>
     </span>
   );
 }
@@ -397,7 +397,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
     <div className="space-y-6">
       {/* Header bar */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ds-muted">
           {trainers.length} trainer{trainers.length !== 1 ? "s" : ""}
         </p>
         <Button className="gap-1.5" onClick={openCreateForm}>
@@ -435,14 +435,14 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
       {/* Trainers List */}
       {trainers.length === 0 && !showForm ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <UserCog className="h-8 w-8 text-blue-600" />
+        <div className="bg-ds-card rounded-xl border border-ds-border p-10 text-center">
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <UserCog className="h-8 w-8 text-blue-700" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+          <h2 className="text-lg font-semibold text-ds-text mb-2">
             No Trainers Yet
           </h2>
-          <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+          <p className="text-sm text-ds-muted mb-6 max-w-md mx-auto">
             Add trainers to manage instructor assignments and
             portal access.
           </p>
@@ -459,8 +459,8 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
             return (
               <div
                 key={trainer.id}
-                className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow ${
-                  !trainer.isActive ? "opacity-60" : ""
+                className={`bg-ds-card rounded-xl border border-ds-border p-6 transition-shadow ${
+                  !trainer.isActive ? "opacity-70" : ""
                 }`}
               >
                 {/* Card header */}
@@ -474,36 +474,36 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                         className="h-14 w-14 rounded-full object-cover border-2 border-gray-200 shrink-0"
                       />
                     ) : (
-                      <div className="h-14 w-14 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border-2 border-gray-200">
-                        <UserCog className="h-6 w-6 text-blue-400" />
+                      <div className="h-14 w-14 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border-2 border-ds-border">
+                        <UserCog className="h-6 w-6 text-blue-700" />
                       </div>
                     )}
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold text-gray-900 truncate">
+                        <h3 className="font-semibold text-ds-text truncate">
                           {trainer.name}
                         </h3>
                         {/* Active/Inactive badge */}
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                             trainer.isActive
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-500"
+                              ? "bg-emerald-50 text-emerald-700"
+                              : "bg-slate-100 text-slate-500"
                           }`}
                         >
                           {trainer.isActive ? "Active" : "Inactive"}
                         </span>
                         {/* Access badge */}
                         {trainer.accessGranted && (
-                          <span className="text-xs px-2 py-0.5 rounded-full shrink-0 bg-purple-100 text-purple-700">
+                          <span className="text-xs px-2 py-0.5 rounded-full shrink-0 bg-blue-50 text-blue-700">
                             Portal Access
                           </span>
                         )}
                       </div>
 
                       {/* Contact + stats row */}
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-ds-muted mb-2">
                         <span className="inline-flex items-center gap-1">
                           <Mail className="h-3.5 w-3.5" />
                           {trainer.email}
@@ -546,7 +546,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
                       {/* Bio preview */}
                       {trainer.bio && !isExpanded && (
-                        <p className="text-sm text-gray-500 line-clamp-2">
+                        <p className="text-sm text-ds-muted line-clamp-2">
                           {trainer.bio}
                         </p>
                       )}
@@ -585,7 +585,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                       className={
                         trainer.isActive
                           ? "text-amber-600 hover:text-amber-800"
-                          : "text-green-600 hover:text-green-800"
+                          : "text-emerald-600 hover:text-emerald-300"
                       }
                     >
                       {trainer.isActive ? "Deactivate" : "Activate"}
@@ -606,14 +606,14 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
                 {/* ─── Expanded section ─── */}
                 {isExpanded && (
-                  <div className="mt-4 pt-4 border-t border-gray-100 space-y-5">
+                  <div className="mt-4 pt-4 border-t border-ds-border space-y-5">
                     {/* Full bio */}
                     {trainer.bio && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-1">
                           Bio
                         </h4>
-                        <p className="text-sm text-gray-600 whitespace-pre-line">
+                        <p className="text-sm text-ds-text whitespace-pre-line">
                           {trainer.bio}
                         </p>
                       </div>
@@ -623,11 +623,11 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {trainer.credentials && (
                         <div>
-                          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-1 flex items-center gap-1">
                             <Award className="h-3 w-3" />
                             Credentials / Degrees
                           </h4>
-                          <p className="text-sm text-gray-600 whitespace-pre-line">
+                          <p className="text-sm text-ds-text whitespace-pre-line">
                             {trainer.credentials}
                           </p>
                         </div>
@@ -635,11 +635,11 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
                       {trainer.industryExperience && (
                         <div>
-                          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-1 flex items-center gap-1">
                             <Briefcase className="h-3 w-3" />
                             Industry Experience
                           </h4>
-                          <p className="text-sm text-gray-600 whitespace-pre-line">
+                          <p className="text-sm text-ds-text whitespace-pre-line">
                             {trainer.industryExperience}
                           </p>
                         </div>
@@ -649,7 +649,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                     {/* Certifications */}
                     {trainer.certifications.length > 0 && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-1">
                           Certifications
                         </h4>
                         <div className="flex flex-wrap gap-1.5">
@@ -668,10 +668,10 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                     {/* Years of experience */}
                     {trainer.yearsOfExperience > 0 && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-1">
                           Years of Experience
                         </h4>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-ds-text">
                           {trainer.yearsOfExperience} year
                           {trainer.yearsOfExperience !== 1 ? "s" : ""}
                         </p>
@@ -680,11 +680,11 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
                     {/* Availability Editor */}
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+                      <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-3">
                         Weekly Availability
                       </h4>
                       {expandedLoading ? (
-                        <p className="text-sm text-gray-400">Loading…</p>
+                        <p className="text-sm text-ds-muted">Loading…</p>
                       ) : (
                         <TrainerAvailabilityEditor
                           trainerId={trainer.id}
@@ -705,14 +705,14 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
 
                     {/* Assigned courses */}
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+                      <h4 className="text-xs font-medium text-ds-muted uppercase tracking-wider mb-2">
                         Assigned Courses
                       </h4>
 
                       {expandedLoading ? (
                         <div className="flex items-center gap-2 py-2">
                           <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-ds-muted">
                             Loading courses...
                           </span>
                         </div>
@@ -725,7 +725,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                               className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 pl-3 pr-1.5 py-1 rounded-full text-xs"
                             >
                               <span>{ct.course.title}</span>
-                              <span className="text-blue-400">
+                              <span className="text-blue-700">
                                 ({ct.role})
                               </span>
                               <button
@@ -733,7 +733,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                                 onClick={() =>
                                   handleUnassignCourse(ct.courseId)
                                 }
-                                className="ml-0.5 text-blue-400 hover:text-red-600 rounded-full p-0.5"
+                                className="ml-0.5 text-blue-700 hover:text-red-700 rounded-full p-0.5"
                                 title="Remove assignment"
                               >
                                 <X className="h-3 w-3" />
@@ -742,7 +742,7 @@ export function TrainerManager({ tierConfigs }: TrainerManagerProps = {}) {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-400 mb-3">
+                        <p className="text-sm text-ds-muted mb-3">
                           No courses assigned yet.
                         </p>
                       )}

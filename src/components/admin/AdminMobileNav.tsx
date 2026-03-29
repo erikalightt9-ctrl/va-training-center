@@ -33,10 +33,10 @@ export function AdminMobileNav() {
               href={href}
               className={cn(
                 "flex-1 flex flex-col items-center gap-0.5 py-2.5 px-1 text-xs font-medium transition-colors",
-                isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600",
+                isActive ? "text-blue-700" : "text-gray-400 hover:text-gray-600",
               )}
             >
-              <Icon className={cn("h-5 w-5", isActive ? "text-blue-600" : "text-gray-400")} />
+              <Icon className={cn("h-5 w-5", isActive ? "text-blue-700" : "text-gray-400")} />
               <span className="truncate">{label}</span>
             </Link>
           );

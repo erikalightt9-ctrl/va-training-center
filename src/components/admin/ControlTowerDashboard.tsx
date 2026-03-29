@@ -115,8 +115,8 @@ function PriorityBadge({
   readonly priority: "high" | "medium" | "low";
 }) {
   const styles: Record<string, string> = {
-    high: "bg-red-100 text-red-700",
-    medium: "bg-yellow-100 text-yellow-700",
+    high: "bg-red-50 text-red-700",
+    medium: "bg-yellow-100 text-yellow-600",
     low: "bg-green-100 text-green-700",
   };
 
@@ -154,7 +154,7 @@ function TrendIndicator({
     },
     declining: {
       icon: <TrendingDown className="h-4 w-4" />,
-      color: "text-red-600",
+      color: "text-red-700",
       label: "Declining",
     },
   };
@@ -256,7 +256,7 @@ export function ControlTowerDashboard() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button
           variant="outline"
           size="sm"
@@ -276,7 +276,7 @@ export function ControlTowerDashboard() {
       {/* Header bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="bg-indigo-100 rounded-lg p-2">
+          <div className="bg-indigo-50 rounded-lg p-2">
             <Rocket className="h-5 w-5 text-indigo-700" />
           </div>
           <div>
@@ -331,7 +331,7 @@ export function ControlTowerDashboard() {
             Dropout Risk Students
           </h3>
           {data.dropoutRiskStudents.length > 0 && (
-            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-auto">
+            <span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded-full ml-auto">
               {data.dropoutRiskStudents.length} flagged
             </span>
           )}
@@ -361,7 +361,7 @@ export function ControlTowerDashboard() {
                   {student.riskFactors.map((factor, i) => (
                     <span
                       key={i}
-                      className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
+                      className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded-full"
                     >
                       {factor}
                     </span>
@@ -380,7 +380,7 @@ export function ControlTowerDashboard() {
           </div>
         ) : (
           <div className="text-center py-6">
-            <Users className="h-8 w-8 text-green-400 mx-auto mb-2" />
+            <Users className="h-8 w-8 text-green-700 mx-auto mb-2" />
             <p className="text-sm text-green-600 font-medium">
               No students at risk of dropping out
             </p>
@@ -392,7 +392,7 @@ export function ControlTowerDashboard() {
       {data.completionPredictions.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <TrendingUp className="h-5 w-5 text-blue-700" />
             <h3 className="font-semibold text-gray-900">
               Completion Predictions
             </h3>

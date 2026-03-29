@@ -36,7 +36,7 @@ export default async function CertificatesPage() {
               className="bg-ds-card rounded-xl border border-ds-border p-5 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="h-10 w-10 rounded-xl bg-amber-900/40 text-amber-400 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
                   <Award className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">

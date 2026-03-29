@@ -58,7 +58,7 @@ export function NotificationCenter() {
         </div>
         <button
           onClick={markAllRead}
-          className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800"
+          className="flex items-center gap-1.5 text-sm text-blue-700 hover:text-blue-800"
         >
           <CheckCheck className="h-4 w-4" />
           Mark all as read
@@ -78,7 +78,7 @@ export function NotificationCenter() {
             <div
               key={n.id}
               className={`flex items-start gap-4 px-5 py-4 transition ${
-                n.isRead ? "" : "bg-blue-50/40"
+                n.isRead ? "" : "bg-blue-500/20"
               }`}
             >
               <div className="flex-1 min-w-0">
@@ -104,7 +104,7 @@ export function NotificationCenter() {
                 {!n.isRead && (
                   <button
                     onClick={() => markAsRead(n.id)}
-                    className="p-1 text-gray-400 hover:text-blue-600"
+                    className="p-1 text-gray-400 hover:text-blue-700"
                     title="Mark as read"
                   >
                     <Check className="h-4 w-4" />
@@ -113,7 +113,7 @@ export function NotificationCenter() {
                 {n.linkUrl && (
                   <a
                     href={n.linkUrl}
-                    className="text-xs text-blue-600 hover:text-blue-800"
+                    className="text-xs text-blue-700 hover:text-blue-800"
                   >
                     View
                   </a>

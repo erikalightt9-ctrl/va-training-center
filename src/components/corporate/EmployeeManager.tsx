@@ -38,9 +38,9 @@ interface Employee {
 function StatusBadge({ status }: { readonly status: string }) {
   const styles: Record<string, string> = {
     APPROVED: "bg-green-100 text-green-700",
-    ACTIVE: "bg-blue-100 text-blue-700",
-    PENDING: "bg-yellow-100 text-yellow-700",
-    REJECTED: "bg-red-100 text-red-700",
+    ACTIVE: "bg-blue-50 text-blue-700",
+    PENDING: "bg-yellow-100 text-yellow-600",
+    REJECTED: "bg-red-50 text-red-700",
   };
 
   return (
@@ -255,8 +255,8 @@ export function EmployeeManager({
       {/* Employee list */}
       {employees.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <Users className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Users className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Students Yet

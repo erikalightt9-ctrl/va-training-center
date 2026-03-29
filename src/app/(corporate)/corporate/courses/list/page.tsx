@@ -29,9 +29,9 @@ interface Course {
 /* ------------------------------------------------------------------ */
 
 const TIER_STYLE: Record<string, string> = {
-  BASIC:        "bg-ds-surface text-ds-muted border-ds-border",
-  PROFESSIONAL: "bg-blue-900/40 text-blue-400 border-blue-800",
-  ENTERPRISE:   "bg-purple-900/40 text-purple-400 border-purple-800",
+  BASIC:        "bg-slate-50 text-ds-muted border-ds-border",
+  PROFESSIONAL: "bg-blue-50 text-blue-700 border-blue-200",
+  ENTERPRISE:   "bg-blue-50 text-blue-300 border-blue-200",
 };
 
 function fmtDuration(mins: number | null): string {
@@ -82,7 +82,7 @@ export default function CoursesListPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/corporate/courses"
-            className="p-2 rounded-xl bg-ds-surface border border-ds-border text-ds-muted hover:text-ds-text hover:border-ds-primary/50 transition-colors"
+            className="p-2 rounded-xl bg-slate-50 border border-gray-200 text-ds-muted hover:text-ds-text hover:border-ds-primary/50 transition-colors"
             title="Back to Courses"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -110,7 +110,7 @@ export default function CoursesListPage() {
             placeholder="Search courses…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+            className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
           />
         </div>
         <div className="flex gap-1.5 flex-wrap">
@@ -121,7 +121,7 @@ export default function CoursesListPage() {
               className={`px-3 py-2 text-xs font-medium rounded-xl border transition-colors ${
                 tierFilter === tier
                   ? "bg-ds-primary text-white border-ds-primary"
-                  : "bg-ds-surface text-ds-muted border-ds-border hover:text-ds-text"
+                  : "bg-slate-50 text-ds-muted border-ds-border hover:text-ds-text"
               }`}
             >
               {tier === "ALL" ? "All Tiers" : tier}
@@ -143,7 +143,7 @@ export default function CoursesListPage() {
           </div>
         ) : (
           <table className="w-full">
-            <thead className="bg-ds-surface border-b border-ds-border">
+            <thead className="bg-slate-50 border-b border-ds-border">
               <tr>
                 <th className="text-left px-5 py-3 text-xs font-medium text-ds-muted uppercase tracking-wide">Course</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-ds-muted uppercase tracking-wide hidden md:table-cell">Trainer</th>
@@ -166,10 +166,10 @@ export default function CoursesListPage() {
                   </div>
                 </td></tr>
               ) : filtered.map((course) => (
-                <tr key={course.id} className="hover:bg-ds-surface/50 transition-colors">
+                <tr key={course.id} className="hover:bg-ds-card transition-colors">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-xl bg-ds-surface flex items-center justify-center shrink-0">
+                      <div className="h-9 w-9 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
                         <BookOpen className="h-4 w-4 text-ds-muted" />
                       </div>
                       <div className="min-w-0">
@@ -192,7 +192,7 @@ export default function CoursesListPage() {
                   </td>
                   <td className="px-5 py-3.5 hidden sm:table-cell">
                     {course.tier ? (
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${TIER_STYLE[course.tier] ?? "bg-ds-surface text-ds-muted border-ds-border"}`}>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${TIER_STYLE[course.tier] ?? "bg-slate-50 text-ds-muted border-ds-border"}`}>
                         {course.tier}
                       </span>
                     ) : <span className="text-ds-muted/50 text-sm">—</span>}

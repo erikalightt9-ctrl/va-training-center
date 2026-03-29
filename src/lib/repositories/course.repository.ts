@@ -129,7 +129,7 @@ export async function getAllCoursesByTenant(
   tenantId: string,
 ): Promise<ReadonlyArray<CourseWithCounts>> {
   return prisma.course.findMany({
-    where: scopeToTenant(tenantId),
+    where: { ...scopeToTenant(tenantId), deletedAt: null },
     include: {
       _count: {
         select: {
@@ -143,6 +143,27 @@ export async function getAllCoursesByTenant(
       },
     },
     orderBy: { title: "asc" },
+  });
+}
+
+export async function getDeletedCoursesByTenant(
+  tenantId: string,
+): Promise<ReadonlyArray<CourseWithCounts>> {
+  return prisma.course.findMany({
+    where: { ...scopeToTenant(tenantId), deletedAt: { not: null } },
+    include: {
+      _count: {
+        select: {
+          enrollments: true,
+          lessons: true,
+          quizzes: true,
+          assignments: true,
+          trainers: true,
+          resources: true,
+        },
+      },
+    },
+    orderBy: { deletedAt: "desc" },
   });
 }
 
@@ -272,12 +293,21 @@ export async function updateCourse(
   return updated;
 }
 
-// ── Admin: Soft-delete course (set isActive=false) ────────────────
+// ── Admin: Soft-delete course (set deletedAt timestamp) ──────────
 
 export async function deleteCourse(id: string): Promise<Course> {
   return prisma.course.update({
     where: { id },
-    data: { isActive: false },
+    data: { deletedAt: new Date() },
+  });
+}
+
+// ── Admin: Restore a soft-deleted course ─────────────────────────
+
+export async function restoreCourse(id: string): Promise<Course> {
+  return prisma.course.update({
+    where: { id },
+    data: { deletedAt: null },
   });
 }
 

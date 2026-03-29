@@ -224,7 +224,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -295,7 +295,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
             </Field>
           </div>
 
-          <div className="text-xs text-ds-muted bg-ds-surface rounded px-3 py-2">
+          <div className="text-xs text-ds-muted bg-slate-50 rounded px-3 py-2">
             <strong>Slug:</strong> {tenant.slug} &nbsp;·&nbsp;
             <strong>ID:</strong> {tenant.id}
           </div>
@@ -379,7 +379,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
             </button>
           </div>
           {tenant.isDefault && (
-            <p className="text-xs text-amber-400 bg-amber-900/20 border border-amber-800 rounded px-3 py-2">
+            <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-3 py-2">
               This is the default (platform owner) tenant and cannot be deactivated.
             </p>
           )}
@@ -490,13 +490,13 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
 
         {/* Feedback banners */}
         {error && (
-          <div className="flex items-start gap-2 bg-red-900/20 border border-red-800 text-red-400 text-sm rounded-xl px-4 py-3">
+          <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
             {error}
           </div>
         )}
         {saved && (
-          <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-800 text-emerald-400 text-sm rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-600 text-sm rounded-xl px-4 py-3">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             Changes saved successfully.
           </div>

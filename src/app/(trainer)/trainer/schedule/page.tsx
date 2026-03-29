@@ -74,7 +74,7 @@ export default async function TrainerSchedulePage() {
                   <ScheduleStatusBadge status={schedule.status} />
                 </div>
 
-                <p className="text-sm text-blue-600 font-medium mb-3">
+                <p className="text-sm text-blue-700 font-medium mb-3">
                   {schedule.course.title}
                 </p>
 
@@ -125,8 +125,8 @@ export default async function TrainerSchedulePage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <CalendarClock className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <CalendarClock className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Schedules Assigned

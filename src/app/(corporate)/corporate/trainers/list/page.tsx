@@ -51,7 +51,7 @@ export default function TrainersListPage() {
       <div className="flex items-center gap-3">
         <Link
           href="/corporate/trainers"
-          className="p-2 rounded-xl bg-ds-surface border border-ds-border text-ds-muted hover:text-ds-text hover:border-ds-primary/50 transition-colors"
+          className="p-2 rounded-xl bg-slate-50 border border-gray-200 text-ds-muted hover:text-ds-text hover:border-ds-primary/50 transition-colors"
           title="Back to Trainers"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -70,7 +70,7 @@ export default function TrainersListPage() {
           placeholder="Search by name or specialization…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+          className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function TrainersListPage() {
           </div>
         ) : (
           <table className="w-full">
-            <thead className="bg-ds-surface border-b border-ds-border">
+            <thead className="bg-slate-50 border-b border-ds-border">
               <tr>
                 <th className="text-left px-5 py-3 text-xs font-medium text-ds-muted uppercase tracking-wide">Trainer</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-ds-muted uppercase tracking-wide hidden sm:table-cell">Specialization</th>
@@ -109,10 +109,10 @@ export default function TrainersListPage() {
                   </div>
                 </td></tr>
               ) : filtered.map((trainer) => (
-                <tr key={trainer.id} className="hover:bg-ds-surface/50 transition-colors">
+                <tr key={trainer.id} className="hover:bg-ds-card transition-colors">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-indigo-900/50 text-indigo-400 flex items-center justify-center font-semibold text-sm shrink-0">
+                      <div className="h-9 w-9 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-semibold text-sm shrink-0">
                         {trainer.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -144,11 +144,11 @@ export default function TrainersListPage() {
                   </td>
                   <td className="px-5 py-3.5">
                     {trainer.isActive ? (
-                      <span className="inline-flex items-center text-xs font-medium bg-emerald-900/40 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full">
+                      <span className="inline-flex items-center text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-xs font-medium bg-ds-surface text-ds-muted border border-ds-border px-2 py-0.5 rounded-full">
+                      <span className="inline-flex items-center text-xs font-medium bg-slate-50 text-ds-muted border border-ds-border px-2 py-0.5 rounded-full">
                         Inactive
                       </span>
                     )}

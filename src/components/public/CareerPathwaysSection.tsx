@@ -80,12 +80,12 @@ export function CareerPathwaysSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Career Outcomes
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             Where Your Training{" "}
-            <span className="text-blue-700">Takes You</span>
+            <span className="text-blue-400">Takes You</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Our graduates work with top companies worldwide, earning competitive
@@ -100,13 +100,13 @@ export function CareerPathwaysSection() {
               key={outcome.label}
               className="bg-white rounded-xl p-5 border border-gray-200 text-center hover:shadow-md transition-shadow"
             >
-              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                <outcome.icon className="h-5 w-5 text-blue-700" />
+              <div className="w-10 h-10 rounded-lg bg-blue-900/40 flex items-center justify-center mx-auto mb-3">
+                <outcome.icon className="h-5 w-5 text-blue-400" />
               </div>
               <p className="text-xl font-extrabold text-gray-900">
                 {outcome.value}
               </p>
-              <p className="text-sm font-medium text-blue-700 mt-1">
+              <p className="text-sm font-medium text-blue-400 mt-1">
                 {outcome.label}
               </p>
               <p className="text-xs text-gray-500 mt-1">
@@ -120,7 +120,7 @@ export function CareerPathwaysSection() {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-700" />
+              <TrendingUp className="h-5 w-5 text-blue-400" />
               <h3 className="font-bold text-gray-900">
                 Popular Career Paths for Graduates
               </h3>
@@ -141,8 +141,8 @@ export function CareerPathwaysSection() {
                     path.demand === "Very High"
                       ? "bg-green-100 text-green-700"
                       : path.demand === "High Demand"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-amber-100 text-amber-700"
+                        ? "bg-blue-900/40 text-blue-400"
+                        : "bg-amber-900/40 text-amber-400"
                   }`}
                 >
                   {path.demand}

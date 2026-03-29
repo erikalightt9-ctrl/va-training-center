@@ -140,7 +140,7 @@ export default async function StudentDetailPage({ params }: PageProps) {
             <p className="text-gray-500 text-sm">{student.email}</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-700 bg-blue-100 rounded-full px-3 py-1">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-700 bg-blue-50 rounded-full px-3 py-1">
               <BookOpen className="h-3.5 w-3.5" />
               {student.course.title}
             </span>
@@ -166,25 +166,25 @@ export default async function StudentDetailPage({ params }: PageProps) {
           label="Progress"
           value={`${student.progress.percent}%`}
           icon={BookOpen}
-          colorClass="text-blue-600 bg-blue-100"
+          colorClass="text-blue-700 bg-blue-50"
         />
         <StatCard
           label="Quiz Average"
           value={student.quizAverage > 0 ? `${student.quizAverage}%` : "—"}
           icon={Trophy}
-          colorClass="text-amber-600 bg-amber-100"
+          colorClass="text-amber-600 bg-amber-50"
         />
         <StatCard
           label="Assignments"
           value={`${student.assignmentsSubmitted}/${student.totalAssignments}`}
           icon={ClipboardCheck}
-          colorClass="text-purple-600 bg-purple-100"
+          colorClass="text-blue-700 bg-blue-50"
         />
         <StatCard
           label="Total Points"
           value={student.totalPoints.toLocaleString()}
           icon={Star}
-          colorClass="text-emerald-600 bg-emerald-100"
+          colorClass="text-emerald-600 bg-emerald-50"
         />
       </div>
 
@@ -317,7 +317,7 @@ export default async function StudentDetailPage({ params }: PageProps) {
                       {q.passed ? (
                         <CheckCircle2 className="h-4 w-4 text-green-500" />
                       ) : (
-                        <XCircle className="h-4 w-4 text-red-400" />
+                        <XCircle className="h-4 w-4 text-red-700" />
                       )}
                     </div>
                   </div>
@@ -375,7 +375,7 @@ export default async function StudentDetailPage({ params }: PageProps) {
                             a.status === "GRADED"
                               ? "text-green-700 bg-green-100"
                               : a.status === "SUBMITTED"
-                                ? "text-blue-700 bg-blue-100"
+                                ? "text-blue-700 bg-blue-50"
                                 : "text-gray-600 bg-gray-100"
                           }`}
                         >

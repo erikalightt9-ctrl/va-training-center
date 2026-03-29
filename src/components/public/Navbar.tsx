@@ -35,7 +35,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-blue-900">
-            <GraduationCap className="h-7 w-7 text-blue-600" />
+            <GraduationCap className="h-7 w-7 text-blue-400" />
             <span>HUMI Training Center</span>
           </Link>
 
@@ -46,8 +46,8 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-blue-700",
-                  pathname === link.href ? "text-blue-700" : "text-gray-600"
+                  "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-blue-400",
+                  pathname === link.href ? "text-blue-400" : "text-gray-600"
                 )}
               >
                 {link.label}
@@ -96,7 +96,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-400"
               >
                 {link.label}
               </Link>

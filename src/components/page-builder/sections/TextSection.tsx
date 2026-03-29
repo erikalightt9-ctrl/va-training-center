@@ -42,7 +42,7 @@ export default function TextSection({ content }: TextSectionProps) {
 
         {sanitizedBody && (
           <div
-            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-blue-600 prose-strong:text-gray-900"
+            className="prose prose-lg max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-blue-700 prose-strong:text-gray-900"
             style={{ color: "var(--color-text, #111827)" }}
             dangerouslySetInnerHTML={{ __html: sanitizedBody }}
           />

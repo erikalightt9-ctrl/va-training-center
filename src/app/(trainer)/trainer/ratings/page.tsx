@@ -129,8 +129,8 @@ export default async function TrainerRatingsPage() {
                       className="h-10 w-10 rounded-full object-cover border border-gray-200"
                     />
                   ) : (
-                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center border border-gray-200">
-                      <span className="text-sm font-medium text-blue-600">
+                    <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center border border-ds-border">
+                      <span className="text-sm font-medium text-blue-700">
                         {rating.student.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -163,7 +163,7 @@ export default async function TrainerRatingsPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <div className="bg-amber-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <Star className="h-8 w-8 text-amber-600" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">

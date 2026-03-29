@@ -114,7 +114,7 @@ export function QuizLeaderboard({ courseId }: { courseId: string }) {
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-        <Trophy className="h-4 w-4 text-yellow-400 shrink-0" />
+        <Trophy className="h-4 w-4 text-yellow-600 shrink-0" />
         <h3 className="font-semibold text-gray-800 text-sm">Leaderboard</h3>
         <span className="ml-auto text-xs text-gray-400">Top {entries.length}</span>
       </div>
@@ -157,7 +157,7 @@ export function QuizLeaderboard({ courseId }: { courseId: string }) {
                   {entry.name}
                 </span>
                 {entry.isCurrentUser && (
-                  <span className="shrink-0 text-[9px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                  <span className="shrink-0 text-[9px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
                     You
                   </span>
                 )}

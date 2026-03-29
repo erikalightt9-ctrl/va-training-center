@@ -28,7 +28,7 @@ export function UpgradeBanner({ plan, limit, onDismiss }: UpgradeBannerProps) {
         <Button
           asChild
           variant="link"
-          className="h-auto p-0 text-sm font-semibold text-amber-700 underline underline-offset-2 hover:text-amber-900"
+          className="h-auto p-0 text-sm font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-900"
         >
           <a href="/corporate/settings">Upgrade your plan</a>
         </Button>{" "}
@@ -39,7 +39,7 @@ export function UpgradeBanner({ plan, limit, onDismiss }: UpgradeBannerProps) {
         type="button"
         onClick={onDismiss}
         aria-label="Dismiss upgrade banner"
-        className="ml-auto shrink-0 rounded p-0.5 text-amber-600 transition-colors hover:bg-amber-100 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        className="ml-auto shrink-0 rounded p-0.5 text-amber-600 transition-colors hover:bg-amber-50 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
       >
         <X className="h-4 w-4" />
       </button>

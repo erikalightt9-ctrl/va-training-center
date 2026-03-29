@@ -61,7 +61,7 @@ export default async function CourseOverviewPage({
         <div className="flex items-center gap-3 mb-1 flex-wrap">
           <h1 className="text-xl font-bold text-ds-text">{course.title}</h1>
           {tierLabel && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-900/40 text-blue-300 border border-blue-800">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
               {tierLabel} Tier
             </span>
           )}
@@ -81,7 +81,7 @@ export default async function CourseOverviewPage({
           <span className="text-sm font-medium text-ds-muted">Progress</span>
           <span className="text-sm font-bold text-ds-primary">{progress.percent}%</span>
         </div>
-        <div className="w-full bg-ds-surface rounded-full h-2">
+        <div className="w-full bg-blue-50 rounded-full h-2">
           <div
             className="bg-ds-primary h-2 rounded-full transition-all"
             style={{ width: `${progress.percent}%` }}
@@ -108,17 +108,17 @@ export default async function CourseOverviewPage({
                 <Link
                   key={lesson.id}
                   href={`/student/courses/${courseId}/lessons/${lesson.id}`}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-surface/50 transition-all group"
+                  className="flex items-center gap-3 p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-card transition-all group"
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
                     done
-                      ? "bg-emerald-900/40 text-emerald-400"
-                      : "bg-ds-surface text-ds-muted"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-slate-50 text-ds-muted"
                   }`}>
                     {done ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-ds-text group-hover:text-blue-300 transition-colors truncate">
+                    <div className="text-sm font-medium text-ds-text group-hover:text-blue-700 transition-colors truncate">
                       {lesson.title}
                     </div>
                     {lesson.durationMin > 0 && (
@@ -128,7 +128,7 @@ export default async function CourseOverviewPage({
                     )}
                   </div>
                   {done && (
-                    <span className="text-xs text-emerald-400 font-medium shrink-0">Done</span>
+                    <span className="text-xs text-emerald-600 font-medium shrink-0">Done</span>
                   )}
                 </Link>
               );
@@ -146,9 +146,9 @@ export default async function CourseOverviewPage({
               <Link
                 key={quiz.id}
                 href={`/student/courses/${courseId}/quizzes/${quiz.id}`}
-                className="flex items-center justify-between p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-surface/50 transition-all group"
+                className="flex items-center justify-between p-3 rounded-xl border border-ds-border hover:border-ds-primary/50 hover:bg-ds-card transition-all group"
               >
-                <span className="text-sm font-medium text-ds-text group-hover:text-blue-300 transition-colors">
+                <span className="text-sm font-medium text-ds-text group-hover:text-blue-700 transition-colors">
                   {quiz.title}
                 </span>
                 <span className="text-xs text-ds-muted">{quiz._count.questions} questions</span>

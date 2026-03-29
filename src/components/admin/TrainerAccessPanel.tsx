@@ -178,7 +178,7 @@ export function TrainerAccessPanel({
               variant="outline"
               onClick={() => handleAction("revoke")}
               disabled={loading}
-              className="gap-1.5 text-red-600 border-red-300 hover:bg-red-50"
+              className="gap-1.5 text-red-700 border-red-300 hover:bg-red-50"
             >
               {loading ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />

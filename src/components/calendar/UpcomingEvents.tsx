@@ -14,12 +14,12 @@ interface UpcomingEventsProps {
 
 // ── Color & label maps ─────────────────────────────────────────────
 const TYPE_COLORS: Record<string, string> = {
-  ANNOUNCEMENT: "bg-blue-100 text-blue-700",
-  DEADLINE: "bg-red-100 text-red-700",
+  ANNOUNCEMENT: "bg-blue-50 text-blue-700",
+  DEADLINE: "bg-red-50 text-red-700",
   ORIENTATION: "bg-green-100 text-green-700",
-  HOLIDAY: "bg-amber-100 text-amber-700",
+  HOLIDAY: "bg-amber-50 text-amber-700",
   CUSTOM: "bg-gray-100 text-gray-700",
-  ASSIGNMENT: "bg-purple-100 text-purple-700",
+  ASSIGNMENT: "bg-blue-50 text-blue-700",
 };
 
 const TYPE_DOT: Record<string, string> = {
@@ -28,7 +28,7 @@ const TYPE_DOT: Record<string, string> = {
   ORIENTATION: "bg-green-500",
   HOLIDAY: "bg-amber-500",
   CUSTOM: "bg-gray-500",
-  ASSIGNMENT: "bg-purple-500",
+  ASSIGNMENT: "bg-blue-500",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -77,7 +77,7 @@ export function UpcomingEvents({
         {showAddButton && (
           <button
             onClick={onAddClick}
-            className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+            className="text-xs font-medium text-blue-700 hover:text-blue-700 hover:underline"
           >
             + Add Event
           </button>

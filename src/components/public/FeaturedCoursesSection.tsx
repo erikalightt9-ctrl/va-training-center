@@ -43,11 +43,11 @@ export function FeaturedCoursesSection({
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-1">
+            <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-1">
               Top Picks
             </p>
             <h2 className="text-3xl font-extrabold text-gray-900">
-              Featured <span className="text-blue-700">Courses</span>
+              Featured <span className="text-blue-400">Courses</span>
             </h2>
           </div>
           <Button asChild variant="outline" size="sm" className="hidden sm:flex gap-1">
@@ -81,7 +81,7 @@ export function FeaturedCoursesSection({
                 <div className="p-6 flex flex-col flex-1">
                   {/* Industry tag */}
                   {course.industry && (
-                    <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full w-fit mb-3">
+                    <span className="text-xs font-medium text-blue-400 bg-blue-50 px-2.5 py-0.5 rounded-full w-fit mb-3">
                       {course.industry}
                     </span>
                   )}

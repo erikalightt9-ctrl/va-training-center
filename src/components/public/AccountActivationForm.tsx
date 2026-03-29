@@ -120,7 +120,7 @@ function PasswordStrengthBar({
         <p className={`text-xs text-right font-medium ${
           strength === "weak" ? "text-red-500" :
           strength === "fair" ? "text-yellow-600" :
-          strength === "good" ? "text-blue-600" :
+          strength === "good" ? "text-blue-400" :
           "text-green-600"
         }`}>
           {config.label}
@@ -236,7 +236,7 @@ export function AccountActivationForm({
         </h2>
         <p className="text-gray-600 text-sm mt-1">
           Create your password to access{" "}
-          <span className="font-medium text-blue-700">{courseTitle}</span>.
+          <span className="font-medium text-blue-400">{courseTitle}</span>.
         </p>
       </div>
 
@@ -335,7 +335,7 @@ export function AccountActivationForm({
 
         {/* Error message */}
         {status === "error" && (
-          <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-2 text-red-400 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
             <XCircle className="h-4 w-4 shrink-0" />
             {errorMsg}
           </div>

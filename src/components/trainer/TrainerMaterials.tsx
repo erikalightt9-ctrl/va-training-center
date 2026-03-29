@@ -60,10 +60,10 @@ function TypeBadge({ type }: { type: string }) {
     other: "File",
   };
   const colors: Record<string, string> = {
-    pdf: "bg-red-100 text-red-700",
-    doc: "bg-blue-100 text-blue-700",
-    xls: "bg-emerald-100 text-emerald-700",
-    ppt: "bg-orange-100 text-orange-700",
+    pdf: "bg-red-50 text-red-700",
+    doc: "bg-blue-50 text-blue-700",
+    xls: "bg-emerald-50 text-emerald-700",
+    ppt: "bg-orange-50 text-orange-700",
     image: "bg-green-100 text-green-700",
     other: "bg-gray-100 text-gray-700",
   };
@@ -165,7 +165,7 @@ export function TrainerMaterials() {
       {showUpload && (
         <form onSubmit={handleUpload} className="bg-white border border-blue-200 rounded-xl p-5 mb-6 shadow-sm">
           <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Upload className="h-4 w-4 text-blue-600" />
+            <Upload className="h-4 w-4 text-blue-700" />
             Upload New Material
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -198,13 +198,13 @@ export function TrainerMaterials() {
               ref={fileInputRef}
               type="file"
               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.webp"
-              className="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:text-sm file:font-medium hover:file:bg-blue-100 cursor-pointer"
+              className="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:text-sm file:font-medium hover:file:bg-ds-card cursor-pointer"
               onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}
               required
             />
             <p className="text-xs text-gray-400 mt-1">PDF, DOC, XLS, PPT, or image — max 10 MB</p>
           </div>
-          {uploadError && <p className="text-red-600 text-sm mb-3">{uploadError}</p>}
+          {uploadError && <p className="text-red-700 text-sm mb-3">{uploadError}</p>}
           <Button type="submit" disabled={uploading} size="sm">
             {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" />Uploading…</> : "Upload"}
           </Button>
@@ -216,13 +216,13 @@ export function TrainerMaterials() {
           <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-600 text-sm">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-700 text-sm">
           {error}
         </div>
       ) : courses.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">No Courses Assigned</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
@@ -290,7 +290,7 @@ export function TrainerMaterials() {
                     download={r.fileName}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-blue-700 hover:bg-ds-card transition-colors"
                     title="Download"
                   >
                     <Download className="h-4 w-4" />

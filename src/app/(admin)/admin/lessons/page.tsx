@@ -45,8 +45,8 @@ const TIER_TABS: readonly { readonly value: TierFilter; readonly label: string }
 
 const TIER_BADGE_STYLES: Readonly<Record<string, string>> = {
   BASIC: "bg-gray-100 text-gray-700",
-  PROFESSIONAL: "bg-blue-100 text-blue-700",
-  ADVANCED: "bg-purple-100 text-purple-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ADVANCED: "bg-blue-50 text-blue-700",
 };
 
 const TIER_OPTIONS: readonly { readonly value: string; readonly label: string }[] = [
@@ -237,16 +237,16 @@ export default function AdminLessonsPage() {
           {/* Manual create lesson form (collapsible) */}
           {showCreateForm && (
             <div className="bg-white rounded-xl shadow border-2 border-blue-100 overflow-hidden">
-              <div className="bg-blue-50 px-6 py-3 flex items-center justify-between border-b border-blue-100">
+              <div className="bg-blue-50 px-6 py-3 flex items-center justify-between border-b border-blue-200">
                 <div className="flex items-center gap-2">
-                  <PenLine className="h-4 w-4 text-blue-600" />
+                  <PenLine className="h-4 w-4 text-blue-700" />
                   <h2 className="font-semibold text-blue-900 text-sm">
                     Create New Lesson
                   </h2>
                 </div>
                 <button
                   onClick={() => setShowCreateForm(false)}
-                  className="text-blue-400 hover:text-blue-600"
+                  className="text-blue-700 hover:text-blue-700"
                 >
                   <ChevronUp className="h-4 w-4" />
                 </button>
@@ -368,7 +368,7 @@ export default function AdminLessonsPage() {
                           onChange={(e) => setIsFreePreview(e.target.checked)}
                           className="rounded border-gray-300"
                         />
-                        <label htmlFor="freePreview" className="text-sm text-orange-600 font-medium">
+                        <label htmlFor="freePreview" className="text-sm text-orange-700 font-medium">
                           Free preview lesson
                         </label>
                       </div>
@@ -454,14 +454,14 @@ export default function AdminLessonsPage() {
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full ${
                           l.isPublished
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-50 text-green-700"
                             : "bg-gray-100 text-gray-500"
                         }`}
                       >
                         {l.isPublished ? "Published" : "Draft"}
                       </span>
                       {l.isFreePreview && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-700">
                           Free Preview
                         </span>
                       )}
@@ -471,15 +471,15 @@ export default function AdminLessonsPage() {
                         onClick={() => toggleFreePreview(l)}
                         className={`text-xs ${
                           l.isFreePreview
-                            ? "text-orange-600 hover:text-orange-800"
-                            : "text-gray-500 hover:text-orange-600"
+                            ? "text-orange-700 hover:text-orange-800"
+                            : "text-gray-500 hover:text-orange-700"
                         }`}
                       >
                         {l.isFreePreview ? "Remove Preview" : "Make Preview"}
                       </button>
                       <button
                         onClick={() => togglePublish(l)}
-                        className="text-xs text-blue-600 hover:text-blue-800"
+                        className="text-xs text-blue-700 hover:text-blue-800"
                       >
                         {l.isPublished ? "Unpublish" : "Publish"}
                       </button>

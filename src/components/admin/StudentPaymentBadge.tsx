@@ -4,11 +4,11 @@ import type { StudentPaymentStatus } from "@prisma/client";
 const STATUS_CONFIG: Record<StudentPaymentStatus, { label: string; className: string }> = {
   UNPAID: {
     label: "Unpaid",
-    className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    className: "bg-red-50 text-red-800 hover:bg-red-50 border-red-200",
   },
   PARTIAL: {
     label: "Partial",
-    className: "bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200",
+    className: "bg-amber-50 text-amber-800 hover:bg-amber-50 border-amber-200",
   },
   PAID: {
     label: "Paid",

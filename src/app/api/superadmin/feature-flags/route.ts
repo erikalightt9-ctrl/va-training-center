@@ -10,7 +10,7 @@ const ALL_FEATURES = [
 
 async function assertSuperAdmin(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-  if (!token?.id || token.role !== "superadmin") return null;
+  if (!(token as { isSuperAdmin?: boolean } | null)?.isSuperAdmin) return null;
   return token;
 }
 

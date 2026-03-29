@@ -92,7 +92,7 @@ export default function LessonViewerPage({
       <div>
         <Link
           href={`/student/courses/${courseId}`}
-          className="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:text-blue-400 transition-colors mb-2"
+          className="inline-flex items-center gap-1.5 text-sm text-ds-primary hover:text-blue-700 transition-colors mb-2"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to Course
         </Link>
@@ -104,7 +104,7 @@ export default function LessonViewerPage({
             </span>
           )}
           {completed && (
-            <span className="flex items-center gap-1 text-emerald-400 font-medium text-xs bg-emerald-900/40 border border-emerald-800 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-emerald-600 font-medium text-xs bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
               <CheckCircle2 className="h-3 w-3" /> Completed
             </span>
           )}
@@ -129,13 +129,13 @@ export default function LessonViewerPage({
           {lesson.content}
         </div>
 
-        {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
+        {error && <p className="text-red-700 text-sm mt-4">{error}</p>}
 
         {/* Certificate banner */}
         {certificate && (
-          <div className="mt-6 p-4 bg-emerald-900/20 border border-emerald-800 rounded-xl text-center">
+          <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
             <p className="text-2xl mb-1">🎉</p>
-            <p className="font-semibold text-emerald-400">
+            <p className="font-semibold text-emerald-600">
               Congratulations! You&apos;ve earned a certificate!
             </p>
             <a
@@ -150,7 +150,7 @@ export default function LessonViewerPage({
         {/* Complete button */}
         <div className="mt-8 flex justify-end">
           {completed ? (
-            <div className="flex items-center gap-2 text-emerald-400 font-medium text-sm">
+            <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm">
               <CheckCircle2 className="h-4 w-4" /> Lesson Completed
             </div>
           ) : (

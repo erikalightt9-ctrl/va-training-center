@@ -134,8 +134,8 @@ export function NewConversationModal({ onClose, onConversationCreated }: Props) 
                       : ""
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <User className="h-4 w-4 text-blue-600" />
+                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                    <User className="h-4 w-4 text-blue-700" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{contact.name}</p>
@@ -160,7 +160,7 @@ export function NewConversationModal({ onClose, onConversationCreated }: Props) 
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="ml-auto text-blue-400 hover:text-blue-600"
+                className="ml-auto text-blue-700 hover:text-blue-700"
                 aria-label="Remove selection"
               >
                 <X className="h-3.5 w-3.5" />
@@ -183,7 +183,7 @@ export function NewConversationModal({ onClose, onConversationCreated }: Props) 
           </div>
 
           {error && (
-            <p className="text-sm text-red-600">{error}</p>
+            <p className="text-sm text-red-700">{error}</p>
           )}
 
           <div className="flex gap-3 pt-1">

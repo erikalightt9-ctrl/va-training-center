@@ -33,8 +33,8 @@ function DashboardPreview() {
 
       <div className="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-lg p-3 z-10">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-            <BarChart3 className="h-4 w-4 text-blue-600" />
+          <div className="w-8 h-8 rounded-lg bg-blue-900/40 flex items-center justify-center">
+            <BarChart3 className="h-4 w-4 text-blue-400" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Completion Rate</p>
@@ -168,17 +168,13 @@ export function SaasHeroSection() {
                   Start Your Training Platform Today <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 font-semibold text-base px-8 py-6"
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 border border-white/40 text-white hover:bg-white/10 font-semibold text-base px-8 py-4 rounded-lg transition-colors"
               >
-                <Link href="/contact">
-                  <Play className="mr-2 h-4 w-4" />
-                  Book a Demo
-                </Link>
-              </Button>
+                <Play className="h-4 w-4" />
+                Book a Demo
+              </Link>
             </div>
 
             {/* Trust badges */}

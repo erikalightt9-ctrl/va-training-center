@@ -323,7 +323,7 @@ export function WeekGrid({
             <div
               key={ds}
               className={`flex-1 border-l relative cursor-crosshair
-                ${isToday ? "bg-blue-50/30" : "bg-white hover:bg-gray-50/50"}`}
+                ${isToday ? "bg-blue-500/10" : "bg-ds-card hover:bg-slate-50/50"}`}
               style={{ height: GRID_HEIGHT }}
               onMouseDown={(e) => handleColumnMouseDown(e, ds)}
               onDragOver={handleDragOver}

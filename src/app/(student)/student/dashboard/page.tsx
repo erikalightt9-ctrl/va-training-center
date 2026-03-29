@@ -93,28 +93,28 @@ export default async function StudentDashboardPage() {
           title="Course Progress"
           value={`${dashboard.courseProgress.percent}%`}
           icon={BookOpen}
-          colorClass="text-blue-400 bg-blue-900/40"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle={`${dashboard.courseProgress.completed} of ${dashboard.courseProgress.total} lessons`}
         />
         <AnalyticsCard
           title="Quiz Average"
           value={dashboard.quizAverage > 0 ? `${dashboard.quizAverage}%` : "--"}
           icon={ClipboardList}
-          colorClass="text-emerald-400 bg-emerald-900/40"
+          colorClass="text-emerald-600 bg-emerald-50"
           subtitle="Across all quiz attempts"
         />
         <AnalyticsCard
           title="Assignments"
           value={`${dashboard.assignmentsSubmitted}/${dashboard.totalAssignments}`}
           icon={FileCheck}
-          colorClass="text-blue-400 bg-blue-900/40"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="Submitted"
         />
         <AnalyticsCard
           title="Points"
           value={dashboard.totalPoints.toLocaleString()}
           icon={Star}
-          colorClass="text-amber-400 bg-amber-900/40"
+          colorClass="text-amber-600 bg-amber-50"
           subtitle="Total earned"
         />
       </div>
@@ -123,9 +123,9 @@ export default async function StudentDashboardPage() {
       <div className="bg-ds-card rounded-xl border border-ds-border p-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-ds-muted">Overall Course Progress</span>
-          <span className="text-sm font-bold text-blue-400">{dashboard.courseProgress.percent}%</span>
+          <span className="text-sm font-bold text-blue-700">{dashboard.courseProgress.percent}%</span>
         </div>
-        <div className="w-full bg-ds-surface rounded-full h-3">
+        <div className="w-full bg-blue-50 rounded-full h-3">
           <div
             className="bg-blue-600 h-3 rounded-full transition-all duration-500"
             style={{ width: `${dashboard.courseProgress.percent}%` }}
@@ -143,7 +143,7 @@ export default async function StudentDashboardPage() {
           {dashboard.nextLesson ? (
             <Link
               href={`/student/courses/${courseId}/lessons/${dashboard.nextLesson.id}`}
-              className="flex items-center justify-between p-4 border border-blue-800 bg-blue-900/20 rounded-lg hover:bg-blue-900/40 transition-colors group"
+              className="flex items-center justify-between p-4 border border-blue-200 bg-blue-50 rounded-lg hover:bg-blue-50 transition-colors group"
             >
               <div>
                 <p className="font-medium text-ds-text">
@@ -156,13 +156,13 @@ export default async function StudentDashboardPage() {
                   </p>
                 )}
               </div>
-              <ArrowRight className="h-5 w-5 text-blue-400 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-5 w-5 text-blue-700 group-hover:translate-x-1 transition-transform" />
             </Link>
           ) : (
-            <div className="p-4 bg-emerald-900/20 border border-emerald-800 rounded-lg text-center">
-              <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2" />
-              <p className="font-medium text-emerald-400">All lessons completed!</p>
-              <p className="text-xs text-emerald-400/70 mt-1">Congratulations on finishing the course content.</p>
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+              <p className="font-medium text-emerald-600">All lessons completed!</p>
+              <p className="text-xs text-emerald-600/70 mt-1">Congratulations on finishing the course content.</p>
             </div>
           )}
         </div>
@@ -176,7 +176,7 @@ export default async function StudentDashboardPage() {
                 <Link
                   key={a.id}
                   href={`/student/courses/${courseId}/assignments`}
-                  className="flex items-center justify-between p-3 border border-ds-border rounded-lg hover:border-blue-700 hover:bg-ds-surface transition-colors"
+                  className="flex items-center justify-between p-3 border border-ds-border rounded-lg hover:border-blue-700 hover:bg-slate-100 transition-colors"
                 >
                   <div>
                     <p className="text-sm font-medium text-ds-text">{a.title}</p>
@@ -219,7 +219,7 @@ export default async function StudentDashboardPage() {
                   key={activity.id}
                   className="flex items-start gap-3 py-2 border-b border-ds-border last:border-0"
                 >
-                  <div className="w-8 h-8 rounded-full bg-ds-surface flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0 mt-0.5">
                     <Icon className="h-4 w-4 text-ds-muted" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -250,7 +250,7 @@ export default async function StudentDashboardPage() {
             {badges.map((sb) => (
               <div
                 key={sb.id}
-                className="flex items-center gap-2 bg-amber-900/20 border border-amber-800 rounded-lg px-3 py-2"
+                className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"
               >
                 <span className="text-xl">{sb.badge.icon}</span>
                 <div>

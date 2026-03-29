@@ -75,7 +75,7 @@ export function FeatureCard({
   );
 
   const badgeBlock = badge !== undefined && state !== "planned" ? (
-    <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+    <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
       {badge}
     </span>
   ) : null;
@@ -123,12 +123,12 @@ export function FeatureCard({
         </div>
       </div>
       <div>
-        <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+        <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
           {label}
         </p>
         <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>
       </div>
-      <div className="flex items-center gap-1 text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+      <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
         Open <ArrowRight className="h-3 w-3" />
       </div>
     </Link>

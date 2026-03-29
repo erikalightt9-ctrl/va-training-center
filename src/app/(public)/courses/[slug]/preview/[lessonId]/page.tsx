@@ -189,7 +189,7 @@ export default async function LessonPreviewPage({ params }: PageProps) {
                               className={`h-3.5 w-3.5 shrink-0 ${
                                 isCurrent
                                   ? "text-orange-600"
-                                  : "text-orange-400"
+                                  : "text-orange-700"
                               }`}
                             />
                             <span className="flex-1 truncate">

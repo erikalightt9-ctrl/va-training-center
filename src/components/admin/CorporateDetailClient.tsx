@@ -87,7 +87,7 @@ interface OrgDetail {
 const PLAN_COLORS: Record<string, string> = {
   TRIAL: "bg-gray-100 text-gray-600 border border-gray-200",
   STARTER: "bg-blue-50 text-blue-700 border border-blue-200",
-  PROFESSIONAL: "bg-purple-50 text-purple-700 border border-purple-200",
+  PROFESSIONAL: "bg-blue-50 text-blue-700 border border-blue-200",
   ENTERPRISE: "bg-amber-50 text-amber-700 border border-amber-200",
 };
 
@@ -105,10 +105,10 @@ function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" }) {
     .join("")
     .toUpperCase();
   const colors = [
-    "bg-blue-100 text-blue-700",
-    "bg-purple-100 text-purple-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
+    "bg-blue-50 text-blue-700",
+    "bg-blue-50 text-blue-700",
+    "bg-emerald-50 text-emerald-700",
+    "bg-amber-50 text-amber-700",
     "bg-rose-100 text-rose-700",
     "bg-cyan-100 text-cyan-700",
   ];
@@ -237,8 +237,8 @@ function EditModal({ title, onClose, onSave, saving, error, children }: {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-100">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
-              <Pencil className="h-4 w-4 text-blue-600" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+              <Pencil className="h-4 w-4 text-blue-700" />
             </div>
             <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
           </div>
@@ -248,7 +248,7 @@ function EditModal({ title, onClose, onSave, saving, error, children }: {
         </div>
         <form onSubmit={onSave} className="p-6 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+            <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />{error}
             </div>
           )}
@@ -324,8 +324,8 @@ function AddEmployeeModal({ orgId, seatsLeft, onClose, onAdded }: AddEmployeeMod
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
-              <UserPlus className="h-4 w-4 text-blue-600" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+              <UserPlus className="h-4 w-4 text-blue-700" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-gray-900">Add Employee</h2>
@@ -340,7 +340,7 @@ function AddEmployeeModal({ orgId, seatsLeft, onClose, onAdded }: AddEmployeeMod
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+            <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               {error}
             </div>
@@ -412,7 +412,7 @@ function AddEmployeeModal({ orgId, seatsLeft, onClose, onAdded }: AddEmployeeMod
             </div>
           </div>
 
-          <div className="bg-blue-50 rounded-xl px-3 py-2 text-xs text-blue-700 border border-blue-100">
+          <div className="bg-blue-50 rounded-xl px-3 py-2 text-xs text-blue-700 border border-blue-200">
             A temporary password <strong>ChangeMe@123!</strong> will be assigned. The employee must change it on first login.
           </div>
 
@@ -629,7 +629,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
       <div className="text-center py-20">
         <Building2 className="h-12 w-12 text-gray-200 mx-auto mb-3" />
         <p className="text-gray-500 font-medium">Company not found.</p>
-        <button onClick={() => router.back()} className="mt-4 text-sm text-blue-600 hover:underline">← Go back</button>
+        <button onClick={() => router.back()} className="mt-4 text-sm text-blue-700 hover:underline">← Go back</button>
       </div>
     );
   }
@@ -733,7 +733,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${PLAN_COLORS[org.plan] ?? "bg-gray-100 text-gray-600"}`}>
                   {org.plan}
                 </span>
-                <span className={`inline-flex items-center gap-1 text-xs font-medium ${org.isActive ? "text-emerald-700" : "text-gray-400"}`}>
+                <span className={`inline-flex items-center gap-1 text-xs font-medium ${org.isActive ? "text-emerald-600" : "text-gray-400"}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${org.isActive ? "bg-emerald-500" : "bg-gray-300"}`} />
                   {org.isActive ? "Active" : "Inactive"}
                 </span>
@@ -750,21 +750,21 @@ export function CorporateDetailClient({ id }: { id: string }) {
             value={stats?.totalEmployees ?? org.counts.employees}
             sub={`${seatsLeft} seat${seatsLeft !== 1 ? "s" : ""} left`}
             icon={Users}
-            color="bg-blue-100"
-            accent="text-blue-600"
+            color="bg-blue-50"
+            accent="text-blue-700"
           />
           <StatCard
             label="Managers"
             value={stats?.totalManagers ?? org.counts.managers}
             icon={Shield}
-            color="bg-purple-100"
-            accent="text-purple-600"
+            color="bg-blue-50"
+            accent="text-blue-700"
           />
           <StatCard
             label="Active Courses"
             value={stats?.activeCourses ?? org.counts.courses}
             icon={BookOpen}
-            color="bg-emerald-100"
+            color="bg-emerald-50"
             accent="text-emerald-600"
           />
           <StatCard
@@ -772,7 +772,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
             value={`${stats?.avgProgress ?? 0}%`}
             sub="across all courses"
             icon={TrendingUp}
-            color="bg-amber-100"
+            color="bg-amber-50"
             accent="text-amber-600"
           />
         </div>
@@ -854,13 +854,13 @@ export function CorporateDetailClient({ id }: { id: string }) {
               {/* Status messages */}
               <div className="flex items-center gap-2 shrink-0">
                 {uploadStatus === "done" && uploadResult && (
-                  <span className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1.5 rounded-lg">
+                  <span className="flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1.5 rounded-lg">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     {uploadResult.created} added{uploadResult.skipped > 0 ? `, ${uploadResult.skipped} skipped` : ""}
                   </span>
                 )}
                 {uploadStatus === "error" && (
-                  <span className="flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-100 px-2.5 py-1.5 rounded-lg">
+                  <span className="flex items-center gap-1.5 text-xs text-red-700 bg-red-50 border border-red-100 px-2.5 py-1.5 rounded-lg">
                     <AlertCircle className="h-3.5 w-3.5" />
                     {uploadError}
                   </span>
@@ -949,7 +949,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                       </tr>
                     ) : (
                       filteredEmployees.map((s) => (
-                        <tr key={s.id} className="hover:bg-blue-50/30 transition-colors group">
+                        <tr key={s.id} className="hover:bg-blue-500/10 transition-colors group">
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-3">
                               <Avatar name={s.name} size="sm" />
@@ -959,7 +959,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                           <td className="px-5 py-3.5 text-gray-500 text-xs">{s.email}</td>
                           <td className="px-5 py-3.5 text-gray-400 text-xs">{s.department ?? "—"}</td>
                           <td className="px-5 py-3.5">
-                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${s.isActive ? "text-emerald-700" : "text-gray-400"}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${s.isActive ? "text-emerald-600" : "text-gray-400"}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${s.isActive ? "bg-emerald-500" : "bg-gray-300"}`} />
                               {s.isActive ? "Active" : "Inactive"}
                             </span>
@@ -975,7 +975,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                                   setEditForm({ name: s.name, email: s.email, department: s.department ?? "", phone: s.phone ?? "", isActive: s.isActive });
                                   setEditError("");
                                 }}
-                                className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                className="p-1.5 text-gray-400 hover:text-blue-700 hover:bg-ds-card rounded-lg transition"
                                 title="Edit employee"
                               >
                                 <Pencil className="h-3.5 w-3.5" />
@@ -1028,10 +1028,10 @@ export function CorporateDetailClient({ id }: { id: string }) {
                           </td>
                           <td className="px-5 py-3.5 text-gray-500 text-xs">{m.email}</td>
                           <td className="px-5 py-3.5">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 capitalize">{m.role}</span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 capitalize">{m.role}</span>
                           </td>
                           <td className="px-5 py-3.5">
-                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${m.isActive ? "text-emerald-700" : "text-gray-400"}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${m.isActive ? "text-emerald-600" : "text-gray-400"}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${m.isActive ? "bg-emerald-500" : "bg-gray-300"}`} />
                               {m.isActive ? "Active" : "Inactive"}
                             </span>
@@ -1044,7 +1044,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                                   setEditForm({ name: m.name, email: m.email, role: m.role, isActive: m.isActive });
                                   setEditError("");
                                 }}
-                                className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                className="p-1.5 text-gray-400 hover:text-blue-700 hover:bg-ds-card rounded-lg transition"
                                 title="Edit manager"
                               >
                                 <Pencil className="h-3.5 w-3.5" />
@@ -1088,7 +1088,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                         <tr key={c.id} className="hover:bg-gray-50 transition-colors group">
                           <td className="px-5 py-3.5 font-medium text-gray-900">{c.title}</td>
                           <td className="px-5 py-3.5">
-                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${c.isActive ? "text-emerald-700" : "text-gray-400"}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${c.isActive ? "text-emerald-600" : "text-gray-400"}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${c.isActive ? "bg-emerald-500" : "bg-gray-300"}`} />
                               {c.isActive ? "Active" : "Inactive"}
                             </span>
@@ -1101,7 +1101,7 @@ export function CorporateDetailClient({ id }: { id: string }) {
                                   setEditForm({ title: c.title, isActive: c.isActive });
                                   setEditError("");
                                 }}
-                                className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                className="p-1.5 text-gray-400 hover:text-blue-700 hover:bg-ds-card rounded-lg transition"
                                 title="Edit course"
                               >
                                 <Pencil className="h-3.5 w-3.5" />
@@ -1165,9 +1165,9 @@ export function CorporateDetailClient({ id }: { id: string }) {
                 {auditLogs.map((log) => (
                   <div key={log.id} className="flex items-center gap-3 text-xs">
                     <span className={`px-2 py-0.5 rounded-full font-medium ${
-                      log.action.includes("CREATE") ? "bg-emerald-100 text-emerald-700" :
-                      log.action.includes("DELETE") || log.action.includes("DEACTIVATE") ? "bg-red-100 text-red-700" :
-                      "bg-blue-100 text-blue-700"
+                      log.action.includes("CREATE") ? "bg-emerald-50 text-emerald-700" :
+                      log.action.includes("DELETE") || log.action.includes("DEACTIVATE") ? "bg-red-50 text-red-700" :
+                      "bg-blue-50 text-blue-700"
                     }`}>
                       {log.action.replace("_", " ")}
                     </span>

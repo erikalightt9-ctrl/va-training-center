@@ -84,7 +84,7 @@ const PACE_CONFIG = {
   },
   on_track: {
     label: "On Track",
-    bg: "bg-blue-100",
+    bg: "bg-blue-50",
     text: "text-blue-700",
     border: "border-blue-300",
     dot: "bg-blue-500",
@@ -92,13 +92,13 @@ const PACE_CONFIG = {
   behind: {
     label: "Behind",
     bg: "bg-yellow-100",
-    text: "text-yellow-700",
+    text: "text-yellow-600",
     border: "border-yellow-300",
     dot: "bg-yellow-500",
   },
   at_risk: {
     label: "At Risk",
-    bg: "bg-red-100",
+    bg: "bg-red-50",
     text: "text-red-700",
     border: "border-red-300",
     dot: "bg-red-500",
@@ -158,7 +158,7 @@ function WeeklyTrendChart({
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex items-center gap-2 mb-4">
-        <BarChart3 className="h-5 w-5 text-indigo-600" />
+        <BarChart3 className="h-5 w-5 text-indigo-700" />
         <h3 className="font-semibold text-gray-900">Weekly Activity Trend</h3>
       </div>
 
@@ -314,7 +314,7 @@ export function WorkPaceMonitor() {
   if (error && !metricsData) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -431,7 +431,7 @@ export function WorkPaceMonitor() {
           value={`${metrics.attendanceRate}%`}
         />
         <StatCard
-          icon={<Clock className="h-4 w-4 text-purple-500" />}
+          icon={<Clock className="h-4 w-4 text-blue-500" />}
           label="Avg Gap Between Lessons"
           value={
             metrics.avgTimeBetweenLessons > 0
@@ -453,7 +453,7 @@ export function WorkPaceMonitor() {
           {/* Summary */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Activity className="h-5 w-5 text-indigo-600" />
+              <Activity className="h-5 w-5 text-indigo-700" />
               <h3 className="font-semibold text-gray-900">AI Pace Analysis</h3>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed">
@@ -508,7 +508,7 @@ export function WorkPaceMonitor() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-blue-700" />
                 <h3 className="font-semibold text-gray-900">
                   Recommended Schedule
                 </h3>
@@ -520,7 +520,7 @@ export function WorkPaceMonitor() {
 
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-blue-700" />
                 <h3 className="font-semibold text-gray-900">
                   Projected Completion
                 </h3>
@@ -537,8 +537,8 @@ export function WorkPaceMonitor() {
       ) : (
         /* Analyze CTA */
         <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <div className="bg-indigo-100 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4">
-            <Activity className="h-7 w-7 text-indigo-600" />
+          <div className="bg-indigo-50 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-4">
+            <Activity className="h-7 w-7 text-indigo-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             Get AI-Powered Pace Analysis

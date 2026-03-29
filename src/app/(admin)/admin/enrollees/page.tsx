@@ -100,40 +100,40 @@ export default async function EnrolleesPage({ searchParams }: PageProps) {
           title="Applications"
           value={applications.total}
           icon={ClipboardList}
-          colorClass="text-blue-400 bg-blue-900/40"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="All submissions"
         />
         <AnalyticsCard
           title="Active Enrollees"
           value={stats.total}
           icon={Users}
-          colorClass="text-indigo-400 bg-indigo-900/40"
+          colorClass="text-indigo-700 bg-indigo-50"
           subtitle="Approved"
         />
         <AnalyticsCard
           title="Paid"
           value={stats.paid}
           icon={CreditCard}
-          colorClass="text-emerald-400 bg-emerald-900/40"
+          colorClass="text-emerald-600 bg-emerald-50"
           subtitle="Fully paid"
         />
         <AnalyticsCard
           title="Unpaid / Partial"
           value={stats.unpaid + stats.partial}
           icon={AlertCircle}
-          colorClass="text-amber-400 bg-amber-900/40"
+          colorClass="text-amber-600 bg-amber-50"
           subtitle={`${stats.partial} partial, ${stats.unpaid} unpaid`}
         />
         <AnalyticsCard
           title="Access Granted"
           value={stats.accessGranted}
           icon={ShieldCheck}
-          colorClass="text-purple-400 bg-purple-900/40"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="Active access"
         />
       </div>
 
-      <Suspense fallback={<div className="h-12 bg-ds-surface rounded animate-pulse mb-6" />}>
+      <Suspense fallback={<div className="h-12 bg-slate-50 rounded animate-pulse mb-6" />}>
         <EnrolleesTabs
           applications={applications}
           enrollees={enrollees}

@@ -7,7 +7,7 @@ export interface DashboardCardProps {
   readonly label: string;
   readonly description?: string;
   readonly icon: React.ComponentType<{ className?: string }>;
-  /** Tailwind color classes for the icon background & icon, e.g. "bg-blue-100 text-blue-600" */
+  /** Tailwind color classes for the icon background & icon, e.g. "bg-blue-50 text-blue-700" */
   readonly colorClass?: string;
   /** Badge text shown top-right (e.g. a count) */
   readonly badge?: string | number;
@@ -31,7 +31,7 @@ export function DashboardCard({
   label,
   description,
   icon: Icon,
-  colorClass = "bg-blue-100 text-blue-600",
+  colorClass = "bg-blue-50 text-blue-700",
   badge,
   allowedRoles,
   currentRole,

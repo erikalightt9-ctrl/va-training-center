@@ -88,8 +88,8 @@ const SOURCE_LABELS: Readonly<Record<string, string>> = {
 };
 
 const SOURCE_COLORS: Readonly<Record<string, string>> = {
-  remotive: "bg-purple-100 text-purple-700",
-  jsearch: "bg-teal-100 text-teal-700",
+  remotive: "bg-blue-50 text-blue-700",
+  jsearch: "bg-teal-50 text-teal-700",
 };
 
 function SourceBadge({ source }: { readonly source: string | null }) {
@@ -194,7 +194,7 @@ function FilterPanel({
         {hasActiveFilters && (
           <button
             onClick={() => onFiltersChange(INITIAL_FILTERS)}
-            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            className="text-xs text-blue-700 hover:text-blue-800 flex items-center gap-1"
           >
             <X className="h-3 w-3" />
             Clear All
@@ -416,7 +416,7 @@ export function JobMatchDashboard() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button
           variant="outline"
           size="sm"
@@ -443,8 +443,8 @@ export function JobMatchDashboard() {
   if (matches.length === 0 && !matching) {
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-        <div className="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <Search className="h-8 w-8 text-indigo-600" />
+        <div className="bg-indigo-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <Search className="h-8 w-8 text-indigo-700" />
         </div>
         <h2 className="text-lg font-semibold text-gray-900 mb-2">
           No Job Matches Yet
@@ -532,7 +532,7 @@ export function JobMatchDashboard() {
           </p>
           <button
             onClick={() => setFilters(INITIAL_FILTERS)}
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-blue-700 hover:text-blue-800"
           >
             Clear all filters
           </button>
@@ -573,7 +573,7 @@ export function JobMatchDashboard() {
                         href={match.jobPosting.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-blue-600 transition-colors"
+                        className="text-gray-400 hover:text-blue-700 transition-colors"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </a>
@@ -611,7 +611,7 @@ export function JobMatchDashboard() {
                 {/* AI Reasoning */}
                 <div className="bg-gray-50 rounded-lg p-3 mb-3">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Sparkles className="h-3.5 w-3.5 text-purple-500" />
+                    <Sparkles className="h-3.5 w-3.5 text-blue-500" />
                     <span className="text-xs font-medium text-gray-600">
                       AI Analysis
                     </span>

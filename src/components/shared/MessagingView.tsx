@@ -284,7 +284,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                     onClick={() => setActiveTab(tab)}
                     className={`flex-1 py-2.5 text-xs font-medium capitalize transition ${
                       activeTab === tab
-                        ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/50"
+                        ? "text-blue-700 border-b-2 border-blue-600 bg-blue-50"
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                   >
@@ -297,7 +297,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                   <span className="text-xs text-gray-400">{conversations.length} conversations</span>
                   <button
                     onClick={() => setShowCompose(true)}
-                    className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition"
+                    className="flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg transition"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Compose
@@ -331,7 +331,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                       <p className="text-sm text-gray-400 mb-3">No conversations yet</p>
                       <button
                         onClick={() => setShowCompose(true)}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium underline"
+                        className="text-xs text-blue-700 hover:text-blue-800 font-medium underline"
                       >
                         Start your first conversation
                       </button>
@@ -381,7 +381,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                           selectedId === msg.conversation.id ? "bg-blue-50" : ""
                         }`}
                       >
-                        <p className="text-xs text-blue-600 font-medium truncate">
+                        <p className="text-xs text-blue-700 font-medium truncate">
                           To: {msg.conversation.title ?? msg.conversation.participants
                             .filter((p) => !(p.actorType === currentActorType && p.actorId === currentActorId))
                             .map((p) => ACTOR_TYPE_LABELS[p.actorType] ?? p.actorType)
@@ -393,7 +393,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                             {new Date(msg.createdAt).toLocaleDateString()}
                           </span>
                           {msg.reads && msg.reads.length > 0 && (
-                            <span className="text-[10px] text-blue-400 font-bold">✓✓</span>
+                            <span className="text-[10px] text-blue-700 font-bold">✓✓</span>
                           )}
                         </div>
                       </button>
@@ -414,7 +414,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                   ) : (
                     savedContacts.map((contact) => (
                       <div key={contact.id} className="px-4 py-3 flex items-center gap-3 border-b border-gray-50 hover:bg-gray-50 group">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-700 text-xs font-bold shrink-0">
                           {(contact.contactName ?? contact.contactType)[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -427,7 +427,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                         </div>
                         <button
                           onClick={() => setShowCompose(true)}
-                          className="opacity-0 group-hover:opacity-100 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded-lg bg-blue-50 transition"
+                          className="opacity-0 group-hover:opacity-100 text-xs text-blue-700 hover:text-blue-800 px-2 py-1 rounded-lg bg-blue-50 transition"
                         >
                           Message
                         </button>
@@ -448,7 +448,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                   <p className="text-sm mb-3">Select a conversation</p>
                   <button
                     onClick={() => setShowCompose(true)}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mx-auto"
+                    className="text-xs text-blue-700 hover:text-blue-800 font-medium flex items-center gap-1 mx-auto"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     New message
@@ -474,7 +474,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                       {isSelf(msg) && (
                         <button
                           onClick={() => handleDeleteMessage(msg.id)}
-                          className="opacity-0 group-hover:opacity-100 self-center mr-1 p-1 text-gray-300 hover:text-red-400 rounded transition"
+                          className="opacity-0 group-hover:opacity-100 self-center mr-1 p-1 text-gray-300 hover:text-red-700 rounded transition"
                           title="Delete message"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -504,7 +504,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                           </span>
                           {isSelf(msg) && (
                             <span className={`text-[11px] font-bold leading-none ${
-                              msg.reads && msg.reads.length > 0 ? "text-blue-300" : "text-blue-400/50"
+                              msg.reads && msg.reads.length > 0 ? "text-blue-700" : "text-blue-700/50"
                             }`} title={msg.reads && msg.reads.length > 0 ? "Read" : "Sent"}>
                               {msg.reads && msg.reads.length > 0 ? "✓✓" : "✓"}
                             </span>
@@ -514,7 +514,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                       {!isSelf(msg) && (
                         <button
                           onClick={() => handleDeleteMessage(msg.id)}
-                          className="opacity-0 group-hover:opacity-100 self-center ml-1 p-1 text-gray-300 hover:text-red-400 rounded transition"
+                          className="opacity-0 group-hover:opacity-100 self-center ml-1 p-1 text-gray-300 hover:text-red-700 rounded transition"
                           title="Delete message"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -530,7 +530,7 @@ export function MessagingView({ currentActorType, currentActorId }: Props) {
                     <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5 text-xs text-blue-700">
                       <Paperclip className="h-3.5 w-3.5 shrink-0" />
                       <span className="truncate flex-1">{pendingFile.name}</span>
-                      <button type="button" onClick={() => setPendingFile(null)} className="shrink-0 text-blue-400 hover:text-blue-600">
+                      <button type="button" onClick={() => setPendingFile(null)} className="shrink-0 text-blue-700 hover:text-blue-700">
                         <X className="h-3.5 w-3.5" />
                       </button>
                     </div>

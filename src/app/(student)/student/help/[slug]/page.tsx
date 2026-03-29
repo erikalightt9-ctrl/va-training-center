@@ -39,7 +39,7 @@ export default async function HelpArticlePage({
         <p className="text-gray-500">Article not found</p>
         <Link
           href="/student/help"
-          className="text-blue-600 hover:underline text-sm mt-2 inline-block"
+          className="text-blue-700 hover:underline text-sm mt-2 inline-block"
         >
           Back to Help Center
         </Link>
@@ -62,7 +62,7 @@ export default async function HelpArticlePage({
 
       <div className="bg-white rounded-xl shadow p-8">
         <div className="mb-6">
-          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+          <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
             {categoryLabel}
           </span>
           <h1 className="text-2xl font-bold text-gray-900 mt-2">

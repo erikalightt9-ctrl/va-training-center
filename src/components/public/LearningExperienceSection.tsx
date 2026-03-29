@@ -60,12 +60,12 @@ export function LearningExperienceSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Learning Experience
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
             A Platform Built for{" "}
-            <span className="text-blue-700">Professional Growth</span>
+            <span className="text-blue-400">Professional Growth</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Our comprehensive learning platform provides everything you need to
@@ -81,8 +81,8 @@ export function LearningExperienceSection() {
               key={feature.title}
               className="bg-white rounded-xl p-6 shadow-sm border border-blue-100 hover:shadow-md transition-shadow"
             >
-              <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                <feature.icon className="h-6 w-6 text-blue-700" />
+              <div className="bg-blue-900/40 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <feature.icon className="h-6 w-6 text-blue-400" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">
                 {feature.title}

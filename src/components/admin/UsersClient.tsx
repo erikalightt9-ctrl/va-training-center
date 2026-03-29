@@ -154,8 +154,8 @@ export function UsersClient() {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           user.role === "trainer"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-blue-100 text-blue-700"
+                            ? "bg-blue-50 text-blue-700"
+                            : "bg-blue-50 text-blue-700"
                         }`}
                       >
                         {user.role === "trainer" ? "Trainer" : "Student"}
@@ -165,7 +165,7 @@ export function UsersClient() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 text-xs font-medium ${
-                          user.status === "active" ? "text-emerald-700" : "text-gray-400"
+                          user.status === "active" ? "text-emerald-600" : "text-gray-400"
                         }`}
                       >
                         <span

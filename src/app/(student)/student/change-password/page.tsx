@@ -78,7 +78,7 @@ export default function ChangePasswordPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-4">
             <ShieldCheck className="h-8 w-8 text-blue-700" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">

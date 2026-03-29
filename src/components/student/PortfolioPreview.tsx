@@ -92,7 +92,7 @@ export function PortfolioPreview({
       {certificates.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <GraduationCap className="h-5 w-5 text-blue-600" />
+            <GraduationCap className="h-5 w-5 text-blue-700" />
             <h3 className="font-semibold text-gray-900">Certificates</h3>
           </div>
           <div className="space-y-3">
@@ -140,7 +140,7 @@ export function PortfolioPreview({
       {quizScores.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <ClipboardList className="h-5 w-5 text-purple-600" />
+            <ClipboardList className="h-5 w-5 text-blue-700" />
             <h3 className="font-semibold text-gray-900">Quiz Performance</h3>
           </div>
           <div className="space-y-2">
@@ -174,7 +174,7 @@ export function PortfolioPreview({
       {assignments.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <FileCheck className="h-5 w-5 text-blue-600" />
+            <FileCheck className="h-5 w-5 text-blue-700" />
             <h3 className="font-semibold text-gray-900">Assignments</h3>
           </div>
           <div className="space-y-2">

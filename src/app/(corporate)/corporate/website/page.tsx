@@ -225,7 +225,7 @@ export default function WebsiteBuilderPage() {
             href={`${window.location.protocol}//${subdomain}.${window.location.host.replace(/^[^.]+\./, "")}/site`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm text-blue-600 hover:underline"
+            className="flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
           >
             <ExternalLink className="h-3.5 w-3.5" />
             View live site

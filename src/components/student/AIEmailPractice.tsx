@@ -77,8 +77,8 @@ function scoreBgColor(score: number): string {
 
 function scoreBadgeBg(score: number): string {
   if (score >= 80) return "bg-green-100 text-green-700";
-  if (score >= 60) return "bg-yellow-100 text-yellow-700";
-  return "bg-red-100 text-red-700";
+  if (score >= 60) return "bg-yellow-100 text-yellow-600";
+  return "bg-red-50 text-red-700";
 }
 
 /* ------------------------------------------------------------------ */
@@ -245,7 +245,7 @@ export function AIEmailPractice() {
     return (
       <div className="space-y-6">
         {/* Description */}
-        <div className="bg-blue-50 rounded-xl border border-blue-100 p-4">
+        <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
           <p className="text-sm text-blue-800">
             Practice writing professional emails for real-world VA scenarios.
             Choose a scenario below, write your email, and get instant AI
@@ -263,7 +263,7 @@ export function AIEmailPractice() {
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className="bg-blue-50 rounded-lg p-2 mt-0.5">
-                  <Mail className="h-4 w-4 text-blue-600" />
+                  <Mail className="h-4 w-4 text-blue-700" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 text-sm">
@@ -447,7 +447,7 @@ export function AIEmailPractice() {
             <p className="text-xs text-gray-400">
               {fullEmailLength} characters
               {fullEmailLength > 0 && fullEmailLength < 50 && (
-                <span className="text-red-400">
+                <span className="text-red-700">
                   {" "}
                   (minimum 50 characters)
                 </span>
@@ -506,7 +506,7 @@ export function AIEmailPractice() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           {/* Results header */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-amber-100 rounded-lg p-2">
+            <div className="bg-amber-50 rounded-lg p-2">
               <Trophy className="h-5 w-5 text-amber-600" />
             </div>
             <div>
@@ -566,7 +566,7 @@ export function AIEmailPractice() {
 
           {/* AI Feedback */}
           {evaluatedSession.aiFeedback && (
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 mb-4">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-4">
               <h4 className="text-sm font-semibold text-blue-900 mb-1">
                 AI Feedback
               </h4>

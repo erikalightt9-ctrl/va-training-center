@@ -5,7 +5,7 @@ const audiences = [
     icon: Building2,
     title: "Corporate Training Providers",
     description: "Streamline employee development programs with centralized management and analytics.",
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-blue-900/40 text-blue-400",
   },
   {
     icon: GraduationCap,
@@ -17,13 +17,13 @@ const audiences = [
     icon: Monitor,
     title: "Online Course Providers",
     description: "Deliver digital learning with built-in messaging, quizzes, and leaderboards.",
-    color: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-900/40 text-emerald-400",
   },
   {
     icon: BookOpenCheck,
     title: "Review & Certification Centers",
     description: "Track student progress, manage exam prep, and issue certificates automatically.",
-    color: "bg-amber-100 text-amber-700",
+    color: "bg-amber-900/40 text-amber-400",
   },
 ] as const;
 
@@ -32,7 +32,7 @@ export function TargetAudienceSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Who it&apos;s for
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">

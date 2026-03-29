@@ -17,10 +17,10 @@ import { getTenantById } from "@/lib/repositories/superadmin.repository";
 import { Button } from "@/components/ui/button";
 
 const PLAN_BADGE: Record<string, string> = {
-  TRIAL:        "bg-amber-900/40 text-amber-400",
-  STARTER:      "bg-blue-900/40 text-blue-400",
-  PROFESSIONAL: "bg-purple-900/40 text-purple-400",
-  ENTERPRISE:   "bg-emerald-900/40 text-emerald-400",
+  TRIAL:        "bg-amber-50 text-amber-700",
+  STARTER:      "bg-blue-50 text-blue-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ENTERPRISE:   "bg-emerald-50 text-emerald-700",
 };
 
 export default async function TenantDetailPage({
@@ -44,17 +44,17 @@ export default async function TenantDetailPage({
             <h1 className="text-xl font-bold text-ds-text flex items-center gap-2">
               {tenant.name}
               {tenant.isDefault && (
-                <span className="inline-flex items-center gap-1 text-xs bg-violet-900/40 text-violet-400 px-1.5 py-0.5 rounded-full font-medium">
+                <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-300 px-1.5 py-0.5 rounded-full font-medium">
                   <Crown className="h-3 w-3" />
                   Default Tenant
                 </span>
               )}
               {tenant.isActive ? (
-                <span className="flex items-center gap-1 text-xs text-emerald-400">
+                <span className="flex items-center gap-1 text-xs text-emerald-600">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Active
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-xs text-red-400">
+                <span className="flex items-center gap-1 text-xs text-red-700">
                   <XCircle className="h-3.5 w-3.5" /> Suspended
                 </span>
               )}
@@ -115,7 +115,7 @@ export default async function TenantDetailPage({
           {
             label: "Plan",
             value: (
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PLAN_BADGE[tenant.plan] ?? "bg-ds-surface text-ds-muted"}`}>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PLAN_BADGE[tenant.plan] ?? "bg-slate-50 text-ds-muted"}`}>
                 {tenant.plan}
               </span>
             ),

@@ -140,7 +140,7 @@ export function GradingQueueClient({ submissions }: GradingQueueClientProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-ds-surface border-b border-ds-border">
+              <tr className="bg-slate-50 border-b border-ds-border">
                 <th className="text-left px-5 py-3 font-medium text-ds-muted">
                   Student
                 </th>
@@ -163,11 +163,11 @@ export function GradingQueueClient({ submissions }: GradingQueueClientProps) {
             </thead>
             <tbody className="divide-y divide-ds-border">
               {submissions.map((submission) => (
-                <tr key={submission.id} className="hover:bg-ds-surface/50">
+                <tr key={submission.id} className="hover:bg-slate-50/50">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="bg-blue-900/40 rounded-full p-1.5">
-                        <User className="h-3.5 w-3.5 text-blue-400" />
+                      <div className="bg-blue-50 rounded-full p-1.5">
+                        <User className="h-3.5 w-3.5 text-blue-700" />
                       </div>
                       <div>
                         <p className="font-medium text-ds-text text-xs">
@@ -262,7 +262,7 @@ export function GradingQueueClient({ submissions }: GradingQueueClientProps) {
                 max={100}
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
-                className="w-full bg-ds-surface border border-ds-border rounded-lg px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:border-ds-primary/50"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:border-ds-primary/50"
                 placeholder="Enter grade..."
               />
             </div>
@@ -280,13 +280,13 @@ export function GradingQueueClient({ submissions }: GradingQueueClientProps) {
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 rows={4}
-                className="w-full bg-ds-surface border border-ds-border rounded-lg px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:border-ds-primary/50 resize-none"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50 focus:border-ds-primary/50 resize-none"
                 placeholder="Provide feedback to the student..."
               />
             </div>
 
             {error && (
-              <p className="text-sm text-red-400 bg-red-900/40 border border-red-800 px-3 py-2 rounded-lg">
+              <p className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
                 {error}
               </p>
             )}

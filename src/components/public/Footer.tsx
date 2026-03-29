@@ -89,7 +89,7 @@ export function Footer() {
         </div>
 
         {/* Contact info bar */}
-        <div className="border-t border-blue-800 mt-10 pt-6">
+        <div className="border-t border-blue-200 mt-10 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-blue-200 mb-6">
             <span className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-blue-400 shrink-0" />

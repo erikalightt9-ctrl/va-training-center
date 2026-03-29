@@ -68,10 +68,10 @@ const TIER_UI: Readonly<
   },
   PROFESSIONAL: {
     label: "Professional",
-    bg: "bg-blue-50/30",
+    bg: "bg-blue-500/10",
     border: "border-blue-200",
     selectedBorder: "border-blue-500 ring-2 ring-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    badge: "bg-blue-50 text-blue-700",
     icon: Zap,
     priceKey: "priceProfessional",
     finalPriceKey: "finalPriceProfessional",
@@ -80,10 +80,10 @@ const TIER_UI: Readonly<
   },
   ADVANCED: {
     label: "Advanced",
-    bg: "bg-purple-50/30",
-    border: "border-purple-200",
-    selectedBorder: "border-purple-500 ring-2 ring-purple-200",
-    badge: "bg-purple-100 text-purple-700",
+    bg: "bg-blue-50/30",
+    border: "border-blue-200",
+    selectedBorder: "border-blue-500 ring-2 ring-blue-200",
+    badge: "bg-blue-50 text-blue-700",
     icon: Crown,
     priceKey: "priceAdvanced",
     finalPriceKey: "finalPriceAdvanced",
@@ -207,7 +207,7 @@ export function StepCourseTierSelect({ form, courseId }: StepCourseTierSelectPro
                     <span className="text-sm line-through text-gray-400">
                       ₱{tierPrice.toLocaleString()}
                     </span>
-                    <span className="text-xs font-semibold bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold bg-red-50 text-red-700 px-1.5 py-0.5 rounded-full">
                       {formatDiscountLabel(discount)}
                     </span>
                   </div>

@@ -219,7 +219,7 @@ export function ResumeForm() {
           <Button type="submit" disabled={loading} size="lg" className="bg-blue-900 hover:bg-blue-800 text-white font-bold">
             {loading ? "Saving…" : "Save Resume"}
           </Button>
-          <Button type="button" variant="outline" disabled={aiLoading} onClick={handleAIImprove} size="lg" className="gap-2 border-purple-300 text-purple-700 hover:bg-purple-50">
+          <Button type="button" variant="outline" disabled={aiLoading} onClick={handleAIImprove} size="lg" className="gap-2 border-blue-300 text-blue-700 hover:bg-blue-50">
             <Sparkles className="h-4 w-4" />
             {aiLoading ? "Analysing with AI…" : "AI Improve"}
           </Button>
@@ -228,42 +228,42 @@ export function ResumeForm() {
 
       {/* AI Result Panel */}
       {aiResult && (
-        <div className="rounded-xl border border-purple-200 bg-purple-50 p-6 space-y-4">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-purple-600" />
-              <h3 className="font-extrabold text-purple-900">AI Resume Analysis</h3>
+              <Sparkles className="h-5 w-5 text-blue-700" />
+              <h3 className="font-extrabold text-blue-900">AI Resume Analysis</h3>
             </div>
             <div className="flex items-center gap-1">
-              <span className="text-sm font-bold text-purple-700">Score:</span>
-              <span className={`text-lg font-extrabold ${aiResult.overallScore >= 80 ? "text-green-600" : aiResult.overallScore >= 60 ? "text-amber-600" : "text-red-600"}`}>
+              <span className="text-sm font-bold text-blue-700">Score:</span>
+              <span className={`text-lg font-extrabold ${aiResult.overallScore >= 80 ? "text-green-600" : aiResult.overallScore >= 60 ? "text-amber-600" : "text-red-700"}`}>
                 {aiResult.overallScore}/100
               </span>
             </div>
           </div>
 
-          <p className="text-sm text-purple-800 leading-relaxed">{aiResult.feedback}</p>
+          <p className="text-sm text-blue-800 leading-relaxed">{aiResult.feedback}</p>
 
           {aiResult.improvedHeadline && (
             <div>
-              <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">Improved Headline</p>
-              <p className="text-sm text-gray-800 bg-white rounded-lg px-3 py-2 border border-purple-200">{aiResult.improvedHeadline}</p>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Improved Headline</p>
+              <p className="text-sm text-gray-800 bg-white rounded-lg px-3 py-2 border border-blue-200">{aiResult.improvedHeadline}</p>
             </div>
           )}
 
           {aiResult.improvedSummary && (
             <div>
-              <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">Improved Summary</p>
-              <p className="text-sm text-gray-800 bg-white rounded-lg px-3 py-2 border border-purple-200 leading-relaxed">{aiResult.improvedSummary}</p>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Improved Summary</p>
+              <p className="text-sm text-gray-800 bg-white rounded-lg px-3 py-2 border border-blue-200 leading-relaxed">{aiResult.improvedSummary}</p>
             </div>
           )}
 
           {aiResult.skillSuggestions.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">Suggested Skills to Add</p>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Suggested Skills to Add</p>
               <div className="flex flex-wrap gap-2">
                 {aiResult.skillSuggestions.map((s) => (
-                  <span key={s} className="bg-white border border-purple-200 text-purple-800 text-xs px-2 py-1 rounded-full font-medium">{s}</span>
+                  <span key={s} className="bg-white border border-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">{s}</span>
                 ))}
               </div>
             </div>
@@ -271,11 +271,11 @@ export function ResumeForm() {
 
           {aiResult.experienceTips.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">Experience Tips</p>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Experience Tips</p>
               <ul className="space-y-1">
                 {aiResult.experienceTips.map((t) => (
                   <li key={t} className="text-sm text-gray-700 flex items-start gap-2">
-                    <span className="text-purple-500 mt-0.5">•</span> {t}
+                    <span className="text-blue-500 mt-0.5">•</span> {t}
                   </li>
                 ))}
               </ul>
@@ -283,10 +283,10 @@ export function ResumeForm() {
           )}
 
           <div className="flex gap-3 pt-2">
-            <Button onClick={applyAISuggestions} className="bg-purple-700 hover:bg-purple-800 text-white font-bold gap-2">
+            <Button onClick={applyAISuggestions} className="bg-blue-700 hover:bg-blue-800 text-white font-bold gap-2">
               <CheckCircle2 className="h-4 w-4" /> Apply AI Suggestions
             </Button>
-            <Button variant="outline" onClick={() => setAiResult(null)} className="border-purple-300 text-purple-700">
+            <Button variant="outline" onClick={() => setAiResult(null)} className="border-blue-300 text-blue-700">
               Dismiss
             </Button>
           </div>

@@ -328,7 +328,7 @@ export default function AssignmentManager() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(a)}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        className="text-xs text-blue-700 hover:text-blue-800 font-medium"
                       >
                         Edit
                       </button>
@@ -548,7 +548,7 @@ export default function AssignmentManager() {
                     <button
                       type="button"
                       onClick={addRubricRow}
-                      className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      className="text-xs text-blue-700 hover:text-blue-800 font-medium"
                     >
                       + Add Criterion
                     </button>
@@ -574,7 +574,7 @@ export default function AssignmentManager() {
                           <button
                             type="button"
                             onClick={() => removeRubricRow(idx)}
-                            className="text-red-400 hover:text-red-600 text-lg leading-none"
+                            className="text-red-700 hover:text-red-700 text-lg leading-none"
                           >
                             &times;
                           </button>

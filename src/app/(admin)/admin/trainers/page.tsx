@@ -36,8 +36,8 @@ export default async function TrainersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="bg-blue-900/40 rounded-xl p-2.5">
-          <UserCog className="h-5 w-5 text-blue-400" />
+        <div className="bg-blue-50 rounded-xl p-2.5">
+          <UserCog className="h-5 w-5 text-blue-700" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-ds-text">Trainer Management</h1>

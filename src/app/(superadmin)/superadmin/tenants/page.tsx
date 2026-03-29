@@ -1,26 +1,157 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Building2, Plus, CheckCircle2, XCircle, Crown } from "lucide-react";
-import { getAllTenantsWithStats } from "@/lib/repositories/superadmin.repository";
+import {
+  Building2,
+  Plus,
+  Search,
+  UserCheck,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const PLAN_BADGE: Record<string, string> = {
-  TRIAL: "bg-amber-900/40 text-amber-400",
-  STARTER: "bg-blue-900/40 text-blue-400",
-  PROFESSIONAL: "bg-purple-900/40 text-purple-400",
-  ENTERPRISE: "bg-emerald-900/40 text-emerald-400",
+type Tenant = {
+  id: string;
+  name: string;
+  slug: string;
+  subdomain: string | null;
+  email: string;
+  plan: string;
+  isActive: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  _count: { students: number; courses: number; managers: number };
 };
 
-export default async function TenantsPage() {
-  const tenants = await getAllTenantsWithStats().catch(() => []);
+const PLAN_BADGE: Record<string, string> = {
+  TRIAL:        "bg-amber-50 text-amber-700 border border-amber-200",
+  STARTER:      "bg-blue-50 text-blue-700 border border-blue-200",
+  PROFESSIONAL: "bg-blue-50 text-blue-700 border border-blue-200",
+  ENTERPRISE:   "bg-emerald-50 text-emerald-700 border border-emerald-200",
+};
+
+function StatusDot({ tenant }: { tenant: Tenant }) {
+  if (tenant.plan === "TRIAL") {
+    return (
+      <span className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-amber-400" />
+        <span className="text-xs text-slate-600">Trial</span>
+      </span>
+    );
+  }
+  if (tenant.isActive) {
+    return (
+      <span className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+        <span className="text-xs text-slate-600">Active</span>
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className="h-2 w-2 rounded-full bg-red-500" />
+      <span className="text-xs text-slate-600">Suspended</span>
+    </span>
+  );
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export default function TenantsPage() {
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const fetchTenants = useCallback(async () => {
+    try {
+      const res = await fetch("/api/superadmin/tenants");
+      const json = await res.json();
+      if (json.success) {
+        setTenants(json.data ?? []);
+      }
+    } catch {
+      // silently fail — table stays empty
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants]);
+
+  const handleToggleSuspend = async (tenant: Tenant) => {
+    setActionLoading(tenant.id + "-suspend");
+    try {
+      const res = await fetch(`/api/superadmin/tenants/${tenant.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !tenant.isActive }),
+      });
+      if (res.ok) {
+        setTenants((prev) =>
+          prev.map((t) =>
+            t.id === tenant.id ? { ...t, isActive: !tenant.isActive } : t
+          )
+        );
+        showToast(
+          `${tenant.name} has been ${!tenant.isActive ? "activated" : "suspended"}.`
+        );
+      } else {
+        showToast("Failed to update tenant status.");
+      }
+    } catch {
+      showToast("Network error. Please try again.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleImpersonate = (tenant: Tenant) => {
+    showToast(`Full impersonation coming soon — managing tenant ${tenant.name}`);
+    window.open(`/superadmin/tenants/${tenant.id}`, "_blank");
+  };
+
+  const filtered = tenants.filter(
+    (t) =>
+      !search ||
+      t.name.toLowerCase().includes(search.toLowerCase()) ||
+      (t.subdomain ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      t.slug.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ds-text">Tenants</h1>
-          <p className="text-sm text-ds-muted mt-1">{tenants.length} tenant(s) registered</p>
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg">
+          {toast}
         </div>
-        <Button asChild size="sm" className="gap-1.5">
+      )}
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-slate-900">Tenants</h1>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+            {tenants.length}
+          </span>
+        </div>
+        <Button asChild size="sm" className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
           <Link href="/superadmin/tenants/new">
             <Plus className="h-4 w-4" />
             New Tenant
@@ -28,75 +159,136 @@ export default async function TenantsPage() {
         </Button>
       </div>
 
-      <div className="bg-ds-card rounded-xl border border-ds-border overflow-hidden">
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Search by name or subdomain..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-ds-border bg-ds-surface">
-              <th className="text-left px-4 py-3 font-medium text-ds-muted">Tenant</th>
-              <th className="text-left px-4 py-3 font-medium text-ds-muted">Subdomain</th>
-              <th className="text-left px-4 py-3 font-medium text-ds-muted">Plan</th>
-              <th className="text-right px-4 py-3 font-medium text-ds-muted">Students</th>
-              <th className="text-right px-4 py-3 font-medium text-ds-muted">Courses</th>
-              <th className="text-center px-4 py-3 font-medium text-ds-muted">Status</th>
-              <th className="px-4 py-3" />
+            <tr className="bg-slate-50 border-b border-slate-200">
+              <th className="text-left px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Tenant
+              </th>
+              <th className="text-left px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Plan
+              </th>
+              <th className="text-left px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Status
+              </th>
+              <th className="text-right px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Students
+              </th>
+              <th className="text-right px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Courses
+              </th>
+              <th className="text-left px-5 py-3 font-medium text-slate-500 text-xs uppercase tracking-wide">
+                Created
+              </th>
+              <th className="px-5 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-ds-border">
-            {tenants.map((t) => (
-              <tr key={t.id} className="hover:bg-ds-surface">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-ds-muted flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-ds-text">{t.name}</p>
-                      <p className="text-xs text-ds-muted">{t.email}</p>
-                    </div>
-                    {t.isDefault && (
-                      <span className="inline-flex items-center gap-1 text-xs bg-violet-900/40 text-violet-400 px-1.5 py-0.5 rounded-full">
-                        <Crown className="h-3 w-3" />
-                        Default
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-ds-muted font-mono text-xs">
-                  {t.subdomain ?? <span className="text-ds-muted opacity-50">—</span>}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${PLAN_BADGE[t.plan] ?? "bg-ds-surface text-ds-muted"}`}
-                  >
-                    {t.plan}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right text-ds-text">{t._count.students}</td>
-                <td className="px-4 py-3 text-right text-ds-text">{t._count.courses}</td>
-                <td className="px-4 py-3 text-center">
-                  {t.isActive ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mx-auto" />
-                  ) : (
-                    <XCircle className="h-4 w-4 text-red-400 mx-auto" />
-                  )}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/superadmin/tenants/${t.id}`}
-                    className="text-xs text-violet-400 hover:underline"
-                  >
-                    Manage
-                  </Link>
+          <tbody className="divide-y divide-slate-100">
+            {loading && (
+              <tr>
+                <td colSpan={7} className="px-5 py-10 text-center text-sm text-slate-400">
+                  Loading tenants...
                 </td>
               </tr>
-            ))}
+            )}
+            {!loading && filtered.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-5 py-12 text-center text-sm text-slate-400">
+                  <Building2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  {search ? "No tenants match your search." : "No tenants yet."}
+                </td>
+              </tr>
+            )}
+            {!loading &&
+              filtered.map((tenant) => (
+                <tr key={tenant.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-slate-300 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-slate-900">{tenant.name}</p>
+                        <p className="text-xs text-slate-400 font-mono">
+                          {tenant.subdomain ?? tenant.slug}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        PLAN_BADGE[tenant.plan] ?? "bg-slate-50 text-slate-500"
+                      }`}
+                    >
+                      {tenant.plan}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3">
+                    <StatusDot tenant={tenant} />
+                  </td>
+                  <td className="px-5 py-3 text-right text-slate-700">
+                    {tenant._count.students}
+                  </td>
+                  <td className="px-5 py-3 text-right text-slate-700">
+                    {tenant._count.courses}
+                  </td>
+                  <td className="px-5 py-3 text-xs text-slate-500">
+                    {formatDate(tenant.createdAt)}
+                  </td>
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-2 justify-end">
+                      {/* Manage */}
+                      <Link
+                        href={`/superadmin/tenants/${tenant.id}`}
+                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        Manage
+                      </Link>
+
+                      {/* Impersonate */}
+                      <button
+                        onClick={() => handleImpersonate(tenant)}
+                        className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors"
+                      >
+                        <UserCheck className="h-3 w-3" />
+                        <ExternalLink className="h-3 w-3" />
+                      </button>
+
+                      {/* Suspend / Activate */}
+                      <button
+                        disabled={actionLoading === tenant.id + "-suspend"}
+                        onClick={() => handleToggleSuspend(tenant)}
+                        className={`inline-flex items-center text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors disabled:opacity-50 ${
+                          tenant.isActive
+                            ? "border-red-200 text-red-600 hover:bg-red-50"
+                            : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                        }`}
+                      >
+                        {actionLoading === tenant.id + "-suspend"
+                          ? "..."
+                          : tenant.isActive
+                          ? "Suspend"
+                          : "Activate"}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
-
-        {tenants.length === 0 && (
-          <div className="text-center py-12 text-ds-muted">
-            <Building2 className="h-8 w-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">No tenants yet.</p>
-          </div>
-        )}
       </div>
     </div>
   );

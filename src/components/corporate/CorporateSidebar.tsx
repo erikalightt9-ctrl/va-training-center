@@ -51,28 +51,28 @@ export function CorporateSidebar() {
   }
 
   return (
-    <aside className="w-56 bg-ds-surface text-ds-text flex flex-col shrink-0 h-screen">
+    <aside className="w-56 bg-ds-surface text-white flex flex-col shrink-0 h-screen">
       {/* Brand */}
-      <div className="px-5 py-5 border-b border-ds-border">
+      <div className="px-5 py-5 border-b border-white/20">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl bg-ds-primary flex items-center justify-center shrink-0">
+          <div className="h-8 w-8 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
             <GraduationCap className="h-4 w-4 text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold text-ds-text leading-none">HUMI</p>
-            <p className="text-[10px] text-ds-muted mt-0.5">Corporate Portal</p>
+            <p className="text-sm font-bold text-white leading-none">HUMI</p>
+            <p className="text-[10px] text-blue-200 mt-0.5">Corporate Portal</p>
           </div>
         </div>
       </div>
 
       {/* User */}
       {user && (
-        <div className="px-4 py-3 border-b border-ds-border">
-          <p className="text-xs font-medium text-ds-text truncate">
+        <div className="px-4 py-3 border-b border-white/20">
+          <p className="text-xs font-medium text-white truncate">
             {user.name ?? user.email ?? "Manager"}
           </p>
           {user.email && (
-            <p className="text-[10px] text-ds-muted truncate mt-0.5">{user.email}</p>
+            <p className="text-[10px] text-blue-200 truncate mt-0.5">{user.email}</p>
           )}
         </div>
       )}
@@ -88,8 +88,8 @@ export function CorporateSidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
                 active
-                  ? "bg-ds-primary text-white"
-                  : "text-ds-muted hover:bg-ds-card hover:text-ds-text",
+                  ? "bg-white/20 text-white"
+                  : "text-blue-100 hover:bg-white/10 hover:text-white",
               )}
             >
               <item.icon className="h-4 w-4 shrink-0" />
@@ -100,10 +100,10 @@ export function CorporateSidebar() {
       </nav>
 
       {/* Sign out */}
-      <div className="px-3 py-4 border-t border-ds-border">
+      <div className="px-3 py-4 border-t border-white/20">
         <button
           onClick={() => signOut({ callbackUrl: "/corporate/login" })}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ds-muted hover:bg-ds-card hover:text-ds-text transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white transition-colors"
         >
           <LogOut className="h-4 w-4 shrink-0" />
           Sign Out

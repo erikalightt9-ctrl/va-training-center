@@ -44,18 +44,18 @@ interface Subscription {
 // ---------------------------------------------------------------------------
 
 const STATUS_STYLES: Record<SubscriptionStatus, { bg: string; text: string; icon: React.ReactNode }> = {
-  PENDING:   { bg: "bg-amber-50",   text: "text-amber-700",  icon: <Clock className="h-3 w-3" /> },
-  ACTIVE:    { bg: "bg-emerald-50", text: "text-emerald-700",icon: <CheckCircle2 className="h-3 w-3" /> },
+  PENDING:   { bg: "bg-amber-50",   text: "text-amber-600",  icon: <Clock className="h-3 w-3" /> },
+  ACTIVE:    { bg: "bg-emerald-50", text: "text-emerald-600",icon: <CheckCircle2 className="h-3 w-3" /> },
   PAST_DUE:  { bg: "bg-orange-50",  text: "text-orange-700", icon: <AlertCircle className="h-3 w-3" /> },
   EXPIRED:   { bg: "bg-slate-100",  text: "text-slate-600",  icon: <XCircle className="h-3 w-3" /> },
-  CANCELLED: { bg: "bg-red-50",     text: "text-red-600",    icon: <XCircle className="h-3 w-3" /> },
+  CANCELLED: { bg: "bg-red-50",     text: "text-red-700",    icon: <XCircle className="h-3 w-3" /> },
 };
 
 const PLAN_BADGE: Record<TenantPlan, string> = {
-  TRIAL:        "bg-amber-100 text-amber-700",
-  STARTER:      "bg-blue-100 text-blue-700",
-  PROFESSIONAL: "bg-purple-100 text-purple-700",
-  ENTERPRISE:   "bg-emerald-100 text-emerald-700",
+  TRIAL:        "bg-amber-50 text-amber-700",
+  STARTER:      "bg-blue-50 text-blue-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ENTERPRISE:   "bg-emerald-50 text-emerald-700",
 };
 
 const PLAN_PRICES: Record<TenantPlan, number> = {
@@ -202,7 +202,7 @@ function NewSubscriptionForm({
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+        <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
@@ -256,7 +256,7 @@ function SubscriptionActions({
         <Button
           size="sm"
           variant="outline"
-          className="h-7 text-xs gap-1 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+          className="h-7 text-xs gap-1 text-emerald-600 border-emerald-200 hover:bg-ds-card"
           onClick={() => transition("ACTIVE")}
           disabled={loading}
         >
@@ -268,7 +268,7 @@ function SubscriptionActions({
         <Button
           size="sm"
           variant="outline"
-          className="h-7 text-xs gap-1 text-red-500 border-red-200 hover:bg-red-50"
+          className="h-7 text-xs gap-1 text-red-700 border-red-200 hover:bg-ds-card"
           onClick={() => transition("CANCELLED")}
           disabled={loading}
         >

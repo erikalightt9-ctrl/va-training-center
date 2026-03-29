@@ -13,7 +13,7 @@ export function AnalyticsCard({
   title,
   value,
   icon: Icon,
-  colorClass = "text-blue-400 bg-blue-900/40",
+  colorClass = "text-blue-700 bg-blue-50",
   subtitle,
 }: AnalyticsCardProps) {
   return (

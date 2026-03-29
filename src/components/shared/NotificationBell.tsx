@@ -93,7 +93,7 @@ export function NotificationBell() {
   return (
     <div className="relative" ref={dropdownRef}>
       {isNotificationsPage ? (
-        <div className="relative p-2 text-blue-600" aria-label="Notifications">
+        <div className="relative p-2 text-white" aria-label="Notifications">
           <Bell className="h-5 w-5" />
           {count > 0 && (
             <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4.5 h-4.5 flex items-center justify-center min-w-[18px] px-1">
@@ -104,7 +104,7 @@ export function NotificationBell() {
       ) : (
         <button
           onClick={() => setOpen((v) => !v)}
-          className="relative p-2 text-gray-400 hover:text-gray-600 transition"
+          className="relative p-2 text-white hover:text-blue-100 transition"
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
@@ -123,7 +123,7 @@ export function NotificationBell() {
             {count > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-blue-700 hover:text-blue-900"
               >
                 Mark all read
               </button>
@@ -145,7 +145,7 @@ export function NotificationBell() {
                     setOpen(false);
                   }}
                   className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition ${
-                    n.isRead ? "" : "bg-blue-50/50"
+                    n.isRead ? "" : "bg-blue-50"
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -171,7 +171,7 @@ export function NotificationBell() {
 
           <a
             href={notificationsHref}
-            className="block text-center py-2.5 text-xs text-blue-600 hover:text-blue-800 border-t border-gray-100 font-medium"
+            className="block text-center py-2.5 text-xs text-blue-700 hover:text-blue-900 border-t border-gray-100 font-medium"
           >
             View all notifications
           </a>

@@ -30,7 +30,7 @@ export function MultiTenantSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left — Text */}
           <div>
-            <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+            <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
               SaaS-Ready
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -46,7 +46,7 @@ export function MultiTenantSection() {
               {capabilities.map((c) => (
                 <div key={c.title} className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                    <c.icon className="h-5 w-5 text-blue-600" />
+                    <c.icon className="h-5 w-5 text-blue-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 text-sm">{c.title}</h3>

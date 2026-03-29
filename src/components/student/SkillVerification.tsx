@@ -58,14 +58,14 @@ const SKILL_META: Record<
   COMMUNICATION: {
     label: "Communication",
     icon: MessageSquare,
-    color: "text-blue-600",
+    color: "text-blue-700",
     bgColor: "bg-blue-50",
   },
   TECHNICAL: {
     label: "Technical",
     icon: Monitor,
-    color: "text-purple-600",
-    bgColor: "bg-purple-50",
+    color: "text-blue-700",
+    bgColor: "bg-blue-50",
   },
   TIME_MANAGEMENT: {
     label: "Time Management",
@@ -82,19 +82,19 @@ const SKILL_META: Record<
   PROFESSIONALISM: {
     label: "Professionalism",
     icon: Award,
-    color: "text-indigo-600",
+    color: "text-indigo-700",
     bgColor: "bg-indigo-50",
   },
   ACCURACY: {
     label: "Accuracy",
     icon: Target,
-    color: "text-red-600",
+    color: "text-red-700",
     bgColor: "bg-red-50",
   },
   TOOL_PROFICIENCY: {
     label: "Tool Proficiency",
     icon: Wrench,
-    color: "text-teal-600",
+    color: "text-teal-700",
     bgColor: "bg-teal-50",
   },
   CLIENT_MANAGEMENT: {
@@ -117,7 +117,7 @@ function StarRating({ level }: { readonly level: number }) {
           key={i}
           className={`h-4 w-4 ${
             i < level
-              ? "fill-yellow-400 text-yellow-400"
+              ? "fill-yellow-400 text-yellow-600"
               : "fill-gray-200 text-gray-200"
           }`}
         />
@@ -291,7 +291,7 @@ export function SkillVerification({ studentId }: SkillVerificationProps) {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -304,7 +304,7 @@ export function SkillVerification({ studentId }: SkillVerificationProps) {
       {/* Refresh Button + Status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-blue-600" />
+          <ShieldCheck className="h-5 w-5 text-blue-700" />
           <span className="text-sm font-medium text-gray-700">
             {hasSkills
               ? `${skills.length} skills verified`
@@ -350,8 +350,8 @@ export function SkillVerification({ studentId }: SkillVerificationProps) {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <ShieldCheck className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
             No Verified Skills Yet

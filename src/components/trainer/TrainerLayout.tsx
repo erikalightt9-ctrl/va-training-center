@@ -56,24 +56,24 @@ export function TrainerLayout({ children }: TrainerLayoutProps) {
     <div className="flex h-screen bg-ds-bg overflow-hidden">
 
       {/* ── Sidebar ─────────────────────────────────────────────────── */}
-      <aside className="w-56 bg-ds-surface text-ds-text flex flex-col shrink-0">
+      <aside className="w-56 bg-ds-surface text-white flex flex-col shrink-0">
         {/* Brand */}
-        <div className="px-5 py-5 border-b border-ds-border">
+        <div className="px-5 py-5 border-b border-white/20">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
+            <div className="h-8 w-8 rounded-xl bg-indigo-500 flex items-center justify-center shrink-0">
               <GraduationCap className="h-4 w-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-bold text-ds-text leading-none">HUMI</p>
-              <p className="text-[10px] text-ds-muted mt-0.5">Trainer Portal</p>
+              <p className="text-sm font-bold text-white leading-none">HUMI</p>
+              <p className="text-[10px] text-blue-200 mt-0.5">Trainer Portal</p>
             </div>
           </div>
         </div>
 
         {/* User */}
-        <div className="px-4 py-3 border-b border-ds-border">
-          <p className="text-xs font-medium text-ds-text truncate">{trainerName}</p>
-          <p className="text-[10px] text-ds-muted mt-0.5">Trainer</p>
+        <div className="px-4 py-3 border-b border-white/20">
+          <p className="text-xs font-medium text-white truncate">{trainerName}</p>
+          <p className="text-[10px] text-blue-200 mt-0.5">Trainer</p>
         </div>
 
         {/* Nav */}
@@ -87,8 +87,8 @@ export function TrainerLayout({ children }: TrainerLayoutProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
                   active
-                    ? "bg-indigo-600 text-white"
-                    : "text-ds-muted hover:bg-ds-card hover:text-ds-text",
+                    ? "bg-indigo-500 text-white"
+                    : "text-blue-100 hover:bg-white/10 hover:text-white",
                 )}
               >
                 <item.icon className="h-4 w-4 shrink-0" />
@@ -99,10 +99,10 @@ export function TrainerLayout({ children }: TrainerLayoutProps) {
         </nav>
 
         {/* Sign out */}
-        <div className="px-3 py-4 border-t border-ds-border">
+        <div className="px-3 py-4 border-t border-white/20">
           <button
             onClick={() => signOut({ callbackUrl: "/trainer/login" })}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ds-muted hover:bg-ds-card hover:text-ds-text transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white transition-colors"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             Sign Out
@@ -113,7 +113,7 @@ export function TrainerLayout({ children }: TrainerLayoutProps) {
       {/* ── Main content ──────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center justify-end gap-2 px-6 h-14 border-b border-ds-border bg-ds-surface shrink-0">
+        <header className="flex items-center justify-end gap-2 px-6 h-14 border-b border-white/20 bg-ds-surface shrink-0">
           <NotificationBell />
         </header>
 

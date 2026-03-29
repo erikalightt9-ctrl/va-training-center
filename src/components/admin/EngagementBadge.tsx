@@ -17,11 +17,11 @@ const BADGE_CONFIG: Record<
   },
   at_risk: {
     label: "At Risk",
-    className: "bg-amber-100 text-amber-800",
+    className: "bg-amber-50 text-amber-800",
   },
   inactive: {
     label: "Inactive",
-    className: "bg-red-100 text-red-800",
+    className: "bg-red-50 text-red-800",
   },
 };
 

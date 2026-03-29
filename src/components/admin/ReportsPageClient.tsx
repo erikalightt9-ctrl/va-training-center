@@ -16,7 +16,7 @@ const REPORTS: ReadonlyArray<ReportConfig> = [
   {
     title: "Enrollment Report",
     description: "All enrollment data including status, course, trainer tier, and submission dates.",
-    icon: <Users className="h-5 w-5 text-blue-600" />,
+    icon: <Users className="h-5 w-5 text-blue-700" />,
     endpoint: "/api/admin/export",
     supportsDateRange: false,
     color: "blue",
@@ -32,7 +32,7 @@ const REPORTS: ReadonlyArray<ReportConfig> = [
   {
     title: "Attendance Report",
     description: "Session-by-session attendance across all schedules. Filter by date range.",
-    icon: <Calendar className="h-5 w-5 text-purple-600" />,
+    icon: <Calendar className="h-5 w-5 text-blue-700" />,
     endpoint: "/api/admin/export/attendance",
     supportsDateRange: true,
     color: "purple",
@@ -119,7 +119,7 @@ export function ReportsPageClient() {
               </div>
               <p className="text-sm text-gray-500">{report.description}</p>
               {report.supportsDateRange && (from || to) && (
-                <p className="text-xs text-blue-600 mt-2">
+                <p className="text-xs text-blue-700 mt-2">
                   Filtered: {from || "all time"} → {to || "now"}
                 </p>
               )}
@@ -130,7 +130,7 @@ export function ReportsPageClient() {
                   ? buildUrl(report.endpoint, from, to)
                   : report.endpoint
               }
-              className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-800 transition-colors"
               download
             >
               <Download className="h-4 w-4" />

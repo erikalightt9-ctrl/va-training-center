@@ -32,8 +32,8 @@ export default function AssignmentAnalytics() {
 
   const cards = [
     { label: "Total Assignments", value: data.total, color: "bg-blue-50 text-blue-700" },
-    { label: "Total Submissions", value: data.submissions, color: "bg-purple-50 text-purple-700" },
-    { label: "Pending Review", value: data.pending, color: "bg-yellow-50 text-yellow-700" },
+    { label: "Total Submissions", value: data.submissions, color: "bg-blue-50 text-blue-700" },
+    { label: "Pending Review", value: data.pending, color: "bg-yellow-50 text-yellow-600" },
     { label: "Graded", value: data.graded, color: "bg-green-50 text-green-700" },
     { label: "Completion Rate", value: `${data.completionRate}%`, color: "bg-indigo-50 text-indigo-700" },
   ];

@@ -38,7 +38,7 @@ export default async function LeaderboardPage({
                     {entry.rank === 1 ? "\uD83E\uDD47" : entry.rank === 2 ? "\uD83E\uDD48" : entry.rank === 3 ? "\uD83E\uDD49" : `#${entry.rank}`}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-800">{entry.name}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-blue-600 text-right">{entry.points}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-blue-700 text-right">{entry.points}</td>
                 </tr>
               ))
             )}

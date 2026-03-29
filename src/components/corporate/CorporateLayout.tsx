@@ -34,7 +34,7 @@ export function CorporateLayout({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center justify-end px-6 h-14 border-b border-ds-border bg-ds-surface shrink-0">
+        <header className="flex items-center justify-end px-6 h-14 border-b border-white/20 bg-ds-surface shrink-0">
           <NotificationBell />
         </header>
 

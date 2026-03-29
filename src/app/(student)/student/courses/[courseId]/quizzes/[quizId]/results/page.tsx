@@ -28,7 +28,7 @@ function ResultsContent({
         </h1>
 
         {autoSubmit && (
-          <div className="flex items-center justify-center gap-2 mt-3 text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm">
+          <div className="flex items-center justify-center gap-2 mt-3 text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             Quiz was auto-submitted (time expired or violations exceeded)
           </div>

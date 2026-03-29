@@ -43,7 +43,7 @@ function HubCard({
         </p>
         <p className="text-xs text-ds-muted mt-0.5 leading-relaxed">{description}</p>
       </div>
-      <div className="flex items-center gap-1 text-xs text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+      <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
         Open <ArrowRight className="h-3 w-3" />
       </div>
     </Link>
@@ -121,38 +121,38 @@ export default function CoursesHubPage() {
             icon={BookOpen}
             label="All Courses"
             description="Browse all available training courses"
-            accent="bg-emerald-900/50 text-emerald-400"
+            accent="bg-emerald-50 text-emerald-700"
           />
           <HubCard
             href="/corporate/employees"
             icon={Users}
             label="Enroll Student"
             description="Assign a course to a team member"
-            accent="bg-blue-900/50 text-blue-400"
+            accent="bg-blue-50 text-blue-700"
           />
           <SoonCard
             icon={CalendarDays}
             label="Schedule"
             description="View upcoming course sessions and dates"
-            accent="bg-cyan-900/50 text-cyan-400"
+            accent="bg-cyan-100 text-cyan-600"
           />
           <SoonCard
             icon={ClipboardList}
             label="Assignments"
             description="Manage course assignments and submissions"
-            accent="bg-orange-900/50 text-orange-400"
+            accent="bg-orange-50 text-orange-700"
           />
         </div>
       </div>
 
       {/* Quick tip */}
-      <div className="bg-ds-surface rounded-xl border border-ds-border px-5 py-4 flex items-start gap-3">
+      <div className="bg-slate-50 rounded-xl border border-ds-border px-5 py-4 flex items-start gap-3">
         <Plus className="h-4 w-4 text-ds-primary mt-0.5 shrink-0" />
         <div>
           <p className="text-sm font-medium text-ds-text">Quick tip</p>
           <p className="text-xs text-ds-muted mt-0.5 leading-relaxed">
-            Go to <span className="text-blue-400">All Courses</span> to browse available programs,
-            then use <span className="text-blue-400">Enroll Student</span> to assign courses to your team members.
+            Go to <span className="text-blue-700">All Courses</span> to browse available programs,
+            then use <span className="text-blue-700">Enroll Student</span> to assign courses to your team members.
           </p>
         </div>
       </div>

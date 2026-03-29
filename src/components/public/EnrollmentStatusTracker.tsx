@@ -94,11 +94,11 @@ const STEP_BADGE_CONFIGS: Record<StepState, StepBadgeConfig> = {
   },
   active: {
     label: "In Progress",
-    className: "bg-blue-100 text-blue-700",
+    className: "bg-blue-900/40 text-blue-400",
   },
   waiting: {
     label: "Waiting",
-    className: "bg-amber-100 text-amber-700",
+    className: "bg-amber-900/40 text-amber-400",
   },
   locked: {
     label: "Pending",
@@ -106,7 +106,7 @@ const STEP_BADGE_CONFIGS: Record<StepState, StepBadgeConfig> = {
   },
   rejected: {
     label: "Rejected",
-    className: "bg-red-100 text-red-700",
+    className: "bg-red-900/40 text-red-400",
   },
 };
 
@@ -200,21 +200,21 @@ function StepIcon({ state }: { readonly state: StepState }) {
       );
     case "active":
       return (
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 ring-4 ring-blue-50">
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-blue-900/40 ring-4 ring-blue-50">
           <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-ping" />
-          <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+          <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
         </div>
       );
     case "waiting":
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 ring-4 ring-amber-50">
-          <Clock className="h-5 w-5 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-900/40 ring-4 ring-amber-50">
+          <Clock className="h-5 w-5 text-amber-400" />
         </div>
       );
     case "rejected":
       return (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 ring-4 ring-red-50">
-          <AlertOctagon className="h-5 w-5 text-red-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-900/40 ring-4 ring-red-50">
+          <AlertOctagon className="h-5 w-5 text-red-400" />
         </div>
       );
     case "locked":
@@ -351,7 +351,7 @@ export function EnrollmentStatusTracker({
               <p className="text-sm font-medium text-red-800">
                 Application Not Approved
               </p>
-              <p className="text-xs text-red-600 mt-0.5">
+              <p className="text-xs text-red-400 mt-0.5">
                 Unfortunately, your application was not approved at this time.
                 Please contact support for more information.
               </p>

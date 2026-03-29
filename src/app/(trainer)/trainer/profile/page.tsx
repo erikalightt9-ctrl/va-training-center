@@ -187,14 +187,14 @@ export default function TrainerProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-blue-700" />
       </div>
     );
   }
 
   if (error || !profile) {
     return (
-      <div className="bg-red-900/40 border border-red-800 text-red-400 text-sm rounded-lg p-4">
+      <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-4">
         {error ?? "Unable to load profile."}
         <Button
           variant="outline"
@@ -238,7 +238,7 @@ export default function TrainerProfilePage() {
           className="bg-ds-card rounded-xl border border-ds-border p-6 space-y-6"
         >
           {saveError && (
-            <div className="bg-red-900/40 border border-red-800 text-red-400 text-sm rounded-lg p-3">
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
               {saveError}
             </div>
           )}
@@ -264,14 +264,14 @@ export default function TrainerProfilePage() {
                   </button>
                 </div>
               ) : (
-                <div className="h-20 w-20 rounded-full bg-ds-surface flex items-center justify-center border-2 border-dashed border-ds-border">
+                <div className="h-20 w-20 rounded-full bg-slate-50 flex items-center justify-center border-2 border-dashed border-ds-border">
                   <Camera className="h-6 w-6 text-ds-muted" />
                 </div>
               )}
               <div className="flex-1">
                 <label
                   htmlFor="profile-photo"
-                  className="inline-flex items-center gap-1.5 cursor-pointer bg-ds-surface hover:bg-ds-card text-ds-text text-sm font-medium px-3 py-1.5 rounded-lg transition-colors border border-ds-border"
+                  className="inline-flex items-center gap-1.5 cursor-pointer bg-slate-50 hover:bg-ds-card text-ds-text text-sm font-medium px-3 py-1.5 rounded-lg transition-colors border border-ds-border"
                 >
                   <Camera className="h-3.5 w-3.5" />
                   {photoPreview ? "Change Photo" : "Upload Photo"}
@@ -314,7 +314,7 @@ export default function TrainerProfilePage() {
               placeholder="Tell your students about yourself..."
               maxLength={2000}
               rows={4}
-              className="flex w-full rounded-md border border-ds-border bg-ds-surface px-3 py-2 text-sm text-ds-text shadow-xs transition-colors placeholder:text-ds-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ds-primary/50"
+              className="flex w-full rounded-md border border-ds-border bg-slate-50 px-3 py-2 text-sm text-ds-text shadow-xs transition-colors placeholder:text-ds-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ds-primary/50"
             />
           </div>
 
@@ -356,8 +356,8 @@ export default function TrainerProfilePage() {
                   className="h-20 w-20 rounded-full object-cover border-2 border-ds-border shrink-0"
                 />
               ) : (
-                <div className="h-20 w-20 rounded-full bg-blue-900/40 flex items-center justify-center shrink-0 border-2 border-ds-border">
-                  <UserCircle className="h-10 w-10 text-blue-400" />
+                <div className="h-20 w-20 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border-2 border-ds-border">
+                  <UserCircle className="h-10 w-10 text-blue-700" />
                 </div>
               )}
 
@@ -391,7 +391,7 @@ export default function TrainerProfilePage() {
                   </span>
                   {profile.averageRating !== null && (
                     <span className="inline-flex items-center gap-1 text-ds-muted">
-                      <Star className="h-4 w-4 text-amber-400" />
+                      <Star className="h-4 w-4 text-amber-600" />
                       <strong className="text-ds-text">
                         {Number(profile.averageRating).toFixed(1)}
                       </strong>{" "}
@@ -448,7 +448,7 @@ export default function TrainerProfilePage() {
                   {profile.certifications.map((cert) => (
                     <span
                       key={cert}
-                      className="bg-blue-900/40 text-blue-400 border border-blue-800 px-2.5 py-1 rounded-full text-xs font-medium"
+                      className="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-xs font-medium"
                     >
                       {cert}
                     </span>
@@ -481,7 +481,7 @@ export default function TrainerProfilePage() {
                   {profile.specializations.map((spec) => (
                     <span
                       key={spec}
-                      className="bg-blue-900/40 text-blue-400 border border-blue-800 px-2.5 py-1 rounded-full text-xs font-medium"
+                      className="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-xs font-medium"
                     >
                       {spec}
                     </span>

@@ -185,7 +185,7 @@ export function CoachingForm() {
             href={zoomJoinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-2 bg-purple-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-purple-800"
+            className="inline-flex items-center gap-2 mt-2 bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-blue-800"
           >
             <Video className="h-4 w-4" /> Join Zoom Session
           </a>
@@ -212,7 +212,7 @@ export function CoachingForm() {
           </p>
         </div>
 
-        <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 space-y-1">
+        <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-300 space-y-1">
           <p><span className="font-semibold">Topic:</span> {form.topic}</p>
           <p><span className="font-semibold">Name:</span> {form.fullName}</p>
           {form.preferredDate && <p><span className="font-semibold">Preferred date:</span> {form.preferredDate}</p>}

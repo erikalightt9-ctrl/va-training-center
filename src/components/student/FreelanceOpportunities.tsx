@@ -82,10 +82,10 @@ interface FreelanceData {
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-800",
-  REVIEWED: "bg-blue-100 text-blue-800",
-  SHORTLISTED: "bg-purple-100 text-purple-800",
+  REVIEWED: "bg-blue-50 text-blue-800",
+  SHORTLISTED: "bg-blue-50 text-blue-800",
   ACCEPTED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+  REJECTED: "bg-red-50 text-red-800",
   WITHDRAWN: "bg-gray-100 text-gray-600",
 };
 
@@ -121,7 +121,7 @@ interface FreelanceTip {
 
 const FREELANCE_TIPS: ReadonlyArray<FreelanceTip> = [
   {
-    icon: <UserCircle className="h-6 w-6 text-blue-600" />,
+    icon: <UserCircle className="h-6 w-6 text-blue-700" />,
     title: "Build Your Profile",
     description: "Complete your portfolio and verify your skills",
   },
@@ -131,17 +131,17 @@ const FREELANCE_TIPS: ReadonlyArray<FreelanceTip> = [
     description: "Take on smaller projects to build reviews",
   },
   {
-    icon: <Gauge className="h-6 w-6 text-purple-600" />,
+    icon: <Gauge className="h-6 w-6 text-blue-700" />,
     title: "Set Your Rates",
     description: "Research market rates for your specialization",
   },
   {
-    icon: <MessageSquare className="h-6 w-6 text-orange-600" />,
+    icon: <MessageSquare className="h-6 w-6 text-orange-700" />,
     title: "Communicate Promptly",
     description: "Respond to clients within 24 hours",
   },
   {
-    icon: <Award className="h-6 w-6 text-indigo-600" />,
+    icon: <Award className="h-6 w-6 text-indigo-700" />,
     title: "Deliver Quality",
     description: "Always exceed expectations on deliverables",
   },
@@ -333,7 +333,7 @@ export function FreelanceOpportunities() {
   if (error && !data) {
     return (
       <div className="bg-red-50 rounded-xl border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-700">{error}</p>
         <Button
           variant="outline"
           size="sm"

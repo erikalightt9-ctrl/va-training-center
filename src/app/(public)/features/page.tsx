@@ -34,7 +34,7 @@ const PILLARS = [
   },
   {
     icon: Zap,
-    color: "bg-amber-100 text-amber-700",
+    color: "bg-amber-100 text-amber-600",
     title: "Instant Provisioning",
     description:
       "Sign up → platform is live in seconds. No waiting, no setup calls. Your subdomain is ready immediately after signup.",
@@ -133,7 +133,7 @@ export default function FeaturesPage() {
           </Link>
           <Link
             href="/pricing"
-            className="inline-flex items-center gap-2 border border-blue-400/50 text-blue-200 font-medium px-6 py-3 rounded-xl hover:bg-blue-900/40 transition-colors"
+            className="inline-flex items-center gap-2 border border-blue-400/50 text-blue-200 font-medium px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
           >
             View Pricing
           </Link>

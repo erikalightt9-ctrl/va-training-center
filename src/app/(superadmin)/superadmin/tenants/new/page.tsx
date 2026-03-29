@@ -15,13 +15,13 @@ export default function NewTenantPage() {
       </div>
 
       <div className="bg-ds-card rounded-xl border border-ds-border p-6 space-y-4">
-        <div className="bg-violet-900/20 border border-violet-800 rounded-xl p-4 text-sm text-violet-300">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-700">
           <strong>CLI Onboarding:</strong> Use the script below to create a tenant programmatically.
         </div>
 
         <div>
           <h2 className="text-sm font-semibold text-ds-text mb-2">Run on your server:</h2>
-          <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-xs overflow-x-auto">
+          <pre className="bg-slate-50 border border-gray-200 text-emerald-600 rounded-lg p-4 text-xs overflow-x-auto">
 {`npx tsx --env-file=.env prisma/scripts/onboard-tenant.ts \\
   --name "Client Company Name" \\
   --subdomain "clientslug" \\

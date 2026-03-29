@@ -79,7 +79,7 @@ function LiveTimer({ clockInIso }: { readonly clockInIso: string }) {
   const label = h > 0 ? `${h}h ${m}m` : `${m}m`;
 
   return (
-    <span className="tabular-nums text-emerald-400 font-medium">{label}</span>
+    <span className="tabular-nums text-emerald-600 font-medium">{label}</span>
   );
 }
 
@@ -175,7 +175,7 @@ export function TrainerAttendanceTable({
           <button
             onClick={() => void fetchData(false)}
             disabled={refreshing}
-            className="flex items-center gap-1.5 text-xs text-ds-muted hover:text-blue-400 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs text-ds-muted hover:text-blue-700 transition-colors disabled:opacity-50"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`}
@@ -187,7 +187,7 @@ export function TrainerAttendanceTable({
 
       {/* Error */}
       {error && (
-        <div className="text-sm text-red-400 bg-red-900/40 border border-red-800 rounded-lg px-4 py-3">
+        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
           {error}
         </div>
       )}
@@ -207,7 +207,7 @@ export function TrainerAttendanceTable({
               </h4>
               <div className="rounded-lg border border-ds-border overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-ds-surface border-b border-ds-border">
+                  <thead className="bg-slate-50 border-b border-ds-border">
                     <tr>
                       <th className="text-left px-4 py-2.5 text-xs font-medium text-ds-muted">
                         Student
@@ -225,7 +225,7 @@ export function TrainerAttendanceTable({
                   </thead>
                   <tbody className="divide-y divide-ds-border">
                     {activeRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-ds-surface/50">
+                      <tr key={row.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-medium text-ds-text">
                           {row.studentName}
                         </td>
@@ -234,12 +234,12 @@ export function TrainerAttendanceTable({
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 text-emerald-400" />
+                            <Clock className="h-3.5 w-3.5 text-emerald-600" />
                             <LiveTimer clockInIso={row.clockIn} />
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-900/40 text-emerald-400 border border-emerald-800">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             Active
                           </span>
@@ -260,7 +260,7 @@ export function TrainerAttendanceTable({
               </h4>
               <div className="rounded-lg border border-ds-border overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-ds-surface border-b border-ds-border">
+                  <thead className="bg-slate-50 border-b border-ds-border">
                     <tr>
                       <th className="text-left px-4 py-2.5 text-xs font-medium text-ds-muted">
                         Student
@@ -281,7 +281,7 @@ export function TrainerAttendanceTable({
                   </thead>
                   <tbody className="divide-y divide-ds-border">
                     {completedRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-ds-surface/50">
+                      <tr key={row.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-medium text-ds-text">
                           {row.studentName}
                         </td>
@@ -295,7 +295,7 @@ export function TrainerAttendanceTable({
                           {formatDuration(row.durationMinutes)}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-ds-surface text-ds-muted border border-ds-border">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-50 text-ds-muted border border-ds-border">
                             <CheckCircle2 className="h-3 w-3" />
                             Done
                           </span>

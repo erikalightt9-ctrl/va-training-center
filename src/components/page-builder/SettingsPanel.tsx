@@ -175,7 +175,7 @@ export function SettingsPanel({ section, onUpdate, onDelete }: SettingsPanelProp
             type="checkbox"
             checked={isVisible}
             onChange={(e) => handleVisibilityChange(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500 cursor-pointer"
           />
         </div>
 
@@ -192,7 +192,7 @@ export function SettingsPanel({ section, onUpdate, onDelete }: SettingsPanelProp
       <div className="shrink-0 p-4 border-t border-gray-100">
         {confirmDelete ? (
           <div className="space-y-2">
-            <p className="text-xs text-red-600 font-medium text-center">Delete this section?</p>
+            <p className="text-xs text-red-700 font-medium text-center">Delete this section?</p>
             <div className="flex gap-2">
               <Button
                 type="button"
@@ -220,7 +220,7 @@ export function SettingsPanel({ section, onUpdate, onDelete }: SettingsPanelProp
             variant="outline"
             size="sm"
             onClick={handleDelete}
-            className="w-full gap-1.5 text-xs h-8 text-red-500 border-red-200 hover:bg-red-50 hover:border-red-300"
+            className="w-full gap-1.5 text-xs h-8 text-red-700 border-red-200 hover:bg-ds-card hover:border-red-300"
           >
             <Trash2 className="h-3.5 w-3.5" />
             Delete Section

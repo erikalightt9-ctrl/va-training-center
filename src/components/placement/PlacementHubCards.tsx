@@ -14,8 +14,8 @@ interface HubCard {
 const HUB_CARDS: readonly HubCard[] = [
   {
     icon: FileText,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-700",
     title: "Resume Builder",
     description:
       "Build a professional resume that highlights your skills and experience to attract top employers.",
@@ -23,8 +23,8 @@ const HUB_CARDS: readonly HubCard[] = [
   },
   {
     icon: Mic,
-    iconBg: "bg-indigo-100",
-    iconColor: "text-indigo-600",
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-700",
     title: "AI Interview Practice",
     description:
       "Practice with AI-generated interview questions tailored to your target role and get instant feedback.",
@@ -41,8 +41,8 @@ const HUB_CARDS: readonly HubCard[] = [
   },
   {
     icon: Users,
-    iconBg: "bg-teal-100",
-    iconColor: "text-teal-600",
+    iconBg: "bg-teal-50",
+    iconColor: "text-teal-700",
     title: "Career Coaching",
     description:
       "Book one-on-one sessions with expert career coaches for personalized guidance and strategy.",

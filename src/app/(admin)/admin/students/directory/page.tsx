@@ -52,7 +52,7 @@ export default async function StudentDirectoryPage({ searchParams }: PageProps) 
     <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
-        <Link href="/admin/students" className="hover:text-blue-600 transition-colors">
+        <Link href="/admin/students" className="hover:text-blue-700 transition-colors">
           Students
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -80,7 +80,7 @@ export default async function StudentDirectoryPage({ searchParams }: PageProps) 
           title="Total Enrollments"
           value={enrollmentResult.total}
           icon={Users}
-          colorClass="text-blue-600 bg-blue-100"
+          colorClass="text-blue-700 bg-blue-50"
           subtitle="All applications"
         />
         <AnalyticsCard
@@ -94,7 +94,7 @@ export default async function StudentDirectoryPage({ searchParams }: PageProps) 
           title="Present Now"
           value={presentNow}
           icon={ClipboardCheck}
-          colorClass="text-emerald-600 bg-emerald-100"
+          colorClass="text-emerald-600 bg-emerald-50"
           subtitle="Currently clocked in"
         />
       </div>

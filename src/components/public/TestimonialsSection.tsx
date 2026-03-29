@@ -38,11 +38,11 @@ export async function TestimonialsSection() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Success Stories
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
-            What Our <span className="text-blue-700">Graduates</span> Say
+            What Our <span className="text-blue-400">Graduates</span> Say
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Hear from real professionals who transformed their careers through
@@ -58,8 +58,8 @@ export async function TestimonialsSection() {
               className="bg-gray-50 rounded-xl p-6 border border-gray-100 hover:shadow-md transition-shadow"
             >
               {/* Quote icon */}
-              <div className="bg-amber-100 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                <Quote className="h-5 w-5 text-amber-700" />
+              <div className="bg-amber-900/40 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+                <Quote className="h-5 w-5 text-amber-400" />
               </div>
 
               {/* Star rating */}

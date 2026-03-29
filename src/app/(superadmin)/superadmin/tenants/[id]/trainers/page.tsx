@@ -192,7 +192,7 @@ export default function TenantTrainersPage({
                           className="h-8 w-8 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">
+                        <div className="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-700">
                           {trainer.name.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -223,7 +223,7 @@ export default function TenantTrainersPage({
                         size="sm"
                         onClick={() => unassign(trainer.id)}
                         disabled={working === trainer.id}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 gap-1"
+                        className="text-red-500 hover:text-red-700 hover:bg-ds-card gap-1"
                       >
                         {working === trainer.id ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -291,7 +291,7 @@ export default function TenantTrainersPage({
                       {trainer.specializations.length > 0 && (
                         <div className="hidden sm:flex gap-1 flex-wrap">
                           {trainer.specializations.slice(0, 2).map((s) => (
-                            <span key={s} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                            <span key={s} className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">
                               {s}
                             </span>
                           ))}

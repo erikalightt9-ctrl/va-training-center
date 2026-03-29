@@ -242,7 +242,7 @@ export function JobBoard() {
       {/* Loading State */}
       {loading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-blue-400 mr-2" />
           <span className="text-gray-500">Loading jobs...</span>
         </div>
       )}
@@ -250,11 +250,11 @@ export function JobBoard() {
       {/* Error State */}
       {!loading && error && (
         <div className="text-center py-20">
-          <p className="text-red-600 font-medium">{error}</p>
+          <p className="text-red-400 font-medium">{error}</p>
           <button
             type="button"
             onClick={() => fetchJobs(search, courseFilter, typeFilter)}
-            className="mt-4 text-sm text-blue-600 hover:underline"
+            className="mt-4 text-sm text-blue-400 hover:underline"
           >
             Try again
           </button>
@@ -319,7 +319,7 @@ export function JobBoard() {
                   {job.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs"
+                      className="bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full text-xs"
                     >
                       {skill}
                     </span>

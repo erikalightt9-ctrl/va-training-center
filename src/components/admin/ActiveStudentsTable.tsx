@@ -71,7 +71,7 @@ function ProgressBar({ percent }: { readonly percent: number }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-20 h-2 bg-ds-surface rounded-full overflow-hidden">
+      <div className="w-20 h-2 bg-slate-50 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${color}`}
           style={{ width: `${Math.min(percent, 100)}%` }}
@@ -199,7 +199,7 @@ export function ActiveStudentsTable({ courses }: ActiveStudentsTableProps) {
         <>
           <div className="rounded-xl border border-ds-border overflow-hidden">
             <Table>
-              <TableHeader className="bg-ds-surface border-b border-ds-border">
+              <TableHeader className="bg-slate-50 border-b border-ds-border">
                 <TableRow>
                   <TableHead className="w-[180px] text-ds-muted">Student</TableHead>
                   <TableHead className="text-ds-muted">Course</TableHead>
@@ -216,7 +216,7 @@ export function ActiveStudentsTable({ courses }: ActiveStudentsTableProps) {
                   result.data.map((s) => (
                     <TableRow
                       key={s.id}
-                      className="hover:bg-ds-surface/50 cursor-pointer"
+                      className="hover:bg-ds-card cursor-pointer"
                       onClick={() => router.push(`/admin/students/${s.id}`)}
                     >
                       <TableCell>
@@ -235,9 +235,9 @@ export function ActiveStudentsTable({ courses }: ActiveStudentsTableProps) {
                         <span
                           className={`text-sm font-semibold ${
                             s.quizAverage >= 80
-                              ? "text-green-400"
+                              ? "text-emerald-600"
                               : s.quizAverage >= 60
-                                ? "text-yellow-400"
+                                ? "text-yellow-600"
                                 : "text-ds-muted"
                           }`}
                         >
@@ -255,12 +255,12 @@ export function ActiveStudentsTable({ courses }: ActiveStudentsTableProps) {
                       </TableCell>
                       <TableCell>
                         {s.isClockedIn ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-900/40 border border-emerald-800 rounded-full px-2.5 py-0.5">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             Present
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ds-muted bg-ds-surface border border-ds-border rounded-full px-2.5 py-0.5">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ds-muted bg-slate-50 border border-gray-200 rounded-full px-2.5 py-0.5">
                             Offline
                           </span>
                         )}

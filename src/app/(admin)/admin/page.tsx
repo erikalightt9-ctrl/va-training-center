@@ -47,9 +47,9 @@ const ACTIVITY_ICONS: Record<string, typeof Users> = {
 };
 
 const ACTIVITY_COLORS: Record<string, string> = {
-  enrollment: "text-blue-400 bg-blue-900/40",
-  payment: "text-emerald-400 bg-emerald-900/40",
-  certificate: "text-purple-400 bg-purple-900/40",
+  enrollment: "text-blue-700 bg-blue-50",
+  payment: "text-emerald-600 bg-emerald-50",
+  certificate: "text-blue-700 bg-blue-50",
 };
 
 // ---------------------------------------------------------------------------
@@ -133,8 +133,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/users"
           icon={Users}
-          iconClass="text-blue-400"
-          bgClass="bg-blue-900/40"
+          iconClass="text-blue-700"
+          bgClass="bg-blue-50"
           title="Users"
           value={stats.approvedCount}
           sub="Active accounts"
@@ -142,8 +142,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/enrollees"
           icon={UserCheck}
-          iconClass="text-amber-400"
-          bgClass="bg-amber-900/40"
+          iconClass="text-amber-600"
+          bgClass="bg-amber-50"
           title="Enrollment"
           value={pipeline.pending}
           sub="Pending review"
@@ -152,7 +152,7 @@ export default async function AdminDashboardPage() {
               ? {
                   label: "enrolled",
                   value: pipeline.enrolled,
-                  color: "bg-emerald-900/40 text-emerald-400 border border-emerald-800",
+                  color: "bg-emerald-50 text-emerald-700 border border-emerald-200",
                 }
               : null
           }
@@ -160,8 +160,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/payments"
           icon={CreditCard}
-          iconClass="text-rose-400"
-          bgClass="bg-rose-900/40"
+          iconClass="text-rose-600"
+          bgClass="bg-rose-100"
           title="Payments"
           value={revenue.pendingVerificationCount}
           sub="Pending verification"
@@ -170,7 +170,7 @@ export default async function AdminDashboardPage() {
               ? {
                   label: "completed",
                   value: revenue.paidPaymentsCount,
-                  color: "bg-emerald-900/40 text-emerald-400 border border-emerald-800",
+                  color: "bg-emerald-50 text-emerald-700 border border-emerald-200",
                 }
               : null
           }
@@ -178,8 +178,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/courses"
           icon={BookOpen}
-          iconClass="text-purple-400"
-          bgClass="bg-purple-900/40"
+          iconClass="text-blue-700"
+          bgClass="bg-blue-50"
           title="Courses"
           value={totalCourses}
           sub="Active courses"
@@ -187,8 +187,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/communications"
           icon={MessageSquare}
-          iconClass="text-teal-400"
-          bgClass="bg-teal-900/40"
+          iconClass="text-teal-700"
+          bgClass="bg-teal-50"
           title="Messages"
           value={messageCount}
           sub="Contact messages"
@@ -196,8 +196,8 @@ export default async function AdminDashboardPage() {
         <ModuleCard
           href="/admin/reports"
           icon={BarChart3}
-          iconClass="text-indigo-400"
-          bgClass="bg-indigo-900/40"
+          iconClass="text-indigo-700"
+          bgClass="bg-indigo-50"
           title="Reports"
           value={stats.recentEnrollments}
           sub="New enrollments this month"
@@ -222,7 +222,7 @@ export default async function AdminDashboardPage() {
         </Link>
         <Link
           href="/admin/courses"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-semibold hover:bg-purple-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Create Course
@@ -245,12 +245,12 @@ export default async function AdminDashboardPage() {
               const IconComponent =
                 ACTIVITY_ICONS[activity.type] ?? Activity;
               const colorClass =
-                ACTIVITY_COLORS[activity.type] ?? "text-ds-muted bg-ds-surface";
+                ACTIVITY_COLORS[activity.type] ?? "text-ds-muted bg-slate-50";
               return (
                 <Link
                   key={`${activity.type}-${activity.id}`}
                   href={activity.href}
-                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-ds-surface/50 transition-colors group"
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-ds-card transition-colors group"
                 >
                   <div className={`rounded-lg p-1.5 shrink-0 ${colorClass}`}>
                     <IconComponent className="h-3.5 w-3.5" />

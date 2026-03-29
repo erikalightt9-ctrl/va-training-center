@@ -104,18 +104,18 @@ function ModuleCard({
           <Icon className="h-5 w-5" />
         </div>
         {badge !== undefined && badge > 0 && (
-          <span className="text-xs font-semibold bg-ds-primary/20 text-blue-300 px-2 py-0.5 rounded-full">
+          <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
             {badge}
           </span>
         )}
       </div>
       <div>
-        <p className="font-semibold text-ds-text group-hover:text-blue-300 transition-colors text-sm">
+        <p className="font-semibold text-ds-text group-hover:text-blue-700 transition-colors text-sm">
           {label}
         </p>
         <p className="text-xs text-ds-muted mt-0.5 leading-relaxed">{description}</p>
       </div>
-      <div className="flex items-center gap-1 text-xs text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+      <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
         Open <ArrowRight className="h-3 w-3" />
       </div>
     </Link>
@@ -146,7 +146,7 @@ function ComingSoonCard({
         <div className={`p-2.5 rounded-xl ${accent} opacity-50`}>
           <Icon className="h-5 w-5" />
         </div>
-        <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-ds-surface text-ds-muted border border-ds-border px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-slate-50 text-ds-muted border border-ds-border px-2 py-0.5 rounded-full">
           <Lock className="h-2.5 w-2.5" />
           Soon
         </span>
@@ -169,12 +169,12 @@ function ComingSoonCard({
 
 function StatusBadge({ status }: { readonly status: string }) {
   const styles: Record<string, string> = {
-    APPROVED:         "bg-emerald-900/40 text-emerald-400 border-emerald-800",
-    ACTIVE:           "bg-blue-900/40 text-blue-400 border-blue-800",
-    ENROLLED:         "bg-blue-900/40 text-blue-400 border-blue-800",
-    PENDING:          "bg-amber-900/40 text-amber-400 border-amber-800",
-    PAYMENT_VERIFIED: "bg-teal-900/40 text-teal-400 border-teal-800",
-    REJECTED:         "bg-red-900/40 text-red-400 border-red-800",
+    APPROVED:         "bg-emerald-50 text-emerald-700 border-emerald-200",
+    ACTIVE:           "bg-blue-50 text-blue-700 border-blue-200",
+    ENROLLED:         "bg-blue-50 text-blue-700 border-blue-200",
+    PENDING:          "bg-amber-50 text-amber-700 border-amber-200",
+    PAYMENT_VERIFIED: "bg-teal-50 text-teal-700 border-teal-200",
+    REJECTED:         "bg-red-50 text-red-700 border-red-200",
   };
 
   const label: Record<string, string> = {
@@ -187,7 +187,7 @@ function StatusBadge({ status }: { readonly status: string }) {
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[status] ?? "bg-ds-surface text-ds-muted border-ds-border"}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[status] ?? "bg-slate-50 text-ds-muted border-ds-border"}`}>
       {label[status] ?? status}
     </span>
   );
@@ -234,14 +234,14 @@ export function CorporateDashboard({ stats }: { readonly stats: DashboardStats }
 
       {/* ── Stats ────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Students"      value={stats.totalEmployees}    icon={Users}         accent="bg-blue-900/50 text-blue-400"    href="/corporate/employees" />
-        <StatCard label="Active Enrollments"  value={stats.activeEnrollments}  icon={ClipboardList} accent="bg-emerald-900/50 text-emerald-400" />
-        <StatCard label="Certificates Earned" value={stats.certificatesEarned} icon={Award}         accent="bg-purple-900/50 text-purple-400" />
+        <StatCard label="Total Students"      value={stats.totalEmployees}    icon={Users}         accent="bg-blue-50 text-blue-700"    href="/corporate/employees" />
+        <StatCard label="Active Enrollments"  value={stats.activeEnrollments}  icon={ClipboardList} accent="bg-emerald-50 text-emerald-700" />
+        <StatCard label="Certificates Earned" value={stats.certificatesEarned} icon={Award}         accent="bg-blue-50 text-blue-700" />
       </div>
 
       {/* ── Seat usage ───────────────────────────────────────────────── */}
       <div className="bg-ds-card rounded-xl border border-ds-border px-5 py-4 flex items-center gap-5">
-        <TrendingUp className="h-5 w-5 text-amber-400 shrink-0" />
+        <TrendingUp className="h-5 w-5 text-amber-600 shrink-0" />
         <div className="flex-1">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="font-medium text-ds-text">Seat Usage</span>
@@ -249,7 +249,7 @@ export function CorporateDashboard({ stats }: { readonly stats: DashboardStats }
               {stats.totalEmployees} / {stats.maxSeats} · {seatPct}%
             </span>
           </div>
-          <div className="w-full bg-ds-surface rounded-full h-1.5">
+          <div className="w-full bg-blue-50 rounded-full h-1.5">
             <div
               className={`h-1.5 rounded-full transition-all ${seatPct >= 90 ? "bg-red-500" : "bg-amber-500"}`}
               style={{ width: `${seatPct}%` }}
@@ -264,10 +264,10 @@ export function CorporateDashboard({ stats }: { readonly stats: DashboardStats }
           Modules
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <ModuleCard href="/corporate/courses"   icon={BookOpen}      label="Courses"  description="Browse and assign courses to your team"  accent="bg-emerald-900/50 text-emerald-400" />
-          <ModuleCard href="/corporate/employees" icon={Users}         label="Students" description="Manage your enrolled team members"        accent="bg-blue-900/50 text-blue-400"    badge={stats.totalEmployees} />
-          <ModuleCard href="/corporate/trainers"  icon={GraduationCap} label="Trainers" description="View your assigned certified trainers"    accent="bg-indigo-900/50 text-indigo-400" />
-          <ModuleCard href="/corporate/tasks"     icon={CheckSquare}   label="Tasks"    description="Assign and track team tasks"             accent="bg-orange-900/50 text-orange-400" />
+          <ModuleCard href="/corporate/courses"   icon={BookOpen}      label="Courses"  description="Browse and assign courses to your team"  accent="bg-emerald-50 text-emerald-700" />
+          <ModuleCard href="/corporate/employees" icon={Users}         label="Students" description="Manage your enrolled team members"        accent="bg-blue-50 text-blue-700"    badge={stats.totalEmployees} />
+          <ModuleCard href="/corporate/trainers"  icon={GraduationCap} label="Trainers" description="View your assigned certified trainers"    accent="bg-indigo-50 text-indigo-700" />
+          <ModuleCard href="/corporate/tasks"     icon={CheckSquare}   label="Tasks"    description="Assign and track team tasks"             accent="bg-orange-50 text-orange-700" />
         </div>
       </div>
 
@@ -277,9 +277,9 @@ export function CorporateDashboard({ stats }: { readonly stats: DashboardStats }
           Coming Soon
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <ComingSoonCard icon={Sparkles} label="AI Summary"       description="Auto-summarize course content with AI"        accent="bg-pink-900/50 text-pink-400" />
-          <ComingSoonCard icon={BarChart3} label="Analytics"       description="Completion rates, trends, and exports"       accent="bg-purple-900/50 text-purple-400" />
-          <ComingSoonCard icon={FileText}  label="Grammar Checker" description="AI-powered writing assistance for your team" accent="bg-teal-900/50 text-teal-400" />
+          <ComingSoonCard icon={Sparkles} label="AI Summary"       description="Auto-summarize course content with AI"        accent="bg-pink-100 text-pink-700" />
+          <ComingSoonCard icon={BarChart3} label="Analytics"       description="Completion rates, trends, and exports"       accent="bg-blue-50 text-blue-700" />
+          <ComingSoonCard icon={FileText}  label="Grammar Checker" description="AI-powered writing assistance for your team" accent="bg-teal-50 text-teal-700" />
         </div>
       </div>
 

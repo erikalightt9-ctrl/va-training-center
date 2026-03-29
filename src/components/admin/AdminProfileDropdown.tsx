@@ -34,18 +34,18 @@ export function AdminProfileDropdown() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-white/10 transition-colors"
       >
         {/* Avatar */}
-        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+        <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
           {initials}
         </div>
         <div className="hidden sm:block text-left">
-          <p className="text-sm font-medium text-gray-800 leading-none">{name}</p>
-          <p className="text-xs text-gray-500 leading-none mt-0.5 truncate max-w-[120px]">{email}</p>
+          <p className="text-sm font-medium text-white leading-none">{name}</p>
+          <p className="text-xs text-blue-100 leading-none mt-0.5 truncate max-w-[120px]">{email}</p>
         </div>
         <ChevronDown
-          className={`h-4 w-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-blue-100 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -80,7 +80,7 @@ export function AdminProfileDropdown() {
           <div className="border-t border-gray-100 py-1">
             <button
               onClick={() => signOut({ callbackUrl: "/portal?tab=admin" })}
-              className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Logout

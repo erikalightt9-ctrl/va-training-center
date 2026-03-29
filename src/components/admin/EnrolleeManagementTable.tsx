@@ -133,7 +133,7 @@ export function EnrolleeManagementTable({ enrollees }: EnrolleeManagementTablePr
                     {e.schedule ? (
                       <Link
                         href={`/admin/schedules/${e.schedule.id}`}
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-700 hover:underline"
                       >
                         {e.schedule.name}
                       </Link>

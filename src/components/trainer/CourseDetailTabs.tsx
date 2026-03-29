@@ -80,12 +80,12 @@ function formatDate(date: string | null): string {
 
 function PublishedBadge({ published }: { readonly published: boolean }) {
   return published ? (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-900/40 text-emerald-400 border border-emerald-800">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
       <CheckCircle2 className="h-3 w-3" />
       Published
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-ds-surface text-ds-muted border border-ds-border">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-50 text-ds-muted border border-ds-border">
       <XCircle className="h-3 w-3" />
       Draft
     </span>
@@ -170,7 +170,7 @@ export function CourseDetailTabs({
             className={cn(
               "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
               activeTab === tab.key
-                ? "border-blue-500 text-blue-400"
+                ? "border-blue-500 text-blue-700"
                 : "border-transparent text-ds-muted hover:text-ds-text hover:border-ds-border",
             )}
           >
@@ -181,8 +181,8 @@ export function CourseDetailTabs({
                 className={cn(
                   "ml-1 px-1.5 py-0.5 rounded-full text-xs",
                   activeTab === tab.key
-                    ? "bg-blue-900/40 text-blue-400"
-                    : "bg-ds-surface text-ds-muted",
+                    ? "bg-blue-50 text-blue-700"
+                    : "bg-slate-50 text-ds-muted",
                 )}
               >
                 {tab.count}
@@ -244,7 +244,7 @@ function LessonsTab({
               "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
               tierFilter === "ALL"
                 ? "bg-ds-text text-ds-card"
-                : "bg-ds-surface text-ds-muted hover:bg-ds-card border border-ds-border",
+                : "bg-slate-50 text-ds-muted hover:bg-ds-card border border-ds-border",
             )}
           >
             All ({lessons.length})
@@ -260,7 +260,7 @@ function LessonsTab({
                   "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
                   isActive
                     ? `${colors.bg} ${colors.text} ring-1 ${colors.border}`
-                    : "bg-ds-surface text-ds-muted hover:bg-ds-card border border-ds-border",
+                    : "bg-slate-50 text-ds-muted hover:bg-ds-card border border-ds-border",
                 )}
               >
                 {COURSE_TIER_LABELS[group.tier]} ({group.lessons.length})
@@ -283,10 +283,10 @@ function LessonsTab({
             {group.lessons.map((lesson) => (
               <div
                 key={lesson.id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-ds-surface transition-colors"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-full bg-blue-900/40 text-blue-400 text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-700 text-xs font-bold flex items-center justify-center shrink-0">
                     {lesson.order}
                   </span>
                   <span className="text-sm font-medium text-ds-text">
@@ -330,7 +330,7 @@ function AssignmentsTab({
       {assignments.map((assignment) => (
         <div
           key={assignment.id}
-          className="border border-ds-border rounded-lg p-4 hover:bg-ds-surface transition-colors"
+          className="border border-ds-border rounded-lg p-4 hover:bg-slate-100 transition-colors"
         >
           <div className="flex items-start justify-between mb-2">
             <h4 className="text-sm font-semibold text-ds-text">
@@ -346,7 +346,7 @@ function AssignmentsTab({
             <span>{assignment.maxPoints} pts</span>
             <span>{assignment.totalSubmissions} submissions</span>
             {assignment.pendingCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-amber-900/40 text-amber-400 border border-amber-800 font-medium">
+              <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium">
                 {assignment.pendingCount} pending
               </span>
             )}
@@ -375,7 +375,7 @@ function QuizzesTab({
       {quizzes.map((quiz) => (
         <div
           key={quiz.id}
-          className="border border-ds-border rounded-lg p-4 hover:bg-ds-surface transition-colors"
+          className="border border-ds-border rounded-lg p-4 hover:bg-slate-100 transition-colors"
         >
           <div className="flex items-start justify-between mb-2">
             <h4 className="text-sm font-semibold text-ds-text">

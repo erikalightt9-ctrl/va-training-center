@@ -130,7 +130,7 @@ function ScheduleCard({
         </div>
         {schedule.trainerName && (
           <div className="flex items-center gap-1.5">
-            <UserCog className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+            <UserCog className="h-3.5 w-3.5 text-blue-500 shrink-0" />
             <span>{schedule.trainerName}</span>
           </div>
         )}
@@ -148,7 +148,7 @@ function ScheduleCard({
               isAlmostFull
                 ? "text-amber-600"
                 : availableSeats === 0
-                  ? "text-red-600"
+                  ? "text-red-700"
                   : "text-green-600"
             }`}
           >
@@ -356,7 +356,7 @@ export function StepScheduleSelect({ form }: StepScheduleSelectProps) {
                       Full — {s.maxCapacity}/{s.maxCapacity} enrolled
                     </span>
                     {isWaitlistSelected ? (
-                      <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                         ✓ On waitlist
                       </span>
                     ) : (

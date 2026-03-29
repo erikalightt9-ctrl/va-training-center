@@ -38,7 +38,7 @@ export default async function TrainerCourseListPage() {
     <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-        <Link href="/trainer/courses" className="hover:text-blue-600 transition-colors">
+        <Link href="/trainer/courses" className="hover:text-blue-700 transition-colors">
           Courses
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
@@ -61,8 +61,8 @@ export default async function TrainerCourseListPage() {
               className="group bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-blue-200 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="bg-blue-100 rounded-lg p-2.5">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
+                <div className="bg-blue-50 rounded-lg p-2.5">
+                  <BookOpen className="h-5 w-5 text-blue-700" />
                 </div>
                 <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors mt-1" />
               </div>
@@ -94,8 +94,8 @@ export default async function TrainerCourseListPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="h-8 w-8 text-blue-600" />
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="h-8 w-8 text-blue-700" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">No Courses Found</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto">

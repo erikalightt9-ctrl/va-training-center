@@ -13,6 +13,8 @@ import {
   Clock,
   GraduationCap,
   Search,
+  RotateCcw,
+  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -140,8 +142,12 @@ function slugLabel(slug: string): string {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+type TabView = "active" | "deleted";
+
 export function CourseManager() {
   const [courses, setCourses] = useState<ReadonlyArray<Course>>([]);
+  const [deletedCourses, setDeletedCourses] = useState<ReadonlyArray<Course>>([]);
+  const [tab, setTab] = useState<TabView>("active");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -186,13 +192,17 @@ export function CourseManager() {
 
   const fetchCourses = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/courses");
-      const json = await res.json();
-      if (json.success) {
-        setCourses(json.data);
-      } else {
-        setError(json.error ?? "Failed to load courses");
-      }
+      const [activeRes, deletedRes] = await Promise.all([
+        fetch("/api/admin/courses"),
+        fetch("/api/admin/courses?deleted=true"),
+      ]);
+      const [activeJson, deletedJson] = await Promise.all([
+        activeRes.json(),
+        deletedRes.json(),
+      ]);
+      if (activeJson.success) setCourses(activeJson.data);
+      else setError(activeJson.error ?? "Failed to load courses");
+      if (deletedJson.success) setDeletedCourses(deletedJson.data);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -364,19 +374,33 @@ export function CourseManager() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Deactivate this course? It will be marked as inactive and hidden from students.")) {
+    if (!confirm("Move this course to the deleted bin? You can restore it later.")) {
       return;
     }
     try {
       const res = await fetch(`/api/admin/courses/${id}`, { method: "DELETE" });
       const json = await res.json();
       if (!json.success) {
-        setError(json.error ?? "Failed to deactivate");
+        setError(json.error ?? "Failed to delete");
         return;
       }
       await fetchCourses();
     } catch {
-      setError("Failed to deactivate course.");
+      setError("Failed to delete course.");
+    }
+  }
+
+  async function handleRestore(id: string) {
+    try {
+      const res = await fetch(`/api/admin/courses/${id}/restore`, { method: "POST" });
+      const json = await res.json();
+      if (!json.success) {
+        setError(json.error ?? "Failed to restore");
+        return;
+      }
+      await fetchCourses();
+    } catch {
+      setError("Failed to restore course.");
     }
   }
 
@@ -407,8 +431,52 @@ export function CourseManager() {
       })
     : courses;
 
+  const filteredDeleted = searchQuery.trim()
+    ? deletedCourses.filter((c) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          c.title.toLowerCase().includes(q) ||
+          (c.industry ?? "").toLowerCase().includes(q)
+        );
+      })
+    : deletedCourses;
+
   return (
     <div className="space-y-6">
+      {/* Tab switcher */}
+      <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setTab("active")}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            tab === "active"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          <BookOpen className="h-3.5 w-3.5" />
+          Active Courses
+          <span className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${tab === "active" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-500"}`}>
+            {courses.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setTab("deleted")}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            tab === "deleted"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          <Trash className="h-3.5 w-3.5" />
+          Deleted
+          {deletedCourses.length > 0 && (
+            <span className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${tab === "deleted" ? "bg-red-100 text-red-700" : "bg-red-100 text-red-600"}`}>
+              {deletedCourses.length}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* Header bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 sm:max-w-xs">
@@ -417,19 +485,23 @@ export function CourseManager() {
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search courses…"
+            placeholder={tab === "active" ? "Search courses…" : "Search deleted courses…"}
             className="pl-9"
             aria-label="Search courses"
           />
         </div>
         <div className="flex items-center gap-3">
           <p className="text-sm text-gray-500 whitespace-nowrap">
-            {filteredCourses.length} / {courses.length} course{courses.length !== 1 ? "s" : ""}
+            {tab === "active"
+              ? `${filteredCourses.length} / ${courses.length} course${courses.length !== 1 ? "s" : ""}`
+              : `${filteredDeleted.length} deleted`}
           </p>
-          <Button className="gap-1.5" onClick={openCreateForm}>
-            <Plus className="h-4 w-4" />
-            Create Course
-          </Button>
+          {tab === "active" && (
+            <Button className="gap-1.5" onClick={openCreateForm}>
+              <Plus className="h-4 w-4" />
+              Create Course
+            </Button>
+          )}
         </div>
       </div>
 
@@ -589,7 +661,7 @@ export function CourseManager() {
                     type="checkbox"
                     checked={isActive}
                     onChange={(e) => setIsActive(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">Active</span>
                 </label>
@@ -655,148 +727,200 @@ export function CourseManager() {
         </div>
       )}
 
-      {/* Course Cards */}
-      {courses.length === 0 && !showForm ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <GraduationCap className="h-8 w-8 text-blue-600" />
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Courses Yet</h2>
-          <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
-            Create your first course to start managing lessons, quizzes, and student enrollments.
-          </p>
-          <Button onClick={openCreateForm} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create First Course
-          </Button>
-        </div>
-      ) : filteredCourses.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <Search className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-700 font-medium">No courses match your search</p>
-          <p className="text-sm text-gray-500 mt-1">
-            Try a different keyword or{" "}
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="text-blue-600 underline hover:text-blue-700"
-            >
-              clear the search
-            </button>
-            .
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
-            <div
-              key={course.id}
-              className={`bg-white rounded-xl border p-6 hover:shadow-md transition-shadow ${
-                course.isActive ? "border-gray-200" : "border-gray-200 opacity-60"
-              }`}
-            >
-              {/* Card header */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 truncate">{course.title}</h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                      {slugLabel(course.slug)}
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        course.isActive
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {course.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0 ml-2">
-                  <Button variant="ghost" size="sm" onClick={() => openEditForm(course)}>
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(course.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+      {/* ── Active Courses Tab ── */}
+      {tab === "active" && (
+        <>
+          {courses.length === 0 && !showForm ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <GraduationCap className="h-8 w-8 text-blue-700" />
               </div>
-
-              {/* Description preview */}
-              <p className="text-sm text-gray-600 line-clamp-2 mb-4">{course.description}</p>
-
-              {/* Stats grid */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="h-4 w-4 text-blue-500" />
-                  <span>{course._count.enrollments} enrolled</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FileText className="h-4 w-4 text-green-500" />
-                  <span>{course._count.lessons} lessons</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <BookOpen className="h-4 w-4 text-purple-500" />
-                  <span>{course._count.quizzes} quizzes</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <GraduationCap className="h-4 w-4 text-amber-500" />
-                  <span>{course._count.assignments} assignments</span>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="flex flex-col gap-1">
-                  <span className="flex items-center gap-1 text-sm text-gray-600">
-                    <Clock className="h-3.5 w-3.5" />
-                    {course.durationWeeks}w
-                  </span>
-                  {/* Show tier prices — these are what students see on the enrollment page */}
-                  <div className="flex items-center gap-1.5 text-xs flex-wrap">
-                    <span className="text-gray-400">Basic:</span>
-                    <span className="font-semibold text-gray-700">
-                      {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
-                      {Number(course.priceBasic).toLocaleString()}
-                    </span>
-                    <span className="text-gray-300">·</span>
-                    <span className="text-gray-400">Pro:</span>
-                    <span className="font-semibold text-gray-700">
-                      {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
-                      {Number(course.priceProfessional).toLocaleString()}
-                    </span>
-                    <span className="text-gray-300">·</span>
-                    <span className="text-gray-400">Adv:</span>
-                    <span className="font-semibold text-gray-700">
-                      {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
-                      {Number(course.priceAdvanced).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleToggleActive(course)}
-                  className={`text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
-                    course.isActive
-                      ? "text-amber-700 bg-amber-50 hover:bg-amber-100"
-                      : "text-green-700 bg-green-50 hover:bg-green-100"
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">No Courses Yet</h2>
+              <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+                Create your first course to start managing lessons, quizzes, and student enrollments.
+              </p>
+              <Button onClick={openCreateForm} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create First Course
+              </Button>
+            </div>
+          ) : filteredCourses.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <Search className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-700 font-medium">No courses match your search</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Try a different keyword or{" "}
+                <button type="button" onClick={() => setSearchQuery("")} className="text-blue-700 underline">
+                  clear the search
+                </button>.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredCourses.map((course) => (
+                <div
+                  key={course.id}
+                  className={`bg-white rounded-xl border p-6 hover:shadow-md transition-shadow ${
+                    course.isActive ? "border-gray-200" : "border-gray-200 opacity-60"
                   }`}
                 >
-                  {course.isActive ? "Deactivate" : "Activate"}
-                </button>
-              </div>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate mb-1">{course.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                          {slugLabel(course.slug)}
+                        </span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${course.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                          {course.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0 ml-2">
+                      <Button variant="ghost" size="sm" onClick={() => openEditForm(course)}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(course.id)}
+                        className="text-red-500 hover:text-red-700"
+                        title="Move to deleted"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">{course.description}</p>
+
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <span>{course._count.enrollments} enrolled</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <FileText className="h-4 w-4 text-green-500" />
+                      <span>{course._count.lessons} lessons</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <BookOpen className="h-4 w-4 text-blue-500" />
+                      <span>{course._count.quizzes} quizzes</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <GraduationCap className="h-4 w-4 text-amber-500" />
+                      <span>{course._count.assignments} assignments</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex flex-col gap-1">
+                      <span className="flex items-center gap-1 text-sm text-gray-600">
+                        <Clock className="h-3.5 w-3.5" />
+                        {course.durationWeeks}w
+                      </span>
+                      <div className="flex items-center gap-1.5 text-xs flex-wrap">
+                        <span className="text-gray-400">Basic:</span>
+                        <span className="font-semibold text-gray-700">
+                          {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
+                          {Number(course.priceBasic).toLocaleString()}
+                        </span>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-gray-400">Pro:</span>
+                        <span className="font-semibold text-gray-700">
+                          {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
+                          {Number(course.priceProfessional).toLocaleString()}
+                        </span>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-gray-400">Adv:</span>
+                        <span className="font-semibold text-gray-700">
+                          {CURRENCY_SYMBOLS[(course.currency as CurrencyCode) || "PHP"]}
+                          {Number(course.priceAdvanced).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleActive(course)}
+                      className={`text-xs font-medium px-2.5 py-1 rounded-lg transition-colors ${
+                        course.isActive
+                          ? "text-amber-600 bg-amber-50 hover:bg-amber-100"
+                          : "text-green-700 bg-green-50 hover:bg-green-100"
+                      }`}
+                    >
+                      {course.isActive ? "Deactivate" : "Activate"}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
+      )}
+
+      {/* ── Deleted Courses Tab ── */}
+      {tab === "deleted" && (
+        <>
+          {deletedCourses.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <div className="bg-gray-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Trash className="h-8 w-8 text-gray-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">No Deleted Courses</h2>
+              <p className="text-sm text-gray-500">
+                Courses you delete will appear here and can be restored at any time.
+              </p>
+            </div>
+          ) : filteredDeleted.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <Search className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-700 font-medium">No deleted courses match your search</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredDeleted.map((course) => (
+                <div key={course.id} className="bg-white rounded-xl border border-red-100 p-6 opacity-75 hover:opacity-100 transition-opacity">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-700 truncate mb-1">{course.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                          {slugLabel(course.slug)}
+                        </span>
+                        <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full">
+                          Deleted
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRestore(course.id)}
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50 gap-1.5 shrink-0 ml-2"
+                      title="Restore course"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      Restore
+                    </Button>
+                  </div>
+
+                  <p className="text-sm text-gray-500 line-clamp-2 mb-4">{course.description}</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Users className="h-4 w-4" />
+                      <span>{course._count.enrollments} enrolled</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <FileText className="h-4 w-4" />
+                      <span>{course._count.lessons} lessons</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -31,16 +31,16 @@ function formatDate(iso: string | Date | null) {
 }
 
 const PLAN_BADGE: Record<string, string> = {
-  TRIAL:        "bg-amber-900/40 text-amber-400",
-  STARTER:      "bg-blue-900/40 text-blue-400",
-  PROFESSIONAL: "bg-purple-900/40 text-purple-400",
-  ENTERPRISE:   "bg-emerald-900/40 text-emerald-400",
+  TRIAL:        "bg-amber-50 text-amber-700",
+  STARTER:      "bg-blue-50 text-blue-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ENTERPRISE:   "bg-emerald-50 text-emerald-700",
 };
 
 const PLAN_COLOR: Record<string, string> = {
   TRIAL:        "bg-amber-400",
   STARTER:      "bg-blue-400",
-  PROFESSIONAL: "bg-purple-400",
+  PROFESSIONAL: "bg-blue-400",
   ENTERPRISE:   "bg-emerald-500",
 };
 
@@ -100,10 +100,10 @@ export default async function SuperAdminAnalyticsPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-ds-muted uppercase tracking-wide">Tenant Overview</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Tenants"  value={analytics?.tenantCount  ?? "—"} icon={Building2}   color="text-violet-400" bg="bg-violet-900/40" />
-          <StatCard label="Active Tenants" value={analytics?.activeTenants ?? "—"} icon={BarChart3}   color="text-emerald-400" bg="bg-emerald-900/40" />
-          <StatCard label="Trial Tenants"  value={analytics?.trialTenants  ?? "—"} icon={ShieldAlert} color="text-amber-400"  bg="bg-amber-900/40" />
-          <StatCard label="Total Students" value={analytics?.totalStudents  ?? "—"} icon={Users}      color="text-blue-400"  bg="bg-blue-900/40" />
+          <StatCard label="Total Tenants"  value={analytics?.tenantCount  ?? "—"} icon={Building2}   color="text-blue-700" bg="bg-blue-50" />
+          <StatCard label="Active Tenants" value={analytics?.activeTenants ?? "—"} icon={BarChart3}   color="text-emerald-600" bg="bg-emerald-50" />
+          <StatCard label="Trial Tenants"  value={analytics?.trialTenants  ?? "—"} icon={ShieldAlert} color="text-amber-600"  bg="bg-amber-50" />
+          <StatCard label="Total Students" value={analytics?.totalStudents  ?? "—"} icon={Users}      color="text-blue-700"  bg="bg-blue-50" />
         </div>
       </section>
 
@@ -115,24 +115,24 @@ export default async function SuperAdminAnalyticsPage() {
             label="MRR"
             value={revenue ? formatMoney(revenue.mrrCents) : "—"}
             icon={TrendingUp}
-            color="text-emerald-400"
-            bg="bg-emerald-900/40"
+            color="text-emerald-600"
+            bg="bg-emerald-50"
             sub="Monthly Recurring Revenue"
           />
           <StatCard
             label="ARR"
             value={revenue ? formatMoney(revenue.arrCents) : "—"}
             icon={Activity}
-            color="text-blue-400"
-            bg="bg-blue-900/40"
+            color="text-blue-700"
+            bg="bg-blue-50"
             sub="Annualised Run Rate"
           />
           <StatCard
             label="Total Revenue"
             value={revenue ? formatMoney(revenue.totalRevenueCents) : "—"}
             icon={DollarSign}
-            color="text-violet-400"
-            bg="bg-violet-900/40"
+            color="text-blue-700"
+            bg="bg-blue-50"
             sub="All-time paid subs"
           />
           <StatCard
@@ -140,7 +140,7 @@ export default async function SuperAdminAnalyticsPage() {
             value={revenue?.totalPayments ?? "—"}
             icon={CreditCard}
             color="text-ds-muted"
-            bg="bg-ds-surface"
+            bg="bg-slate-50"
             sub="Paid subscriptions"
           />
         </div>
@@ -162,12 +162,12 @@ export default async function SuperAdminAnalyticsPage() {
                 return (
                   <div key={plan}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAN_BADGE[plan] ?? "bg-ds-surface text-ds-muted"}`}>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAN_BADGE[plan] ?? "bg-slate-50 text-ds-muted"}`}>
                         {plan}
                       </span>
                       <span className="text-sm font-medium text-ds-text">{count} tenant{count !== 1 ? "s" : ""} · {pct}%</span>
                     </div>
-                    <div className="w-full bg-ds-surface rounded-full h-2">
+                    <div className="w-full bg-blue-50 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full transition-all ${PLAN_COLOR[plan] ?? "bg-ds-muted"}`}
                         style={{ width: `${pct}%` }}
@@ -194,7 +194,7 @@ export default async function SuperAdminAnalyticsPage() {
               {revenue.recentPayments.slice(0, 8).map((p, i) => (
                 <div key={i} className="flex items-center justify-between py-2.5 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${PLAN_BADGE[p.plan] ?? "bg-ds-surface text-ds-muted"}`}>
+                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${PLAN_BADGE[p.plan] ?? "bg-slate-50 text-ds-muted"}`}>
                       {p.plan}
                     </span>
                     <span className="text-ds-muted text-xs">{formatDate(p.paidAt)}</span>

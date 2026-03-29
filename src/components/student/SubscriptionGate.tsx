@@ -82,7 +82,7 @@ export function SubscriptionGate({ children }: SubscriptionGateProps) {
           </p>
 
           {hasPending ? (
-            <div className="inline-flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm font-medium rounded-lg px-4 py-2">
+            <div className="inline-flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-600 text-sm font-medium rounded-lg px-4 py-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               Awaiting Admin Approval
             </div>

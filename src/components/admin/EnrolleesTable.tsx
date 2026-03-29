@@ -151,7 +151,7 @@ export function EnrolleesTable({ enrollments }: EnrolleesTableProps) {
 
       {/* Inline edit form */}
       {editingId && (
-        <div className="bg-ds-surface border border-ds-primary/30 rounded-xl p-4">
+        <div className="bg-slate-50 border border-ds-primary/30 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-ds-text">
               Edit Application
@@ -227,7 +227,7 @@ export function EnrolleesTable({ enrollments }: EnrolleesTableProps) {
 
       <div className="rounded-xl border border-ds-border overflow-hidden">
         <Table>
-          <TableHeader className="bg-ds-surface border-b border-ds-border">
+          <TableHeader className="bg-slate-50 border-b border-ds-border">
             <TableRow>
               <TableHead className="w-[200px] text-ds-muted">Name</TableHead>
               <TableHead className="text-ds-muted">Email</TableHead>
@@ -245,7 +245,7 @@ export function EnrolleesTable({ enrollments }: EnrolleesTableProps) {
               return (
                 <TableRow
                   key={e.id}
-                  className={`hover:bg-ds-surface/50 ${isDeleting ? "opacity-50" : ""}`}
+                  className={`hover:bg-slate-50/50 ${isDeleting ? "opacity-50" : ""}`}
                 >
                   <TableCell className="font-medium text-ds-text">
                     {e.fullName}

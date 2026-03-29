@@ -304,7 +304,7 @@ export function AISimulator() {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 text-red-600 border-red-200 hover:bg-red-50"
+            className="gap-1.5 text-red-700 border-red-200 hover:bg-red-50"
             onClick={handleEnd}
             disabled={ending || activeSession.messages.length < 2}
           >
@@ -382,7 +382,7 @@ export function AISimulator() {
       <div className="space-y-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-amber-100 rounded-lg p-2">
+            <div className="bg-amber-50 rounded-lg p-2">
               <Trophy className="h-5 w-5 text-amber-600" />
             </div>
             <div>
@@ -424,7 +424,7 @@ export function AISimulator() {
 
           {/* AI Feedback */}
           {activeSession.aiFeedback && (
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 mb-4">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-4">
               <h4 className="text-sm font-semibold text-blue-900 mb-1">
                 AI Feedback
               </h4>

@@ -22,8 +22,8 @@ export default async function AdminTestimonialsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-amber-100 rounded-lg p-2">
-            <MessageSquareQuote className="h-5 w-5 text-amber-700" />
+          <div className="bg-amber-50 rounded-lg p-2">
+            <MessageSquareQuote className="h-5 w-5 text-amber-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>

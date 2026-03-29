@@ -127,7 +127,7 @@ export function SearchableCourseGrid({
 
       {/* Error */}
       {searchError && (
-        <p className="text-center text-sm text-red-600">{searchError}</p>
+        <p className="text-center text-sm text-red-400">{searchError}</p>
       )}
 
       {/* Results count */}
@@ -155,7 +155,7 @@ export function SearchableCourseGrid({
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="mt-4 text-sm text-blue-600 underline hover:text-blue-700"
+              className="mt-4 text-sm text-blue-400 underline hover:text-blue-400"
             >
               Clear search
             </button>

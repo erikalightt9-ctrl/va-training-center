@@ -83,10 +83,10 @@ function KpiCard({
   readonly color: "blue" | "green" | "amber" | "purple";
 }) {
   const colorMap = {
-    blue: { bg: "bg-blue-100", text: "text-blue-600" },
+    blue: { bg: "bg-blue-50", text: "text-blue-700" },
     green: { bg: "bg-green-100", text: "text-green-600" },
-    amber: { bg: "bg-amber-100", text: "text-amber-600" },
-    purple: { bg: "bg-purple-100", text: "text-purple-600" },
+    amber: { bg: "bg-amber-50", text: "text-amber-600" },
+    purple: { bg: "bg-blue-50", text: "text-blue-700" },
   };
   const c = colorMap[color];
 
@@ -136,7 +136,7 @@ function DailyBarChart({
               {/* Tooltip */}
               <div className="relative">
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10 pointer-events-none">
-                  <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                  <div className="bg-slate-50 text-ds-text border border-ds-border text-xs rounded px-2 py-1 whitespace-nowrap shadow">
                     {d.count} check-in{d.count !== 1 ? "s" : ""}
                     {d.avgDurationMinutes !== null && (
                       <> · avg {formatDuration(d.avgDurationMinutes)}</>
@@ -194,11 +194,11 @@ function TopStudentsTable({
           <span
             className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
               idx === 0
-                ? "bg-amber-100 text-amber-700"
+                ? "bg-amber-50 text-amber-700"
                 : idx === 1
                   ? "bg-gray-200 text-gray-600"
                   : idx === 2
-                    ? "bg-orange-100 text-orange-700"
+                    ? "bg-orange-50 text-orange-700"
                     : "bg-gray-100 text-gray-500"
             }`}
           >
@@ -274,7 +274,7 @@ export function AdminAttendanceAnalytics({
 
   if (error) {
     return (
-      <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+      <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
         {error}
       </div>
     );

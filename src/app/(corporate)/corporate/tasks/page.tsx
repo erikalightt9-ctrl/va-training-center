@@ -31,14 +31,14 @@ interface Task {
 
 const STATUS_COLS: ReadonlyArray<{ status: TaskStatus; label: string; border: string; icon: React.ReactNode }> = [
   { status: "TODO",        label: "To Do",      border: "border-ds-border",  icon: <Square       className="h-4 w-4 text-ds-muted" /> },
-  { status: "IN_PROGRESS", label: "In Progress", border: "border-blue-800",   icon: <Clock        className="h-4 w-4 text-blue-400" /> },
-  { status: "DONE",        label: "Done",        border: "border-emerald-800", icon: <CheckCircle2 className="h-4 w-4 text-emerald-400" /> },
+  { status: "IN_PROGRESS", label: "In Progress", border: "border-blue-200",   icon: <Clock        className="h-4 w-4 text-blue-700" /> },
+  { status: "DONE",        label: "Done",        border: "border-emerald-200", icon: <CheckCircle2 className="h-4 w-4 text-emerald-600" /> },
 ];
 
 const PRIORITY_STYLE: Record<TaskPriority, string> = {
-  LOW:    "bg-ds-surface text-ds-muted border border-ds-border",
-  MEDIUM: "bg-amber-900/40 text-amber-400 border border-amber-800",
-  HIGH:   "bg-red-900/40 text-red-400 border border-red-800",
+  LOW:    "bg-slate-50 text-ds-muted border border-ds-border",
+  MEDIUM: "bg-amber-50 text-amber-700 border border-amber-200",
+  HIGH:   "bg-red-50 text-red-700 border border-red-200",
 };
 
 function isOverdue(d: string | null) { return !!d && new Date(d) < new Date(); }
@@ -72,7 +72,7 @@ function TaskCard({ task, onStatusChange }: {
       <div className="flex items-center justify-between gap-2 pt-1 border-t border-ds-border">
         <div className="flex items-center gap-2">
           {task.dueDate && (
-            <span className={`flex items-center gap-1 text-xs ${overdue ? "text-red-400 font-medium" : "text-ds-muted"}`}>
+            <span className={`flex items-center gap-1 text-xs ${overdue ? "text-red-700 font-medium" : "text-ds-muted"}`}>
               {overdue ? <AlertCircle className="h-3 w-3" /> : <CalendarDays className="h-3 w-3" />}
               {fmt(task.dueDate)}
             </span>
@@ -85,7 +85,7 @@ function TaskCard({ task, onStatusChange }: {
         <select
           value={task.status}
           onChange={(e) => onStatusChange(task.id, e.target.value as TaskStatus)}
-          className="text-xs bg-ds-surface border border-ds-border text-ds-muted rounded-lg px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-ds-primary cursor-pointer"
+          className="text-xs bg-slate-50 border border-gray-200 text-ds-muted rounded-lg px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-ds-primary cursor-pointer"
         >
           <option value="TODO">To Do</option>
           <option value="IN_PROGRESS">In Progress</option>
@@ -135,7 +135,7 @@ function AddTaskModal({ onClose, onAdd }: {
             <input
               type="text" required value={title} onChange={(e) => setTitle(e.target.value)} autoFocus
               placeholder="What needs to be done?"
-              className="w-full px-3 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+              className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
             />
           </div>
 
@@ -144,7 +144,7 @@ function AddTaskModal({ onClose, onAdd }: {
             <textarea
               value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
               placeholder="Optional details…"
-              className="w-full px-3 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50 resize-none"
+              className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text placeholder:text-ds-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50 resize-none"
             />
           </div>
 
@@ -153,7 +153,7 @@ function AddTaskModal({ onClose, onAdd }: {
               <label className="block text-xs font-medium text-ds-muted mb-1">Priority</label>
               <select
                 value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full px-3 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+                className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
               >
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
@@ -164,7 +164,7 @@ function AddTaskModal({ onClose, onAdd }: {
               <label className="block text-xs font-medium text-ds-muted mb-1">Due Date</label>
               <input
                 type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+                className="w-full px-3 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
               />
             </div>
           </div>
@@ -261,14 +261,14 @@ export default function CorporateTasksPage() {
           onClick={() => setShowAdd(true)}
           className="group bg-ds-card rounded-xl border border-ds-border p-4 flex flex-col gap-2 hover:border-ds-primary/50 hover:shadow-lg hover:shadow-black/20 transition-all text-left"
         >
-          <div className="p-2 rounded-xl w-fit bg-blue-900/50 text-blue-400">
+          <div className="p-2 rounded-xl w-fit bg-blue-50 text-blue-700">
             <Plus className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-300 transition-colors">New Task</p>
+            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-700 transition-colors">New Task</p>
             <p className="text-xs text-ds-muted mt-0.5">Create a to-do item</p>
           </div>
-          <div className="flex items-center gap-1 text-xs text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+          <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
             Create <ArrowRight className="h-3 w-3" />
           </div>
         </button>
@@ -277,20 +277,20 @@ export default function CorporateTasksPage() {
           href="/corporate/employees"
           className="group bg-ds-card rounded-xl border border-ds-border p-4 flex flex-col gap-2 hover:border-ds-primary/50 hover:shadow-lg hover:shadow-black/20 transition-all"
         >
-          <div className="p-2 rounded-xl w-fit bg-emerald-900/50 text-emerald-400">
+          <div className="p-2 rounded-xl w-fit bg-emerald-50 text-emerald-700">
             <CheckSquare className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-300 transition-colors">Assign to Student</p>
+            <p className="text-xs font-semibold text-ds-text group-hover:text-blue-700 transition-colors">Assign to Student</p>
             <p className="text-xs text-ds-muted mt-0.5">Link tasks to team members</p>
           </div>
-          <div className="flex items-center gap-1 text-xs text-blue-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+          <div className="flex items-center gap-1 text-xs text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
             Open <ArrowRight className="h-3 w-3" />
           </div>
         </Link>
 
         <div title="Coming soon" className="bg-ds-card/40 rounded-xl border border-dashed border-ds-border p-4 flex flex-col gap-2 opacity-50 cursor-not-allowed">
-          <div className="p-2 rounded-xl w-fit bg-amber-900/50 text-amber-400 opacity-60">
+          <div className="p-2 rounded-xl w-fit bg-amber-50 text-amber-700 opacity-60">
             <CalendarDays className="h-4 w-4" />
           </div>
           <div>
@@ -303,7 +303,7 @@ export default function CorporateTasksPage() {
         </div>
 
         <div title="Coming soon" className="bg-ds-card/40 rounded-xl border border-dashed border-ds-border p-4 flex flex-col gap-2 opacity-50 cursor-not-allowed">
-          <div className="p-2 rounded-xl w-fit bg-purple-900/50 text-purple-400 opacity-60">
+          <div className="p-2 rounded-xl w-fit bg-blue-50 text-blue-700 opacity-60">
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
@@ -323,13 +323,13 @@ export default function CorporateTasksPage() {
           <Square className="h-3.5 w-3.5" />{counts.TODO} to do
         </span>
         <span className="flex items-center gap-1.5 text-ds-muted">
-          <Clock className="h-3.5 w-3.5 text-blue-400" />{counts.IN_PROGRESS} in progress
+          <Clock className="h-3.5 w-3.5 text-blue-700" />{counts.IN_PROGRESS} in progress
         </span>
         <span className="flex items-center gap-1.5 text-ds-muted">
-          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />{counts.DONE} done
+          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />{counts.DONE} done
         </span>
         {overdueCount > 0 && (
-          <span className="flex items-center gap-1.5 text-red-400 font-medium ml-auto">
+          <span className="flex items-center gap-1.5 text-red-700 font-medium ml-auto">
             <AlertCircle className="h-3.5 w-3.5" />{overdueCount} overdue
           </span>
         )}
@@ -351,7 +351,7 @@ export default function CorporateTasksPage() {
                     {col.icon}
                     <span className="text-sm font-semibold text-ds-text">{col.label}</span>
                   </div>
-                  <span className="text-xs bg-ds-surface border border-ds-border text-ds-muted rounded-full px-2 py-0.5">
+                  <span className="text-xs bg-slate-50 border border-gray-200 text-ds-muted rounded-full px-2 py-0.5">
                     {colTasks.length}
                   </span>
                 </div>
@@ -370,7 +370,7 @@ export default function CorporateTasksPage() {
                 {col.status === "TODO" && (
                   <button
                     onClick={() => setShowAdd(true)}
-                    className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-ds-muted hover:text-ds-text hover:bg-ds-surface rounded-xl border border-dashed border-ds-border hover:border-ds-primary/50 transition-colors"
+                    className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-ds-muted hover:text-ds-text hover:bg-slate-100 rounded-xl border border-dashed border-ds-border hover:border-ds-primary/50 transition-colors"
                   >
                     <Plus className="h-3.5 w-3.5" />Add task
                   </button>

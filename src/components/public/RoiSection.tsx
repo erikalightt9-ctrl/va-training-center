@@ -6,28 +6,28 @@ const stats = [
     value: "70%",
     label: "Less Admin Work",
     description: "Automate enrollment, payments, and reports",
-    color: "text-blue-600 bg-blue-50",
+    color: "text-blue-400 bg-blue-50",
   },
   {
     icon: TrendingUp,
     value: "3x",
     label: "Faster Operations",
     description: "From enrollment to certification",
-    color: "text-emerald-600 bg-emerald-50",
+    color: "text-emerald-400 bg-emerald-50",
   },
   {
     icon: Clock,
     value: "90%",
     label: "Faster Support Response",
     description: "AI auto-replies handle common questions",
-    color: "text-purple-600 bg-purple-50",
+    color: "text-purple-400 bg-purple-50",
   },
   {
     icon: Zap,
     value: "2x",
     label: "Higher Completion",
     description: "Gamification drives student engagement",
-    color: "text-amber-600 bg-amber-50",
+    color: "text-amber-400 bg-amber-50",
   },
 ] as const;
 
@@ -36,7 +36,7 @@ export function RoiSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
             Business Impact
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">

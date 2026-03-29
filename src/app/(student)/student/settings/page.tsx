@@ -21,8 +21,8 @@ export default async function StudentSettingsPage() {
     <div className="space-y-6">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-blue-900/40 rounded-lg p-2">
-            <Settings className="h-5 w-5 text-blue-400" />
+          <div className="bg-blue-50 rounded-lg p-2">
+            <Settings className="h-5 w-5 text-blue-700" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-ds-text">Settings</h1>

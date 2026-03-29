@@ -131,16 +131,16 @@ export default function StudentAssignmentsPage({
       {/* Summary pills */}
       {assignments.length > 0 && (
         <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-ds-surface text-ds-muted border border-ds-border px-3 py-1.5 rounded-full font-medium">
+          <span className="text-xs bg-slate-50 text-ds-muted border border-ds-border px-3 py-1.5 rounded-full font-medium">
             {pending.length} to submit
           </span>
           {submitted.length > 0 && (
-            <span className="text-xs bg-amber-900/40 text-amber-400 border border-amber-800 px-3 py-1.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full font-medium">
               {submitted.length} awaiting grade
             </span>
           )}
           {graded.length > 0 && (
-            <span className="text-xs bg-emerald-900/40 text-emerald-400 border border-emerald-800 px-3 py-1.5 rounded-full font-medium">
+            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-full font-medium">
               {graded.length} graded
             </span>
           )}
@@ -160,8 +160,8 @@ export default function StudentAssignmentsPage({
           const passed    = isGraded && a.submission?.grade != null && a.submission.grade >= a.passingScore;
 
           const borderColor = isGraded
-            ? passed ? "border-emerald-800" : "border-red-800"
-            : isPending ? "border-amber-800" : "border-ds-border";
+            ? passed ? "border-emerald-200" : "border-red-200"
+            : isPending ? "border-amber-200" : "border-ds-border";
 
           return (
             <div key={a.id} className={`bg-ds-card rounded-xl border-2 p-5 transition-all ${borderColor}`}>
@@ -173,7 +173,7 @@ export default function StudentAssignmentsPage({
                     <span className="text-base">{TYPE_LABEL[a.submissionType] ?? "📋"}</span>
                     <h3 className="font-semibold text-ds-text">{a.title}</h3>
                     {a.isRequired && (
-                      <span className="text-xs bg-red-900/40 text-red-400 border border-red-800 px-2 py-0.5 rounded-full font-medium">
+                      <span className="text-xs bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-full font-medium">
                         Required
                       </span>
                     )}
@@ -193,11 +193,11 @@ export default function StudentAssignmentsPage({
                 <span className={`text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap border ${
                   isGraded
                     ? passed
-                      ? "bg-emerald-900/40 text-emerald-400 border-emerald-800"
-                      : "bg-red-900/40 text-red-400 border-red-800"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-red-50 text-red-700 border-red-200"
                     : isPending
-                    ? "bg-amber-900/40 text-amber-400 border-amber-800"
-                    : "bg-ds-surface text-ds-muted border-ds-border"
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-slate-50 text-ds-muted border-ds-border"
                 }`}>
                   {isGraded
                     ? `${a.submission?.grade}/${a.maxPoints}`
@@ -213,10 +213,10 @@ export default function StudentAssignmentsPage({
               {isGraded && a.submission?.feedback && (
                 <div className={`mt-3 p-3 rounded-xl text-sm border ${
                   passed
-                    ? "bg-emerald-900/20 border-emerald-800"
-                    : "bg-red-900/20 border-red-800"
+                    ? "bg-emerald-50 border-emerald-200"
+                    : "bg-red-50 border-red-200"
                 }`}>
-                  <p className={`font-semibold ${passed ? "text-emerald-400" : "text-red-400"}`}>
+                  <p className={`font-semibold ${passed ? "text-emerald-600" : "text-red-700"}`}>
                     Grade: {a.submission.grade}/{a.maxPoints}
                     {passed ? " ✓ Passed" : " — Needs Improvement"}
                   </p>
@@ -228,7 +228,7 @@ export default function StudentAssignmentsPage({
               {!a.submission && (
                 <div className="mt-4">
                   {error[a.id] && (
-                    <p className="text-red-400 text-xs mb-2">{error[a.id]}</p>
+                    <p className="text-red-700 text-xs mb-2">{error[a.id]}</p>
                   )}
 
                   {a.submissionType === "FILE_UPLOAD" && (
@@ -260,7 +260,7 @@ export default function StudentAssignmentsPage({
                         rows={4}
                         value={textAnswers[a.id] ?? ""}
                         onChange={(e) => setTextAnswers((t) => ({ ...t, [a.id]: e.target.value }))}
-                        className="w-full border border-ds-border bg-ds-surface rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+                        className="w-full border border-ds-border bg-slate-50 rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
                         placeholder="Write your response here..."
                       />
                       <button
@@ -280,7 +280,7 @@ export default function StudentAssignmentsPage({
                         type="url"
                         value={linkUrls[a.id] ?? ""}
                         onChange={(e) => setLinkUrls((l) => ({ ...l, [a.id]: e.target.value }))}
-                        className="w-full border border-ds-border bg-ds-surface rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+                        className="w-full border border-ds-border bg-slate-50 rounded-xl px-3 py-2 text-sm text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
                         placeholder="https://docs.google.com/..."
                       />
                       <button
@@ -308,7 +308,7 @@ export default function StudentAssignmentsPage({
               )}
 
               {isPending && (
-                <p className="text-sm text-amber-400 mt-3 flex items-center gap-1">
+                <p className="text-sm text-amber-600 mt-3 flex items-center gap-1">
                   <span>⏳</span> Submitted — waiting for review
                 </p>
               )}

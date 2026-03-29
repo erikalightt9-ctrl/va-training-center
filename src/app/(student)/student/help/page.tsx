@@ -55,7 +55,7 @@ export default async function StudentHelpPage() {
                   <li key={article.id}>
                     <Link
                       href={`/student/help/${article.slug}`}
-                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                      className="text-sm text-blue-700 hover:text-blue-800 hover:underline"
                     >
                       {article.title}
                     </Link>

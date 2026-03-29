@@ -77,7 +77,7 @@ function StatCard({ href, icon: Icon, iconClass, bgClass, label, value, sub }: S
         <p className="text-2xl font-bold text-ds-text leading-none">{value}</p>
         {sub && <p className="text-xs text-ds-muted mt-1.5">{sub}</p>}
       </div>
-      <ArrowRight className="h-4 w-4 text-ds-muted group-hover:text-blue-400 transition-colors self-center shrink-0" />
+      <ArrowRight className="h-4 w-4 text-ds-muted group-hover:text-blue-700 transition-colors self-center shrink-0" />
     </Link>
   );
 }
@@ -127,8 +127,8 @@ export default async function TrainerDashboardPage() {
         <StatCard
           href="/trainer/students"
           icon={Users}
-          iconClass="text-blue-400"
-          bgClass="bg-blue-900/40"
+          iconClass="text-blue-700"
+          bgClass="bg-blue-50"
           label="My Students"
           value={stats.totalStudents}
           sub="Across all courses"
@@ -136,8 +136,8 @@ export default async function TrainerDashboardPage() {
         <StatCard
           href="/trainer/schedule"
           icon={CalendarClock}
-          iconClass="text-indigo-400"
-          bgClass="bg-indigo-900/40"
+          iconClass="text-indigo-700"
+          bgClass="bg-indigo-50"
           label="Active Schedules"
           value={stats.activeSchedules}
           sub="Currently running"
@@ -145,8 +145,8 @@ export default async function TrainerDashboardPage() {
         <StatCard
           href="/trainer/ratings"
           icon={Star}
-          iconClass="text-amber-400"
-          bgClass="bg-amber-900/40"
+          iconClass="text-amber-600"
+          bgClass="bg-amber-50"
           label="Avg Rating"
           value={
             stats.averageRating !== null
@@ -158,8 +158,8 @@ export default async function TrainerDashboardPage() {
         <StatCard
           href="/trainer/ratings"
           icon={MessageSquare}
-          iconClass="text-purple-400"
-          bgClass="bg-purple-900/40"
+          iconClass="text-blue-700"
+          bgClass="bg-blue-50"
           label="Total Ratings"
           value={stats.totalRatings}
           sub="Reviews received"
@@ -172,10 +172,10 @@ export default async function TrainerDashboardPage() {
         <div className="bg-ds-card rounded-2xl border border-ds-border shadow-sm p-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-semibold text-ds-text flex items-center gap-2">
-              <CalendarClock className="h-4 w-4 text-blue-400" />
+              <CalendarClock className="h-4 w-4 text-blue-700" />
               Upcoming Schedules
             </h2>
-            <Link href="/trainer/schedule" className="text-xs text-blue-400 hover:underline">
+            <Link href="/trainer/schedule" className="text-xs text-blue-700 hover:underline">
               View all →
             </Link>
           </div>
@@ -186,10 +186,10 @@ export default async function TrainerDashboardPage() {
                 <Link
                   key={schedule.id}
                   href="/trainer/schedule"
-                  className="flex items-center justify-between p-3 bg-ds-surface rounded-xl hover:bg-blue-900/20 hover:border-blue-800 border border-ds-border transition-all group"
+                  className="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-ds-card hover:border-ds-border border border-ds-border transition-all group"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-ds-text truncate group-hover:text-blue-400 transition-colors">
+                    <p className="text-sm font-medium text-ds-text truncate group-hover:text-blue-700 transition-colors">
                       {schedule.name}
                     </p>
                     <p className="text-xs text-ds-muted">
@@ -217,10 +217,10 @@ export default async function TrainerDashboardPage() {
         <div className="bg-ds-card rounded-2xl border border-ds-border shadow-sm p-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-semibold text-ds-text flex items-center gap-2">
-              <Star className="h-4 w-4 text-amber-400" />
+              <Star className="h-4 w-4 text-amber-600" />
               Recent Ratings
             </h2>
-            <Link href="/trainer/ratings" className="text-xs text-blue-400 hover:underline">
+            <Link href="/trainer/ratings" className="text-xs text-blue-700 hover:underline">
               View all →
             </Link>
           </div>
@@ -231,7 +231,7 @@ export default async function TrainerDashboardPage() {
                 <Link
                   key={rating.id}
                   href="/trainer/ratings"
-                  className="block p-3 bg-ds-surface rounded-xl hover:bg-amber-900/20 border border-ds-border hover:border-amber-800 transition-all"
+                  className="block p-3 bg-slate-50 rounded-xl hover:bg-ds-card border border-ds-border hover:border-ds-border transition-all"
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium text-ds-text">
@@ -239,7 +239,7 @@ export default async function TrainerDashboardPage() {
                     </span>
                     <span className="text-xs text-ds-muted">{timeAgo(rating.createdAt)}</span>
                   </div>
-                  <div className="text-amber-400 text-sm mb-1">
+                  <div className="text-amber-600 text-sm mb-1">
                     {renderStars(rating.rating)}
                   </div>
                   {rating.review && (
@@ -275,7 +275,7 @@ export default async function TrainerDashboardPage() {
         </Link>
         <Link
           href="/trainer/messages"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-ds-surface text-ds-text border border-ds-border rounded-xl text-sm font-semibold hover:bg-ds-card transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-ds-text border border-ds-border rounded-xl text-sm font-semibold hover:bg-ds-card transition-colors"
         >
           <MessageSquare className="h-4 w-4" />
           Messages

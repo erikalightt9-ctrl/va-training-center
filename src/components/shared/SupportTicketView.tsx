@@ -240,7 +240,7 @@ export function SupportTicketView() {
       <div className="space-y-4">
         <button
           onClick={() => setSelectedTicket(null)}
-          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+          className="flex items-center gap-1 text-sm text-blue-700 hover:text-blue-800"
         >
           <ChevronLeft className="h-4 w-4" /> Back to tickets
         </button>
@@ -254,7 +254,7 @@ export function SupportTicketView() {
               {sla && (
                 <span
                   className={`inline-flex items-center gap-1 text-xs mt-1.5 px-2 py-0.5 rounded-full ${
-                    sla.overdue ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                    sla.overdue ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
                   }`}
                 >
                   {sla.overdue && <AlertTriangle className="h-3 w-3" />}
@@ -284,7 +284,7 @@ export function SupportTicketView() {
               key={r.id}
               className={`rounded-xl p-4 ${
                 r.authorType === "ADMIN"
-                  ? "bg-blue-50 border border-blue-100 ml-4"
+                  ? "bg-blue-50 border border-blue-200 ml-4"
                   : "bg-white border border-gray-200 mr-4"
               }`}
             >
@@ -476,7 +476,7 @@ export function SupportTicketView() {
             <p className="text-gray-400 text-sm">No support tickets yet</p>
             <button
               onClick={() => setShowForm(true)}
-              className="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
+              className="mt-3 text-sm text-blue-700 hover:text-blue-800 underline"
             >
               Create your first ticket
             </button>
@@ -514,7 +514,7 @@ export function SupportTicketView() {
                     {sla && (
                       <span
                         className={`text-xs flex items-center gap-1 ${
-                          sla.overdue ? "text-red-600" : "text-amber-600"
+                          sla.overdue ? "text-red-700" : "text-amber-600"
                         }`}
                       >
                         {sla.overdue && <AlertTriangle className="h-3 w-3" />}

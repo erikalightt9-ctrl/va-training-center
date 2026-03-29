@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import {
   getAllCoursesByTenant,
+  getDeletedCoursesByTenant,
   createCourse,
 } from "@/lib/repositories/course.repository";
 import { requireAdmin } from "@/lib/auth-guards";
@@ -18,7 +19,10 @@ export async function GET(request: NextRequest) {
     const guard = requireAdmin(token);
     if (!guard.ok) return guard.response;
 
-    const courses = await getAllCoursesByTenant(guard.tenantId);
+    const deleted = request.nextUrl.searchParams.get("deleted") === "true";
+    const courses = deleted
+      ? await getDeletedCoursesByTenant(guard.tenantId)
+      : await getAllCoursesByTenant(guard.tenantId);
     return NextResponse.json({ success: true, data: courses, error: null });
   } catch (err) {
     console.error("[GET /api/admin/courses]", err);

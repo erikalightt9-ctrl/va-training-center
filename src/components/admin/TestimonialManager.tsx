@@ -89,7 +89,7 @@ function StarRating({
             <Star
               className={`h-4 w-4 ${
                 isFilled
-                  ? "fill-amber-400 text-amber-400"
+                  ? "fill-amber-400 text-amber-600"
                   : "fill-none text-gray-300"
               }`}
             />
@@ -431,7 +431,7 @@ export function TestimonialManager() {
                     type="checkbox"
                     checked={isPublished}
                     onChange={(e) => setIsPublished(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">Published</span>
                 </label>
@@ -463,7 +463,7 @@ export function TestimonialManager() {
       {/* Testimonials List */}
       {testimonials.length === 0 && !showForm ? (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <div className="bg-amber-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <MessageSquareQuote className="h-8 w-8 text-amber-600" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">

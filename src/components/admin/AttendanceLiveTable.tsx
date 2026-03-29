@@ -116,10 +116,10 @@ export function AttendanceLiveTable() {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="bg-ds-surface border border-ds-border text-ds-text rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
+            className="bg-slate-50 border border-gray-200 text-ds-text rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ds-primary/50"
           />
           {isToday && (
-            <span className="text-xs bg-emerald-900/40 text-emerald-400 border border-emerald-800 rounded-full px-2 py-0.5 font-medium">
+            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-0.5 font-medium">
               Live
             </span>
           )}
@@ -145,21 +145,21 @@ export function AttendanceLiveTable() {
             title="Present Now"
             value={data.presentNow}
             icon={Users}
-            colorClass="text-emerald-400 bg-emerald-900/40"
+            colorClass="text-emerald-600 bg-emerald-50"
             subtitle="Currently clocked in"
           />
           <AnalyticsCard
             title="Clocked Out"
             value={data.clockedOutToday}
             icon={LogOut}
-            colorClass="text-ds-muted bg-ds-surface"
+            colorClass="text-ds-muted bg-slate-50"
             subtitle="Completed for today"
           />
           <AnalyticsCard
             title="Total Records"
             value={data.totalToday}
             icon={CalendarDays}
-            colorClass="text-blue-400 bg-blue-900/40"
+            colorClass="text-blue-700 bg-blue-50"
             subtitle={isToday ? "Today" : date}
           />
         </div>
@@ -170,7 +170,7 @@ export function AttendanceLiveTable() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-ds-surface border-b border-ds-border">
+              <tr className="bg-slate-50 border-b border-ds-border">
                 <th className="text-left px-4 py-3 font-medium text-ds-muted">
                   Student
                 </th>
@@ -196,7 +196,7 @@ export function AttendanceLiveTable() {
                 data.records.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-b border-ds-border hover:bg-ds-surface/50"
+                    className="border-b border-ds-border hover:bg-slate-50/50"
                   >
                     <td className="px-4 py-3 font-medium text-ds-text">
                       {row.studentName}
@@ -215,12 +215,12 @@ export function AttendanceLiveTable() {
                     </td>
                     <td className="px-4 py-3">
                       {row.isActive ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-900/40 border border-emerald-800 rounded-full px-2.5 py-0.5">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                           Present
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ds-muted bg-ds-surface border border-ds-border rounded-full px-2.5 py-0.5">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-ds-muted bg-slate-50 border border-gray-200 rounded-full px-2.5 py-0.5">
                           Completed
                         </span>
                       )}

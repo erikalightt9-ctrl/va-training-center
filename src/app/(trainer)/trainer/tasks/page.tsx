@@ -21,42 +21,42 @@ const TASKS_CARDS: ReadonlyArray<Omit<DashboardCardProps, "currentRole">> = [
     label: "Grading Queue",
     description: "Review and grade pending student assignment submissions.",
     icon: ClipboardCheck,
-    colorClass: "bg-green-100 text-green-700",
+    colorClass: "bg-green-50 text-green-700",
   },
   {
     href: "/trainer/schedule",
     label: "My Schedule",
     description: "View and manage your upcoming training sessions.",
     icon: CalendarClock,
-    colorClass: "bg-orange-100 text-orange-700",
+    colorClass: "bg-orange-50 text-orange-700",
   },
   {
     href: "/trainer/materials",
     label: "Materials",
     description: "Upload and manage training materials for your students.",
     icon: FolderOpen,
-    colorClass: "bg-purple-100 text-purple-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/trainer/messages",
     label: "Messages",
     description: "Send and receive direct messages.",
     icon: Mail,
-    colorClass: "bg-blue-100 text-blue-700",
+    colorClass: "bg-blue-50 text-blue-700",
   },
   {
     href: "/trainer/support",
     label: "Support Tickets",
     description: "Submit and track trainer support requests.",
     icon: Ticket,
-    colorClass: "bg-red-100 text-red-700",
+    colorClass: "bg-red-50 text-red-700",
   },
   {
     href: "/trainer/notifications",
     label: "Notifications",
     description: "View platform notifications and announcements.",
     icon: Bell,
-    colorClass: "bg-yellow-100 text-yellow-700",
+    colorClass: "bg-yellow-100 text-yellow-600",
   },
 ];
 
@@ -73,7 +73,7 @@ export default async function TrainerTasksHubPage() {
       title="Tasks"
       description="Manage grading, schedule, materials, messages, and support."
       icon={ClipboardCheck}
-      iconColorClass="bg-blue-100 text-blue-700"
+      iconColorClass="bg-blue-50 text-blue-700"
       cards={TASKS_CARDS}
       currentRole="trainer"
     />

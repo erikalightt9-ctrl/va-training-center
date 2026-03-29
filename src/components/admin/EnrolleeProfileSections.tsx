@@ -477,7 +477,7 @@ export function EnrolleeProfileSections({ enrollee }: EnrolleeProfileSectionsPro
                   month: "short", day: "numeric", year: "numeric",
                 })}
               </p>
-              <p className="text-blue-600 text-xs">
+              <p className="text-blue-700 text-xs">
                 {enrollee.schedule.startTime} – {enrollee.schedule.endTime}
               </p>
             </div>

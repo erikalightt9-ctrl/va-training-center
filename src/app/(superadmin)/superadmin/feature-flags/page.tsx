@@ -28,10 +28,10 @@ const ALL_FLAGS: ReadonlyArray<{ key: string; label: string; description: string
 ];
 
 const PLAN_COLOR: Record<string, string> = {
-  TRIAL:        "bg-amber-900/40 text-amber-400",
-  STARTER:      "bg-blue-900/40 text-blue-400",
-  PROFESSIONAL: "bg-purple-900/40 text-purple-400",
-  ENTERPRISE:   "bg-emerald-900/40 text-emerald-400",
+  TRIAL:        "bg-amber-50 text-amber-700",
+  STARTER:      "bg-blue-50 text-blue-700",
+  PROFESSIONAL: "bg-blue-50 text-blue-700",
+  ENTERPRISE:   "bg-emerald-50 text-emerald-700",
 };
 
 /* ------------------------------------------------------------------ */
@@ -106,7 +106,7 @@ export default function FeatureFlagsPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-400 bg-red-900/20 border border-red-800 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
@@ -120,13 +120,13 @@ export default function FeatureFlagsPage() {
           placeholder="Search tenants…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm bg-ds-surface border border-ds-border text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/50 placeholder:text-ds-muted"
+          className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-gray-200 text-ds-text rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 placeholder:text-ds-muted"
         />
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-violet-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-sm text-ds-muted">
@@ -137,7 +137,7 @@ export default function FeatureFlagsPage() {
         <div className="overflow-x-auto rounded-xl border border-ds-border bg-ds-card shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ds-border bg-ds-surface">
+              <tr className="border-b border-ds-border bg-slate-50">
                 <th className="text-left px-5 py-3 font-semibold text-ds-text min-w-[200px]">Tenant</th>
                 {ALL_FLAGS.map((f) => (
                   <th key={f.key} className="text-center px-3 py-3 font-medium text-ds-muted min-w-[100px]">
@@ -149,11 +149,11 @@ export default function FeatureFlagsPage() {
             </thead>
             <tbody className="divide-y divide-ds-border">
               {filtered.map((tenant) => (
-                <tr key={tenant.tenantId} className="hover:bg-ds-surface transition-colors">
+                <tr key={tenant.tenantId} className="hover:bg-ds-card transition-colors">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-lg bg-violet-900/40 flex items-center justify-center shrink-0">
-                        <Building2 className="h-4 w-4 text-violet-400" />
+                      <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4 text-blue-700" />
                       </div>
                       <div className="min-w-0">
                         <p className="font-semibold text-ds-text truncate">{tenant.tenantName}</p>
@@ -161,7 +161,7 @@ export default function FeatureFlagsPage() {
                           {tenant.subdomain && (
                             <p className="text-xs text-ds-muted truncate">{tenant.subdomain}</p>
                           )}
-                          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${PLAN_COLOR[tenant.plan] ?? "bg-ds-surface text-ds-muted"}`}>
+                          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${PLAN_COLOR[tenant.plan] ?? "bg-slate-50 text-ds-muted"}`}>
                             {tenant.plan}
                           </span>
                         </div>
@@ -183,7 +183,7 @@ export default function FeatureFlagsPage() {
                           {isSaving ? (
                             <Loader2 className="h-5 w-5 animate-spin text-ds-muted" />
                           ) : enabled ? (
-                            <ToggleRight className="h-6 w-6 text-violet-400" />
+                            <ToggleRight className="h-6 w-6 text-blue-700" />
                           ) : (
                             <ToggleLeft className="h-6 w-6 text-ds-muted/40" />
                           )}
@@ -199,7 +199,7 @@ export default function FeatureFlagsPage() {
       )}
 
       {/* Legend */}
-      <div className="bg-amber-900/20 border border-amber-800 rounded-xl px-5 py-4 text-sm text-amber-400">
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 text-sm text-amber-600">
         <strong>Note:</strong> Feature flags override plan defaults. You can enable enterprise features
         for a Starter tenant (e.g., for trials) or restrict Pro features from a tenant for compliance reasons.
         Changes are instant — no restart required.

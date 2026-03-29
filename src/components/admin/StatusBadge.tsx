@@ -4,15 +4,15 @@ import type { EnrollmentStatus } from "@prisma/client";
 const STATUS_CONFIG: Record<EnrollmentStatus, { label: string; className: string }> = {
   PENDING: {
     label: "Pending",
-    className: "bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200",
+    className: "bg-amber-50 text-amber-800 hover:bg-amber-50 border-amber-200",
   },
   PAYMENT_SUBMITTED: {
     label: "Payment Submitted",
-    className: "bg-orange-100 text-orange-800 hover:bg-orange-100 border-orange-200",
+    className: "bg-orange-50 text-orange-800 hover:bg-orange-50 border-orange-200",
   },
   PAYMENT_VERIFIED: {
     label: "Payment Verified",
-    className: "bg-teal-100 text-teal-800 hover:bg-teal-100 border-teal-200",
+    className: "bg-teal-50 text-teal-800 hover:bg-teal-50 border-teal-200",
   },
   EMAIL_VERIFIED: {
     label: "Email Verified",
@@ -24,11 +24,11 @@ const STATUS_CONFIG: Record<EnrollmentStatus, { label: string; className: string
   },
   REJECTED: {
     label: "Rejected",
-    className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    className: "bg-red-50 text-red-800 hover:bg-red-50 border-red-200",
   },
   ENROLLED: {
     label: "Enrolled",
-    className: "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
+    className: "bg-blue-50 text-blue-800 hover:bg-blue-50 border-blue-200",
   },
 };
 

@@ -156,7 +156,7 @@ function ChangePasswordPanel() {
       <h2 className="font-semibold text-gray-800">Change Password</h2>
 
       {status === "success" && (
-        <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
           <CheckCircle2 className="h-4 w-4" />
           Password updated successfully.
         </div>
@@ -260,7 +260,7 @@ function NotificationSettingsPanel() {
       </div>
 
       {saved && (
-        <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
           <CheckCircle2 className="h-4 w-4" />
           Preferences saved.
         </div>

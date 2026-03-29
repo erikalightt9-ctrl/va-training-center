@@ -177,7 +177,7 @@ export function AIPremiumPage() {
     return (
       <div className="max-w-lg mx-auto">
         <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-8 text-center">
-          <div className="bg-amber-100 rounded-full p-3 w-14 h-14 mx-auto mb-4 flex items-center justify-center">
+          <div className="bg-amber-50 rounded-full p-3 w-14 h-14 mx-auto mb-4 flex items-center justify-center">
             <Crown className="h-7 w-7 text-amber-600" />
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">
@@ -280,7 +280,7 @@ export function AIPremiumPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-600 text-xs font-semibold px-3 py-1 rounded-full mb-3">
           <Sparkles className="h-3 w-3" />
           AI PREMIUM
         </div>
@@ -317,7 +317,7 @@ export function AIPremiumPage() {
                 </span>
               )}
               <PlanIcon
-                className={`h-5 w-5 mb-3 ${isSelected ? "text-blue-600" : "text-gray-400"}`}
+                className={`h-5 w-5 mb-3 ${isSelected ? "text-blue-700" : "text-gray-400"}`}
               />
               <p className="font-semibold text-gray-900">{plan.label}</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">
@@ -365,7 +365,7 @@ export function AIPremiumPage() {
           <h3 className="font-semibold text-gray-900">Payment Details</h3>
 
           {/* Payment instructions */}
-          <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800 space-y-2">
+          <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-300 space-y-2">
             <p className="font-medium">Send payment via:</p>
             <div className="space-y-1 text-xs">
               <p>
@@ -375,7 +375,7 @@ export function AIPremiumPage() {
                 <strong>Bank Transfer:</strong> BDO SA 001234567890
               </p>
             </div>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs text-blue-700">
               Amount:{" "}
               <strong>
                 ₱
