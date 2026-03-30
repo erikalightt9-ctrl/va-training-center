@@ -1,14 +1,29 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { User, Lock, Bell, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Lock, Bell, CheckCircle2, Eye, EyeOff, Pencil, X } from "lucide-react";
 
 type Tab = "profile" | "password" | "notifications";
 
 export function AdminProfileClient() {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [displayName, setDisplayName] = useState<string>("");
+
+  // Initialise displayName once session loads
+  useEffect(() => {
+    if (session?.user?.name && !displayName) {
+      setDisplayName(session.user.name);
+    }
+  }, [session?.user?.name, displayName]);
+
+  const initials = (displayName || session?.user?.name || "A")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   const tabs: { id: Tab; label: string; icon: typeof User }[] = [
     { id: "profile", label: "Profile Info", icon: User },
@@ -23,18 +38,15 @@ export function AdminProfileClient() {
         <p className="text-sm text-gray-500 mt-1">Manage your account information and preferences</p>
       </div>
 
-      {/* Avatar + name banner */}
+      {/* Avatar + name banner — updates live on save */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 mb-6 flex items-center gap-4">
         <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-bold">
-          {(session?.user?.name ?? "A")
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)}
+          {initials}
         </div>
         <div>
-          <p className="text-white font-semibold text-lg">{session?.user?.name ?? "Admin"}</p>
+          <p className="text-white font-semibold text-lg">
+            {displayName || session?.user?.name || "Admin"}
+          </p>
           <p className="text-blue-200 text-sm">{session?.user?.email ?? ""}</p>
           <span className="mt-1 inline-block text-xs bg-white/20 text-white px-2 py-0.5 rounded-full">
             Administrator
@@ -61,7 +73,9 @@ export function AdminProfileClient() {
       </div>
 
       {/* Tab panels */}
-      {activeTab === "profile" && <ProfileInfoPanel session={session} />}
+      {activeTab === "profile" && (
+        <ProfileInfoPanel session={session} onNameUpdated={setDisplayName} />
+      )}
       {activeTab === "password" && <ChangePasswordPanel />}
       {activeTab === "notifications" && <NotificationSettingsPanel />}
     </div>
@@ -69,37 +83,163 @@ export function AdminProfileClient() {
 }
 
 // ---------------------------------------------------------------------------
-// Panel: Profile Info
+// Panel: Profile Info (editable)
 // ---------------------------------------------------------------------------
 
-function ProfileInfoPanel({ session }: { session: ReturnType<typeof useSession>["data"] }) {
+function ProfileInfoPanel({
+  session,
+  onNameUpdated,
+}: {
+  session: ReturnType<typeof useSession>["data"];
+  onNameUpdated: (name: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(session?.user?.name ?? "");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // Sync name if session loads after mount
+  useEffect(() => {
+    if (!editing) setName(session?.user?.name ?? "");
+  }, [session?.user?.name, editing]);
+
+  function handleCancel() {
+    setName(session?.user?.name ?? "");
+    setEditing(false);
+    setStatus("idle");
+    setErrorMsg("");
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setErrorMsg("Full name cannot be empty.");
+      setStatus("error");
+      return;
+    }
+    setStatus("loading");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/admin/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Failed to update profile.");
+      setStatus("success");
+      setEditing(false);
+      onNameUpdated(json.data.name);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "An error occurred.");
+      setStatus("error");
+    } finally {
+      if (status !== "error") setStatus("idle");
+    }
+  }
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-      <h2 className="font-semibold text-gray-800">Account Information</h2>
-      <div className="grid gap-4">
-        <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Full Name</label>
-          <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
-            {session?.user?.name ?? "—"}
-          </div>
+    <form onSubmit={handleSave} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold text-gray-800">Account Information</h2>
+        {!editing && (
+          <button
+            type="button"
+            onClick={() => { setEditing(true); setStatus("idle"); setErrorMsg(""); }}
+            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit
+          </button>
+        )}
+      </div>
+
+      {/* Success banner */}
+      {status === "success" && (
+        <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+          <CheckCircle2 className="h-4 w-4" />
+          Profile updated successfully.
         </div>
+      )}
+
+      {/* Error banner */}
+      {status === "error" && (
+        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+          {errorMsg}
+        </div>
+      )}
+
+      <div className="grid gap-4">
+        {/* Full Name — editable */}
+        <div>
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            Full Name
+            {editing && <span className="text-blue-500 ml-1">*</span>}
+          </label>
+          {editing ? (
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+              maxLength={100}
+              className="w-full rounded-lg border border-blue-400 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              placeholder="Enter your full name"
+            />
+          ) : (
+            <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
+              {session?.user?.name ?? "—"}
+            </div>
+          )}
+        </div>
+
+        {/* Email Address — read-only */}
         <div>
           <label className="block text-xs font-medium text-gray-500 mb-1">Email Address</label>
           <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
             {session?.user?.email ?? "—"}
           </div>
+          {editing && (
+            <p className="text-xs text-gray-400 mt-1">Email address cannot be changed here.</p>
+          )}
         </div>
+
+        {/* Role — read-only */}
         <div>
           <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
           <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
             Administrator
           </div>
+          {editing && (
+            <p className="text-xs text-gray-400 mt-1">Role is assigned by the system and cannot be changed.</p>
+          )}
         </div>
       </div>
-      <p className="text-xs text-gray-400">
-        Contact your system administrator to update your name or email.
-      </p>
-    </div>
+
+      {/* Action buttons (edit mode only) */}
+      {editing && (
+        <div className="flex gap-3 pt-1">
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="flex-1 bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {status === "loading" ? "Saving…" : "Save Changes"}
+          </button>
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={status === "loading"}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+            Cancel
+          </button>
+        </div>
+      )}
+    </form>
   );
 }
 

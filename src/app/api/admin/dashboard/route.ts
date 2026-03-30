@@ -25,6 +25,9 @@ export async function GET(request: NextRequest) {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
+    // Scope all counts to the requesting admin's tenant
+    const tid = guard.tenantId;
+
     const [
       totalStudents,
       totalTrainers,
@@ -34,13 +37,13 @@ export async function GET(request: NextRequest) {
       enrollmentPipeline,
       revenueSnapshot,
     ] = await Promise.all([
-      prisma.student.count({ where: { accessGranted: true } }),
-      prisma.trainer.count({ where: { isActive: true } }),
-      prisma.course.count({ where: { isActive: true } }),
+      prisma.student.count({ where: { accessGranted: true, organizationId: tid } }),
+      prisma.tenantTrainer.count({ where: { tenantId: tid, isActive: true } }),
+      prisma.course.count({ where: { isActive: true, tenantId: tid } }),
       prisma.directMessage.count({ where: { createdAt: { gte: todayStart } } }),
-      getRecentActivity(10),
-      getEnrollmentPipeline(),
-      getRevenueSnapshot(),
+      getRecentActivity(10, tid),
+      getEnrollmentPipeline(tid),
+      getRevenueSnapshot(tid),
     ]);
 
     return NextResponse.json({

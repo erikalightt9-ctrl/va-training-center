@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { GraduationCap, Users, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { GraduationCap, Users, ShieldCheck, Briefcase, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 
 interface TenantBranding {
   id: string;
@@ -12,15 +12,54 @@ interface TenantBranding {
   logoUrl: string | null;
   siteName: string | null;
   primaryColor: string | null;
+  secondaryColor: string | null;
   tagline: string | null;
+  faviconUrl: string | null;
 }
 
-type LoginRole = "student" | "corporate";
+type LoginRole = "student" | "trainer" | "corporate" | "admin";
+
+const ROLE_CONFIG: Record<LoginRole, { label: string; description: string; icon: typeof GraduationCap; provider: string; callbackUrl: string }> = {
+  student: {
+    label: "Student",
+    description: "Access your courses, lessons, and assignments",
+    icon: GraduationCap,
+    provider: "student",
+    callbackUrl: "/student/dashboard",
+  },
+  trainer: {
+    label: "Trainer",
+    description: "Manage your classes, students, and materials",
+    icon: Briefcase,
+    provider: "trainer",
+    callbackUrl: "/trainer",
+  },
+  corporate: {
+    label: "Corporate",
+    description: "Manage your team's training and progress",
+    icon: Users,
+    provider: "corporate",
+    callbackUrl: "/corporate/dashboard",
+  },
+  admin: {
+    label: "Admin",
+    description: "Manage your training center",
+    icon: ShieldCheck,
+    provider: "corporate",
+    callbackUrl: "/admin",
+  },
+};
+
+const ERROR_MESSAGES: Record<string, string> = {
+  tenant_mismatch: "Your account is registered with a different organization. Please use the correct portal.",
+  CredentialsSignin: "Invalid email or password. Please try again.",
+};
 
 function TenantLoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const slug = searchParams.get("slug") ?? "";
+  const urlError = searchParams.get("error") ?? "";
 
   const [tenant, setTenant] = useState<TenantBranding | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +70,7 @@ function TenantLoginContent() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(ERROR_MESSAGES[urlError] ?? "");
 
   useEffect(() => {
     if (!slug) { setNotFound(true); setLoading(false); return; }
@@ -50,30 +89,37 @@ function TenantLoginContent() {
     setError("");
     setSubmitting(true);
 
-    const provider = role === "student" ? "student" : "corporate";
-    const callbackUrl = role === "student" ? "/student/dashboard" : "/corporate/dashboard";
+    const config = ROLE_CONFIG[role];
 
-    const result = await signIn(provider, {
+    const result = await signIn(config.provider, {
       email: email.trim().toLowerCase(),
       password,
+      subdomain: slug,           // ← tenant enforcement in auth.ts
       redirect: false,
     });
 
     setSubmitting(false);
 
     if (result?.error) {
-      setError("Invalid email or password. Please try again.");
+      setError(
+        result.error === "CredentialsSignin"
+          ? "Invalid email or password. Please try again."
+          : result.error,
+      );
     } else if (result?.ok) {
-      router.push(callbackUrl);
+      // Relative redirect stays on the current subdomain
+      router.push(config.callbackUrl);
+      router.refresh();
     }
   }
 
   const primaryColor = tenant?.primaryColor ?? "#1E3A8A";
+  const secondaryColor = tenant?.secondaryColor ?? "#1E40AF";
 
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: primaryColor }} />
       </div>
     );
   }
@@ -86,86 +132,89 @@ function TenantLoginContent() {
             <AlertCircle className="h-8 w-8 text-red-500" />
           </div>
           <h1 className="text-xl font-bold text-gray-900 mb-2">Organization Not Found</h1>
-          <p className="text-gray-500 text-sm">The training center you&apos;re looking for doesn&apos;t exist or is inactive.</p>
+          <p className="text-gray-500 text-sm">
+            The training center you&apos;re looking for doesn&apos;t exist or is inactive.
+          </p>
         </div>
       </div>
     );
   }
 
+  const displayName = tenant?.siteName ?? tenant?.name ?? "Training Center";
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12"
+      style={{ background: `linear-gradient(135deg, ${primaryColor}18 0%, ${secondaryColor}10 100%)` }}
+    >
       {/* Branding Header */}
       <div className="text-center mb-8">
         {tenant?.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={tenant.logoUrl} alt={tenant.name} className="h-16 w-auto mx-auto mb-4 object-contain" />
+          <img
+            src={tenant.logoUrl}
+            alt={displayName}
+            className="h-16 w-auto mx-auto mb-4 object-contain"
+          />
         ) : (
           <div
-            className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
             style={{ backgroundColor: primaryColor }}
           >
             <GraduationCap className="h-8 w-8 text-white" />
           </div>
         )}
-        <h1 className="text-2xl font-bold text-gray-900">{tenant?.siteName ?? tenant?.name}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{displayName}</h1>
         {tenant?.tagline && (
-          <p className="text-gray-500 text-sm mt-1">{tenant.tagline}</p>
+          <p className="text-gray-500 text-sm mt-1 max-w-xs mx-auto">{tenant.tagline}</p>
         )}
       </div>
 
       {/* Login Card */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
         {/* Role Tabs */}
         <div className="flex border-b border-slate-200">
-          <button
-            onClick={() => { setRole("student"); setError(""); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-medium transition-colors ${
-              role === "student"
-                ? "text-white border-b-2"
-                : "text-slate-500 hover:text-slate-700 bg-slate-50"
-            }`}
-            style={role === "student" ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
-          >
-            <GraduationCap className="h-4 w-4" />
-            Student
-          </button>
-          <button
-            onClick={() => { setRole("corporate"); setError(""); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-medium transition-colors ${
-              role === "corporate"
-                ? "text-white border-b-2"
-                : "text-slate-500 hover:text-slate-700 bg-slate-50"
-            }`}
-            style={role === "corporate" ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
-          >
-            <Users className="h-4 w-4" />
-            Corporate
-          </button>
+          {(Object.keys(ROLE_CONFIG) as LoginRole[]).map((r) => {
+            const { label, icon: Icon } = ROLE_CONFIG[r];
+            const isActive = role === r;
+            return (
+              <button
+                key={r}
+                onClick={() => { setRole(r); setError(""); }}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-3.5 text-sm font-medium transition-colors ${
+                  isActive ? "text-white" : "text-slate-500 hover:text-slate-700 bg-slate-50"
+                }`}
+                style={isActive ? { backgroundColor: primaryColor } : {}}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Form */}
         <div className="p-6">
           <div className="mb-5">
             <h2 className="text-lg font-semibold text-gray-900">
-              {role === "student" ? "Student Login" : "Corporate Login"}
+              {ROLE_CONFIG[role].label} Login
             </h2>
             <p className="text-sm text-gray-500 mt-0.5">
-              {role === "student"
-                ? "Access your courses, lessons, and assignments"
-                : "Manage your team's training and progress"}
+              {ROLE_CONFIG[role].description}
             </p>
           </div>
 
           {error && (
-            <div className="mb-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+            <div className="mb-4 flex items-start gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Email Address
+              </label>
               <input
                 type="email"
                 value={email}
@@ -179,7 +228,9 @@ function TenantLoginContent() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -203,7 +254,7 @@ function TenantLoginContent() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 transition-opacity disabled:opacity-70"
+              className="w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 transition-opacity disabled:opacity-70 shadow-sm hover:opacity-90"
               style={{ backgroundColor: primaryColor }}
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
@@ -213,10 +264,18 @@ function TenantLoginContent() {
         </div>
       </div>
 
-      {/* Footer */}
-      <p className="mt-6 text-xs text-slate-400">
-        Powered by <span className="font-semibold text-slate-500">HUMI</span>
-      </p>
+      {/* Tenant slug badge + powered by */}
+      <div className="mt-6 flex flex-col items-center gap-1">
+        <span
+          className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-mono font-medium border"
+          style={{ color: primaryColor, borderColor: `${primaryColor}40`, backgroundColor: `${primaryColor}10` }}
+        >
+          {slug}.portal
+        </span>
+        <p className="text-xs text-slate-400">
+          Powered by <span className="font-semibold text-slate-500">HUMI</span>
+        </p>
+      </div>
     </div>
   );
 }

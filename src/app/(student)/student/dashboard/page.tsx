@@ -62,6 +62,17 @@ export default async function StudentDashboardPage() {
 
   const courseId = student.enrollment.courseId;
 
+  // Fetch tenant branding if student belongs to an organization
+  const org = student.organizationId
+    ? await prisma.organization.findUnique({
+        where: { id: student.organizationId },
+        select: { name: true, siteName: true, logoUrl: true, primaryColor: true },
+      })
+    : null;
+
+  const orgDisplayName = org?.siteName ?? org?.name ?? null;
+  const orgPrimaryColor = org?.primaryColor ?? "#2563eb";
+
   const [dashboard, badges] = await Promise.all([
     getStudentDashboardData(user.id, courseId),
     getStudentBadges(user.id),
@@ -73,12 +84,31 @@ export default async function StudentDashboardPage() {
       <ClockInWidget />
 
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
+      <div
+        className="rounded-xl p-6 text-white"
+        style={{
+          background: `linear-gradient(135deg, ${orgPrimaryColor} 0%, ${orgPrimaryColor}cc 100%)`,
+        }}
+      >
+        {/* Org branding row */}
+        {orgDisplayName && (
+          <div className="flex items-center gap-2 mb-3">
+            {org?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={org.logoUrl}
+                alt={orgDisplayName}
+                className="h-6 w-auto object-contain brightness-0 invert"
+              />
+            ) : null}
+            <span className="text-xs font-medium text-white/75">{orgDisplayName}</span>
+          </div>
+        )}
         <h1 className="text-2xl font-bold">Welcome back, {student.name}!</h1>
-        <p className="text-blue-100 mt-1">
+        <p className="text-white/85 mt-1">
           {student.enrollment.course.title}
         </p>
-        <p className="text-blue-200 text-xs mt-2">
+        <p className="text-white/60 text-xs mt-2">
           Enrolled {student.createdAt.toLocaleDateString("en-PH", {
             year: "numeric",
             month: "long",

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import {
   Users,
@@ -107,12 +109,32 @@ function ModuleCard({
 // ---------------------------------------------------------------------------
 
 export default async function AdminDashboardPage() {
+  // Resolve the current admin's tenantId from session (supports both superadmin and tenant admin)
+  const session = await getServerSession(authOptions);
+  const sessionUser = session?.user as (typeof session & { user: { tenantId?: string | null; isSuperAdmin?: boolean } })["user"] | undefined;
+  const tenantId: string | null =
+    sessionUser?.isSuperAdmin
+      ? (process.env.DEFAULT_TENANT_ID ?? null)
+      : (sessionUser?.tenantId ?? process.env.DEFAULT_TENANT_ID ?? null);
+
+  // Fetch tenant branding for the dashboard header
+  const { prisma } = await import("@/lib/prisma");
+  const org = tenantId
+    ? await prisma.organization.findUnique({
+        where: { id: tenantId },
+        select: { name: true, siteName: true, logoUrl: true, primaryColor: true },
+      })
+    : null;
+
+  const orgDisplayName = org?.siteName ?? org?.name ?? null;
+  const orgPrimaryColor = org?.primaryColor ?? null;
+
   const [stats, revenue, pipeline, recentActivity, messageCount] =
     await Promise.all([
-      getAnalyticsStats(process.env.DEFAULT_TENANT_ID ?? null),
-      getRevenueSnapshot(),
-      getEnrollmentPipeline(),
-      getRecentActivity(8),
+      getAnalyticsStats(tenantId),
+      getRevenueSnapshot(tenantId),
+      getEnrollmentPipeline(tenantId),
+      getRecentActivity(8, tenantId),
       getContactMessageCount(),
     ]);
 
@@ -120,6 +142,31 @@ export default async function AdminDashboardPage() {
 
   return (
     <>
+      {/* Tenant branding banner (shown for tenant admins) */}
+      {orgDisplayName && (
+        <div
+          className="rounded-xl px-5 py-3.5 mb-6 flex items-center gap-3 text-white"
+          style={{
+            background: orgPrimaryColor
+              ? `linear-gradient(135deg, ${orgPrimaryColor} 0%, ${orgPrimaryColor}cc 100%)`
+              : "linear-gradient(135deg, #1e3a8a 0%, #1e40afcc 100%)",
+          }}
+        >
+          {org?.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={org.logoUrl}
+              alt={orgDisplayName}
+              className="h-7 w-auto object-contain brightness-0 invert shrink-0"
+            />
+          ) : null}
+          <div>
+            <p className="font-semibold text-sm leading-none">{orgDisplayName}</p>
+            <p className="text-white/70 text-xs mt-0.5">Tenant Admin Dashboard</p>
+          </div>
+        </div>
+      )}
+
       {/* Page header */}
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-ds-text">Dashboard</h1>

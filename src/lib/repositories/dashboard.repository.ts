@@ -37,21 +37,26 @@ export interface PresentStudent {
 // Queries
 // ---------------------------------------------------------------------------
 
-export async function getRevenueSnapshot(): Promise<RevenueSnapshot> {
+export async function getRevenueSnapshot(tenantId?: string | null): Promise<RevenueSnapshot> {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+  // Scope by tenant via enrollment → organizationId when tenantId is provided
+  const tenantEnrollmentFilter = tenantId
+    ? { enrollment: { organizationId: tenantId } }
+    : {};
+
   const [paidPayments, pendingCount, recentPaid] = await Promise.all([
     prisma.payment.aggregate({
-      where: { status: "PAID" },
+      where: { status: "PAID", ...tenantEnrollmentFilter },
       _sum: { amount: true },
       _count: true,
     }),
     prisma.payment.count({
-      where: { status: "PENDING_PAYMENT" },
+      where: { status: "PENDING_PAYMENT", ...tenantEnrollmentFilter },
     }),
     prisma.payment.aggregate({
-      where: { status: "PAID", paidAt: { gte: thirtyDaysAgo } },
+      where: { status: "PAID", paidAt: { gte: thirtyDaysAgo }, ...tenantEnrollmentFilter },
       _sum: { amount: true },
     }),
   ]);
@@ -64,28 +69,34 @@ export async function getRevenueSnapshot(): Promise<RevenueSnapshot> {
   };
 }
 
-export async function getEnrollmentPipeline(): Promise<EnrollmentPipelineCounts> {
+export async function getEnrollmentPipeline(tenantId?: string | null): Promise<EnrollmentPipelineCounts> {
+  const tenantFilter = tenantId ? { organizationId: tenantId } : {};
+
   const [pending, paymentSubmitted, paymentVerified, enrolled] =
     await Promise.all([
-      prisma.enrollment.count({ where: { status: "PENDING" } }),
-      prisma.enrollment.count({ where: { status: "PAYMENT_SUBMITTED" } }),
-      prisma.enrollment.count({ where: { status: "PAYMENT_VERIFIED" } }),
-      prisma.enrollment.count({ where: { status: "ENROLLED" } }),
+      prisma.enrollment.count({ where: { status: "PENDING", ...tenantFilter } }),
+      prisma.enrollment.count({ where: { status: "PAYMENT_SUBMITTED", ...tenantFilter } }),
+      prisma.enrollment.count({ where: { status: "PAYMENT_VERIFIED", ...tenantFilter } }),
+      prisma.enrollment.count({ where: { status: "ENROLLED", ...tenantFilter } }),
     ]);
 
   return { pending, paymentSubmitted, paymentVerified, enrolled };
 }
 
 export async function getRecentActivity(
-  limit = 10
+  limit = 10,
+  tenantId?: string | null,
 ): Promise<ReadonlyArray<RecentActivity>> {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+  const enrollmentTenantFilter = tenantId ? { organizationId: tenantId } : {};
+  const courseTenantFilter = tenantId ? { tenantId } : {};
+
   const [recentEnrollments, recentPayments, recentCertificates] =
     await Promise.all([
       prisma.enrollment.findMany({
-        where: { createdAt: { gte: sevenDaysAgo } },
+        where: { createdAt: { gte: sevenDaysAgo }, ...enrollmentTenantFilter },
         select: {
           id: true,
           fullName: true,
@@ -96,7 +107,10 @@ export async function getRecentActivity(
         take: limit,
       }),
       prisma.payment.findMany({
-        where: { createdAt: { gte: sevenDaysAgo } },
+        where: {
+          createdAt: { gte: sevenDaysAgo },
+          ...(tenantId ? { enrollment: { organizationId: tenantId } } : {}),
+        },
         select: {
           id: true,
           amount: true,
@@ -108,7 +122,10 @@ export async function getRecentActivity(
         take: limit,
       }),
       prisma.certificate.findMany({
-        where: { issuedAt: { gte: sevenDaysAgo } },
+        where: {
+          issuedAt: { gte: sevenDaysAgo },
+          ...(tenantId ? { course: { tenantId } } : {}),
+        },
         select: {
           id: true,
           issuedAt: true,

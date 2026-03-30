@@ -1259,6 +1259,7 @@ model Organization {
   featureFlags   TenantFeatureFlag[]
   pages          TenantPage[]
   theme          TenantTheme?
+  invites        TenantInvite[]
 
   @@map("organizations")
 }
@@ -1979,4 +1980,43 @@ model OrganizationFile {
 
   @@index([organizationId, createdAt])
   @@map("organization_files")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Training Tiers                                                     */
+/* ------------------------------------------------------------------ */
+
+model TrainingTier {
+  id          String   @id @default(cuid())
+  name        String
+  price       Decimal  @db.Decimal(10, 2)
+  description String?  @db.Text
+  features    String[]
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("training_tiers")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Tenant Invites                                                     */
+/* ------------------------------------------------------------------ */
+
+model TenantInvite {
+  id           String       @id @default(cuid())
+  code         String       @unique @default(cuid())
+  tenantId     String
+  email        String?      // optional: lock invite to specific email
+  role         String       @default("student") // student | corporate | trainer
+  expiresAt    DateTime
+  usedAt       DateTime?
+  usedByEmail  String?
+  createdAt    DateTime     @default(now())
+  tenant       Organization @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([code])
+  @@map("tenant_invites")
 }

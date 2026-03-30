@@ -52,7 +52,8 @@ export type EnrollmentResult =
 
 export async function processEnrollment(
   data: EnrollmentFormData,
-  ipAddress: string
+  ipAddress: string,
+  tenantId?: string | null,
 ): Promise<EnrollmentResult> {
   // Record first, then check — eliminates TOCTOU race between check and record.
   // Concurrent requests from the same IP each insert their own row before counting,
@@ -136,7 +137,7 @@ export async function processEnrollment(
     }
   }
 
-  // Create enrollment
+  // Create enrollment — include tenantId (organizationId) if resolved
   const enrollment = await createEnrollment({
     ...sanitized,
     ipAddress,
@@ -146,6 +147,7 @@ export async function processEnrollment(
     trainerTier,
     trainerUpgradeFee,
     scheduleId: resolvedScheduleId,
+    organizationId: tenantId ?? undefined,
   });
 
   // Fetch course title for the confirmation email

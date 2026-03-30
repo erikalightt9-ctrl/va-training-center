@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enrollmentSchema } from "@/lib/validations/enrollment.schema";
 import { processEnrollment } from "@/lib/services/enrollment.service";
+import { prisma } from "@/lib/prisma";
 
 function getClientIp(request: NextRequest): string {
   return (
@@ -14,8 +15,23 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Resolve tenant from subdomain header (set by middleware)
+    const tenantSubdomain = request.headers.get("x-tenant-subdomain");
+    let resolvedTenantId: string | null = null;
+    if (tenantSubdomain) {
+      try {
+        const org = await prisma.organization.findUnique({
+          where: { subdomain: tenantSubdomain, isActive: true },
+          select: { id: true },
+        });
+        resolvedTenantId = org?.id ?? null;
+      } catch {
+        // Non-fatal: proceed without tenant context
+      }
+    }
+
     // Validate
-    const result = enrollmentSchema.safeParse(body);
+    const result = enrollmentSchema.safeParse({ ...body, tenantId: resolvedTenantId });
     if (!result.success) {
       return NextResponse.json(
         {
@@ -29,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = getClientIp(request);
-    const outcome = await processEnrollment(result.data, ip);
+    const outcome = await processEnrollment(result.data, ip, resolvedTenantId);
 
     if (!outcome.success) {
       const statusMap = {

@@ -64,6 +64,8 @@ export const enrollmentSchema = z.object({
   courseTier: z.enum(["BASIC", "PROFESSIONAL", "ADVANCED"]),
   trainerId: z.string().min(1).optional().nullable(),
   scheduleId: z.string().min(1).optional().nullable(),
+  // Tenant context — set server-side from x-tenant-subdomain header
+  tenantId: z.string().cuid().optional().nullable(),
 });
 
 export type EnrollmentFormData = z.infer<typeof enrollmentSchema>;

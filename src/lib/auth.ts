@@ -66,6 +66,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        subdomain: { label: "Subdomain", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -141,12 +142,22 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        // Seat enforcement: verify the organization is still active and within plan limits
+        // Fetch org once for: subdomain (JWT), tenant check, and seat enforcement
+        let orgSubdomain: string | null = null;
         if (student.organizationId) {
           const org = await prisma.organization.findUnique({
             where: { id: student.organizationId },
-            select: { isActive: true, maxSeats: true, planExpiresAt: true },
+            select: { id: true, isActive: true, maxSeats: true, planExpiresAt: true, subdomain: true },
           });
+
+          orgSubdomain = org?.subdomain ?? null;
+
+          // Tenant membership enforcement: subdomain must match org
+          if (credentials.subdomain && org && org.subdomain !== credentials.subdomain) {
+            throw new Error(
+              "This account does not belong to this organization. Please use the correct login portal.",
+            );
+          }
 
           if (!org?.isActive) {
             throw new Error(
@@ -160,15 +171,12 @@ export const authOptions: NextAuthOptions = {
             );
           }
 
-          // If org has exceeded its seat limit (e.g. after a plan downgrade),
-          // count active students. Students are ordered by creation date — those
-          // added first retain access; latecomers are blocked.
+          // Seat limit: students ordered by creation date retain access first
           const activeStudentCount = await prisma.student.count({
             where: { organizationId: student.organizationId, accessGranted: true },
           });
 
           if (activeStudentCount > org.maxSeats) {
-            // Check if this student is within the allowed seat window
             const rank = await prisma.student.count({
               where: {
                 organizationId: student.organizationId,
@@ -182,6 +190,11 @@ export const authOptions: NextAuthOptions = {
               );
             }
           }
+        } else if (credentials.subdomain) {
+          // Student has no org but is trying to log in on a tenant subdomain — block it
+          throw new Error(
+            "This account is not associated with any organization. Please use the main portal.",
+          );
         }
 
         return {
@@ -192,6 +205,7 @@ export const authOptions: NextAuthOptions = {
           mustChangePassword: student.mustChangePassword,
           accessExpiry: student.accessExpiry?.toISOString() ?? null,
           tenantId: student.organizationId ?? null,
+          orgSubdomain,
           isSuperAdmin: false,
         };
       },
@@ -204,6 +218,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        subdomain: { label: "Subdomain", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -267,12 +282,40 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        // Resolve trainer's primary tenant via TenantTrainer
+        // Resolve trainer's primary tenant via TenantTrainer and enforce subdomain
         const tenantTrainer = await prisma.tenantTrainer.findFirst({
           where: { trainerId: trainer.id, isActive: true },
           select: { tenantId: true },
           orderBy: { assignedAt: "asc" },
         });
+
+        let orgSubdomain: string | null = null;
+
+        if (tenantTrainer?.tenantId) {
+          const org = await prisma.organization.findUnique({
+            where: { id: tenantTrainer.tenantId },
+            select: { subdomain: true, isActive: true },
+          });
+          orgSubdomain = org?.subdomain ?? null;
+
+          // Tenant membership enforcement: subdomain must match trainer's org
+          if (credentials.subdomain && org && org.subdomain !== credentials.subdomain) {
+            throw new Error(
+              "This account does not belong to this organization. Please use the correct login portal.",
+            );
+          }
+
+          if (org && !org.isActive) {
+            throw new Error(
+              "Your organization account has been suspended. Please contact your administrator.",
+            );
+          }
+        } else if (credentials.subdomain) {
+          // Trainer has no active tenant assignment but is logging in on a subdomain portal
+          throw new Error(
+            "This account is not assigned to any organization. Please use the main portal.",
+          );
+        }
 
         return {
           id: trainer.id,
@@ -281,6 +324,7 @@ export const authOptions: NextAuthOptions = {
           role: "trainer" as const,
           mustChangePassword: trainer.mustChangePassword,
           tenantId: tenantTrainer?.tenantId ?? null,
+          orgSubdomain,
           isSuperAdmin: false,
         };
       },
@@ -293,6 +337,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        subdomain: { label: "Subdomain", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -328,6 +373,20 @@ export const authOptions: NextAuthOptions = {
           );
         }
 
+        // Tenant membership enforcement: if logging in via a tenant subdomain,
+        // verify this manager belongs to that tenant.
+        if (credentials.subdomain) {
+          const org = await prisma.organization.findUnique({
+            where: { subdomain: credentials.subdomain, isActive: true },
+            select: { id: true },
+          });
+          if (org && manager.organizationId !== org.id) {
+            throw new Error(
+              "This account does not belong to this organization. Please use the correct login portal.",
+            );
+          }
+        }
+
         return {
           id: manager.id,
           email: manager.email,
@@ -335,6 +394,8 @@ export const authOptions: NextAuthOptions = {
           role: manager.isTenantAdmin ? ("tenant_admin" as const) : ("corporate" as const),
           organizationId: manager.organizationId,
           tenantId: manager.organizationId,
+          // Store org subdomain in JWT for Edge middleware cross-tenant guard (no DB needed)
+          orgSubdomain: manager.organization.subdomain ?? null,
           isSuperAdmin: false,
           isTenantAdmin: manager.isTenantAdmin,
           mustChangePassword: manager.mustChangePassword,
@@ -369,6 +430,9 @@ export const authOptions: NextAuthOptions = {
           (user as typeof user & { isSuperAdmin?: boolean }).isSuperAdmin ?? false;
         token.isTenantAdmin =
           (user as typeof user & { isTenantAdmin?: boolean }).isTenantAdmin ?? false;
+        // orgSubdomain stored for Edge middleware cross-tenant guard (avoids DB in middleware)
+        token.orgSubdomain =
+          (user as typeof user & { orgSubdomain?: string | null }).orgSubdomain ?? null;
       }
       return token;
     },
@@ -394,8 +458,19 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
+      // Relative paths stay on the current origin (preserves subdomain in browser)
+      if (url.startsWith("/")) return url;
+      // Same-origin absolute URLs are allowed
+      try {
+        const targetOrigin = new URL(url).origin;
+        const baseOrigin = new URL(baseUrl).origin;
+        if (targetOrigin === baseOrigin) return url;
+        // Allow subdomain redirects within the root domain
+        const rootDomain = process.env.ROOT_DOMAIN ?? "";
+        if (rootDomain && new URL(url).hostname.endsWith(rootDomain.split(":")[0])) return url;
+      } catch {
+        // Malformed URL — fall through to baseUrl
+      }
       return baseUrl;
     },
   },

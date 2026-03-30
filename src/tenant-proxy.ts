@@ -1,16 +1,27 @@
+/**
+ * tenant-proxy.ts — Edge-compatible tenant routing middleware.
+ *
+ * NO Prisma / database calls here. This runs in Next.js Edge Runtime
+ * where the Prisma client is too large (exceeds Vercel 1 MB limit).
+ *
+ * Tenant resolution strategy:
+ *  1. Subdomain extracted via string ops (no DB)
+ *  2. x-tenant-subdomain header set for downstream server components / API routes
+ *  3. Cross-tenant guard compares JWT.orgSubdomain (stored at login) to URL subdomain
+ *  4. Custom domain → tenant mapping is handled at the API/server layer, not here
+ */
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
 
-/**
- * Subdomains that belong to the platform itself — never redirect to tenant login.
- */
+/** Subdomains that belong to the platform itself — never redirect to tenant login. */
 const PLATFORM_SUBDOMAINS = new Set(["www", "app", "admin", "superadmin"]);
 
-/** Extract the subdomain from the hostname.
- *  e.g. "acme.yoursite.com" with rootDomain "yoursite.com" → "acme"
- *  e.g. "localhost:3000" → null (no subdomain) */
+/**
+ * Extract the tenant subdomain from the hostname.
+ * e.g. "acme.yoursite.com" with rootDomain "yoursite.com" → "acme"
+ * e.g. "localhost:3000" → null (no subdomain)
+ */
 function extractSubdomain(hostname: string, rootDomain: string): string | null {
   const cleanHostname = hostname.split(":")[0];
   const cleanRoot = rootDomain.split(":")[0];
@@ -25,18 +36,17 @@ function extractSubdomain(hostname: string, rootDomain: string): string | null {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Tenant resolution (subdomain OR custom domain) ───────────────────────
+  // ── Tenant subdomain resolution ──────────────────────────────────────────
   const hostname = request.headers.get("host") ?? "";
   const rootDomain = process.env.ROOT_DOMAIN ?? "localhost:3000";
   const subdomain = extractSubdomain(hostname, rootDomain);
 
   const response = NextResponse.next();
 
-  // ── superadmin.domain → /superadmin/* ───────────────────────────────────
+  // ── superadmin subdomain → rewrite to /superadmin/* ─────────────────────
   if (subdomain === "superadmin") {
     const url = request.nextUrl.clone();
     if (!pathname.startsWith("/superadmin")) {
-      // /login → dedicated superadmin login page (no sidebar)
       if (pathname === "/login" || pathname === "/") {
         url.pathname = "/superadmin/login";
         return NextResponse.rewrite(url);
@@ -47,41 +57,21 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ── Tenant subdomain routing ─────────────────────────────────────────────
   if (subdomain && !PLATFORM_SUBDOMAINS.has(subdomain)) {
-    // Tenant subdomain: redirect root and /login to branded tenant login page
+    // Root / /login → branded tenant login page
     if (pathname === "/" || pathname === "/login") {
       const tenantLoginUrl = new URL("/tenant-login", request.url);
       tenantLoginUrl.searchParams.set("slug", subdomain);
       return NextResponse.rewrite(tenantLoginUrl);
     }
 
-    // Standard subdomain routing: set header for downstream consumption
+    // Propagate subdomain downstream via request/response headers
     response.headers.set("x-tenant-subdomain", subdomain);
-  } else {
-    // Custom domain routing: check if this hostname maps to a tenant
-    const cleanHost = hostname.split(":")[0];
-    const isRootOrWww =
-      cleanHost === rootDomain.split(":")[0] ||
-      cleanHost === `www.${rootDomain.split(":")[0]}`;
-
-    if (!isRootOrWww && cleanHost !== "localhost") {
-      try {
-        const org = await prisma.organization.findFirst({
-          where: { customDomain: cleanHost, isActive: true },
-          select: { subdomain: true, id: true },
-        });
-        if (org?.subdomain) {
-          response.headers.set("x-tenant-subdomain", org.subdomain);
-          response.headers.set("x-tenant-id", org.id);
-        }
-      } catch (err) {
-        // Non-fatal: proceed without tenant context
-        console.error("[proxy] custom domain lookup failed:", err);
-      }
-    }
+    response.headers.set("x-forwarded-host", hostname);
   }
 
-  // Fetch token once for all protected routes
+  // ── Auth token (decoded JWT — no DB call) ────────────────────────────────
   const needsAuth =
     pathname.startsWith("/superadmin") ||
     (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) ||
@@ -98,22 +88,20 @@ export async function proxy(request: NextRequest) {
   // ── Superadmin protection ────────────────────────────────────────────────
   if (pathname.startsWith("/superadmin") && !pathname.startsWith("/superadmin/login")) {
     if (!token?.isSuperAdmin) {
-      const loginUrl = new URL("/superadmin/login", request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(new URL("/superadmin/login", request.url));
     }
   }
 
   // ── Admin route protection ───────────────────────────────────────────────
+  // Allows both platform admins (role === "admin") and tenant admins (isTenantAdmin === true)
   const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
   const isAdminApi = pathname.startsWith("/api/admin");
 
   if (isAdminRoute || isAdminApi) {
-    if (!token || token.role !== "admin") {
+    const isAuthorized = token && (token.role === "admin" || token.isTenantAdmin === true);
+    if (!isAuthorized) {
       if (isAdminApi) {
-        return NextResponse.json(
-          { success: false, data: null, error: "Unauthorized" },
-          { status: 401 },
-        );
+        return NextResponse.json({ success: false, data: null, error: "Unauthorized" }, { status: 401 });
       }
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
@@ -128,36 +116,27 @@ export async function proxy(request: NextRequest) {
   if (isStudentRoute || isStudentApi) {
     if (!token || token.role !== "student") {
       if (isStudentApi) {
-        return NextResponse.json(
-          { success: false, data: null, error: "Unauthorized" },
-          { status: 401 },
-        );
+        return NextResponse.json({ success: false, data: null, error: "Unauthorized" }, { status: 401 });
       }
       const loginUrl = new URL("/student/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // Check if access has expired (JWT snapshot)
+    // Access expiry check (JWT snapshot — no DB)
     if (token.accessExpiry) {
       const expiry = new Date(token.accessExpiry as string);
       if (expiry < new Date()) {
         if (isStudentApi) {
-          return NextResponse.json(
-            { success: false, data: null, error: "Access expired" },
-            { status: 403 },
-          );
+          return NextResponse.json({ success: false, data: null, error: "Access expired" }, { status: 403 });
         }
-        return NextResponse.redirect(
-          new URL("/portal?tab=student&error=expired", request.url),
-        );
+        return NextResponse.redirect(new URL("/portal?tab=student&error=expired", request.url));
       }
     }
 
     // Force password change on first login
     const isChangePasswordPage = pathname === "/student/change-password";
     const isChangePasswordApi = pathname === "/api/student/change-password";
-
     if (token.mustChangePassword === true && !isChangePasswordPage && !isChangePasswordApi) {
       return NextResponse.redirect(new URL("/student/change-password", request.url));
     }
@@ -170,14 +149,38 @@ export async function proxy(request: NextRequest) {
   if (isTrainerRoute || isTrainerApi) {
     if (!token || token.role !== "trainer") {
       if (isTrainerApi) {
-        return NextResponse.json(
-          { success: false, data: null, error: "Unauthorized" },
-          { status: 401 },
-        );
+        return NextResponse.json({ success: false, data: null, error: "Unauthorized" }, { status: 401 });
       }
       const loginUrl = new URL("/trainer/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // ── Cross-tenant session guard (no DB — uses JWT.orgSubdomain) ────────────
+  // When a user logged in on tenantA.app.com visits tenantB.app.com,
+  // their JWT.orgSubdomain will be "tenanta" but the URL subdomain is "tenantb".
+  // Redirect them to the correct tenant's login page.
+  if (subdomain && !PLATFORM_SUBDOMAINS.has(subdomain) && token) {
+    const isTenantScopedRole =
+      token.role === "student" ||
+      token.role === "corporate" ||
+      token.role === "trainer" ||
+      token.isTenantAdmin === true;
+
+    const isProtectedPath =
+      pathname.startsWith("/student") ||
+      pathname.startsWith("/corporate") ||
+      pathname.startsWith("/trainer") ||
+      pathname.startsWith("/admin");
+
+    if (isTenantScopedRole && token.orgSubdomain && isProtectedPath) {
+      if ((token.orgSubdomain as string) !== subdomain) {
+        const mismatchUrl = new URL("/tenant-login", request.url);
+        mismatchUrl.searchParams.set("slug", subdomain);
+        mismatchUrl.searchParams.set("error", "tenant_mismatch");
+        return NextResponse.redirect(mismatchUrl);
+      }
     }
   }
 

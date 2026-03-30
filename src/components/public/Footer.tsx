@@ -59,7 +59,8 @@ function LinkColumn({
 /*  Footer                                                             */
 /* ------------------------------------------------------------------ */
 
-export function Footer() {
+export function Footer({ siteName }: { siteName?: string | null }) {
+  const displayName = siteName ?? "HUMI Training Center";
   return (
     <footer className="bg-blue-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -69,7 +70,7 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 font-bold text-xl mb-3">
               <GraduationCap className="h-6 w-6 text-blue-400" />
-              <span>HUMI Training Center</span>
+              <span>{displayName}</span>
             </div>
             <p className="text-blue-200 text-sm leading-relaxed">
               All-in-one training management platform for modern training
@@ -107,7 +108,7 @@ export function Footer() {
 
           {/* Copyright */}
           <p className="text-center text-sm text-blue-300">
-            &copy; {new Date().getFullYear()} HUMI Training Center. All rights reserved.
+            &copy; {new Date().getFullYear()} {displayName}. All rights reserved.
           </p>
         </div>
       </div>

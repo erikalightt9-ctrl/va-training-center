@@ -37,6 +37,7 @@ interface CreateEnrollmentInput {
   readonly trainerTier?: TrainerTier | null;
   readonly trainerUpgradeFee?: number | null;
   readonly scheduleId?: string | null;
+  readonly organizationId?: string | null;
 }
 
 export async function createEnrollment(
@@ -63,6 +64,7 @@ export async function createEnrollment(
       trainerTier: data.trainerTier ?? null,
       trainerUpgradeFee: data.trainerUpgradeFee ?? null,
       scheduleId: data.scheduleId ?? null,
+      organizationId: data.organizationId ?? null,
     },
   });
 }
