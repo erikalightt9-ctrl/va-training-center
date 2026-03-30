@@ -96,14 +96,25 @@ export function Navbar({ branding }: NavbarProps) {
               Log In
             </Link>
 
-            <Link
-              href={enrollHref}
-              className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0"
-              style={{ backgroundColor: isTenant ? brandColor : "#F59E0B" }}
-            >
-              Enroll Now
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            {/* Tenant portals show Enroll Now; main SaaS site shows Get Started (B2B) */}
+            {isTenant ? (
+              <Link
+                href={enrollHref}
+                className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0"
+                style={{ backgroundColor: brandColor }}
+              >
+                Enroll Now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0 bg-amber-500 hover:bg-amber-600"
+              >
+                Get Started
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -133,15 +144,26 @@ export function Navbar({ branding }: NavbarProps) {
             ))}
 
             <div className="border-t border-gray-100 pt-3 mt-3 space-y-2">
-              <Link
-                href={enrollHref}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md transition-colors"
-                style={{ backgroundColor: isTenant ? brandColor : "#F59E0B" }}
-              >
-                Enroll Now
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              {isTenant ? (
+                <Link
+                  href={enrollHref}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md transition-colors"
+                  style={{ backgroundColor: brandColor }}
+                >
+                  Enroll Now
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md bg-amber-500 hover:bg-amber-600 transition-colors"
+                >
+                  Get Started
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
 
               <Link
                 href={loginHref}
