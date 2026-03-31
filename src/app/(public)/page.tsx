@@ -10,7 +10,6 @@ import { PricingSection } from "@/components/public/PricingSection";
 import { RoiSection } from "@/components/public/RoiSection";
 import { SaasTestimonialsSection } from "@/components/public/SaasTestimonialsSection";
 import { FaqSection } from "@/components/public/FaqSection";
-import { FinalCtaSection } from "@/components/public/FinalCtaSection";
 
 export const metadata: Metadata = {
   title: "HUMI Training Center — All-in-One Training Management Platform",
@@ -50,9 +49,6 @@ export default function HomePage() {
 
       {/* 10. FAQ */}
       <FaqSection />
-
-      {/* 11. Final CTA */}
-      <FinalCtaSection />
     </>
   );
 }
