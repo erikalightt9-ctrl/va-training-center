@@ -113,7 +113,7 @@ export async function POST(
     data: {
       name: name.trim(),
       email: email.trim().toLowerCase(),
-      password: passwordHash,
+      passwordHash,
       organizationId: tenantId,
       isTenantAdmin: Boolean(isTenantAdmin),
       isActive: true,
