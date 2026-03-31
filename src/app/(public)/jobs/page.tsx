@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { JobBoard } from "@/components/public/JobBoard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Job Board — HUMI Training Center",
+  title: "Job Board — HUMI Hub",
   description: "Browse job opportunities for Virtual Assistants.",
 };
 

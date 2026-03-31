@@ -1,4 +1,4 @@
-import {
+﻿import {
   Html,
   Head,
   Body,
@@ -18,7 +18,7 @@ interface BaseLayoutProps {
 export function BaseLayout({
   children,
   previewText,
-  siteName = "HUMI Training Center",
+  siteName = "HUMI Hub",
 }: BaseLayoutProps) {
   return (
     <Html lang="en">

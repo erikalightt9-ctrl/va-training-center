@@ -1,11 +1,11 @@
-import { render } from "@react-email/components";
+﻿import { render } from "@react-email/components";
 import { sendMailWithRetry } from "@/lib/mailer";
 import { ConfirmationEmail } from "@/lib/email/templates/confirmation";
 import { prisma } from "@/lib/prisma";
 import type { Enrollment } from "@prisma/client";
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
-const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@vatrainingcenter.com";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Hub";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@humihub.com";
 
 export async function sendConfirmationEmail(enrollment: Enrollment): Promise<void> {
   const course = await prisma.course.findUnique({
@@ -36,7 +36,7 @@ export async function sendConfirmationEmail(enrollment: Enrollment): Promise<voi
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: enrollment.email,
-      subject: `Application Received — ${courseTitle} | HUMI Training Center`,
+      subject: `Application Received — ${courseTitle} | HUMI Hub`,
       html,
     },
     `Confirmation to ${enrollment.email}`,

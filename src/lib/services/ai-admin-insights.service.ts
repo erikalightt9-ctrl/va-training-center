@@ -1,4 +1,4 @@
-import { generateJsonCompletion } from "@/lib/services/openai.service";
+﻿import { generateJsonCompletion } from "@/lib/services/openai.service";
 import { getPerformanceOverview } from "@/lib/repositories/ai-admin-insights.repository";
 import type {
   AIPerformanceInsights,
@@ -89,7 +89,7 @@ async function generateInsights(
     )
     .join("\n");
 
-  const userPrompt = `Analyze this HUMI Training Center platform data:
+  const userPrompt = `Analyze this HUMI Hub platform data:
 
 **Overview**:
 - Total Active Students: ${overview.totalStudents}

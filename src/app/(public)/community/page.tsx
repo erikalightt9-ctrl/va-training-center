@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Users,
@@ -14,7 +14,7 @@ import { NewsletterSignup } from "@/components/public/NewsletterSignup";
 export const metadata: Metadata = {
   title: "Community",
   description:
-    "Join the HUMI Training Center community. Connect with fellow students, access mentorship, and grow your VA career together.",
+    "Join the HUMI Hub community. Connect with fellow students, access mentorship, and grow your VA career together.",
 };
 
 const features = [

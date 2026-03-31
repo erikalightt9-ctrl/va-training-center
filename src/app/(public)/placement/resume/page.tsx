@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { FileText, Info } from "lucide-react";
 import { ResumeForm } from "@/components/placement/ResumeForm";
 
 export const metadata: Metadata = {
-  title: "Resume Builder — Placement Services | HUMI Training Center",
+  title: "Resume Builder — Placement Services | HUMI Hub",
   description:
-    "Build and save your professional resume to your HUMI profile. Used to match you with the best job opportunities.",
+    "Build and save your professional resume to your HUMI Hub profile. Used to match you with the best job opportunities.",
 };
 
 export default function ResumePage() {
@@ -35,7 +35,7 @@ export default function ResumePage() {
             <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-800 leading-relaxed">
               Your resume is saved to your profile and used to match you with the best job
-              opportunities available through HUMI&apos;s employer network. Keeping it up to date
+              opportunities available through HUMI Hub&apos;s employer network. Keeping it up to date
               improves your chances of being discovered by hiring companies.
             </p>
           </div>

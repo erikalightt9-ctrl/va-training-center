@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import { SaasHeroSection } from "@/components/public/SaasHeroSection";
 import { TargetAudienceSection } from "@/components/public/TargetAudienceSection";
@@ -10,10 +10,9 @@ import { PricingSection } from "@/components/public/PricingSection";
 import { RoiSection } from "@/components/public/RoiSection";
 import { SaasTestimonialsSection } from "@/components/public/SaasTestimonialsSection";
 import { FaqSection } from "@/components/public/FaqSection";
-import { FinalCtaSection } from "@/components/public/FinalCtaSection";
 
 export const metadata: Metadata = {
-  title: "HUMI Training Center — All-in-One Training Management Platform",
+  title: "HUMI Hub — All-in-One Training Management Platform",
   description:
     "Manage students, trainers, courses, messaging, and analytics — all in one powerful system. Built for modern training centers and academies.",
 };
@@ -50,9 +49,6 @@ export default function HomePage() {
 
       {/* 10. FAQ */}
       <FaqSection />
-
-      {/* 11. Final CTA */}
-      <FinalCtaSection />
     </>
   );
 }

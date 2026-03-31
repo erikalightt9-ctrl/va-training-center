@@ -29,11 +29,11 @@ export async function generateMetadata({
   });
 
   if (!course) {
-    return { title: "Program Not Found | HUMI Training Center" };
+    return { title: "Program Not Found | HUMI Hub" };
   }
 
   return {
-    title: `${course.title} | HUMI Training Center`,
+    title: `${course.title} | HUMI Hub`,
     description: course.description.slice(0, 160),
   };
 }

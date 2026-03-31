@@ -1,13 +1,13 @@
-import { render } from "@react-email/components";
+﻿import { render } from "@react-email/components";
 import { sendMailWithRetry } from "@/lib/mailer";
 import { WaitlistJoinedEmail } from "@/lib/email/templates/waitlist-joined";
 import { WaitlistPromotedEmail } from "@/lib/email/templates/waitlist-promoted";
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Hub";
 const FROM_ADDRESS =
   process.env.EMAIL_FROM_ADDRESS ??
   process.env.GMAIL_USER ??
-  "noreply@vatrainingcenter.com";
+  "noreply@humihub.com";
 
 /* ------------------------------------------------------------------ */
 /*  Waitlist Joined                                                     */
@@ -33,7 +33,7 @@ export async function sendWaitlistJoinedEmail(params: {
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: params.email,
-      subject: `You're on the Waitlist — ${params.scheduleName} | HUMI Training Center`,
+      subject: `You're on the Waitlist — ${params.scheduleName} | HUMI Hub`,
       html,
     },
     `Waitlist joined to ${params.email}`,
@@ -52,7 +52,7 @@ export async function sendWaitlistPromotedEmail(params: {
   readonly enrollmentId: string;
 }): Promise<void> {
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://vatrainingcenter.com";
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://humihub.com";
   const confirmUrl = `${baseUrl}/enrollment-status?id=${params.enrollmentId}`;
 
   const html = await render(
@@ -68,7 +68,7 @@ export async function sendWaitlistPromotedEmail(params: {
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: params.email,
-      subject: `A Seat Is Available — ${params.scheduleName} | HUMI Training Center`,
+      subject: `A Seat Is Available — ${params.scheduleName} | HUMI Hub`,
       html,
     },
     `Waitlist promotion to ${params.email}`,

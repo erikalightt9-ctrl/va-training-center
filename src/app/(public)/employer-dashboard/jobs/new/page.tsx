@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getEmployerSession } from "@/lib/employer-auth";
 import { JobPostingForm } from "@/components/employer/JobPostingForm";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export const metadata: Metadata = { title: "Post a Job — HUMI Training Center" };
+export const metadata: Metadata = { title: "Post a Job — HUMI Hub" };
 export const dynamic = "force-dynamic";
 
 export default async function PostJobPage() {
@@ -23,7 +23,7 @@ export default async function PostJobPage() {
         </Link>
         <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Post a New Job</h1>
         <p className="text-gray-600 mb-6 text-sm">
-          Your listing will be visible to all HUMI graduates seeking placement.
+          Your listing will be visible to all HUMI Hub graduates seeking placement.
         </p>
         <JobPostingForm />
       </div>

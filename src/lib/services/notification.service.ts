@@ -1,4 +1,4 @@
-import { render } from "@react-email/components";
+﻿import { render } from "@react-email/components";
 import { sendMailWithRetry } from "@/lib/mailer";
 import { EnrollmentApprovedEmail } from "@/lib/email/templates/enrollment-approved";
 import { EnrollmentRejectedEmail } from "@/lib/email/templates/enrollment-rejected";
@@ -21,8 +21,8 @@ import { EmailVerificationEmail } from "@/lib/email/templates/email-verification
 import { AccountActivationEmail } from "@/lib/email/templates/account-activation";
 import { EnrollmentConfirmationWithPaymentEmail } from "@/lib/email/templates/enrollment-confirmation-with-payment";
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
-const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@vatrainingcenter.com";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Hub";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@humihub.com";
 
 const fromAddress = () => `"${FROM_NAME}" <${FROM_ADDRESS}>`;
 
@@ -78,7 +78,7 @@ export async function sendEnrollmentRejected(opts: {
 
   await sendEmail(
     opts.email,
-    `Application Update — ${opts.courseTitle} | HUMI Training Center`,
+    `Application Update — ${opts.courseTitle} | HUMI Hub`,
     html
   );
 }
@@ -131,7 +131,7 @@ export async function sendLessonCompleted(opts: {
 
   await sendEmail(
     opts.email,
-    `Lesson Completed: ${opts.lessonTitle} | HUMI Training Center`,
+    `Lesson Completed: ${opts.lessonTitle} | HUMI Hub`,
     html
   );
 }
@@ -233,7 +233,7 @@ export async function sendBadgeEarned(opts: {
 
   await sendEmail(
     opts.email,
-    `Badge Earned: ${opts.badgeName} | HUMI Training Center`,
+    `Badge Earned: ${opts.badgeName} | HUMI Hub`,
     html
   );
 }
@@ -338,7 +338,7 @@ export async function sendPasswordReset(opts: {
 
   await sendEmail(
     opts.email,
-    "Reset Your Password — HUMI Training Center",
+    "Reset Your Password — HUMI Hub",
     html
   );
 }
@@ -423,7 +423,7 @@ export async function sendPaymentInstructions(opts: {
 
   await sendEmail(
     opts.email,
-    `Payment Instructions — ${opts.courseTitle} | HUMI Training Center`,
+    `Payment Instructions — ${opts.courseTitle} | HUMI Hub`,
     html
   );
 }
@@ -454,8 +454,8 @@ export async function sendAdminReviewReminder(opts: {
   );
 
   const subject = opts.isUrgent
-    ? `URGENT: ${count} ${label} pending over 12h — HUMI Training Center`
-    : `Reminder: ${count} pending ${label} to review — HUMI Training Center`;
+    ? `URGENT: ${count} ${label} pending over 12h — HUMI Hub`
+    : `Reminder: ${count} pending ${label} to review — HUMI Hub`;
 
   await sendEmail(opts.adminEmail, subject, html);
 }
@@ -506,7 +506,7 @@ export async function sendEmailVerification(opts: {
 
   await sendEmail(
     opts.email,
-    `Verify Your Email — ${opts.courseTitle} | HUMI Training Center`,
+    `Verify Your Email — ${opts.courseTitle} | HUMI Hub`,
     html
   );
 }
@@ -530,7 +530,7 @@ export async function sendAccountActivation(opts: {
 
   await sendEmail(
     opts.email,
-    `Create Your Password — ${opts.courseTitle} | HUMI Training Center`,
+    `Create Your Password — ${opts.courseTitle} | HUMI Hub`,
     html
   );
 }

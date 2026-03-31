@@ -1,12 +1,12 @@
 # Custom Domain Setup Guide
 
-Connect a professional domain name to your VA Training Center website hosted on Vercel.
+Connect a professional domain name to your HUMI Hub website hosted on Vercel.
 
 ---
 
 ## Prerequisites
 
-- A registered domain name (e.g., `vatrainingcenter.com`)
+- A registered domain name (e.g., `humihub.com`)
 - Access to your domain registrar's DNS settings (GoDaddy, Namecheap, Google Domains, etc.)
 - Vercel project admin access
 
@@ -15,9 +15,9 @@ Connect a professional domain name to your VA Training Center website hosted on 
 ## Step 1: Add Domain in Vercel
 
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select the **va-training-center** project
+2. Select the **humi-hub** project
 3. Navigate to **Settings** > **Domains**
-4. Enter your custom domain (e.g., `vatrainingcenter.com`)
+4. Enter your custom domain (e.g., `humihub.com`)
 5. Click **Add**
 6. Vercel will show you the DNS records you need to configure
 
@@ -27,13 +27,13 @@ Connect a professional domain name to your VA Training Center website hosted on 
 
 Go to your domain registrar's DNS management panel and add the records Vercel provides.
 
-### Option A: Apex Domain (vatrainingcenter.com)
+### Option A: Apex Domain (humihub.com)
 
 | Type | Name     | Value        |
 |------|----------|--------------|
 | A    | @ (root) | 76.76.21.21  |
 
-### Option B: Subdomain (www.vatrainingcenter.com)
+### Option B: Subdomain (www.humihub.com)
 
 | Type  | Name | Value                |
 |-------|------|----------------------|
@@ -68,8 +68,8 @@ Add **both** records above. Vercel will auto-redirect one to the other (configur
 
 1. Go to **Vercel Dashboard** > **Settings** > **Environment Variables**
 2. Find and update `NEXTAUTH_URL`:
-   - **Old value:** `https://va-training-center.vercel.app`
-   - **New value:** `https://vatrainingcenter.com` (your custom domain)
+   - **Old value:** `https://humi-hub.vercel.app`
+   - **New value:** `https://humihub.com` (your custom domain)
 3. Click **Save**
 4. **Redeploy the application** after updating the environment variable
 
@@ -86,7 +86,7 @@ If `NEXTAUTH_URL` is not updated, login and authentication callbacks will fail.
 Check and update any hardcoded URLs:
 
 - Email templates in `src/lib/email/` that reference the old domain
-- Any external services pointing to `va-training-center.vercel.app`
+- Any external services pointing to `humi-hub.vercel.app`
 - Social media profile links
 - Google Business Profile or directory listings
 

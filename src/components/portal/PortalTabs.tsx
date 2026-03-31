@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -235,7 +235,7 @@ export function PortalTabs() {
             <GraduationCap className="h-8 w-8 text-blue-300" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">HUMI Training Center</h1>
+        <h1 className="text-2xl font-bold text-gray-900">HUMI Hub</h1>
         <p className="text-gray-500 text-sm mt-1">
           Sign in to your account or enroll in a course
         </p>

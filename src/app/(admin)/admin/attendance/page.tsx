@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { AdminAttendancePageClient } from "@/components/admin/AdminAttendancePage";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Attendance Analytics | HUMI Admin",
-  description: "Course-level attendance analytics for HUMI Training Center",
+  title: "Attendance Analytics | HUMI Hub Admin",
+  description: "Course-level attendance analytics for HUMI Hub",
 };
 
 export default async function AdminAttendancePage() {

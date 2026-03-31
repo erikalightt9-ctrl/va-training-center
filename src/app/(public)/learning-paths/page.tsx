@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Map,
@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Learning Paths — HUMI Training Center",
+  title: "Learning Paths — HUMI Hub",
   description:
     "Follow a clear, structured learning path from enrollment to career placement. Choose your VA specialization and start your journey.",
 };

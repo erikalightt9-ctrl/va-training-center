@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -68,7 +68,7 @@ export function EmployerAuthForm({ defaultMode = "login" }: { defaultMode?: Mode
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-gray-900">Employer Portal</h1>
-            <p className="text-sm text-gray-500">HUMI Training Center</p>
+            <p className="text-sm text-gray-500">HUMI Hub</p>
           </div>
         </div>
 

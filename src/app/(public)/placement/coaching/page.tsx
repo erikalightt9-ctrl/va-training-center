@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Users, CheckCircle } from "lucide-react";
 import { CoachingForm } from "@/components/placement/CoachingForm";
 
 export const metadata: Metadata = {
-  title: "Career Coaching — Placement Services | HUMI Training Center",
+  title: "Career Coaching — Placement Services | HUMI Hub",
   description:
     "Book a one-on-one career coaching session with an expert to get personalized guidance on your resume, interview strategy, and salary negotiation.",
 };

@@ -5,7 +5,7 @@ import { findEnrollmentById } from "@/lib/repositories/enrollment.repository";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Payment Failed | HUMI Training Center",
+  title: "Payment Failed | HUMI Hub",
 };
 
 export default async function PaymentFailedPage({

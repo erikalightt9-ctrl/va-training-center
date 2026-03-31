@@ -6,9 +6,9 @@ interface PageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Verified Skills | HUMI Training Center",
+  title: "Verified Skills | HUMI Hub",
   description:
-    "View verified skill levels for a HUMI Training Center student, auto-assessed across communication, technical, and professional dimensions.",
+    "View verified skill levels for a HUMI Hub student, auto-assessed across communication, technical, and professional dimensions.",
 };
 
 export default async function VerifySkillsPage({ params }: PageProps) {

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Briefcase,
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { JobBoard } from "@/components/public/JobBoard";
 
 export const metadata: Metadata = {
-  title: "Career Placement — HUMI Training Center",
+  title: "Career Placement — HUMI Hub",
   description:
     "Launch your professional career with our comprehensive placement services. Resume building, AI mock interviews, job matching, and career coaching to help you land the right role.",
 };

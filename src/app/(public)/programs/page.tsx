@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { resolveTenantFromSubdomain } from "@/lib/tenant";
 import { SearchableCourseGrid } from "@/components/public/SearchableCourseGrid";
 
 export const metadata: Metadata = {
-  title: "Programs — HUMI Training Center",
+  title: "Programs — HUMI Hub",
   description:
-    "Explore HUMI Training Center's professional training programs across multiple industries. Designed by industry experts for global employers.",
+    "Explore HUMI Hub's professional training programs across multiple industries. Designed by industry experts for global employers.",
 };
 
 function resolveHref(slug: string): string {
