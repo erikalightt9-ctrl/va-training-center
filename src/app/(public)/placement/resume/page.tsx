@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { FileText, Info } from "lucide-react";
 import { ResumeForm } from "@/components/placement/ResumeForm";
 
 export const metadata: Metadata = {
-  title: "Resume Builder — Placement Services | HUMI Training Center",
+  title: "Resume Builder — Placement Services | Humi Hub",
   description:
     "Build and save your professional resume to your HUMI profile. Used to match you with the best job opportunities.",
 };

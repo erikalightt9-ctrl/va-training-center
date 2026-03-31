@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Send, Loader2 } from "lucide-react";
@@ -14,7 +14,7 @@ const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
   content:
-    "Hi! 👋 I'm your HUMI Training Center assistant. Ask me anything about our courses, enrollment, pricing, or how to get started!",
+    "Hi! 👋 I'm your Humi Hub assistant. Ask me anything about our courses, enrollment, pricing, or how to get started!",
 };
 
 export function ChatWidget() {

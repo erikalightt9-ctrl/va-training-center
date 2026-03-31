@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ContactForm } from "@/components/public/ContactForm";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with HUMI Training Center. We are here to answer your questions about our training programs.",
+    "Get in touch with Humi Hub. We are here to answer your questions about our training programs.",
 };
 
 const contactInfo = [

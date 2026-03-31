@@ -1,4 +1,4 @@
-import { Text, Section, Link } from "@react-email/components";
+﻿import { Text, Section, Link } from "@react-email/components";
 import { BaseLayout } from "./base-layout";
 
 interface EnrollmentRejectedEmailProps {
@@ -51,7 +51,7 @@ export function EnrollmentRejectedEmail({
       )}
 
       <Text style={styles.textMuted}>
-        We appreciate your interest in HUMI Training Center and wish you the best.
+        We appreciate your interest in Humi Hub and wish you the best.
       </Text>
     </BaseLayout>
   );

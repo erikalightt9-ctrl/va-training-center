@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -297,7 +297,7 @@ export function ResetPasswordForm() {
             </div>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">
-            HUMI Training Center
+            Humi Hub
           </h1>
           <p className="text-gray-500 text-sm mt-1">Password Reset</p>
         </div>

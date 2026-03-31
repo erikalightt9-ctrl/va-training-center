@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { BookOpen, HelpCircle } from "lucide-react";
 import { KB_CATEGORIES } from "@/lib/constants/communications";
 
 export const metadata: Metadata = {
-  title: "Help Center | HUMI Training Center",
-  description: "Find answers to common questions about HUMI Training Center.",
+  title: "Help Center | Humi Hub",
+  description: "Find answers to common questions about Humi Hub.",
 };
 
 interface Article {

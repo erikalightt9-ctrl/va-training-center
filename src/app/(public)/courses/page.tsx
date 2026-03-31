@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { resolveTenantFromSubdomain } from "@/lib/tenant";
@@ -7,7 +7,7 @@ import { SearchableCourseGrid } from "@/components/public/SearchableCourseGrid";
 export const metadata: Metadata = {
   title: "Courses",
   description:
-    "Explore HUMI Training Center's professional training programs across multiple specializations.",
+    "Explore Humi Hub's professional training programs across multiple specializations.",
 };
 
 function resolveHref(slug: string): string {

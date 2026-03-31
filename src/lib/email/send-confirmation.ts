@@ -1,10 +1,10 @@
-import { render } from "@react-email/components";
+﻿import { render } from "@react-email/components";
 import { sendMailWithRetry } from "@/lib/mailer";
 import { ConfirmationEmail } from "@/lib/email/templates/confirmation";
 import { prisma } from "@/lib/prisma";
 import type { Enrollment } from "@prisma/client";
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Humi Hub";
 const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? process.env.GMAIL_USER ?? "noreply@vatrainingcenter.com";
 
 export async function sendConfirmationEmail(enrollment: Enrollment): Promise<void> {
@@ -36,7 +36,7 @@ export async function sendConfirmationEmail(enrollment: Enrollment): Promise<voi
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: enrollment.email,
-      subject: `Application Received — ${courseTitle} | HUMI Training Center`,
+      subject: `Application Received — ${courseTitle} | Humi Hub`,
       html,
     },
     `Confirmation to ${enrollment.email}`,

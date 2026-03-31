@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlacementHubCards } from "@/components/placement/PlacementHubCards";
 import { FileText, Mic, Briefcase, Users } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Placement Services — HUMI Training Center",
+  title: "Placement Services — Humi Hub",
   description:
     "Comprehensive career placement support including resume building, AI interview practice, job matching, and one-on-one career coaching to help you land your dream role.",
 };
@@ -49,7 +49,7 @@ export default function PlacementPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl font-extrabold mb-4 tracking-tight">Placement Services</h1>
           <p className="text-blue-100 text-lg leading-relaxed">
-            From building your resume to landing your first client, HUMI Training Center provides
+            From building your resume to landing your first client, Humi Hub provides
             comprehensive career placement support every step of the way.
           </p>
         </div>

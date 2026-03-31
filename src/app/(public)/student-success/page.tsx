@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Users,
@@ -15,7 +15,7 @@ import { getPublicPlacementStats } from "@/lib/repositories/placement.repository
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Student Success — HUMI Training Center",
+  title: "Student Success — Humi Hub",
   description:
     "See how our graduates transformed their careers. Real stories, real results from AI-powered Virtual Assistant training.",
 };

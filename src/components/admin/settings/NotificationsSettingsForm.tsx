@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -179,7 +179,7 @@ export function NotificationsSettingsForm({ initialValues }: NotificationsSettin
               id="fromName"
               value={fromName}
               onChange={(e) => setFromName(e.target.value)}
-              placeholder="HUMI Training Center"
+              placeholder="Humi Hub"
             />
           </div>
           <div>

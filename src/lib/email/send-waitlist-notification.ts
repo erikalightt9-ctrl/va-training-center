@@ -1,9 +1,9 @@
-import { render } from "@react-email/components";
+﻿import { render } from "@react-email/components";
 import { sendMailWithRetry } from "@/lib/mailer";
 import { WaitlistJoinedEmail } from "@/lib/email/templates/waitlist-joined";
 import { WaitlistPromotedEmail } from "@/lib/email/templates/waitlist-promoted";
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Humi Hub";
 const FROM_ADDRESS =
   process.env.EMAIL_FROM_ADDRESS ??
   process.env.GMAIL_USER ??
@@ -33,7 +33,7 @@ export async function sendWaitlistJoinedEmail(params: {
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: params.email,
-      subject: `You're on the Waitlist — ${params.scheduleName} | HUMI Training Center`,
+      subject: `You're on the Waitlist — ${params.scheduleName} | Humi Hub`,
       html,
     },
     `Waitlist joined to ${params.email}`,
@@ -68,7 +68,7 @@ export async function sendWaitlistPromotedEmail(params: {
     {
       from: `"${FROM_NAME}" <${FROM_ADDRESS}>`,
       to: params.email,
-      subject: `A Seat Is Available — ${params.scheduleName} | HUMI Training Center`,
+      subject: `A Seat Is Available — ${params.scheduleName} | Humi Hub`,
       html,
     },
     `Waitlist promotion to ${params.email}`,

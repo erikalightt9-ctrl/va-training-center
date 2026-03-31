@@ -1,4 +1,4 @@
-import { Text, Section, Link } from "@react-email/components";
+﻿import { Text, Section, Link } from "@react-email/components";
 import { BaseLayout } from "./base-layout";
 
 interface PasswordResetEmailProps {
@@ -14,7 +14,7 @@ export function PasswordResetEmail({
   expiresInMinutes,
 }: PasswordResetEmailProps) {
   return (
-    <BaseLayout previewText="Reset your HUMI Training Center password">
+    <BaseLayout previewText="Reset your Humi Hub password">
       <Text style={styles.heading}>Password Reset</Text>
       <Text style={styles.text}>Hi <strong>{name}</strong>,</Text>
       <Text style={styles.text}>

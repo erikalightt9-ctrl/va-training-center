@@ -1,4 +1,4 @@
-import { sendMailWithRetry } from "@/lib/mailer";
+﻿import { sendMailWithRetry } from "@/lib/mailer";
 
 interface PasswordResetOptions {
   readonly email: string;
@@ -24,7 +24,7 @@ export async function sendPasswordResetEmail(
 <head><meta charset="utf-8"></head>
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
   <div style="background: #1d4ed8; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
-    <h1 style="color: #fff; margin: 0; font-size: 24px;">HUMI Training Center</h1>
+    <h1 style="color: #fff; margin: 0; font-size: 24px;">Humi Hub</h1>
     <p style="color: #bfdbfe; margin: 8px 0 0;">Password Reset Request</p>
   </div>
   <div style="background: #f9fafb; padding: 32px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
@@ -46,14 +46,14 @@ export async function sendPasswordResetEmail(
     <p style="color: #9ca3af; font-size: 12px; margin: 0;">
       If you did not request a password reset, you can safely ignore this email —
       your password will remain unchanged.<br><br>
-      HUMI Training Center &bull; This email was sent to ${opts.email}
+      Humi Hub &bull; This email was sent to ${opts.email}
     </p>
   </div>
 </body>
 </html>`;
 
   const fromName =
-    process.env.EMAIL_FROM_NAME ?? "HUMI Training Center";
+    process.env.EMAIL_FROM_NAME ?? "Humi Hub";
   const fromAddr =
     process.env.EMAIL_FROM_ADDRESS ??
     process.env.GMAIL_USER ??
@@ -63,7 +63,7 @@ export async function sendPasswordResetEmail(
     {
       from: `"${fromName}" <${fromAddr}>`,
       to: opts.email,
-      subject: "Reset Your Password — HUMI Training Center",
+      subject: "Reset Your Password — Humi Hub",
       html,
     },
     `Password reset to ${opts.email}`,

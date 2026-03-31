@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getPlatformSettings, getBrandingSettings } from "@/lib/repositories/settings.repository";
@@ -31,8 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch {
     return {
       title: {
-        default: "HUMI Training Center — Professional Training Programs",
-        template: "%s | HUMI Training Center",
+        default: "Humi Hub — Professional Training Programs",
+        template: "%s | Humi Hub",
       },
       description: "Professional training programs across multiple industries.",
       metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),

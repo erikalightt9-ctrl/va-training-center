@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -129,7 +129,7 @@ const inputCls =
 
 export function PlatformSettingsForm({ env }: { env: EnvData }) {
   const [settings, setSettings] = useState<PlatformSettings>({
-    siteName: "HUMI Training Center",
+    siteName: "Humi Hub",
     timezone: "Asia/Manila",
     currency: "PHP",
     language: "en",
@@ -223,7 +223,7 @@ export function PlatformSettingsForm({ env }: { env: EnvData }) {
                       type="text"
                       value={settings.siteName}
                       onChange={(e) => set("siteName", e.target.value)}
-                      placeholder="HUMI Training Center"
+                      placeholder="Humi Hub"
                       maxLength={80}
                       required
                       className={inputCls}

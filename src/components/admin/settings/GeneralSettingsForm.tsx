@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -101,7 +101,7 @@ export function GeneralSettingsForm({ initialValues }: GeneralSettingsFormProps)
           id="siteName"
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
-          placeholder="HUMI Training Center"
+          placeholder="Humi Hub"
           maxLength={100}
           required
         />

@@ -14,7 +14,7 @@ interface Article {
 }
 
 export const metadata: Metadata = {
-  title: "Help Article | HUMI Training Center",
+  title: "Help Article | Humi Hub",
 };
 
 export default async function PublicHelpArticlePage({

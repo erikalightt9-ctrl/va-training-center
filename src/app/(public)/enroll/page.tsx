@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 import { EnrollmentForm } from "@/components/enrollment/EnrollmentForm";
@@ -28,7 +28,7 @@ export default async function EnrollPage() {
   const org = tenant?.tenant ?? null;
   const primaryColor = org?.primaryColor ?? "#1e3a8a";
   const secondaryColor = org?.secondaryColor ?? "#1e40af";
-  const displayName = org?.siteName ?? org?.name ?? "HUMI Training Center";
+  const displayName = org?.siteName ?? org?.name ?? "Humi Hub";
   const logoUrl = org?.logoUrl ?? null;
 
   const perks = [

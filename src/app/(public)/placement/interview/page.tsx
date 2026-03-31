@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Mic } from "lucide-react";
 import { InterviewPanel } from "@/components/placement/InterviewPanel";
 
 export const metadata: Metadata = {
-  title: "AI Interview Practice — Placement Services | HUMI Training Center",
+  title: "AI Interview Practice — Placement Services | Humi Hub",
   description:
     "Practice job interviews with AI-generated questions tailored to your role. Get scored feedback on communication, knowledge, problem solving, and professionalism.",
 };

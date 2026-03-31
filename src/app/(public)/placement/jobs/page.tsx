@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Briefcase } from "lucide-react";
 import { JobMatchBoard } from "@/components/placement/JobMatchBoard";
 
 export const metadata: Metadata = {
-  title: "Job Marketplace — Placement Services | HUMI Training Center",
+  title: "Job Marketplace — Placement Services | Humi Hub",
   description:
     "Browse curated job listings matched to your skills and apply directly through HUMI's employer network.",
 };

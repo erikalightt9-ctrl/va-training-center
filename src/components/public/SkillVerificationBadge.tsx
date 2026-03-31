@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -222,7 +222,7 @@ export function SkillVerificationBadge({
           <div className="flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-blue-200" />
             <p className="text-xs text-blue-200">
-              Verified by HUMI Training Center AI System
+              Verified by Humi Hub AI System
             </p>
           </div>
         </div>

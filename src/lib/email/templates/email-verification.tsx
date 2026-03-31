@@ -1,4 +1,4 @@
-import { Text, Section, Link } from "@react-email/components";
+﻿import { Text, Section, Link } from "@react-email/components";
 import { BaseLayout } from "./base-layout";
 
 interface EmailVerificationEmailProps {
@@ -35,7 +35,7 @@ export function EmailVerificationEmail({
 
       <Text style={styles.textMuted}>
         This link will expire in {expiresInHours} hours. If you did not enroll
-        at HUMI Training Center, please ignore this email.
+        at Humi Hub, please ignore this email.
       </Text>
     </BaseLayout>
   );

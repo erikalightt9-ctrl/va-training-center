@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { GraduationCap, Mail, Phone, MapPin } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -60,7 +60,7 @@ function LinkColumn({
 /* ------------------------------------------------------------------ */
 
 export function Footer({ siteName }: { siteName?: string | null }) {
-  const displayName = siteName ?? "HUMI Training Center";
+  const displayName = siteName ?? "Humi Hub";
   return (
     <footer className="bg-blue-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

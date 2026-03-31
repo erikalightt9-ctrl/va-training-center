@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ResetPasswordForm } from "@/components/public/ResetPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Reset Password | HUMI Training Center",
-  description: "Set a new password for your HUMI Training Center account.",
+  title: "Reset Password | Humi Hub",
+  description: "Set a new password for your Humi Hub account.",
 };
 
 export default function ResetPasswordPage() {

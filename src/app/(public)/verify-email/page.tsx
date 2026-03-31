@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, XCircle, AlertCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Email Verification | HUMI Training Center",
+  title: "Email Verification | Humi Hub",
 };
 
 type ErrorType = "expired" | "invalid" | "already_verified";
@@ -67,7 +67,7 @@ export default async function VerifyEmailPage({
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            HUMI Training Center
+            Humi Hub
           </h1>
           <p className="text-gray-500 mt-1">Email Verification</p>
         </div>

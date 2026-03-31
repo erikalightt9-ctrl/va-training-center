@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import type {
   PlatformSettings,
   EmailSettings,
@@ -38,7 +38,7 @@ export type PublicSettings = {
 /* ------------------------------------------------------------------ */
 
 const PLATFORM_DEFAULTS = {
-  siteName: "HUMI Training Center",
+  siteName: "Humi Hub",
   timezone: "Asia/Manila",
   currency: "PHP",
   language: "en",
@@ -49,7 +49,7 @@ const EMAIL_DEFAULTS = {
   smtpPort: 587,
   smtpUser: "",
   smtpPassword: "",
-  fromName: "HUMI Training Center",
+  fromName: "Humi Hub",
   fromEmail: "",
   enrollmentEmails: true,
   lessonEmails: true,

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import { SaasHeroSection } from "@/components/public/SaasHeroSection";
 import { TargetAudienceSection } from "@/components/public/TargetAudienceSection";
@@ -12,7 +12,7 @@ import { SaasTestimonialsSection } from "@/components/public/SaasTestimonialsSec
 import { FaqSection } from "@/components/public/FaqSection";
 
 export const metadata: Metadata = {
-  title: "HUMI Training Center — All-in-One Training Management Platform",
+  title: "Humi Hub — All-in-One Training Management Platform",
   description:
     "Manage students, trainers, courses, messaging, and analytics — all in one powerful system. Built for modern training centers and academies.",
 };
