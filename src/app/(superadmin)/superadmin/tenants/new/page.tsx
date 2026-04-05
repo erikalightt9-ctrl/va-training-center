@@ -84,9 +84,13 @@ function Field({
   );
 }
 
-function Input({
-  value, onChange, placeholder, type = "text", className = "", ...rest
-}: React.InputHTMLAttributes<HTMLInputElement> & { value: string; onChange: (v: string) => void }) {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
+  value: string;
+  onChange: (v: string) => void;
+  className?: string;
+}
+
+function Input({ value, onChange, placeholder, type = "text", className = "", ...rest }: InputProps) {
   return (
     <input
       type={type}
