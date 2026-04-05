@@ -5,10 +5,12 @@ import {
   Play,
   BarChart3,
   Users,
-  BookOpen,
-  MessageSquare,
+  TrendingUp,
+  DollarSign,
   Shield,
   Clock,
+  MessageSquare,
+  BookOpen,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -18,15 +20,15 @@ import {
 function DashboardPreview() {
   return (
     <div className="relative">
-      {/* Floating cards around the dashboard */}
+      {/* Floating stat cards */}
       <div className="absolute -top-4 -left-4 bg-white rounded-xl shadow-lg p-3 z-10 animate-pulse">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-            <Users className="h-4 w-4 text-green-600" />
+          <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+            <Users className="h-4 w-4 text-emerald-600" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Active Students</p>
-            <p className="text-sm font-bold text-gray-900">2,847</p>
+            <p className="text-xs text-gray-500">Active Employees</p>
+            <p className="text-sm font-bold text-gray-900">1,240</p>
           </div>
         </div>
       </div>
@@ -34,11 +36,11 @@ function DashboardPreview() {
       <div className="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-lg p-3 z-10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-blue-900/40 flex items-center justify-center">
-            <BarChart3 className="h-4 w-4 text-blue-400" />
+            <TrendingUp className="h-4 w-4 text-blue-400" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Completion Rate</p>
-            <p className="text-sm font-bold text-gray-900">94.2%</p>
+            <p className="text-xs text-gray-500">Revenue Growth</p>
+            <p className="text-sm font-bold text-gray-900">+28%</p>
           </div>
         </div>
       </div>
@@ -54,7 +56,7 @@ function DashboardPreview() {
           </div>
           <div className="flex-1 text-center">
             <div className="bg-white rounded-md px-3 py-1 text-xs text-gray-400 inline-block border border-gray-200">
-              admin.yourdomain.com/dashboard
+              app.humihub.com/dashboard
             </div>
           </div>
         </div>
@@ -64,10 +66,10 @@ function DashboardPreview() {
           {/* Stats row */}
           <div className="grid grid-cols-4 gap-3 mb-4">
             {[
-              { label: "Revenue", value: "₱2.4M", color: "bg-emerald-500" },
-              { label: "Students", value: "847", color: "bg-blue-500" },
-              { label: "Courses", value: "24", color: "bg-purple-500" },
-              { label: "Trainers", value: "18", color: "bg-amber-500" },
+              { label: "Revenue",   value: "₱4.8M", color: "bg-emerald-500" },
+              { label: "Employees", value: "1,240",  color: "bg-blue-500" },
+              { label: "Students",  value: "847",    color: "bg-purple-500" },
+              { label: "Leads",     value: "312",    color: "bg-amber-500" },
             ].map((stat) => (
               <div key={stat.label} className="bg-gray-50 rounded-lg p-2.5">
                 <div className={`w-1.5 h-1.5 rounded-full ${stat.color} mb-1.5`} />
@@ -79,9 +81,9 @@ function DashboardPreview() {
 
           {/* Chart placeholder */}
           <div className="bg-gray-50 rounded-lg p-3 mb-3">
-            <p className="text-[10px] text-gray-500 mb-2">Enrollment Trend</p>
+            <p className="text-[10px] text-gray-500 mb-2">Business Performance</p>
             <div className="flex items-end gap-1 h-12">
-              {[40, 55, 45, 65, 50, 70, 60, 75, 85, 80, 90, 95].map((h, i) => (
+              {[35, 50, 42, 60, 48, 68, 58, 72, 82, 78, 88, 95].map((h, i) => (
                 <div
                   key={i}
                   className="flex-1 bg-blue-400 rounded-sm opacity-80"
@@ -94,9 +96,9 @@ function DashboardPreview() {
           {/* Recent activity */}
           <div className="space-y-1.5">
             {[
-              { text: "New enrollment: Maria Santos", color: "bg-blue-400" },
-              { text: "Payment verified: ₱15,000", color: "bg-green-400" },
-              { text: "Certificate issued: #2847", color: "bg-purple-400" },
+              { text: "Payroll processed: 48 employees",   color: "bg-emerald-400" },
+              { text: "New sales lead: Acme Corp",          color: "bg-amber-400"  },
+              { text: "IT ticket resolved: Server upgrade", color: "bg-blue-400"   },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 p-1.5 bg-gray-50 rounded-md">
                 <div className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
@@ -115,10 +117,10 @@ function DashboardPreview() {
 /* ------------------------------------------------------------------ */
 
 const trustBadges = [
-  { icon: Shield, label: "Enterprise-grade security" },
-  { icon: Clock, label: "99.9% uptime SLA" },
-  { icon: MessageSquare, label: "24/7 support" },
-  { icon: BookOpen, label: "Free onboarding" },
+  { icon: Shield,       label: "Enterprise-grade security" },
+  { icon: Clock,        label: "99.9% uptime SLA"          },
+  { icon: MessageSquare, label: "24/7 support"              },
+  { icon: BookOpen,     label: "Free onboarding"            },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -136,25 +138,26 @@ export function SaasHeroSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
           {/* Left — Copy */}
           <div>
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-blue-200 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-white/15">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              Training Management Platform
+              All-in-One Business Operations Platform
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 tracking-tight">
-              All-in-One{" "}
+              Run Your Entire{" "}
               <span className="bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">
-                AI-Powered
+                Business
               </span>{" "}
-              Training Management System
+              in One Platform
             </h1>
 
             <p className="text-blue-100/90 text-lg sm:text-xl leading-relaxed mb-8 max-w-xl">
-              Manage enrollments, students, trainers, payments, and analytics —
-              all from one powerful platform. Replace your spreadsheets and
-              manual processes with smart automation.
+              Manage operations, people, and performance with a centralized
+              system built for growing businesses across industries. Training
+              management, HR, admin, IT, sales, and finance — all in one place.
             </p>
 
             {/* CTAs */}
@@ -165,7 +168,7 @@ export function SaasHeroSection() {
                 className="bg-white text-slate-900 hover:bg-blue-50 font-bold text-base px-8 py-6 shadow-lg shadow-blue-950/40"
               >
                 <Link href="/contact">
-                  Start Your Training Platform Today <ArrowRight className="ml-2 h-4 w-4" />
+                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Link

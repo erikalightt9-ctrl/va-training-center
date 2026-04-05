@@ -2,22 +2,22 @@ import {
   Bot,
   BarChart3,
   Bell,
-  Ticket,
+  Zap,
   Mail,
   Trophy,
   FileSearch,
-  Zap,
+  Globe,
 } from "lucide-react";
 
 const advancedFeatures = [
-  { icon: Bot, title: "AI Auto-Priority Detection", description: "Automatically assess and route support tickets by urgency." },
-  { icon: BarChart3, title: "Full Analytics Dashboard", description: "Revenue, enrollment, attendance, and performance at a glance." },
-  { icon: Bell, title: "Real-Time Notifications", description: "Instant alerts for enrollments, payments, and messages." },
-  { icon: Ticket, title: "Smart Ticket Categorization", description: "AI classifies tickets so your team can focus on solutions." },
-  { icon: Mail, title: "Email & SMS Alerts", description: "Automated notifications for every critical event." },
-  { icon: Trophy, title: "Gamification System", description: "Leaderboards, badges, and rankings to drive engagement." },
-  { icon: FileSearch, title: "CSV Report Exports", description: "Download enrollment, revenue, attendance, and grade reports." },
-  { icon: Zap, title: "Automated Workflows", description: "Waitlists, certificate issuance, and payment verification on autopilot." },
+  { icon: Bot,        title: "AI-Powered Automation",        description: "Automate ticket routing, replies, and categorization across HR, IT, and support." },
+  { icon: BarChart3,  title: "Unified Analytics Dashboard",  description: "Revenue, headcount, sales performance, and training progress — all in one live view." },
+  { icon: Bell,       title: "Real-Time Notifications",       description: "Instant alerts for payroll events, new leads, IT issues, and enrollments." },
+  { icon: Zap,        title: "Workflow Automation",           description: "Onboarding, certificate issuance, payment verification — running on autopilot." },
+  { icon: Mail,       title: "Email & SMS Alerts",            description: "Automated communications for every critical business event." },
+  { icon: Trophy,     title: "Gamification & Engagement",    description: "Leaderboards, badges, and rankings to motivate students and staff alike." },
+  { icon: FileSearch, title: "Report Exports",                description: "Download payroll, revenue, sales, attendance, and performance reports as CSV." },
+  { icon: Globe,      title: "Multi-Branch Ready",            description: "Manage multiple locations or departments from one centralized control panel." },
 ] as const;
 
 export function AdvancedFeaturesSection() {
@@ -32,8 +32,8 @@ export function AdvancedFeaturesSection() {
             Advanced Features That Set You Apart
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Go beyond basic LMS capabilities with AI automation, real-time
-            analytics, and engagement tools.
+            Go beyond basic tools with AI automation, real-time analytics, and
+            cross-department capabilities built for modern businesses.
           </p>
         </div>
 

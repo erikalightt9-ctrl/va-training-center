@@ -1,28 +1,28 @@
-import { LayoutDashboard, Bot, MessageCircle, BarChart3 } from "lucide-react";
+import { LayoutDashboard, TrendingUp, BarChart3, Layers } from "lucide-react";
 
 const values = [
   {
     icon: LayoutDashboard,
-    title: "Centralized Management",
-    description: "Replace spreadsheets with a single platform for students, trainers, courses, and payments.",
+    title: "Centralized Operations",
+    description: "Replace disconnected tools with one integrated system that manages HR, finance, IT, sales, admin, and training.",
     color: "bg-blue-600",
   },
   {
-    icon: Bot,
-    title: "AI-Powered Automation",
-    description: "Auto-categorize tickets, generate smart replies, and detect priority issues instantly.",
-    color: "bg-purple-600",
-  },
-  {
-    icon: MessageCircle,
-    title: "Built-in Messaging & Support",
-    description: "Real-time messaging, ticketing with SLA tracking, and file attachments — all in one place.",
+    icon: TrendingUp,
+    title: "Reduced Manual Work",
+    description: "Automate payroll, workflows, and reporting so your team spends more time on what actually moves the business forward.",
     color: "bg-emerald-600",
   },
   {
     icon: BarChart3,
-    title: "Real-time Analytics",
-    description: "Track enrollment trends, revenue, attendance, and student performance in a live dashboard.",
+    title: "Real-Time Insights",
+    description: "Live dashboards across every department — revenue, headcount, sales performance, and training progress in one view.",
+    color: "bg-purple-600",
+  },
+  {
+    icon: Layers,
+    title: "Scalable for Any Industry",
+    description: "Enable only the modules you need today. Add HR, sales, or finance as your business grows — no migration required.",
     color: "bg-amber-600",
   },
 ] as const;
@@ -36,11 +36,11 @@ export function ValuePropositionSection() {
             Why choose us
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Run Your Entire Training Business in One Platform
+            Everything You Need. One Powerful Platform.
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Stop juggling multiple tools. Our all-in-one platform handles
-            everything from enrollment to certification.
+            Simplify your operations and focus on growth with a fully integrated
+            system designed to handle your daily business needs.
           </p>
         </div>
 
@@ -56,6 +56,23 @@ export function ValuePropositionSection() {
               <h3 className="font-semibold text-gray-900 mb-2">{v.title}</h3>
               <p className="text-sm text-gray-500 leading-relaxed">{v.description}</p>
             </div>
+          ))}
+        </div>
+
+        {/* Checkmark list */}
+        <div className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-3">
+          {[
+            "Centralized business operations",
+            "Reduced manual work and errors",
+            "Real-time insights and reporting",
+            "Scalable for any industry",
+          ].map((point) => (
+            <span key={point} className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+              <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                ✓
+              </span>
+              {point}
+            </span>
           ))}
         </div>
       </div>
