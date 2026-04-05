@@ -96,9 +96,10 @@ async function main() {
   );
   console.log(`✓ Feature flags seeded (${features.length} enabled for ${plan} plan)`);
 
-  const domain = process.env.ROOT_DOMAIN ?? "humi-hub.vercel.app";
+  const domain = process.env.ROOT_DOMAIN ?? "va-training-center.vercel.app";
   console.log(`\n✅ Tenant onboarded successfully!`);
-  console.log(`   Portal URL: https://${subdomain}.${domain}/portal`);
+  console.log(`   Portal URL:  https://${domain}/t/${org.id}`);
+  console.log(`   Admin Login: https://${domain}/admin/login`);
   console.log(`   Admin email: ${email}`);
   console.log(`   Plan: ${plan}`);
   console.log(`   Features enabled: ${features.join(", ")}`);
