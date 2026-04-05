@@ -1,19 +1,20 @@
 import {
-  BookOpen,
-  Users,
   GraduationCap,
-  HeadphonesIcon,
-  LayoutDashboard,
-  Layers,
+  Users,
+  Settings,
+  Monitor,
+  TrendingUp,
+  Landmark,
+  BookOpen,
   Clock,
   BarChart3,
-  Award,
-  MessageSquare,
-  Trophy,
   FileText,
-  Bell,
-  Shield,
   DollarSign,
+  Shield,
+  Zap,
+  UserCheck,
+  PieChart,
+  Briefcase,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -31,102 +32,120 @@ interface Feature {
 
 const features: readonly Feature[] = [
   {
-    title: "Course Management",
-    subtitle: "Create and manage courses effortlessly",
+    title: "Training Management",
+    subtitle: "Full LMS built for results",
     description:
-      "Build tiered programs (Basic, Pro, Advanced) with flexible pricing, auto-generated descriptions, and modular lesson structures.",
-    icon: BookOpen,
+      "Manage courses, schedules, trainers, and participants with ease. From enrollment to certification, every step is tracked and automated.",
+    icon: GraduationCap,
     color: "bg-blue-600",
     highlights: [
-      "Tiered programs with flexible pricing",
-      "Module & lesson management",
-      "Auto-generated course descriptions",
-      "Resource & file attachments",
-    ],
-  },
-  {
-    title: "Trainer Dashboard",
-    subtitle: "Give trainers full control",
-    description:
-      "Trainers manage their schedules, track student attendance in real-time, monitor performance, and communicate directly with students.",
-    icon: Users,
-    color: "bg-purple-600",
-    highlights: [
-      "Attendance tracking (auto-sync)",
-      "Student performance monitoring",
-      "Schedule & availability management",
-      "Direct communication tools",
-    ],
-  },
-  {
-    title: "Student Experience",
-    subtitle: "Modern and engaging learning",
-    description:
-      "Students get a polished dashboard with course progress, resume builder with photo validation, leaderboards, badges, and certificate downloads.",
-    icon: GraduationCap,
-    color: "bg-emerald-600",
-    highlights: [
-      "Resume builder with smart validation",
-      "Leaderboards & badge rewards",
+      "Course & curriculum builder",
+      "Trainer schedule management",
+      "Attendance & progress tracking",
       "Certificate auto-generation",
-      "Course progress tracking",
     ],
   },
   {
-    title: "Support System",
-    subtitle: "Never miss a concern",
+    title: "Human Resources",
+    subtitle: "People management made simple",
     description:
-      "Built-in ticketing with SLA tracking, AI auto-replies and categorization, file attachments, and real-time notifications.",
-    icon: HeadphonesIcon,
-    color: "bg-amber-600",
+      "Handle employee records, payroll processing, attendance, and performance tracking in one centralized HR system.",
+    icon: Users,
+    color: "bg-violet-600",
     highlights: [
-      "Ticketing with SLA & priority",
-      "AI auto-reply & categorization",
-      "File attachments & notifications",
-      "Role-based messaging restrictions",
+      "Employee records & onboarding",
+      "Payroll & leave management",
+      "Attendance & timekeeping",
+      "Performance reviews",
     ],
   },
   {
-    title: "Admin Super Dashboard",
-    subtitle: "Full visibility and control",
+    title: "Administration",
+    subtitle: "Keep operations running smoothly",
     description:
-      "A command center for your entire training operation — full analytics, revenue tracking, multi-tenant management, and role-based access control.",
-    icon: LayoutDashboard,
+      "Streamline internal processes, documentation, and daily operations so your admin team can work faster with fewer errors.",
+    icon: Settings,
     color: "bg-indigo-600",
     highlights: [
-      "Full analytics (students, revenue, performance)",
-      "Multi-tenant control",
-      "Role-based access",
-      "Revenue & payment management",
+      "Document management",
+      "Internal workflow automation",
+      "Task assignment & tracking",
+      "Company-wide announcements",
+    ],
+  },
+  {
+    title: "IT Systems & Automation",
+    subtitle: "Digitize your entire workflow",
+    description:
+      "Manage IT assets, automate repetitive processes, and keep your systems running efficiently without heavy technical overhead.",
+    icon: Monitor,
+    color: "bg-cyan-600",
+    highlights: [
+      "IT asset & license tracking",
+      "Helpdesk & ticket management",
+      "Workflow digitization",
+      "System health monitoring",
+    ],
+  },
+  {
+    title: "Sales Management",
+    subtitle: "Track and close more deals",
+    description:
+      "Monitor your full sales pipeline, manage leads, and generate performance reports so your team always knows where to focus.",
+    icon: TrendingUp,
+    color: "bg-orange-600",
+    highlights: [
+      "Lead & pipeline tracking",
+      "Sales performance reports",
+      "Deal stage management",
+      "Client history & notes",
+    ],
+  },
+  {
+    title: "Finance & Accounting",
+    subtitle: "Stay on top of your numbers",
+    description:
+      "Organized and accurate financial reporting tools to manage invoices, expenses, and revenue — all in one place.",
+    icon: Landmark,
+    color: "bg-emerald-600",
+    highlights: [
+      "Invoice & billing management",
+      "Expense tracking",
+      "Revenue reporting",
+      "Financial dashboards",
     ],
   },
 ] as const;
 
 /* ------------------------------------------------------------------ */
-/*  Feature detail icons                                               */
+/*  Detail icon map                                                    */
 /* ------------------------------------------------------------------ */
 
 const DETAIL_ICONS: Record<string, React.ElementType> = {
-  "Tiered programs with flexible pricing": Layers,
-  "Module & lesson management": BookOpen,
-  "Auto-generated course descriptions": FileText,
-  "Resource & file attachments": FileText,
-  "Attendance tracking (auto-sync)": Clock,
-  "Student performance monitoring": BarChart3,
-  "Schedule & availability management": Clock,
-  "Direct communication tools": MessageSquare,
-  "Resume builder with smart validation": FileText,
-  "Leaderboards & badge rewards": Trophy,
-  "Certificate auto-generation": Award,
-  "Course progress tracking": BarChart3,
-  "Ticketing with SLA & priority": Bell,
-  "AI auto-reply & categorization": MessageSquare,
-  "File attachments & notifications": Bell,
-  "Role-based messaging restrictions": Users,
-  "Full analytics (students, revenue, performance)": BarChart3,
-  "Multi-tenant control": Layers,
-  "Role-based access": Shield,
-  "Revenue & payment management": DollarSign,
+  "Course & curriculum builder":        BookOpen,
+  "Trainer schedule management":        Clock,
+  "Attendance & progress tracking":     BarChart3,
+  "Certificate auto-generation":        FileText,
+  "Employee records & onboarding":      UserCheck,
+  "Payroll & leave management":         DollarSign,
+  "Attendance & timekeeping":           Clock,
+  "Performance reviews":                BarChart3,
+  "Document management":                FileText,
+  "Internal workflow automation":       Zap,
+  "Task assignment & tracking":         Settings,
+  "Company-wide announcements":         Users,
+  "IT asset & license tracking":        Shield,
+  "Helpdesk & ticket management":       Briefcase,
+  "Workflow digitization":              Zap,
+  "System health monitoring":           Monitor,
+  "Lead & pipeline tracking":           TrendingUp,
+  "Sales performance reports":          PieChart,
+  "Deal stage management":              BarChart3,
+  "Client history & notes":             FileText,
+  "Invoice & billing management":       FileText,
+  "Expense tracking":                   DollarSign,
+  "Revenue reporting":                  PieChart,
+  "Financial dashboards":               BarChart3,
 };
 
 /* ------------------------------------------------------------------ */
@@ -142,11 +161,11 @@ export function FeatureBreakdownSection() {
             Platform Features
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Everything You Need to Run a Training Center
+            Comprehensive Business Solutions
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Four powerful modules that cover every aspect of your training
-            operations.
+            Six powerful modules that cover every department of your business —
+            from training and HR to sales, finance, and IT.
           </p>
         </div>
 
@@ -156,19 +175,18 @@ export function FeatureBreakdownSection() {
             return (
               <div
                 key={feature.title}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
-                  isReversed ? "lg:direction-rtl" : ""
-                }`}
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center`}
               >
                 {/* Text side */}
                 <div className={isReversed ? "lg:order-2" : ""}>
                   <div className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <p className="text-sm font-medium text-gray-400 mb-1">{feature.subtitle}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-500 mb-6">{feature.description}</p>
+                  <p className="text-gray-500 mb-6 leading-relaxed">{feature.description}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {feature.highlights.map((h) => {
                       const Icon = DETAIL_ICONS[h] ?? BookOpen;
@@ -184,7 +202,7 @@ export function FeatureBreakdownSection() {
                   </div>
                 </div>
 
-                {/* Visual side — mockup card */}
+                {/* Visual side */}
                 <div className={isReversed ? "lg:order-1" : ""}>
                   <FeatureMockup feature={feature} index={index} />
                 </div>
@@ -209,148 +227,174 @@ function FeatureMockup({
   readonly index: number;
 }) {
   const mockups = [
-    // Course Management
-    <div key="courses" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+    /* 0 — Training Management */
+    <div key="training" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-semibold text-gray-900 text-sm">Active Courses</h4>
-        <span className="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full font-medium">12 courses</span>
+        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">12 courses</span>
       </div>
       <div className="space-y-3">
-        {["Healthcare VA Training", "Real Estate VA Program", "Legal VA Specialization"].map((name) => (
+        {["Healthcare VA Training", "Real Estate Program", "Digital Marketing"].map((name, i) => (
           <div key={name} className="bg-white rounded-xl p-3 border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-900">{name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">3 tiers &middot; 24 lessons</p>
+                <p className="text-xs text-gray-500 mt-0.5">3 tiers · {20 + i * 4} lessons</p>
               </div>
               <div className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Active</div>
             </div>
             <div className="mt-2 w-full bg-gray-100 rounded-full h-1.5">
-              <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${60 + Math.random() * 30}%` }} />
+              <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${55 + i * 15}%` }} />
             </div>
           </div>
         ))}
       </div>
     </div>,
 
-    // Trainer Dashboard
-    <div key="trainer" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+    /* 1 — Human Resources */
+    <div key="hr" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900 text-sm">Trainer Schedule</h4>
-        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">This week</span>
+        <h4 className="font-semibold text-gray-900 text-sm">HR Overview</h4>
+        <span className="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-medium">48 employees</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {[
+          { label: "On Leave",    value: "3",    color: "text-amber-600"  },
+          { label: "Payroll Due", value: "₱240K", color: "text-blue-600"  },
+          { label: "New Hires",   value: "2",    color: "text-emerald-600" },
+          { label: "Open Roles",  value: "5",    color: "text-purple-600" },
+        ].map((s) => (
+          <div key={s.label} className="bg-white rounded-lg p-2.5 border border-gray-100 text-center">
+            <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
+            <p className="text-[10px] text-gray-500">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-1.5">
+        {["Maria Santos — On leave until Apr 10", "John Cruz — Payroll processed", "Ana Reyes — New hire onboarding"].map((t) => (
+          <div key={t} className="flex items-center gap-2 p-1.5 bg-white rounded-md border border-gray-100">
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+            <p className="text-[10px] text-gray-600 truncate">{t}</p>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    /* 2 — Administration */
+    <div key="admin" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-gray-900 text-sm">Admin Tasks</h4>
+        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">7 pending</span>
       </div>
       <div className="space-y-2">
         {[
-          { day: "Mon", time: "9:00 AM", batch: "Batch A — Healthcare", count: 18 },
-          { day: "Tue", time: "2:00 PM", batch: "Batch B — Real Estate", count: 22 },
-          { day: "Wed", time: "9:00 AM", batch: "Batch A — Healthcare", count: 18 },
-          { day: "Thu", time: "10:00 AM", batch: "Batch C — Finance", count: 15 },
-        ].map((s) => (
-          <div key={`${s.day}-${s.batch}`} className="bg-white rounded-xl p-3 border border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                <span className="text-xs font-bold text-purple-700">{s.day}</span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">{s.batch}</p>
-                <p className="text-xs text-gray-500">{s.time}</p>
+          { task: "Update company policy document",   due: "Today",    priority: "High",   dot: "bg-red-400" },
+          { task: "Schedule Q2 department meetings",  due: "Apr 12",   priority: "Medium", dot: "bg-amber-400" },
+          { task: "File monthly compliance report",   due: "Apr 15",   priority: "High",   dot: "bg-red-400" },
+          { task: "Onboard 2 new team members",       due: "Apr 20",   priority: "Normal", dot: "bg-blue-400" },
+        ].map((t) => (
+          <div key={t.task} className="bg-white rounded-xl p-3 border border-gray-100">
+            <div className="flex items-start gap-2">
+              <div className={`w-1.5 h-1.5 rounded-full ${t.dot} mt-1.5 flex-shrink-0`} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-900 truncate">{t.task}</p>
+                <p className="text-[10px] text-gray-500">Due {t.due} · {t.priority}</p>
               </div>
             </div>
-            <span className="text-xs text-gray-500">{s.count} students</span>
           </div>
         ))}
       </div>
     </div>,
 
-    // Student Experience
-    <div key="student" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+    /* 3 — IT Systems */
+    <div key="it" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900 text-sm">Student Dashboard</h4>
-        <span className="text-xs bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded-full font-medium">Active</span>
+        <h4 className="font-semibold text-gray-900 text-sm">IT Dashboard</h4>
+        <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-medium">All systems</span>
       </div>
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         {[
-          { label: "Progress", value: "78%" },
-          { label: "Rank", value: "#12" },
-          { label: "Badges", value: "5" },
+          { label: "Assets",       value: "142",  color: "text-cyan-600"  },
+          { label: "Open Tickets", value: "4",    color: "text-amber-600" },
+          { label: "Licenses",     value: "28",   color: "text-blue-600"  },
+          { label: "Uptime",       value: "99.9%", color: "text-emerald-600" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-lg p-2.5 text-center border border-gray-100">
-            <p className="text-lg font-bold text-gray-900">{s.value}</p>
+          <div key={s.label} className="bg-white rounded-lg p-2.5 border border-gray-100 text-center">
+            <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
             <p className="text-[10px] text-gray-500">{s.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-1.5">
+        {["Server upgrade — Completed", "VPN access: 3 new users", "Software license expiry: Apr 30"].map((t) => (
+          <div key={t} className="flex items-center gap-2 p-1.5 bg-white rounded-md border border-gray-100">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <p className="text-[10px] text-gray-600 truncate">{t}</p>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    /* 4 — Sales Management */
+    <div key="sales" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-gray-900 text-sm">Sales Pipeline</h4>
+        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">12 active leads</span>
+      </div>
+      <div className="space-y-2">
+        {[
+          { name: "Acme Corp",       stage: "Proposal",    value: "₱85K",  dot: "bg-blue-400"   },
+          { name: "Global Retail",   stage: "Negotiation", value: "₱120K", dot: "bg-amber-400"  },
+          { name: "TechPro Inc.",    stage: "Closed Won",  value: "₱65K",  dot: "bg-emerald-400"},
+          { name: "Swift Agency",    stage: "Prospecting", value: "₱40K",  dot: "bg-gray-400"   },
+        ].map((lead) => (
+          <div key={lead.name} className="bg-white rounded-xl p-3 border border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${lead.dot}`} />
+              <div>
+                <p className="text-xs font-medium text-gray-900">{lead.name}</p>
+                <p className="text-[10px] text-gray-500">{lead.stage}</p>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-gray-700">{lead.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>,
+
+    /* 5 — Finance & Accounting */
+    <div key="finance" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-semibold text-gray-900 text-sm">Finance Overview</h4>
+        <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">April 2025</span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {[
+          { label: "Total Revenue",  value: "₱4.8M", change: "+14%", up: true  },
+          { label: "Total Expenses", value: "₱1.2M", change: "-5%",  up: false },
+          { label: "Net Profit",     value: "₱3.6M", change: "+21%", up: true  },
+          { label: "Pending Inv.",   value: "8",      change: "",     up: true  },
+        ].map((s) => (
+          <div key={s.label} className="bg-white rounded-lg p-2.5 border border-gray-100">
+            <p className="text-[10px] text-gray-500">{s.label}</p>
+            <div className="flex items-baseline gap-1">
+              <p className="text-sm font-bold text-gray-900">{s.value}</p>
+              {s.change && (
+                <span className={`text-[9px] font-medium ${s.up ? "text-emerald-600" : "text-red-500"}`}>
+                  {s.change}
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>
       <div className="bg-white rounded-xl p-3 border border-gray-100">
-        <p className="text-xs text-gray-500 mb-2">Current Course</p>
-        <p className="text-sm font-medium text-gray-900">Healthcare VA Training</p>
-        <div className="mt-2 w-full bg-gray-100 rounded-full h-2">
-          <div className="bg-emerald-500 h-2 rounded-full" style={{ width: "78%" }} />
+        <p className="text-[10px] text-gray-500 mb-2">Monthly Revenue Trend</p>
+        <div className="flex items-end gap-1 h-10">
+          {[50, 60, 45, 70, 65, 80, 75, 85, 90, 88, 95, 100].map((h, i) => (
+            <div key={i} className="flex-1 bg-emerald-400 rounded-sm opacity-80" style={{ height: `${h}%` }} />
+          ))}
         </div>
-        <p className="text-[10px] text-gray-500 mt-1">18 of 24 lessons completed</p>
-      </div>
-    </div>,
-
-    // Support System
-    <div key="support" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900 text-sm">Support Tickets</h4>
-        <span className="text-xs bg-amber-900/40 text-amber-400 px-2 py-0.5 rounded-full font-medium">3 open</span>
-      </div>
-      <div className="space-y-2">
-        {[
-          { title: "Can't access Module 3", priority: "High", status: "In Progress", statusColor: "bg-amber-900/40 text-amber-400" },
-          { title: "Certificate not received", priority: "Medium", status: "AI Replied", statusColor: "bg-blue-900/40 text-blue-400" },
-          { title: "Payment confirmation", priority: "Low", status: "Resolved", statusColor: "bg-green-100 text-green-700" },
-        ].map((t) => (
-          <div key={t.title} className="bg-white rounded-xl p-3 border border-gray-100">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-sm font-medium text-gray-900">{t.title}</p>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${t.statusColor}`}>
-                {t.status}
-              </span>
-            </div>
-            <p className="text-xs text-gray-500">Priority: {t.priority}</p>
-          </div>
-        ))}
-      </div>
-    </div>,
-
-    // Admin Super Dashboard
-    <div key="admin" className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900 text-sm">Admin Dashboard</h4>
-        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">Live</span>
-      </div>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {[
-          { label: "Total Revenue", value: "₱2.4M", change: "+12%" },
-          { label: "Active Students", value: "847", change: "+8%" },
-          { label: "Completion Rate", value: "94%", change: "+3%" },
-          { label: "Avg. Rating", value: "4.8", change: "+0.2" },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-lg p-2.5 border border-gray-100">
-            <p className="text-[10px] text-gray-500">{s.label}</p>
-            <div className="flex items-baseline gap-1.5">
-              <p className="text-sm font-bold text-gray-900">{s.value}</p>
-              <span className="text-[9px] text-green-600 font-medium">{s.change}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="space-y-2">
-        {[
-          { label: "Organizations", count: 3, icon: "🏢" },
-          { label: "Active Trainers", count: 18, icon: "👨‍🏫" },
-          { label: "Pending Payments", count: 5, icon: "💳" },
-        ].map((item) => (
-          <div key={item.label} className="bg-white rounded-lg p-2.5 border border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">{item.icon}</span>
-              <span className="text-xs text-gray-700">{item.label}</span>
-            </div>
-            <span className="text-xs font-bold text-gray-900">{item.count}</span>
-          </div>
-        ))}
       </div>
     </div>,
   ];

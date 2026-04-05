@@ -34,12 +34,13 @@ export function MultiTenantSection() {
               SaaS-Ready
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Built for Scale — Perfect for Growing Training Businesses
+              Built for Scale — Perfect for Any Growing Business
             </h2>
             <p className="text-gray-500 mb-8 leading-relaxed">
-              Whether you manage one training center or a hundred, our
-              multi-tenant architecture grows with you. Each organization gets
-              its own branded platform with full data isolation.
+              Whether you manage one company or a hundred, our multi-tenant
+              architecture grows with you. Each organization gets its own
+              isolated, fully branded platform — ready to run the moment you
+              onboard them.
             </p>
 
             <div className="space-y-5">
