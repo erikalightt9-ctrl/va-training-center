@@ -32,20 +32,9 @@ export default function TenantDirectAccessPage() {
       const data: TenantInfo = json.data;
       setTenant(data);
 
-      // If tenant has a subdomain, redirect to it
-      if (data.subdomain) {
-        const host = window.location.host;
-        // Remove any existing subdomain to get base domain
-        const parts = host.split(".");
-        const baseDomain =
-          parts.length >= 2 ? parts.slice(-2).join(".") : host;
-        const tenantUrl = `${window.location.protocol}//${data.subdomain}.${baseDomain}`;
-        window.location.href = tenantUrl;
-        return;
-      }
-
-      // No subdomain — redirect to tenant-login with slug fallback
-      router.replace(`/tenant-login?slug=${encodeURIComponent(data.id)}`);
+      // Always use path-based login — subdomain routing requires a custom domain
+      const identifier = data.subdomain ?? data.id;
+      router.replace(`/tenant-login?slug=${encodeURIComponent(identifier)}`);
     }
 
     resolveTenant();
