@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
 
 import { SaasHeroSection } from "@/components/public/SaasHeroSection";
+import { NicheSection } from "@/components/public/NicheSection";
 import { TargetAudienceSection } from "@/components/public/TargetAudienceSection";
 import { ValuePropositionSection } from "@/components/public/ValuePropositionSection";
 import { FeatureBreakdownSection } from "@/components/public/FeatureBreakdownSection";
@@ -12,9 +13,9 @@ import { SaasTestimonialsSection } from "@/components/public/SaasTestimonialsSec
 import { FaqSection } from "@/components/public/FaqSection";
 
 export const metadata: Metadata = {
-  title: "HUMI Hub — All-in-One Training Management Platform",
+  title: "HUMI Hub — All-in-One Business Operations Platform",
   description:
-    "Manage students, trainers, courses, messaging, and analytics — all in one powerful system. Built for modern training centers and academies.",
+    "One platform to manage your entire business. HR, finance, IT, sales, admin, and learning management — built for training centers and SMEs ready to scale.",
 };
 
 export default function HomePage() {
@@ -23,31 +24,34 @@ export default function HomePage() {
       {/* 1. Hero — SaaS positioning with dashboard preview */}
       <SaasHeroSection />
 
-      {/* 2. Target Audience — who it's for */}
+      {/* 2. Niche — platform identity, industries served, business pillars */}
+      <NicheSection />
+
+      {/* 3. Target Audience — who it's for */}
       <TargetAudienceSection />
 
-      {/* 3. Value Proposition — 4 key benefits */}
+      {/* 4. Value Proposition — 4 key benefits */}
       <ValuePropositionSection />
 
-      {/* 4. Feature Breakdown — zig-zag layout with mockups */}
+      {/* 5. Feature Breakdown — zig-zag layout with mockups */}
       <FeatureBreakdownSection />
 
-      {/* 5. Advanced Features — competitive edge grid */}
+      {/* 6. Advanced Features — competitive edge grid */}
       <AdvancedFeaturesSection />
 
-      {/* 6. Multi-Tenant — SaaS selling point */}
+      {/* 7. Multi-Tenant — SaaS selling point */}
       <MultiTenantSection />
 
-      {/* 7. Pricing — 3 tiers */}
+      {/* 8. Pricing — 3 tiers */}
       <PricingSection />
 
-      {/* 8. ROI / Business Impact */}
+      {/* 9. ROI / Business Impact */}
       <RoiSection />
 
-      {/* 9. Testimonials */}
+      {/* 10. Testimonials */}
       <SaasTestimonialsSection />
 
-      {/* 10. FAQ */}
+      {/* 11. FAQ */}
       <FaqSection />
     </>
   );
