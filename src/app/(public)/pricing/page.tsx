@@ -241,8 +241,9 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-sm text-gray-400 mt-8">
-          All prices in Philippine Peso (PHP) · VAT not included ·{" "}
-          <Link href="/contact" className="text-blue-600 hover:underline">Need a custom quote?</Link>
+          All plans include a 30-day free trial. Prices are in Philippine Peso (PHP).{" "}
+          <Link href="/contact" className="text-blue-600 hover:underline">Need a custom quote?</Link>{" "}
+          <Link href="/contact" className="text-blue-600 hover:underline">Contact us</Link>
         </p>
       </section>
 
@@ -300,23 +301,23 @@ export default function PricingPage() {
       </section>
 
       {/* CTA band */}
-      <section className="bg-blue-600 py-16 px-4 text-center">
+      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 py-16 px-4 text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-          Ready to launch your training platform?
+          Ready to centralize your entire business?
         </h2>
-        <p className="text-blue-200 mb-8 text-sm">
-          Join hundreds of training centers already running on HUMI Hub.
+        <p className="text-blue-100 mb-8 text-sm max-w-lg mx-auto">
+          Join growing organizations across industries already managing training, HR, finance, sales, and operations on HUMI Hub.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/start-trial"
             className="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
           >
-            Create Your Training Platform <ArrowRight className="h-4 w-4" />
+            Start Free Trial <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 border border-blue-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 border border-blue-300 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors"
           >
             Talk to Sales
           </Link>

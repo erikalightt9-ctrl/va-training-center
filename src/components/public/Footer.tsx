@@ -73,9 +73,9 @@ export function Footer({ siteName }: { siteName?: string | null }) {
               <span>{displayName}</span>
             </div>
             <p className="text-blue-200 text-sm leading-relaxed">
-              All-in-one training management platform for modern training
-              centers and academies. Manage students, trainers, courses,
-              and analytics in one system.
+              All-in-one business platform for growing organizations.
+              Manage training, HR, finance, sales, IT, and operations
+              — all in one centralized system.
             </p>
           </div>
 

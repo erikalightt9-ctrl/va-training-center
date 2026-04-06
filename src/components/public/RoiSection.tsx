@@ -5,29 +5,29 @@ const stats = [
     icon: TrendingDown,
     value: "70%",
     label: "Less Admin Work",
-    description: "Automate enrollment, payments, and reports",
-    color: "text-blue-400 bg-blue-50",
+    description: "Automate HR, payroll, enrollment, and reporting across departments",
+    color: "text-blue-500 bg-blue-50",
   },
   {
     icon: TrendingUp,
     value: "3x",
     label: "Faster Operations",
-    description: "From enrollment to certification",
-    color: "text-emerald-400 bg-emerald-50",
+    description: "From staff onboarding and training to finance and deployment",
+    color: "text-emerald-500 bg-emerald-50",
   },
   {
     icon: Clock,
     value: "90%",
     label: "Faster Support Response",
-    description: "AI auto-replies handle common questions",
-    color: "text-purple-400 bg-purple-50",
+    description: "AI-powered ticketing handles common queries instantly",
+    color: "text-purple-500 bg-purple-50",
   },
   {
     icon: Zap,
     value: "2x",
-    label: "Higher Completion",
-    description: "Gamification drives student engagement",
-    color: "text-amber-400 bg-amber-50",
+    label: "Higher Team Performance",
+    description: "Structured workflows and analytics drive measurable business results",
+    color: "text-amber-500 bg-amber-50",
   },
 ] as const;
 
@@ -36,14 +36,14 @@ export function RoiSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-500 font-semibold text-sm uppercase tracking-widest mb-2">
             Business Impact
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Why Training Centers Choose Us
+            Why Growing Businesses Choose HUMI Hub
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Real results from real training businesses using the platform.
+            Real results from organizations across industries — training centers, corporates, HR teams, and operations managers.
           </p>
         </div>
 
@@ -51,7 +51,7 @@ export function RoiSection() {
           {stats.map((s) => (
             <div
               key={s.label}
-              className="text-center p-6 rounded-2xl bg-gray-50 border border-gray-100"
+              className="text-center p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-md transition-shadow"
             >
               <div className={`w-14 h-14 rounded-xl ${s.color} flex items-center justify-center mx-auto mb-4`}>
                 <s.icon className="h-7 w-7" />

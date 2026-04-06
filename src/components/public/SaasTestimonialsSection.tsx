@@ -5,29 +5,33 @@ interface Testimonial {
   readonly name: string;
   readonly role: string;
   readonly company: string;
+  readonly industry: string;
   readonly rating: number;
 }
 
 const testimonials: readonly Testimonial[] = [
   {
-    quote: "This platform replaced 5 tools we were using. Everything is now in one place — enrollment, payments, analytics, and messaging.",
+    quote: "HUMI Hub replaced 5 separate tools we were running. HR, training, finance, and messaging — everything is now centralized. Our team spends more time on actual work, not admin.",
     name: "Maria Santos",
     role: "Operations Director",
     company: "PhilTrain Academy",
+    industry: "Training & Education",
     rating: 5,
   },
   {
-    quote: "Our training operations became 10x faster. The AI ticketing alone saved us 20 hours per week on student support.",
+    quote: "We used HUMI Hub to manage our entire HR and sales pipeline. Onboarding new staff, tracking performance, and generating reports used to take days — now it takes minutes.",
     name: "James Reyes",
     role: "CEO",
-    company: "Global Skills Institute",
+    company: "Nexus Business Solutions",
+    industry: "Business Consulting",
     rating: 5,
   },
   {
-    quote: "The multi-tenant setup is perfect. We manage 3 training centers from one admin panel with complete data isolation.",
+    quote: "Managing IT assets, helpdesk tickets, and staff training from one dashboard is a game changer. The multi-tenant setup lets us oversee 3 offices with full data isolation.",
     name: "Angela Cruz",
-    role: "IT Manager",
+    role: "IT & Operations Manager",
     company: "TechReady Solutions",
+    industry: "IT Services",
     rating: 5,
   },
 ] as const;
@@ -37,19 +41,22 @@ export function SaasTestimonialsSection() {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
+          <p className="text-blue-500 font-semibold text-sm uppercase tracking-widest mb-2">
             Testimonials
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Trusted by Training Centers
+            Trusted by Businesses Across Industries
           </h2>
+          <p className="text-gray-500 max-w-xl mx-auto text-sm">
+            From training centers and HR teams to IT firms and corporate operations — here&apos;s what our clients say.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-white rounded-2xl p-6 border border-gray-200 flex flex-col"
+              className="bg-white rounded-2xl p-6 border border-gray-200 flex flex-col hover:shadow-md transition-shadow"
             >
               {/* Stars */}
               <div className="flex gap-0.5 mb-4">
@@ -75,6 +82,9 @@ export function SaasTestimonialsSection() {
                   <p className="text-xs text-gray-500">
                     {t.role}, {t.company}
                   </p>
+                  <span className="inline-block text-xs text-blue-600 font-medium mt-0.5">
+                    {t.industry}
+                  </span>
                 </div>
               </div>
             </div>
