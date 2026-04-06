@@ -1,152 +1,193 @@
 import {
-  GraduationCap,
-  Users,
   Settings,
-  Monitor,
-  TrendingUp,
-  Landmark,
-  BookOpen,
-  Clock,
-  BarChart3,
   FileText,
+  Monitor,
+  Users,
+  Clock,
+  GraduationCap,
+  Landmark,
   DollarSign,
+  BarChart3,
+  TrendingUp,
+  Briefcase,
+  PieChart,
+  Building2,
   Shield,
   Zap,
-  UserCheck,
-  PieChart,
-  Briefcase,
+  Layers,
+  CheckCircle2,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
-/*  Feature data                                                       */
+/*  Platform pillars                                                   */
 /* ------------------------------------------------------------------ */
 
-interface Feature {
+interface SubFeature {
   readonly title: string;
-  readonly subtitle: string;
   readonly description: string;
   readonly icon: React.ElementType;
-  readonly color: string;
-  readonly highlights: readonly string[];
 }
 
-const features: readonly Feature[] = [
+interface Pillar {
+  readonly emoji: string;
+  readonly number: number;
+  readonly title: string;
+  readonly subtitle: string;
+  readonly color: string;
+  readonly iconColor: string;
+  readonly borderColor: string;
+  readonly badgeColor: string;
+  readonly outcome: string;
+  readonly features: readonly SubFeature[];
+}
+
+const pillars: readonly Pillar[] = [
   {
-    title: "Training Management",
-    subtitle: "Full LMS built for results",
-    description:
-      "Manage courses, schedules, trainers, and participants with ease. From enrollment to certification, every step is tracked and automated.",
-    icon: GraduationCap,
-    color: "bg-blue-600",
-    highlights: [
-      "Course & curriculum builder",
-      "Trainer schedule management",
-      "Attendance & progress tracking",
-      "Certificate auto-generation",
-    ],
-  },
-  {
-    title: "Human Resources",
-    subtitle: "People management made simple",
-    description:
-      "Handle employee records, payroll processing, attendance, and performance tracking in one centralized HR system.",
-    icon: Users,
-    color: "bg-violet-600",
-    highlights: [
-      "Employee records & onboarding",
-      "Payroll & leave management",
-      "Attendance & timekeeping",
-      "Performance reviews",
-    ],
-  },
-  {
-    title: "Administration",
-    subtitle: "Keep operations running smoothly",
-    description:
-      "Streamline internal processes, documentation, and daily operations so your admin team can work faster with fewer errors.",
-    icon: Settings,
+    emoji: "⚙️",
+    number: 1,
+    title: "Operations Management",
+    subtitle: "Streamline your daily workflows and internal processes",
     color: "bg-indigo-600",
-    highlights: [
-      "Document management",
-      "Internal workflow automation",
-      "Task assignment & tracking",
-      "Company-wide announcements",
+    iconColor: "text-indigo-600",
+    borderColor: "border-indigo-100",
+    badgeColor: "bg-indigo-50 text-indigo-700",
+    outcome: "Organized operations with full visibility and control.",
+    features: [
+      {
+        title: "Admin & Task Management",
+        description: "Plan, assign, and track tasks with built-in workflows and approvals.",
+        icon: Settings,
+      },
+      {
+        title: "Document Management",
+        description: "Securely store, organize, and control access to business-critical files with version tracking.",
+        icon: FileText,
+      },
+      {
+        title: "IT Asset Management",
+        description: "Monitor and manage company assets, device assignments, and maintenance records.",
+        icon: Monitor,
+      },
     ],
   },
   {
-    title: "IT Systems & Automation",
-    subtitle: "Digitize your entire workflow",
-    description:
-      "Manage IT assets, automate repetitive processes, and keep your systems running efficiently without heavy technical overhead.",
-    icon: Monitor,
-    color: "bg-cyan-600",
-    highlights: [
-      "IT asset & license tracking",
-      "Helpdesk & ticket management",
-      "Workflow digitization",
-      "System health monitoring",
+    emoji: "👥",
+    number: 2,
+    title: "People Management",
+    subtitle: "Empower your workforce and manage your team efficiently",
+    color: "bg-violet-600",
+    iconColor: "text-violet-600",
+    borderColor: "border-violet-100",
+    badgeColor: "bg-violet-50 text-violet-700",
+    outcome: "A more productive, engaged, and well-managed workforce.",
+    features: [
+      {
+        title: "HR & Payroll Management",
+        description: "Handle employee records, payroll processing, and compliance in one place.",
+        icon: Users,
+      },
+      {
+        title: "Attendance & Time Tracking",
+        description: "Monitor employee attendance, work hours, and productivity trends.",
+        icon: Clock,
+      },
+      {
+        title: "Training & Learning (LMS)",
+        description: "Deliver training programs, track progress, and manage certifications.",
+        icon: GraduationCap,
+      },
     ],
   },
   {
-    title: "Sales Management",
-    subtitle: "Track and close more deals",
-    description:
-      "Monitor your full sales pipeline, manage leads, and generate performance reports so your team always knows where to focus.",
-    icon: TrendingUp,
-    color: "bg-orange-600",
-    highlights: [
-      "Lead & pipeline tracking",
-      "Sales performance reports",
-      "Deal stage management",
-      "Client history & notes",
-    ],
-  },
-  {
-    title: "Finance & Accounting",
-    subtitle: "Stay on top of your numbers",
-    description:
-      "Organized and accurate financial reporting tools to manage invoices, expenses, and revenue — all in one place.",
-    icon: Landmark,
+    emoji: "💰",
+    number: 3,
+    title: "Financial Management",
+    subtitle: "Gain full control over your business finances",
     color: "bg-emerald-600",
-    highlights: [
-      "Invoice & billing management",
-      "Expense tracking",
-      "Revenue reporting",
-      "Financial dashboards",
+    iconColor: "text-emerald-600",
+    borderColor: "border-emerald-100",
+    badgeColor: "bg-emerald-50 text-emerald-700",
+    outcome: "Clear financial visibility and smarter decision-making.",
+    features: [
+      {
+        title: "Accounting System",
+        description: "Track income, expenses, and financial transactions with real-time accuracy.",
+        icon: Landmark,
+      },
+      {
+        title: "Expense Management",
+        description: "Record, categorize, and monitor business spending efficiently.",
+        icon: DollarSign,
+      },
+      {
+        title: "Financial Reporting",
+        description: "Generate insights with profit & loss, cash flow, and performance reports.",
+        icon: BarChart3,
+      },
+    ],
+  },
+  {
+    emoji: "📈",
+    number: 4,
+    title: "Growth & Revenue",
+    subtitle: "Drive sales performance and business expansion",
+    color: "bg-orange-600",
+    iconColor: "text-orange-600",
+    borderColor: "border-orange-100",
+    badgeColor: "bg-orange-50 text-orange-700",
+    outcome: "Stronger revenue growth and better strategic decisions.",
+    features: [
+      {
+        title: "CRM (Customer Management)",
+        description: "Manage leads, clients, and relationships in a centralized system.",
+        icon: Briefcase,
+      },
+      {
+        title: "Sales Pipeline Tracking",
+        description: "Monitor deals, track progress, and improve conversion rates.",
+        icon: TrendingUp,
+      },
+      {
+        title: "Advanced Analytics",
+        description: "Get actionable insights across sales, operations, and performance.",
+        icon: PieChart,
+      },
+    ],
+  },
+  {
+    emoji: "🏢",
+    number: 5,
+    title: "Platform & Infrastructure",
+    subtitle: "Built for scalability, flexibility, and enterprise needs",
+    color: "bg-blue-600",
+    iconColor: "text-blue-600",
+    borderColor: "border-blue-100",
+    badgeColor: "bg-blue-50 text-blue-700",
+    outcome: "A scalable, customizable system that grows with your business.",
+    features: [
+      {
+        title: "Multi-Tenant Architecture",
+        description: "Manage multiple businesses or branches within one platform.",
+        icon: Building2,
+      },
+      {
+        title: "SSO / SAML Integration",
+        description: "Enable secure and seamless enterprise authentication.",
+        icon: Shield,
+      },
+      {
+        title: "API & Integrations",
+        description: "Connect with external systems and extend platform capabilities.",
+        icon: Zap,
+      },
+      {
+        title: "White-Label Branding",
+        description: "Customize the platform with your brand, domain, and identity.",
+        icon: Layers,
+      },
     ],
   },
 ] as const;
-
-/* ------------------------------------------------------------------ */
-/*  Detail icon map                                                    */
-/* ------------------------------------------------------------------ */
-
-const DETAIL_ICONS: Record<string, React.ElementType> = {
-  "Course & curriculum builder":        BookOpen,
-  "Trainer schedule management":        Clock,
-  "Attendance & progress tracking":     BarChart3,
-  "Certificate auto-generation":        FileText,
-  "Employee records & onboarding":      UserCheck,
-  "Payroll & leave management":         DollarSign,
-  "Attendance & timekeeping":           Clock,
-  "Performance reviews":                BarChart3,
-  "Document management":                FileText,
-  "Internal workflow automation":       Zap,
-  "Task assignment & tracking":         Settings,
-  "Company-wide announcements":         Users,
-  "IT asset & license tracking":        Shield,
-  "Helpdesk & ticket management":       Briefcase,
-  "Workflow digitization":              Zap,
-  "System health monitoring":           Monitor,
-  "Lead & pipeline tracking":           TrendingUp,
-  "Sales performance reports":          PieChart,
-  "Deal stage management":              BarChart3,
-  "Client history & notes":             FileText,
-  "Invoice & billing management":       FileText,
-  "Expense tracking":                   DollarSign,
-  "Revenue reporting":                  PieChart,
-  "Financial dashboards":               BarChart3,
-};
 
 /* ------------------------------------------------------------------ */
 /*  FeatureBreakdownSection                                            */
@@ -156,54 +197,66 @@ export function FeatureBreakdownSection() {
   return (
     <section id="features" className="py-20 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <p className="text-blue-400 font-semibold text-sm uppercase tracking-wide mb-2">
-            Platform Features
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <p className="text-blue-500 font-semibold text-sm uppercase tracking-widest mb-2">
+            Platform Structure
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Comprehensive Business Solutions
+            Everything Your Business Needs
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Six powerful modules that cover every department of your business —
-            from training and HR to sales, finance, and IT.
+            Manage operations, people, and performance from one intelligent platform.
+            HUMI Hub unifies training, HR, administration, IT, sales, and finance
+            into a single system designed to streamline workflows, improve visibility,
+            and accelerate growth.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature) => (
+        {/* Pillars */}
+        <div className="space-y-12">
+          {pillars.map((pillar) => (
             <div
-              key={feature.title}
-              className="rounded-2xl border border-gray-100 bg-gray-50 p-6 hover:shadow-md transition-shadow"
+              key={pillar.title}
+              className={`rounded-2xl border ${pillar.borderColor} bg-gray-50 p-8`}
             >
-              {/* Icon + title */}
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-xl ${feature.color} flex items-center justify-center shrink-0`}>
-                  <feature.icon className="h-5 w-5 text-white" />
+              {/* Pillar header */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
+                <div className={`w-10 h-10 rounded-xl ${pillar.color} flex items-center justify-center shrink-0 text-white font-bold text-sm`}>
+                  {pillar.number}
                 </div>
                 <div>
-                  <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide leading-none mb-0.5">
-                    {feature.subtitle}
-                  </p>
-                  <h3 className="text-sm font-bold text-gray-900">{feature.title}</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{pillar.emoji}</span>
+                    <h3 className="text-xl font-bold text-gray-900">{pillar.title}</h3>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-0.5">{pillar.subtitle}</p>
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-gray-500 leading-relaxed mb-4">{feature.description}</p>
-
-              {/* Highlights */}
-              <div className="space-y-2">
-                {feature.highlights.map((h) => {
-                  const Icon = DETAIL_ICONS[h] ?? BookOpen;
-                  return (
-                    <div key={h} className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-white border border-gray-200 flex items-center justify-center shrink-0">
-                        <Icon className="h-3 w-3 text-gray-500" />
-                      </div>
-                      <span className="text-xs text-gray-600">{h}</span>
+              {/* Sub-features grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                {pillar.features.map((feat) => (
+                  <div
+                    key={feat.title}
+                    className="bg-white rounded-xl border border-gray-200 p-4 flex gap-3 hover:shadow-sm transition-shadow"
+                  >
+                    <div className={`w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 mt-0.5`}>
+                      <feat.icon className={`h-4 w-4 ${pillar.iconColor}`} />
                     </div>
-                  );
-                })}
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{feat.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{feat.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Outcome */}
+              <div className={`mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${pillar.badgeColor}`}>
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                <span>Outcome: {pillar.outcome}</span>
               </div>
             </div>
           ))}

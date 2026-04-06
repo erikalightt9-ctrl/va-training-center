@@ -11,6 +11,7 @@ import { MultiTenantSection } from "@/components/public/MultiTenantSection";
 import { PricingSection } from "@/components/public/PricingSection";
 import { RoiSection } from "@/components/public/RoiSection";
 import { SaasTestimonialsSection } from "@/components/public/SaasTestimonialsSection";
+import { PowerStatementSection } from "@/components/public/PowerStatementSection";
 import { FaqSection } from "@/components/public/FaqSection";
 
 export const metadata: Metadata = {
@@ -34,28 +35,31 @@ export default function HomePage() {
       {/* 4. Value Proposition — 4 key benefits + checkmarks */}
       <ValuePropositionSection />
 
-      {/* 5. Feature Breakdown — 6 modules with zig-zag mockups */}
+      {/* 5. Feature Breakdown — 5-pillar platform structure */}
       <FeatureBreakdownSection />
 
-      {/* 6. How It Works — 3-step setup, manage, scale */}
+      {/* 6. Power Statement — business operating system */}
+      <PowerStatementSection />
+
+      {/* 7. How It Works — 3-step setup, manage, scale */}
       <HowItWorksSection />
 
-      {/* 7. Advanced Features — competitive edge grid */}
+      {/* 8. Advanced Features — competitive edge grid */}
       <AdvancedFeaturesSection />
 
-      {/* 8. Multi-Tenant — SaaS selling point */}
+      {/* 9. Multi-Tenant — SaaS selling point */}
       <MultiTenantSection />
 
-      {/* 9. Pricing — 3 tiers */}
+      {/* 10. Pricing — 3 tiers */}
       <PricingSection />
 
-      {/* 10. ROI / Business Impact */}
+      {/* 11. ROI / Business Impact */}
       <RoiSection />
 
-      {/* 11. Testimonials */}
+      {/* 12. Testimonials */}
       <SaasTestimonialsSection />
 
-      {/* 12. FAQ */}
+      {/* 13. FAQ */}
       <FaqSection />
     </>
   );

@@ -40,17 +40,17 @@ export function SaasHeroSection() {
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 tracking-tight">
-          Run Your Entire{" "}
+          Manage Operations, People &{" "}
           <span className="bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">
-            Business
+            Performance
           </span>{" "}
-          in One Platform
+          — From One Platform
         </h1>
 
         <p className="text-blue-100/90 text-lg sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
-          Manage operations, people, and performance with a centralized
-          system built for growing businesses across industries. Training
-          management, HR, admin, IT, sales, and finance — all in one place.
+          HUMI Hub unifies your entire business — training, HR, administration,
+          IT, sales, and finance — into a single intelligent system designed to
+          streamline workflows, improve visibility, and accelerate growth.
         </p>
 
         {/* CTAs */}
