@@ -8,10 +8,10 @@ import { Check, Zap, ArrowRight, HelpCircle, Building2, Users, Rocket } from "lu
 const PLANS = [
   {
     name: "Starter",
-    tagline: "Launch your first training platform",
+    tagline: "FOR SMALL TRAINING CENTERS",
     price: "₱2,999",
     period: "/month",
-    description: "Everything you need to start running training programs online.",
+    description: "Everything you need to run your first training programs online.",
     highlighted: false,
     badge: null,
     cta: "Start Free Trial",
@@ -23,19 +23,18 @@ const PLANS = [
       "5 active courses",
       "Student & trainer portals",
       "Certificate generation",
-      "Basic analytics dashboard",
+      "Forum & community",
+      "Basic analytics",
       "Email support",
-      "Community & forum",
       "Gamification & badges",
-      "Custom subdomain",
     ],
   },
   {
     name: "Professional",
-    tagline: "Scale your training operations",
+    tagline: "FOR GROWING TRAINING BUSINESSES",
     price: "₱7,999",
     period: "/month",
-    description: "Full platform with AI tools, payments, and advanced reporting.",
+    description: "The full platform with AI tools, payments, and advanced reporting.",
     highlighted: true,
     badge: "Most Popular",
     cta: "Start Free Trial",
@@ -46,20 +45,19 @@ const PLANS = [
       "Unlimited students",
       "Unlimited courses",
       "Everything in Starter",
-      "AI session summaries",
-      "Grammar checker",
-      "Quiz generation",
-      "Corporate portal",
-      "File management",
-      "Advanced analytics",
+      "AI interview simulations",
+      "AI email practice",
       "Job board integration",
+      "Career readiness scores",
+      "Attendance tracking",
+      "Corporate portal",
+      "Advanced analytics",
       "Priority support",
-      "White-label branding",
     ],
   },
   {
     name: "Enterprise",
-    tagline: "For large organizations",
+    tagline: "FOR LARGE ORGANIZATIONS",
     price: "₱14,999",
     period: "/month",
     description: "Custom white-label deployment with dedicated support and SLA.",
@@ -71,15 +69,15 @@ const PLANS = [
     color: "text-purple-600",
     features: [
       "Everything in Professional",
+      "White-label branding",
       "Custom domain",
-      "Dedicated account manager",
+      "AI mock interviews (unlimited)",
+      "Mentorship matching",
       "Multi-tenant management",
-      "Feature flags per tenant",
-      "Custom API integrations",
-      "SSO / SAML",
-      "SLA guarantee",
-      "Onboarding support",
-      "Unlimited seats",
+      "Dedicated account manager",
+      "Custom integrations & API",
+      "99.9% uptime SLA",
+      "Data migration assistance",
     ],
   },
 ] as const;
@@ -112,20 +110,28 @@ const FAQS = [
 ];
 
 const COMPARE = [
-  { feature: "Students",           starter: "100",      pro: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Courses",            starter: "5",        pro: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Custom subdomain",   starter: true,       pro: true,        enterprise: true },
-  { feature: "Custom domain",      starter: false,      pro: false,       enterprise: true },
-  { feature: "White-label",        starter: false,      pro: true,        enterprise: true },
-  { feature: "AI Tools",           starter: false,      pro: true,        enterprise: true },
-  { feature: "Corporate portal",   starter: false,      pro: true,        enterprise: true },
-  { feature: "File management",    starter: false,      pro: true,        enterprise: true },
-  { feature: "Feature flags",      starter: false,      pro: false,       enterprise: true },
-  { feature: "SSO / SAML",         starter: false,      pro: false,       enterprise: true },
-  { feature: "API access",         starter: false,      pro: false,       enterprise: true },
-  { feature: "Dedicated manager",  starter: false,      pro: false,       enterprise: true },
-  { feature: "SLA",                starter: false,      pro: false,       enterprise: true },
-  { feature: "Support",            starter: "Email",    pro: "Priority",  enterprise: "Dedicated" },
+  { feature: "Students",                  starter: "100",      pro: "Unlimited",  enterprise: "Unlimited" },
+  { feature: "Courses",                   starter: "5",        pro: "Unlimited",  enterprise: "Unlimited" },
+  { feature: "Student & trainer portals", starter: true,       pro: true,         enterprise: true },
+  { feature: "Certificate generation",    starter: true,       pro: true,         enterprise: true },
+  { feature: "Forum & community",         starter: true,       pro: true,         enterprise: true },
+  { feature: "Gamification & badges",     starter: true,       pro: true,         enterprise: true },
+  { feature: "AI interview simulations",  starter: false,      pro: true,         enterprise: true },
+  { feature: "AI email practice",         starter: false,      pro: true,         enterprise: true },
+  { feature: "Career readiness scores",   starter: false,      pro: true,         enterprise: true },
+  { feature: "Attendance tracking",       starter: false,      pro: true,         enterprise: true },
+  { feature: "Corporate portal",          starter: false,      pro: true,         enterprise: true },
+  { feature: "Advanced analytics",        starter: false,      pro: true,         enterprise: true },
+  { feature: "Job board integration",     starter: false,      pro: true,         enterprise: true },
+  { feature: "White-label branding",      starter: false,      pro: false,        enterprise: true },
+  { feature: "Custom domain",             starter: false,      pro: false,        enterprise: true },
+  { feature: "AI mock interviews (∞)",    starter: false,      pro: false,        enterprise: true },
+  { feature: "Mentorship matching",       starter: false,      pro: false,        enterprise: true },
+  { feature: "Multi-tenant management",   starter: false,      pro: false,        enterprise: true },
+  { feature: "Custom integrations & API", starter: false,      pro: false,        enterprise: true },
+  { feature: "99.9% uptime SLA",          starter: false,      pro: false,        enterprise: true },
+  { feature: "Data migration assistance", starter: false,      pro: false,        enterprise: true },
+  { feature: "Support",                   starter: "Email",    pro: "Priority",   enterprise: "Dedicated" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -154,10 +160,6 @@ export default function PricingPage() {
     <div className="bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 pt-20 pb-28 text-center px-4">
-        <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
-          <Zap className="h-3 w-3" />
-          30-day free trial · No credit card needed
-        </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
           Simple, transparent pricing
         </h1>
@@ -168,7 +170,16 @@ export default function PricingPage() {
 
       {/* Plan cards */}
       <section className="max-w-6xl mx-auto px-4 -mt-16 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* Trial banner — matches screenshot */}
+        <div className="flex items-center justify-center gap-2 bg-amber-50 border border-amber-300 text-amber-800 text-sm font-medium px-5 py-3 rounded-xl mb-8 max-w-2xl mx-auto">
+          <Zap className="h-4 w-4 text-amber-500 shrink-0" />
+          <span>
+            <strong>30-day free trial</strong> on all plans — no credit card required. Cancel anytime.
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {PLANS.map((plan) => {
             const Icon = plan.icon;
             return (
@@ -176,24 +187,20 @@ export default function PricingPage() {
                 key={plan.name}
                 className={`relative flex flex-col rounded-2xl p-8 shadow-lg border ${
                   plan.highlighted
-                    ? "bg-blue-600 border-blue-500 text-white"
+                    ? "bg-[#1a2b6d] border-[#2a3d8f] text-white scale-[1.02] z-10"
                     : "bg-white border-gray-200"
                 }`}
               >
                 {plan.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">
+                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
                     {plan.badge}
                   </span>
                 )}
 
-                <div className={`inline-flex p-2.5 rounded-xl mb-4 w-fit ${plan.highlighted ? "bg-white/10" : "bg-blue-50"}`}>
-                  <Icon className={`h-5 w-5 ${plan.highlighted ? "text-white" : plan.color}`} />
-                </div>
-
                 <h2 className={`text-xl font-bold mb-0.5 ${plan.highlighted ? "text-white" : "text-gray-900"}`}>
                   {plan.name}
                 </h2>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-4 ${plan.highlighted ? "text-blue-200" : "text-blue-600"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-widest mb-4 ${plan.highlighted ? "text-blue-300" : "text-blue-600"}`}>
                   {plan.tagline}
                 </p>
 
@@ -201,15 +208,15 @@ export default function PricingPage() {
                   <span className={`text-4xl font-extrabold ${plan.highlighted ? "text-white" : "text-gray-900"}`}>
                     {plan.price}
                   </span>
-                  <span className={`text-sm ml-1 ${plan.highlighted ? "text-blue-200" : "text-gray-400"}`}>
+                  <span className={`text-sm ml-1 ${plan.highlighted ? "text-blue-300" : "text-gray-400"}`}>
                     {plan.period}
                   </span>
                 </div>
-                <p className={`text-sm mb-6 ${plan.highlighted ? "text-blue-200" : "text-gray-500"}`}>
+                <p className={`text-sm mb-6 leading-relaxed ${plan.highlighted ? "text-blue-200" : "text-gray-500"}`}>
                   {plan.description}
                 </p>
 
-                <ul className="space-y-2.5 flex-1 mb-8">
+                <ul className="space-y-3 flex-1 mb-8">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5">
                       <Check className={`h-4 w-4 shrink-0 mt-0.5 ${plan.highlighted ? "text-amber-300" : "text-blue-600"}`} />
@@ -222,7 +229,7 @@ export default function PricingPage() {
                   href={plan.href}
                   className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-colors ${
                     plan.highlighted
-                      ? "bg-white text-blue-700 hover:bg-blue-50"
+                      ? "bg-white text-blue-800 hover:bg-blue-50"
                       : "bg-blue-600 text-white hover:bg-blue-700"
                   }`}
                 >
@@ -233,7 +240,7 @@ export default function PricingPage() {
           })}
         </div>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-gray-400 mt-8">
           All prices in Philippine Peso (PHP) · VAT not included ·{" "}
           <Link href="/contact" className="text-blue-600 hover:underline">Need a custom quote?</Link>
         </p>
