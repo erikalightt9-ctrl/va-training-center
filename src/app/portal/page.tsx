@@ -41,10 +41,12 @@ export default function PortalPage() {
           </p>
         </div>
 
-        {/* Tenant Portal Card */}
-        <div className="w-full max-w-md">
+        {/* Side-by-side: Tenant Portal Card + Org Finder */}
+        <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+
+          {/* Tenant Portal Card */}
           <Link href="/student/login" className="group">
-            <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 flex flex-col transition-all duration-200 cursor-pointer">
+            <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 h-full flex flex-col transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4 mb-5">
                 <div className="bg-emerald-400/20 border border-emerald-400/30 rounded-xl p-3">
                   <LayoutDashboard className="h-8 w-8 text-emerald-300" />
@@ -54,7 +56,7 @@ export default function PortalPage() {
                   <p className="text-blue-300 text-sm">Operations & business management</p>
                 </div>
               </div>
-              <ul className="space-y-2 mb-8">
+              <ul className="space-y-2 mb-8 flex-1">
                 {[
                   "Training, HR & workforce management",
                   "Finance, accounting & reporting",
@@ -75,30 +77,32 @@ export default function PortalPage() {
               </div>
             </div>
           </Link>
-        </div>
 
-        {/* Tenant Org Finder */}
-        <div className="mt-12 w-full max-w-2xl">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px flex-1 bg-white/20" />
-            <span className="text-blue-300 text-sm whitespace-nowrap">Logging in via your organization?</span>
-            <div className="h-px flex-1 bg-white/20" />
-          </div>
-
-          <div className="bg-white/5 border border-white/15 rounded-2xl p-6">
-            <div className="flex items-start gap-4 mb-5">
-              <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
-                <Building2 className="h-5 w-5 text-blue-300" />
-              </div>
+          {/* Org Finder */}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-px flex-1 bg-white/20" />
+              <span className="text-blue-300 text-sm whitespace-nowrap">Via your organization?</span>
+              <div className="h-px flex-1 bg-white/20" />
+            </div>
+            <div className="bg-white/5 border border-white/15 rounded-2xl p-6 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-white font-semibold text-sm">Find Your Organization</h3>
-                <p className="text-blue-300 text-xs mt-0.5">
-                  Enter your organization&apos;s portal name to access your company workspace.
-                </p>
+                <div className="flex items-start gap-4 mb-5">
+                  <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
+                    <Building2 className="h-5 w-5 text-blue-300" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">Find Your Organization</h3>
+                    <p className="text-blue-300 text-xs mt-0.5">
+                      Enter your organization&apos;s portal name to access your company workspace.
+                    </p>
+                  </div>
+                </div>
+                <TenantFinder />
               </div>
             </div>
-            <TenantFinder />
           </div>
+
         </div>
 
         {/* Divider + enroll CTA */}
