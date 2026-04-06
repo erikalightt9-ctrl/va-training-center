@@ -113,7 +113,52 @@ export async function DELETE(
       );
     }
 
-    await prisma.organization.delete({ where: { id } });
+    // Delete all related records in the correct dependency order,
+    // then delete the organization — wrapped in a transaction for atomicity.
+    await prisma.$transaction(async (tx) => {
+      // 1. Null-out optional FKs (records that survive tenant deletion)
+      await tx.student.updateMany({
+        where: { organizationId: id },
+        data: { organizationId: null },
+      });
+      await tx.course.updateMany({
+        where: { organizationId: id },
+        data: { organizationId: null },
+      });
+      await tx.enrollment.updateMany({
+        where: { organizationId: id },
+        data: { organizationId: null },
+      });
+      await tx.conversation.updateMany({
+        where: { tenantId: id },
+        data: { tenantId: null },
+      });
+      await tx.notification.updateMany({
+        where: { tenantId: id },
+        data: { tenantId: null },
+      });
+
+      // 2. Delete required relations (no cascade in schema)
+      await tx.tenantTrainer.deleteMany({ where: { tenantId: id } });
+      await tx.tenantSubscription.deleteMany({ where: { tenantId: id } });
+
+      // Accounting — delete child tables before parents
+      await tx.accAuditLog.deleteMany({ where: { organizationId: id } });
+      await tx.accForensicFlag.deleteMany({ where: { organizationId: id } });
+      await tx.accTransaction.deleteMany({ where: { organizationId: id } });
+      await tx.accInvoice.deleteMany({ where: { organizationId: id } });
+      await tx.accExpense.deleteMany({ where: { organizationId: id } });
+      await tx.accBankAccount.deleteMany({ where: { organizationId: id } });
+      await tx.accAccount.deleteMany({ where: { organizationId: id } });
+
+      // Corporate managers
+      await tx.corporateManager.deleteMany({ where: { organizationId: id } });
+
+      // 3. Delete the organization — schema cascades handle the rest
+      //    (OrganizationTask, OrganizationFile, TenantPage, TenantTheme,
+      //     TenantInvite, TenantFeatureFlag all have onDelete: Cascade)
+      await tx.organization.delete({ where: { id } });
+    });
 
     return NextResponse.json({ success: true, data: { id }, error: null });
   } catch (err) {
