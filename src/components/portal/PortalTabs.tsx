@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import {
-  GraduationCap,
-  LogIn,
+  Building2,
+  LayoutDashboard,
   ShieldCheck,
   UserCog,
   Loader2,
@@ -35,7 +35,7 @@ interface Tab {
 /* ------------------------------------------------------------------ */
 
 const TABS: ReadonlyArray<Tab> = [
-  { id: "student", label: "Student Login", icon: LogIn },
+  { id: "student", label: "Tenant Portal", icon: LayoutDashboard },
   { id: "trainer", label: "Trainer Login", icon: UserCog },
   { id: "admin", label: "Admin Login", icon: ShieldCheck },
 ] as const;
@@ -232,12 +232,12 @@ export function PortalTabs() {
       <div className="text-center mb-8">
         <div className="flex justify-center mb-3">
           <div className="bg-blue-800 rounded-xl p-3">
-            <GraduationCap className="h-8 w-8 text-blue-300" />
+            <Building2 className="h-8 w-8 text-blue-300" />
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">HUMI Hub</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Sign in to your account or enroll in a course
+          All your business systems in one place.
         </p>
       </div>
 
@@ -269,10 +269,13 @@ export function PortalTabs() {
         {activeTab === "student" && (
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-1">
-              Student Login
+              Tenant Portal Access
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
-              Access your courses, lessons, and assignments
+            <p className="text-sm text-gray-500 mb-1">
+              Manage operations, people, and performance with a centralized system built for growing businesses across industries.
+            </p>
+            <p className="text-xs text-gray-400 mb-6">
+              Access your all-in-one platform for training management, HR, administration, IT systems, sales tracking, and finance.
             </p>
             <LoginPanel provider="student" />
           </div>
@@ -296,7 +299,7 @@ export function PortalTabs() {
               Admin Login
             </h2>
             <p className="text-sm text-gray-500 mb-6">
-              Manage courses, students, and enrollments
+              Full platform control — manage tenants, users, modules, and operations
             </p>
             <LoginPanel provider="admin" />
           </div>

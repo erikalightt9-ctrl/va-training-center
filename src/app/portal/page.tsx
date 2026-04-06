@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GraduationCap, ShieldCheck, BookOpen, ArrowRight, Home, Building2 } from "lucide-react";
+import { GraduationCap, ShieldCheck, LayoutDashboard, ArrowRight, Home, Building2 } from "lucide-react";
 import { TenantFinder } from "@/components/public/TenantFinder";
 
 export const metadata: Metadata = {
   title: "Portal — Select Your Role",
-  description: "Access the HUMI Hub admin or student portal.",
+  description: "Access the HUMI Hub admin or tenant portal. Manage operations, people, and performance with a centralized business platform.",
 };
 
 export default function PortalPage() {
@@ -36,8 +36,8 @@ export default function PortalPage() {
           <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">
             Welcome Back
           </h1>
-          <p className="text-blue-200 text-lg max-w-md mx-auto">
-            Select your role to access your dashboard.
+          <p className="text-blue-200 text-lg max-w-lg mx-auto">
+            Select your portal to access your workspace.
           </p>
         </div>
 
@@ -77,24 +77,24 @@ export default function PortalPage() {
             </div>
           </Link>
 
-          {/* Student / Enrollee Card */}
+          {/* Tenant Portal Card */}
           <Link href="/student/login" className="group">
             <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 h-full flex flex-col transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4 mb-5">
                 <div className="bg-emerald-400/20 border border-emerald-400/30 rounded-xl p-3">
-                  <BookOpen className="h-8 w-8 text-emerald-300" />
+                  <LayoutDashboard className="h-8 w-8 text-emerald-300" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Student Portal</h2>
-                  <p className="text-blue-300 text-sm">Learning & progress</p>
+                  <h2 className="text-xl font-bold text-white">Tenant Portal</h2>
+                  <p className="text-blue-300 text-sm">Operations & business management</p>
                 </div>
               </div>
               <ul className="space-y-2 mb-8 flex-1">
                 {[
-                  "Access your course materials",
-                  "Take quizzes & assignments",
-                  "Track your progress & badges",
-                  "Download your certificates",
+                  "Training, HR & workforce management",
+                  "Finance, accounting & reporting",
+                  "Sales tracking & performance",
+                  "IT systems & administration",
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-blue-100">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
@@ -104,7 +104,7 @@ export default function PortalPage() {
               </ul>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-emerald-300 group-hover:text-emerald-200 transition-colors">
-                  Sign in as Student
+                  Access Tenant Portal
                 </span>
                 <ArrowRight className="h-4 w-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -128,7 +128,7 @@ export default function PortalPage() {
               <div>
                 <h3 className="text-white font-semibold text-sm">Find Your Organization</h3>
                 <p className="text-blue-300 text-xs mt-0.5">
-                  Enter your organization&apos;s portal name to access their training portal.
+                  Enter your organization&apos;s portal name to access your company workspace.
                 </p>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function PortalPage() {
             <div className="h-px w-20 bg-white/20" />
           </div>
           <p className="text-blue-200 text-sm mb-3">
-            Don&apos;t have an account? Apply for enrollment — it&apos;s free.
+            Interested in HUMI Hub for your business? Get started today.
           </p>
           <Link
             href="/enroll"
