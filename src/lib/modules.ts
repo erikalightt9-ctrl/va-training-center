@@ -30,16 +30,6 @@ export interface IndustryDefinition {
   defaultModules: ModuleKey[];
 }
 
-// Forward-declare ModuleKey so it can be referenced below
-type ModuleKey =
-  | "module_lms"
-  | "module_hr"
-  | "module_accounting"
-  | "module_marketing"
-  | "module_inventory"
-  | "module_sales"
-  | "module_it";
-
 export const MODULE_KEYS = [
   "module_lms",
   "module_hr",
