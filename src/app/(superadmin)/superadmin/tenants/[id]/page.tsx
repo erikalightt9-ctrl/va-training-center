@@ -11,7 +11,7 @@ import {
   CreditCard,
   CheckCircle2,
   XCircle,
-  GraduationCap,
+
 } from "lucide-react";
 import { getTenantById } from "@/lib/repositories/superadmin.repository";
 import { Button } from "@/components/ui/button";
@@ -71,12 +71,7 @@ export default async function TenantDetailPage({
               Subscriptions
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild className="gap-1.5">
-            <Link href={`/superadmin/tenants/${id}/trainers`}>
-              <GraduationCap className="h-4 w-4" />
-              Trainers
-            </Link>
-          </Button>
+
           <Button size="sm" asChild className="gap-1.5">
             <Link href={`/superadmin/tenants/${id}/edit`}>
               <Pencil className="h-4 w-4" />
