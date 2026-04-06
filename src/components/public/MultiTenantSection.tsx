@@ -60,16 +60,18 @@ export function MultiTenantSection() {
 
           {/* Right — Visual */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-            <div className="space-y-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Active Tenants</p>
+            <div className="space-y-3">
               {[
-                { name: "Acme Training Co.", domain: "acme.yourdomain.com", students: 340, color: "bg-blue-500" },
-                { name: "Global Skills Academy", domain: "globalskills.yourdomain.com", students: 890, color: "bg-purple-500" },
-                { name: "TechPro Institute", domain: "techpro.yourdomain.com", students: 215, color: "bg-emerald-500" },
+                { name: "PhilTrain Academy",      industry: "Training Center",    domain: "philtrain.humihub.com",  metric: "340 users",   color: "bg-blue-600"    },
+                { name: "Nexus Consulting Group", industry: "Business Consulting", domain: "nexus.humihub.com",     metric: "58 staff",    color: "bg-violet-600"  },
+                { name: "MedCare Clinic Group",   industry: "Healthcare",          domain: "medcare.humihub.com",   metric: "5 branches",  color: "bg-emerald-600" },
+                { name: "RetailPro Distribution", industry: "Retail & Sales",      domain: "retailpro.humihub.com", metric: "120 staff",   color: "bg-orange-500"  },
               ].map((tenant) => (
-                <div key={tenant.name} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div key={tenant.name} className="bg-white rounded-xl p-3.5 border border-gray-200 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg ${tenant.color} flex items-center justify-center`}>
+                      <div className={`w-8 h-8 rounded-lg ${tenant.color} flex items-center justify-center shrink-0`}>
                         <span className="text-white font-bold text-xs">{tenant.name[0]}</span>
                       </div>
                       <div>
@@ -77,16 +79,16 @@ export function MultiTenantSection() {
                         <p className="text-xs text-gray-400">{tenant.domain}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900">{tenant.students}</p>
-                      <p className="text-[10px] text-gray-500">students</p>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs font-bold text-gray-700">{tenant.metric}</p>
+                      <span className="text-[10px] text-blue-500 font-medium">{tenant.industry}</span>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
             <p className="text-center text-xs text-gray-400 mt-4">
-              Each tenant has isolated data, branding, and user management
+              Each tenant has isolated data, branding, and module configuration
             </p>
           </div>
         </div>

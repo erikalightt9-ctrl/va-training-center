@@ -15,7 +15,7 @@ const advancedFeatures = [
   { icon: Bell,       title: "Real-Time Notifications",       description: "Instant alerts for payroll events, new leads, IT issues, and enrollments." },
   { icon: Zap,        title: "Workflow Automation",           description: "Onboarding, certificate issuance, payment verification — running on autopilot." },
   { icon: Mail,       title: "Email & SMS Alerts",            description: "Automated communications for every critical business event." },
-  { icon: Trophy,     title: "Gamification & Engagement",    description: "Leaderboards, badges, and rankings to motivate students and staff alike." },
+  { icon: Trophy,     title: "Gamification & Engagement",    description: "Leaderboards, badges, and rankings to motivate teams, learners, and staff across departments." },
   { icon: FileSearch, title: "Report Exports",                description: "Download payroll, revenue, sales, attendance, and performance reports as CSV." },
   { icon: Globe,      title: "Multi-Branch Ready",            description: "Manage multiple locations or departments from one centralized control panel." },
 ] as const;

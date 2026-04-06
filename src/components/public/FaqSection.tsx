@@ -23,7 +23,7 @@ const faqs: readonly FaqItem[] = [
   {
     question: "Is there a free trial?",
     answer:
-      "Yes. Our Basic plan is free to get started with up to 50 students and 3 courses. No credit card required. Upgrade anytime as you grow.",
+      "Yes. Every plan starts with a 30-day free trial — full access to all core modules, no credit card required. Your workspace is live and ready from day one. Upgrade or change plans anytime.",
   },
   {
     question: "How secure is the system?",
@@ -33,7 +33,7 @@ const faqs: readonly FaqItem[] = [
   {
     question: "Can I migrate existing data?",
     answer:
-      "Yes. Our Enterprise plan includes data migration assistance. We can import student records, course data, and payment history from spreadsheets or other LMS platforms.",
+      "Yes. Our Enterprise plan includes data migration assistance. We can import employee records, financial data, operational history, and more from spreadsheets or existing business tools — regardless of your industry.",
   },
   {
     question: "Do you support multiple payment methods?",
