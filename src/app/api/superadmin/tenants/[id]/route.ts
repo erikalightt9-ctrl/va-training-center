@@ -113,58 +113,30 @@ export async function DELETE(
       );
     }
 
-    // Delete all related records in the correct dependency order,
-    // then delete the organization — wrapped in a transaction for atomicity.
-    await prisma.$transaction(async (tx) => {
-      // 1. Null-out optional FKs (records that survive tenant deletion)
-      await tx.student.updateMany({
-        where: { organizationId: id },
-        data: { organizationId: null },
-      });
-      await tx.course.updateMany({
-        where: { organizationId: id },
-        data: { organizationId: null },
-      });
-      await tx.enrollment.updateMany({
-        where: { organizationId: id },
-        data: { organizationId: null },
-      });
-      await tx.conversation.updateMany({
-        where: { tenantId: id },
-        data: { tenantId: null },
-      });
-      await tx.notification.updateMany({
-        where: { tenantId: id },
-        data: { tenantId: null },
-      });
+    // Step 1: Null-out optional FKs outside transaction (safe, non-blocking)
+    await prisma.student.updateMany({ where: { organizationId: id }, data: { organizationId: null } });
+    await prisma.course.updateMany({ where: { organizationId: id }, data: { organizationId: null } });
+    await prisma.enrollment.updateMany({ where: { organizationId: id }, data: { organizationId: null } });
+    await prisma.conversation.updateMany({ where: { tenantId: id }, data: { tenantId: null } });
+    await prisma.notification.updateMany({ where: { tenantId: id }, data: { tenantId: null } });
 
-      // 2. Delete required relations (no cascade in schema)
-      await tx.tenantTrainer.deleteMany({ where: { tenantId: id } });
-      await tx.tenantSubscription.deleteMany({ where: { tenantId: id } });
+    // Step 2: Delete only the 3 required relations that have NO onDelete: Cascade
+    await prisma.tenantTrainer.deleteMany({ where: { tenantId: id } });
+    await prisma.tenantSubscription.deleteMany({ where: { tenantId: id } });
+    await prisma.corporateManager.deleteMany({ where: { organizationId: id } });
 
-      // Accounting — delete child tables before parents
-      await tx.accAuditLog.deleteMany({ where: { organizationId: id } });
-      await tx.accForensicFlag.deleteMany({ where: { organizationId: id } });
-      await tx.accTransaction.deleteMany({ where: { organizationId: id } });
-      await tx.accInvoice.deleteMany({ where: { organizationId: id } });
-      await tx.accExpense.deleteMany({ where: { organizationId: id } });
-      await tx.accBankAccount.deleteMany({ where: { organizationId: id } });
-      await tx.accAccount.deleteMany({ where: { organizationId: id } });
-
-      // Corporate managers
-      await tx.corporateManager.deleteMany({ where: { organizationId: id } });
-
-      // 3. Delete the organization — schema cascades handle the rest
-      //    (OrganizationTask, OrganizationFile, TenantPage, TenantTheme,
-      //     TenantInvite, TenantFeatureFlag all have onDelete: Cascade)
-      await tx.organization.delete({ where: { id } });
-    });
+    // Step 3: Delete the organization.
+    // All Acc*, OrganizationTask, OrganizationFile, TenantPage, TenantTheme,
+    // TenantInvite, TenantFeatureFlag already have onDelete: Cascade in the schema
+    // so Postgres will remove them automatically.
+    await prisma.organization.delete({ where: { id } });
 
     return NextResponse.json({ success: true, data: { id }, error: null });
   } catch (err) {
-    console.error("[DELETE /api/superadmin/tenants/[id]]", err);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[DELETE /api/superadmin/tenants/[id]]", message);
     return NextResponse.json(
-      { success: false, data: null, error: "Internal server error" },
+      { success: false, data: null, error: message },
       { status: 500 },
     );
   }

@@ -141,7 +141,7 @@ export default function TenantsPage() {
         setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
         showToast(`"${tenant.name}" has been permanently deleted.`);
       } else {
-        showToast(json.error ?? "Failed to delete tenant.");
+        showToast(`Delete failed: ${json.error ?? "Unknown error"}`);
       }
     } catch {
       showToast("Network error. Please try again.");
