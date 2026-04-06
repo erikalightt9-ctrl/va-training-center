@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GraduationCap, ShieldCheck, LayoutDashboard, ArrowRight, Home, Building2 } from "lucide-react";
+import { GraduationCap, LayoutDashboard, ArrowRight, Home, Building2 } from "lucide-react";
 import { TenantFinder } from "@/components/public/TenantFinder";
 
 export const metadata: Metadata = {
-  title: "Portal — Select Your Role",
-  description: "Access the HUMI Hub admin or tenant portal. Manage operations, people, and performance with a centralized business platform.",
+  title: "Tenant Portal — HUMI Hub",
+  description: "Access your HUMI Hub workspace. Manage operations, people, and performance with a centralized business platform.",
 };
 
 export default function PortalPage() {
@@ -41,45 +41,10 @@ export default function PortalPage() {
           </p>
         </div>
 
-        {/* Role selection cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-          {/* Admin Card */}
-          <Link href="/admin/login" className="group">
-            <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 h-full flex flex-col transition-all duration-200 cursor-pointer">
-              <div className="flex items-center gap-4 mb-5">
-                <div className="bg-amber-400/20 border border-amber-400/30 rounded-xl p-3">
-                  <ShieldCheck className="h-8 w-8 text-amber-300" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white">Admin Portal</h2>
-                  <p className="text-blue-300 text-sm">Management & oversight</p>
-                </div>
-              </div>
-              <ul className="space-y-2 mb-8 flex-1">
-                {[
-                  "Manage enrollee applications",
-                  "Review & approve students",
-                  "Track analytics & reports",
-                  "Manage courses & lessons",
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-blue-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-amber-300 group-hover:text-amber-200 transition-colors">
-                  Sign in as Admin
-                </span>
-                <ArrowRight className="h-4 w-4 text-amber-300 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Tenant Portal Card */}
+        {/* Tenant Portal Card */}
+        <div className="w-full max-w-md">
           <Link href="/student/login" className="group">
-            <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 h-full flex flex-col transition-all duration-200 cursor-pointer">
+            <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 flex flex-col transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4 mb-5">
                 <div className="bg-emerald-400/20 border border-emerald-400/30 rounded-xl p-3">
                   <LayoutDashboard className="h-8 w-8 text-emerald-300" />
@@ -89,7 +54,7 @@ export default function PortalPage() {
                   <p className="text-blue-300 text-sm">Operations & business management</p>
                 </div>
               </div>
-              <ul className="space-y-2 mb-8 flex-1">
+              <ul className="space-y-2 mb-8">
                 {[
                   "Training, HR & workforce management",
                   "Finance, accounting & reporting",
