@@ -18,48 +18,48 @@ interface PricingTier {
 const tiers: readonly PricingTier[] = [
   {
     name: "Starter",
-    tagline: "For small training centers",
+    tagline: "For small businesses",
     price: "₱2,999",
     period: "/ month",
     description:
-      "Everything you need to run your first training programs online.",
+      "Core tools to run your day-to-day business operations from one place.",
     features: [
-      "Up to 100 students",
-      "5 active courses",
-      "Student & trainer portals",
-      "Certificate generation",
-      "Forum & community",
-      "Basic analytics",
+      "Up to 50 users",
+      "1 active business module",
+      "Admin & task management",
+      "Basic HR tools",
+      "Document management",
+      "Staff attendance tracking",
+      "Basic analytics dashboard",
       "Email support",
-      "Gamification & badges",
     ],
     highlighted: false,
     cta: "Start Free Trial",
-    href: "/contact",
+    href: "/start-trial",
   },
   {
     name: "Professional",
-    tagline: "For growing training businesses",
+    tagline: "For growing organizations",
     price: "₱7,999",
     period: "/ month",
     description:
-      "The full platform with AI tools, payments, and advanced reporting.",
+      "All modules unlocked — HR, Finance, Sales, IT, Training, and Admin in one platform.",
     features: [
-      "Unlimited students",
-      "Unlimited courses",
+      "Unlimited users",
+      "All business modules",
       "Everything in Starter",
-      "AI interview simulations",
-      "AI email practice",
-      "Job board integration",
-      "Career readiness scores",
-      "Attendance tracking",
-      "Corporate portal",
-      "Advanced analytics",
+      "HR & payroll management",
+      "Finance & accounting",
+      "Sales pipeline tracking",
+      "IT asset management",
+      "AI-powered automation",
+      "Training & LMS module",
+      "Advanced analytics & reports",
       "Priority support",
     ],
     highlighted: true,
     cta: "Start Free Trial",
-    href: "/contact",
+    href: "/start-trial",
     badge: "Most Popular",
   },
   {
@@ -73,11 +73,11 @@ const tiers: readonly PricingTier[] = [
       "Everything in Professional",
       "White-label branding",
       "Custom domain",
-      "AI mock interviews (unlimited)",
-      "Mentorship matching",
       "Multi-tenant management",
       "Dedicated account manager",
       "Custom integrations & API",
+      "SSO / SAML",
+      "Feature flags per tenant",
       "99.9% uptime SLA",
       "Data migration assistance",
     ],
@@ -100,8 +100,8 @@ export function PricingSection() {
             Simple, Transparent Pricing
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            No hidden fees. No per-student charges. Pay one monthly rate and
-            scale your training center without limits.
+            No hidden fees. No per-module charges. One monthly rate for your
+            entire business — HR, Finance, Sales, IT, Training, and Admin.
           </p>
         </div>
 
