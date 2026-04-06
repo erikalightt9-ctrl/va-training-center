@@ -113,23 +113,17 @@ export async function DELETE(
       );
     }
 
-    // Step 1: Null-out all optional FKs pointing to this org
-    // Course uses `tenantId`, all others use `organizationId`
-    await prisma.course.updateMany({ where: { tenantId: id }, data: { tenantId: null } });
-    await prisma.student.updateMany({ where: { organizationId: id }, data: { organizationId: null } });
-    await prisma.enrollment.updateMany({ where: { organizationId: id }, data: { organizationId: null } });
-    await prisma.conversation.updateMany({ where: { tenantId: id }, data: { tenantId: null } });
-    await prisma.notification.updateMany({ where: { tenantId: id }, data: { tenantId: null } });
-
-    // Step 2: Delete required relations with NO onDelete: Cascade
-    await prisma.tenantTrainer.deleteMany({ where: { tenantId: id } });
-    await prisma.tenantSubscription.deleteMany({ where: { tenantId: id } });
-    await prisma.corporateManager.deleteMany({ where: { organizationId: id } });
-
-    // Step 3: Delete the organization.
-    // Acc*, OrganizationTask, OrganizationFile, TenantPage, TenantTheme,
-    // TenantInvite, TenantFeatureFlag all have onDelete: Cascade — auto-removed.
-    await prisma.organization.delete({ where: { id } });
+    // Use raw SQL to handle all FK dependencies reliably.
+    // This avoids Prisma model mismatches and handles every table in one go.
+    await prisma.$executeRawUnsafe(`UPDATE courses SET "tenantId" = NULL WHERE "tenantId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`UPDATE students SET "organizationId" = NULL WHERE "organizationId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`UPDATE enrollments SET "organizationId" = NULL WHERE "organizationId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`UPDATE conversations SET "tenantId" = NULL WHERE "tenantId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`UPDATE notifications SET "tenantId" = NULL WHERE "tenantId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`DELETE FROM tenant_trainers WHERE "tenantId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`DELETE FROM tenant_subscriptions WHERE "tenantId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`DELETE FROM corporate_managers WHERE "organizationId" = '${id}'`);
+    await prisma.$executeRawUnsafe(`DELETE FROM organizations WHERE id = '${id}'`);
 
     return NextResponse.json({ success: true, data: { id }, error: null });
   } catch (err) {
