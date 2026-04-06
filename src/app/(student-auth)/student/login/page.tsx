@@ -45,15 +45,16 @@ export default function TenantPortalLoginPage() {
     setLoading(true);
 
     try {
-      // Step 1: Fast pre-check — surfaces access/lock errors before bcrypt
+      // Step 1: Auto-detect which provider this email belongs to
       const checkRes = await fetch("/api/auth/validate-credentials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider: "student", email }),
+        body: JSON.stringify({ provider: "auto", email }),
       });
       const checkData = (await checkRes.json()) as {
         ok: boolean | null;
         error?: string;
+        provider?: "student" | "corporate" | "trainer";
         mustChangePassword?: boolean;
       };
 
@@ -63,10 +64,17 @@ export default function TenantPortalLoginPage() {
         return;
       }
 
+      if (checkData.ok === null) {
+        setError("No account found with this email address.");
+        setLoading(false);
+        return;
+      }
+
+      const detectedProvider = checkData.provider ?? "student";
       const mustChangePassword = checkData.mustChangePassword ?? false;
 
-      // Step 2: Authenticate and create session
-      const result = await signIn("student", {
+      // Step 2: Authenticate using the detected provider
+      const result = await signIn(detectedProvider, {
         email,
         password,
         redirect: false,
@@ -79,11 +87,23 @@ export default function TenantPortalLoginPage() {
         return;
       }
 
-      // Step 3: Redirect — password change takes priority
+      // Step 3: Redirect based on role and password status
       if (mustChangePassword) {
-        router.push("/student/change-password");
+        if (detectedProvider === "corporate") {
+          router.push("/corporate/change-password");
+        } else if (detectedProvider === "trainer") {
+          router.push("/trainer/change-password");
+        } else {
+          router.push("/student/change-password");
+        }
       } else {
-        router.push("/student/dashboard");
+        if (detectedProvider === "corporate") {
+          router.push("/corporate/dashboard");
+        } else if (detectedProvider === "trainer") {
+          router.push("/trainer/dashboard");
+        } else {
+          router.push("/student/dashboard");
+        }
       }
       router.refresh();
     } catch {
