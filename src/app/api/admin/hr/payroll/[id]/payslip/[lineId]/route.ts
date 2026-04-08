@@ -1,0 +1,81 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { requireAdmin } from "@/lib/auth-guards";
+import { getPayrollLineWithEmployee } from "@/lib/repositories/hr-payroll.repository";
+import { generatePayslipPdf } from "@/lib/pdf/payslip.pdf";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; lineId: string }> }
+) {
+  try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
+
+    const { id, lineId } = await params;
+    const line = await getPayrollLineWithEmployee(guard.tenantId, id, lineId);
+
+    if (!line) {
+      return NextResponse.json(
+        { success: false, data: null, error: "Payslip not found" },
+        { status: 404 }
+      );
+    }
+
+    const { employee, payrollRun: run } = line;
+
+    const pdfBuffer = await generatePayslipPdf({
+      // Company (org name not in token, use a placeholder resolved at org level)
+      companyName:            run.notes ?? "Your Company",
+      // Employee
+      employeeNumber:         employee.employeeNumber,
+      employeeName:           `${employee.firstName} ${employee.lastName}`,
+      position:               employee.position,
+      department:             employee.department,
+      sssNumber:              employee.sssNumber,
+      philhealthNumber:       employee.philhealthNumber,
+      pagibigNumber:          employee.pagibigNumber,
+      tinNumber:              employee.tinNumber,
+      // Period
+      periodStart:            run.periodStart,
+      periodEnd:              run.periodEnd,
+      payDate:                run.payDate,
+      runNumber:              run.runNumber,
+      // Earnings
+      basicSalary:            Number(line.basicSalary),
+      daysWorked:             Number(line.daysWorked),
+      overtimeHours:          Number(line.overtimeHours),
+      overtimePay:            Number(line.overtimePay),
+      allowances:             Number(line.allowances),
+      grossPay:               Number(line.grossPay),
+      // Deductions
+      sssEmployee:            Number(line.sssEmployee),
+      philhealthEmployee:     Number(line.philhealthEmployee),
+      pagibigEmployee:        Number(line.pagibigEmployee),
+      withholdingTax:         Number(line.withholdingTax),
+      otherDeductions:        Number(line.otherDeductions),
+      totalDeductions:        Number(line.totalDeductions),
+      // Net
+      netPay:                 Number(line.netPay),
+      remarks:                line.remarks ?? null,
+    });
+
+    const filename = `payslip-${employee.employeeNumber}-${run.runNumber}.pdf`;
+
+    return new NextResponse(new Uint8Array(pdfBuffer), {
+      status: 200,
+      headers: {
+        "Content-Type":        "application/pdf",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+        "Content-Length":      String(pdfBuffer.length),
+      },
+    });
+  } catch (err) {
+    console.error("[GET /api/admin/hr/payroll/[id]/payslip/[lineId]]", err);
+    return NextResponse.json(
+      { success: false, data: null, error: err instanceof Error ? err.message : "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

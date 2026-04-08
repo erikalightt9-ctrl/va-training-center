@@ -11,6 +11,8 @@ const TABS = [
   { label: "Expenses", href: "/admin/accounting/expenses" },
   { label: "Bank", href: "/admin/accounting/bank" },
   { label: "Reports", href: "/admin/accounting/reports" },
+  { label: "Official Receipts", href: "/admin/accounting/official-receipts" },
+  { label: "Tax Rules (BIR)", href: "/admin/accounting/tax-rules" },
   { label: "Audit & Forensic", href: "/admin/accounting/audit" },
 ];
 

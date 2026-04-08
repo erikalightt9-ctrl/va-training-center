@@ -1284,13 +1284,18 @@ model Organization {
   pages             TenantPage[]
   theme             TenantTheme?
   invites           TenantInvite[]
-  accAccounts       AccAccount[]
-  accTransactions   AccTransaction[]
-  accInvoices       AccInvoice[]
-  accExpenses       AccExpense[]
-  accBankAccounts   AccBankAccount[]
-  accAuditLogs      AccAuditLog[]
-  accForensicFlags  AccForensicFlag[]
+  accAccounts          AccAccount[]
+  accTransactions      AccTransaction[]
+  accInvoices          AccInvoice[]
+  accExpenses          AccExpense[]
+  accBankAccounts      AccBankAccount[]
+  accAuditLogs         AccAuditLog[]
+  accForensicFlags     AccForensicFlag[]
+  accTaxRules          AccTaxRule[]
+  accOfficialReceipts  AccOfficialReceipt[]
+  hrEmployees          HrEmployee[]
+  hrGovContribRules    HrGovContribRule[]
+  hrPayrollRuns        HrPayrollRun[]
 
   @@map("organizations")
 }
@@ -2109,6 +2114,17 @@ enum AccForensicSeverity {
   CRITICAL
 }
 
+enum BirVatType {
+  VAT_12
+  ZERO_RATED
+  VAT_EXEMPT
+}
+
+enum OfficialReceiptStatus {
+  ISSUED
+  VOIDED
+}
+
 /* ------------------------------------------------------------------ */
 /*  Chart of Accounts                                                  */
 /* ------------------------------------------------------------------ */
@@ -2203,6 +2219,7 @@ model AccInvoice {
   customerName    String           @db.VarChar(200)
   customerEmail   String?          @db.VarChar(200)
   customerAddress String?          @db.Text
+  customerTin     String?          @db.VarChar(20)
   issueDate       DateTime         @db.Date
   dueDate         DateTime         @db.Date
   status          AccInvoiceStatus @default(DRAFT)
@@ -2218,8 +2235,9 @@ model AccInvoice {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
-  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lines        AccInvoiceLine[]
+  organization     Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lines            AccInvoiceLine[]
+  officialReceipts AccOfficialReceipt[]
 
   @@unique([organizationId, invoiceNumber])
   @@index([organizationId, status])
@@ -2229,15 +2247,16 @@ model AccInvoice {
 }
 
 model AccInvoiceLine {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   invoiceId   String
-  description String   @db.VarChar(300)
-  quantity    Decimal  @default(1) @db.Decimal(10, 4)
-  unitPrice   Decimal  @default(0) @db.Decimal(15, 2)
-  amount      Decimal  @default(0) @db.Decimal(15, 2)
-  taxRate     Decimal  @default(0) @db.Decimal(5, 2)
+  description String      @db.VarChar(300)
+  quantity    Decimal     @default(1) @db.Decimal(10, 4)
+  unitPrice   Decimal     @default(0) @db.Decimal(15, 2)
+  amount      Decimal     @default(0) @db.Decimal(15, 2)
+  taxRate     Decimal     @default(0) @db.Decimal(5, 2)
+  birVatType  BirVatType  @default(VAT_12)
   accountId   String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
 
   invoice AccInvoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   account AccAccount? @relation(fields: [accountId], references: [id])
@@ -2254,12 +2273,15 @@ model AccExpense {
   id               String           @id @default(cuid())
   organizationId   String
   expenseNumber    String           @db.VarChar(30)
-  vendor           String           @db.VarChar(200)
-  description      String           @db.VarChar(500)
-  category         String           @db.VarChar(100)
-  amount           Decimal          @default(0) @db.Decimal(15, 2)
-  taxAmount        Decimal          @default(0) @db.Decimal(15, 2)
-  totalAmount      Decimal          @default(0) @db.Decimal(15, 2)
+  vendor                String           @db.VarChar(200)
+  vendorTin             String?          @db.VarChar(20)
+  description           String           @db.VarChar(500)
+  category              String           @db.VarChar(100)
+  amount                Decimal          @default(0) @db.Decimal(15, 2)
+  taxAmount             Decimal          @default(0) @db.Decimal(15, 2)
+  totalAmount           Decimal          @default(0) @db.Decimal(15, 2)
+  withholdingTaxRate    Decimal?         @db.Decimal(5, 2)
+  withholdingTaxAmount  Decimal?         @default(0) @db.Decimal(15, 2)
   currency         String           @default("PHP") @db.VarChar(3)
   expenseDate      DateTime         @db.Date
   status           AccExpenseStatus @default(DRAFT)
@@ -2379,4 +2401,325 @@ model AccForensicFlag {
   @@index([organizationId, ruleCode])
   @@index([organizationId, entityType, entityId])
   @@map("acc_forensic_flags")
+}
+
+/* ------------------------------------------------------------------ */
+/*  BIR Tax Rules (PH Compliance)                                      */
+/* ------------------------------------------------------------------ */
+
+model AccTaxRule {
+  id             String   @id @default(cuid())
+  organizationId String
+  code           String   @db.VarChar(40)
+  name           String   @db.VarChar(150)
+  rate           Decimal  @db.Decimal(5, 2)
+  taxType        String   @db.VarChar(30)
+  isActive       Boolean  @default(true)
+  description    String?  @db.VarChar(300)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, code])
+  @@index([organizationId, taxType])
+  @@index([organizationId, isActive])
+  @@map("acc_tax_rules")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Official Receipts (BIR OR System)                                  */
+/* ------------------------------------------------------------------ */
+
+model AccOfficialReceipt {
+  id             String                @id @default(cuid())
+  organizationId String
+  orNumber       String                @db.VarChar(30)
+  invoiceId      String
+  issuedAt       DateTime              @default(now())
+  status         OfficialReceiptStatus @default(ISSUED)
+  voidedAt       DateTime?
+  voidedReason   String?               @db.VarChar(300)
+  voidedById     String?
+  issuedById     String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      AccInvoice   @relation(fields: [invoiceId], references: [id])
+
+  @@unique([organizationId, orNumber])
+  @@index([organizationId, status])
+  @@index([invoiceId])
+  @@map("acc_official_receipts")
+}
+
+/* ================================================================== */
+/*  HR & PAYROLL MODULE                                                 */
+/* ================================================================== */
+
+enum HrEmploymentType {
+  REGULAR
+  PROBATIONARY
+  CONTRACTUAL
+  PART_TIME
+  INTERN
+}
+
+enum HrEmployeeStatus {
+  ACTIVE
+  INACTIVE
+  RESIGNED
+  TERMINATED
+  ON_LEAVE
+}
+
+enum HrPayrollStatus {
+  DRAFT
+  APPROVED
+  PAID
+  VOIDED
+}
+
+enum HrLeaveType {
+  SICK
+  VACATION
+  EMERGENCY
+  MATERNITY
+  PATERNITY
+  BEREAVEMENT
+  OTHER
+}
+
+enum HrLeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum HrAttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+  ON_LEAVE
+}
+
+/* ------------------------------------------------------------------ */
+/*  Employee 201 File                                                   */
+/* ------------------------------------------------------------------ */
+
+model HrEmployee {
+  id               String            @id @default(cuid())
+  organizationId   String
+  employeeNumber   String            @db.VarChar(20)
+  firstName        String            @db.VarChar(100)
+  lastName         String            @db.VarChar(100)
+  middleName       String?           @db.VarChar(100)
+  email            String            @db.VarChar(200)
+  phone            String?           @db.VarChar(30)
+  position         String            @db.VarChar(150)
+  department       String?           @db.VarChar(100)
+  employmentType   HrEmploymentType  @default(REGULAR)
+  status           HrEmployeeStatus  @default(ACTIVE)
+  hireDate         DateTime          @db.Date
+  regularizationDate DateTime?       @db.Date
+  separationDate   DateTime?         @db.Date
+  separationReason String?           @db.VarChar(300)
+  // Government IDs (PH compliance)
+  sssNumber        String?           @db.VarChar(20)
+  philhealthNumber String?           @db.VarChar(20)
+  pagibigNumber    String?           @db.VarChar(20)
+  tinNumber        String?           @db.VarChar(20)
+  // Personal info
+  birthDate        DateTime?         @db.Date
+  gender           String?           @db.VarChar(10)
+  civilStatus      String?           @db.VarChar(20)
+  address          String?           @db.Text
+  emergencyContact String?           @db.VarChar(150)
+  emergencyPhone   String?           @db.VarChar(30)
+  avatarUrl        String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  organization  Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contracts     HrEmployeeContract[]
+  payrollLines  HrPayrollLine[]
+  attendance    HrAttendanceLog[]
+  leaveRequests HrLeaveRequest[]
+
+  @@unique([organizationId, employeeNumber])
+  @@unique([organizationId, email])
+  @@index([organizationId, status])
+  @@index([organizationId, department])
+  @@map("hr_employees")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Employment Contracts                                                */
+/* ------------------------------------------------------------------ */
+
+model HrEmployeeContract {
+  id             String           @id @default(cuid())
+  employeeId     String
+  contractType   HrEmploymentType
+  basicSalary    Decimal          @db.Decimal(15, 2)
+  salaryFrequency String          @default("MONTHLY") @db.VarChar(20)
+  startDate      DateTime         @db.Date
+  endDate        DateTime?        @db.Date
+  isCurrent      Boolean          @default(true)
+  notes          String?          @db.Text
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  employee HrEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, isCurrent])
+  @@map("hr_employee_contracts")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Government Contribution Rules (configurable — not hardcoded)       */
+/* ------------------------------------------------------------------ */
+
+model HrGovContribRule {
+  id             String   @id @default(cuid())
+  organizationId String
+  contributionType String @db.VarChar(30)   // "SSS" | "PHILHEALTH" | "PAGIBIG" | "INCOME_TAX"
+  salaryFrom     Decimal  @db.Decimal(15, 2)
+  salaryTo       Decimal? @db.Decimal(15, 2) // null = no upper limit
+  employeeShare  Decimal  @db.Decimal(10, 4) // fixed amount or rate depending on ruleKind
+  employerShare  Decimal  @db.Decimal(10, 4)
+  ruleKind       String   @default("FIXED") @db.VarChar(10) // "FIXED" | "RATE"
+  effectiveDate  DateTime @db.Date
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, contributionType, isActive])
+  @@index([organizationId, effectiveDate])
+  @@map("hr_gov_contrib_rules")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Payroll Runs                                                        */
+/* ------------------------------------------------------------------ */
+
+model HrPayrollRun {
+  id             String          @id @default(cuid())
+  organizationId String
+  runNumber      String          @db.VarChar(30)
+  periodStart    DateTime        @db.Date
+  periodEnd      DateTime        @db.Date
+  payDate        DateTime?       @db.Date
+  status         HrPayrollStatus @default(DRAFT)
+  totalGross     Decimal         @default(0) @db.Decimal(15, 2)
+  totalDeductions Decimal        @default(0) @db.Decimal(15, 2)
+  totalNet       Decimal         @default(0) @db.Decimal(15, 2)
+  notes          String?         @db.Text
+  approvedById   String?
+  approvedAt     DateTime?
+  paidById       String?
+  paidAt         DateTime?
+  createdById    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lines        HrPayrollLine[]
+
+  @@unique([organizationId, runNumber])
+  @@index([organizationId, status])
+  @@index([organizationId, periodStart])
+  @@map("hr_payroll_runs")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Payroll Lines (per employee per run)                                */
+/* ------------------------------------------------------------------ */
+
+model HrPayrollLine {
+  id              String  @id @default(cuid())
+  payrollRunId    String
+  employeeId      String
+  basicSalary     Decimal @default(0) @db.Decimal(15, 2)
+  daysWorked      Decimal @default(0) @db.Decimal(5, 2)
+  overtimeHours   Decimal @default(0) @db.Decimal(5, 2)
+  overtimePay     Decimal @default(0) @db.Decimal(15, 2)
+  allowances      Decimal @default(0) @db.Decimal(15, 2)
+  grossPay        Decimal @default(0) @db.Decimal(15, 2)
+  sssEmployee     Decimal @default(0) @db.Decimal(15, 2)
+  sssEmployer     Decimal @default(0) @db.Decimal(15, 2)
+  philhealthEmployee Decimal @default(0) @db.Decimal(15, 2)
+  philhealthEmployer Decimal @default(0) @db.Decimal(15, 2)
+  pagibigEmployee Decimal @default(0) @db.Decimal(15, 2)
+  pagibigEmployer Decimal @default(0) @db.Decimal(15, 2)
+  withholdingTax  Decimal @default(0) @db.Decimal(15, 2)
+  otherDeductions Decimal @default(0) @db.Decimal(15, 2)
+  totalDeductions Decimal @default(0) @db.Decimal(15, 2)
+  netPay          Decimal @default(0) @db.Decimal(15, 2)
+  remarks         String? @db.VarChar(300)
+  createdAt       DateTime @default(now())
+
+  payrollRun HrPayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+  employee   HrEmployee   @relation(fields: [employeeId], references: [id])
+
+  @@unique([payrollRunId, employeeId])
+  @@index([payrollRunId])
+  @@index([employeeId])
+  @@map("hr_payroll_lines")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Attendance Logs                                                     */
+/* ------------------------------------------------------------------ */
+
+model HrAttendanceLog {
+  id           String             @id @default(cuid())
+  employeeId   String
+  date         DateTime           @db.Date
+  clockIn      DateTime?
+  clockOut     DateTime?
+  hoursWorked  Decimal?           @db.Decimal(5, 2)
+  overtimeHours Decimal?          @db.Decimal(5, 2)
+  status       HrAttendanceStatus @default(PRESENT)
+  notes        String?            @db.VarChar(300)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  employee HrEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([employeeId, date])
+  @@index([employeeId, status])
+  @@map("hr_attendance_logs")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Leave Requests                                                      */
+/* ------------------------------------------------------------------ */
+
+model HrLeaveRequest {
+  id           String        @id @default(cuid())
+  employeeId   String
+  leaveType    HrLeaveType
+  startDate    DateTime      @db.Date
+  endDate      DateTime      @db.Date
+  totalDays    Decimal       @db.Decimal(4, 1)
+  reason       String        @db.VarChar(500)
+  status       HrLeaveStatus @default(PENDING)
+  reviewedById String?
+  reviewedAt   DateTime?
+  reviewNote   String?       @db.VarChar(300)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  employee HrEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, status])
+  @@index([employeeId, startDate])
+  @@map("hr_leave_requests")
 }
