@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   Loader2, AlertCircle, ArrowLeft, Download, FileDown,
-  CheckCircle, DollarSign, Users, Edit2, X, Save, Info, BookmarkCheck,
+  CheckCircle, DollarSign, Users, Edit2, X, Save, Info, BookmarkCheck, ChevronLeft,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -203,23 +203,33 @@ function EditLineModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <div>
-            <h2 className="text-base font-semibold text-slate-800">
-              Edit Payslip — {line.employee.lastName}, {line.employee.firstName}
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              {line.employee.employeeNumber} · Changes trigger full DOLE recomputation
-            </p>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[95vh]">
+        {/* Sticky Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+              title="Back"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div>
+              <h2 className="text-base font-semibold text-slate-800">
+                Edit Payslip — {line.employee.lastName}, {line.employee.firstName}
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {line.employee.employeeNumber} · Changes trigger full DOLE recomputation
+              </p>
+            </div>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="px-6 py-5 space-y-4">
+        {/* Scrollable body */}
+        <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
           {/* Declared salary note */}
           <div className="flex items-start gap-2 text-xs text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-lg p-3">
             <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
@@ -401,31 +411,39 @@ function EditLineModal({
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between gap-3">
-          <button
-            onClick={handleSaveDefaults}
-            disabled={savingDef || saving}
-            title="Save declared shares as defaults — they will auto-apply to all future payroll runs for this employee"
-            className="flex items-center gap-2 px-4 py-2 border border-emerald-300 text-emerald-700 bg-emerald-50 text-sm rounded-lg hover:bg-emerald-100 disabled:opacity-60"
-          >
-            {savingDef
-              ? <><Loader2 className="h-4 w-4 animate-spin" />Saving…</>
-              : <><BookmarkCheck className="h-4 w-4" />Save as Default</>
-            }
-          </button>
-          <div className="flex items-center gap-3">
-            <button onClick={onClose}
-              className="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50">
-              Cancel
+        {/* Sticky Footer */}
+        <div className="px-6 py-4 border-t border-slate-100 shrink-0 bg-white rounded-b-2xl space-y-3">
+          {/* Top row: Back + Save as Default */}
+          <div className="flex items-center justify-between gap-3">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50"
+            >
+              <ChevronLeft className="h-4 w-4" /> Back
             </button>
-            <button onClick={handleSave} disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60">
-              {saving
-                ? <><Loader2 className="h-4 w-4 animate-spin" />Recomputing…</>
-                : <><Save className="h-4 w-4" />Save & Recompute</>
+            <button
+              onClick={handleSaveDefaults}
+              disabled={savingDef || saving}
+              title="Save declared shares as defaults — they will auto-apply to all future payroll runs for this employee"
+              className="flex items-center gap-2 px-4 py-2 border border-emerald-300 text-emerald-700 bg-emerald-50 text-sm rounded-lg hover:bg-emerald-100 disabled:opacity-60"
+            >
+              {savingDef
+                ? <><Loader2 className="h-4 w-4 animate-spin" />Saving…</>
+                : <><BookmarkCheck className="h-4 w-4" />Save as Default</>
               }
             </button>
           </div>
+          {/* Bottom row: full-width Save & Recompute */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-60 shadow-sm"
+          >
+            {saving
+              ? <><Loader2 className="h-4 w-4 animate-spin" />Recomputing…</>
+              : <><Save className="h-4 w-4" />Save &amp; Recompute Payslip</>
+            }
+          </button>
         </div>
       </div>
     </div>
