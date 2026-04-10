@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, data: null, error: "Unauthorized" }, { status: 401 });
   }
 
-  // Super admins see all modules enabled
+  // Super admins see all modules enabled (no industry restriction)
   if (token.isSuperAdmin) {
     const allEnabled = Object.fromEntries(MODULE_KEYS.map((k) => [k, true]));
-    return NextResponse.json({ success: true, data: { modules: allEnabled }, error: null });
+    return NextResponse.json({ success: true, data: { modules: allEnabled, industry: null }, error: null });
   }
 
   const tenantId = (token.tenantId ?? token.organizationId) as string | null;
@@ -26,12 +26,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, data: null, error: "No tenant" }, { status: 400 });
   }
 
-  const flags = await prisma.tenantFeatureFlag.findMany({
-    where: { tenantId, feature: { in: [...MODULE_KEYS] } },
-    select: { feature: true, enabled: true },
-  });
+  const [flags, org] = await Promise.all([
+    prisma.tenantFeatureFlag.findMany({
+      where: { tenantId, feature: { in: [...MODULE_KEYS] } },
+      select: { feature: true, enabled: true },
+    }),
+    prisma.organization.findUnique({
+      where: { id: tenantId },
+      select: { industry: true },
+    }),
+  ]);
 
-  const modules = resolveEnabledModules(flags);
+  const modules  = resolveEnabledModules(flags);
+  const industry = org?.industry ?? null;
 
-  return NextResponse.json({ success: true, data: { modules }, error: null });
+  return NextResponse.json({ success: true, data: { modules, industry }, error: null });
 }

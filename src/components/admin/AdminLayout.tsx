@@ -41,6 +41,8 @@ interface NavItem {
   readonly icon: React.ComponentType<{ className?: string }>;
   readonly exact?: boolean;
   readonly moduleKey?: ModuleKey;
+  /** If set, only show this item when the tenant's industry matches one of these values */
+  readonly industries?: string[];
 }
 
 /** Items always visible regardless of enabled modules */
@@ -51,7 +53,7 @@ const STATIC_NAV: ReadonlyArray<NavItem> = [
 /** Module-gated nav items — shown only when the module is enabled */
 const MODULE_NAV: ReadonlyArray<NavItem> = [
   { href: "/admin/courses",    label: "Courses",    icon: BookOpen,      moduleKey: "module_lms" },
-  { href: "/admin/students",   label: "Students",   icon: Users,         moduleKey: "module_lms" },
+  { href: "/admin/students",   label: "Students",   icon: Users,         moduleKey: "module_lms", industries: ["training_center"] },
   { href: "/admin/trainers",   label: "Trainers",   icon: UserCog,       moduleKey: "module_lms" },
   { href: "/admin/enrollees",  label: "Tasks",      icon: CheckSquare,   moduleKey: "module_lms" },
   { href: "/admin/revenue",    label: "Revenue",    icon: DollarSign,    moduleKey: "module_lms" },
@@ -79,19 +81,27 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [enabledModules, setEnabledModules] = useState<Partial<Record<ModuleKey, boolean>>>({
     module_lms: true, // optimistic default for LMS
   });
+  const [tenantIndustry, setTenantIndustry] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/tenant-modules")
       .then((r) => r.json())
-      .then((d: { success: boolean; data: { modules: Record<ModuleKey, boolean> } }) => {
-        if (d.success) setEnabledModules(d.data.modules);
+      .then((d: { success: boolean; data: { modules: Record<ModuleKey, boolean>; industry: string | null } }) => {
+        if (d.success) {
+          setEnabledModules(d.data.modules);
+          setTenantIndustry(d.data.industry);
+        }
       })
       .catch(() => {});
   }, []);
 
   const visibleNav: NavItem[] = [
     ...STATIC_NAV,
-    ...MODULE_NAV.filter((item) => item.moduleKey && enabledModules[item.moduleKey]),
+    ...MODULE_NAV.filter((item) => {
+      if (item.moduleKey && !enabledModules[item.moduleKey]) return false;
+      if (item.industries && !item.industries.includes(tenantIndustry ?? "")) return false;
+      return true;
+    }),
     ...SETTINGS_NAV,
   ];
 
