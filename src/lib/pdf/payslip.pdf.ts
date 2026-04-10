@@ -26,11 +26,20 @@ export interface PayslipData {
   // Earnings
   basicSalary: number;
   daysWorked: number;
+  absentDays?: number;
+  lateMins?: number;
+  regHolidayDays?: number;
+  specHolidayDays?: number;
+  holidayPay?: number;
   overtimeHours: number;
   overtimePay: number;
+  nightDiffHours?: number;
+  nightDiffPay?: number;
   allowances: number;
   grossPay: number;
   // Deductions
+  absenceDeduction?: number;
+  lateDeduction?: number;
   sssEmployee: number;
   philhealthEmployee: number;
   pagibigEmployee: number;
@@ -247,9 +256,15 @@ function PayslipDocument({ d }: { d: PayslipData }) {
               React.createElement(Text, { style: s.tableHeaderTxt }, "EARNINGS"),
               React.createElement(Text, { style: s.tableHeaderAmt }, "Amount")
             ),
-            React.createElement(Row, { label: "Basic Salary",   amount: d.basicSalary }),
+            React.createElement(Row, { label: `Basic Salary (${d.daysWorked} days)`, amount: d.basicSalary }),
+            (d.holidayPay ?? 0) > 0
+              ? React.createElement(Row, { label: `Holiday Pay (Reg:${d.regHolidayDays ?? 0}/Spec:${d.specHolidayDays ?? 0} days)`, amount: d.holidayPay!, alt: true })
+              : null,
             d.overtimePay > 0
-              ? React.createElement(Row, { label: `Overtime (${d.overtimeHours}h × 1.25)`, amount: d.overtimePay, alt: true })
+              ? React.createElement(Row, { label: `Overtime Pay (${d.overtimeHours}h)`, amount: d.overtimePay })
+              : null,
+            (d.nightDiffPay ?? 0) > 0
+              ? React.createElement(Row, { label: `Night Diff (${d.nightDiffHours ?? 0}h)`, amount: d.nightDiffPay!, alt: true })
               : null,
             d.allowances > 0
               ? React.createElement(Row, { label: "Allowances", amount: d.allowances })
@@ -271,6 +286,12 @@ function PayslipDocument({ d }: { d: PayslipData }) {
               React.createElement(Text, { style: s.tableHeaderTxt }, "DEDUCTIONS"),
               React.createElement(Text, { style: s.tableHeaderAmt }, "Amount")
             ),
+            (d.absenceDeduction ?? 0) > 0
+              ? React.createElement(Row, { label: `Absent (${d.absentDays ?? 0} days)`, amount: d.absenceDeduction! })
+              : null,
+            (d.lateDeduction ?? 0) > 0
+              ? React.createElement(Row, { label: `Late (${d.lateMins ?? 0} mins)`, amount: d.lateDeduction!, alt: true })
+              : null,
             React.createElement(Row, { label: "SSS",           amount: d.sssEmployee }),
             React.createElement(Row, { label: "PhilHealth",    amount: d.philhealthEmployee, alt: true }),
             React.createElement(Row, { label: "Pag-IBIG",      amount: d.pagibigEmployee }),

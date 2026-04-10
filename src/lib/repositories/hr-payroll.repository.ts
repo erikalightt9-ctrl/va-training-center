@@ -157,47 +157,134 @@ function computeWithholdingTax(monthlyTaxableIncome: number): number {
 export interface PayrollLineInput {
   employeeId: string;
   basicSalary: number;
+  /** Total scheduled working days in pay period (default 22 for monthly) */
+  totalWorkingDays?: number;
+  /** Actual days present (default = totalWorkingDays - absentDays) */
   daysWorked?: number;
+  absentDays?: number;
+  /** Minutes late */
+  lateMins?: number;
+  /** Regular holidays (e.g. New Year, Christmas) worked — DOLE 200% of daily rate */
+  regHolidayDays?: number;
+  /** Special non-working holidays worked — DOLE 130% of daily rate */
+  specHolidayDays?: number;
+  /** Regular weekday overtime hours — DOLE 125% of hourly rate */
   overtimeHours?: number;
+  /** Night differential hours (10pm–6am) — DOLE +10% of hourly rate */
+  nightDiffHours?: number;
   allowances?: number;
   otherDeductions?: number;
   remarks?: string;
 }
 
+/**
+ * Full DOLE-compliant payroll computation.
+ *
+ * Key rules applied:
+ * - Daily rate = monthly basic salary / 22 (industry standard)
+ * - Hourly rate = daily rate / 8
+ * - Absent deduction = daily rate × absent days
+ * - Late deduction = hourly rate × (late minutes / 60)
+ * - Regular holiday worked premium = daily rate × 100% (extra) per day
+ * - Special non-working holiday worked = daily rate × 30% (extra) per day
+ * - Regular day overtime = hourly rate × 0.25 × OT hours  (i.e. +25% premium)
+ * - Night differential = hourly rate × 0.10 × ND hours   (i.e. +10% premium)
+ * - Gov contributions computed on basic monthly salary
+ * - BIR withholding tax on taxable income after mandatory deductions
+ */
 export async function computePayrollLine(
   organizationId: string,
   input: PayrollLineInput
 ) {
   const rules = await listGovContribRules(organizationId);
 
-  const totalWorkingDays = 22;
-  const daysWorked    = input.daysWorked ?? totalWorkingDays;
-  const dailyRate     = input.basicSalary / totalWorkingDays;
-  const earnedSalary  = dailyRate * daysWorked;
-  const overtimePay   = input.overtimeHours ? (dailyRate / 8) * 1.25 * input.overtimeHours : 0;
-  const allowances    = input.allowances ?? 0;
-  const grossPay      = earnedSalary + overtimePay + allowances;
+  const totalWorkingDays = input.totalWorkingDays ?? 22;
+  const absentDays       = input.absentDays  ?? 0;
+  const lateMins         = input.lateMins    ?? 0;
+  const regHolidayDays   = input.regHolidayDays  ?? 0;
+  const specHolidayDays  = input.specHolidayDays ?? 0;
+  const overtimeHours    = input.overtimeHours   ?? 0;
+  const nightDiffHours   = input.nightDiffHours  ?? 0;
 
+  const dailyRate  = input.basicSalary / totalWorkingDays;
+  const hourlyRate = dailyRate / 8;
+
+  // Days actually worked (capped at scheduled days)
+  const daysWorked = input.daysWorked
+    ?? Math.max(0, totalWorkingDays - absentDays - regHolidayDays);
+
+  // Earned basic pay (present days only; holidays handled separately)
+  const earnedBasic = dailyRate * daysWorked;
+
+  // Deductions for absences and tardiness
+  const absenceDeduction = dailyRate * absentDays;
+  const lateDeduction    = hourlyRate * (lateMins / 60);
+
+  // Holiday pay premiums (DOLE)
+  // Regular holiday worked: employee gets 200% → premium above base = +100%
+  const regHolidayPremium  = dailyRate * 1.00 * regHolidayDays;
+  // Reg holiday BASE (even if worked, 100% is already in basicSalary; we add the premium day)
+  const regHolidayBase     = dailyRate * 1.00 * regHolidayDays; // base for days worked on reg holiday
+  // Special non-working holiday worked: 130% → premium above base = +30%
+  const specHolidayPremium = dailyRate * 0.30 * specHolidayDays;
+  const specHolidayBase    = dailyRate * 1.00 * specHolidayDays;
+
+  const holidayPay = regHolidayPremium + regHolidayBase + specHolidayPremium + specHolidayBase;
+
+  // Overtime premium (DOLE: regular day OT = +25% per OT hour above 8-hr rate)
+  const overtimePay  = hourlyRate * 0.25 * overtimeHours;
+
+  // Night differential (+10% per ND hour)
+  const nightDiffPay = hourlyRate * 0.10 * nightDiffHours;
+
+  const allowances = input.allowances ?? 0;
+
+  // Gross pay = earned basic + holiday pay + OT premium + night diff + allowances
+  // (absence & late deductions reduce net, not gross — they're listed separately per DOLE)
+  const grossPay = earnedBasic + holidayPay + overtimePay + nightDiffPay + allowances;
+
+  // Gov contributions on monthly basic salary (not reduced by absences)
   const sss        = computeContribution(rules, "SSS",        input.basicSalary);
   const philhealth = computeContribution(rules, "PHILHEALTH", input.basicSalary);
   const pagibig    = computeContribution(rules, "PAGIBIG",    input.basicSalary);
 
-  const taxableIncome = grossPay - sss.employee - philhealth.employee - pagibig.employee;
-  const withholdingTax = computeWithholdingTax(taxableIncome);
+  // Taxable income = gross - mandatory deductions - absence - late
+  const taxableIncome = grossPay
+    - absenceDeduction
+    - lateDeduction
+    - sss.employee
+    - philhealth.employee
+    - pagibig.employee;
+  const withholdingTax = computeWithholdingTax(Math.max(0, taxableIncome));
 
   const totalDeductions =
-    sss.employee + philhealth.employee + pagibig.employee +
-    withholdingTax + (input.otherDeductions ?? 0);
-  const netPay = grossPay - totalDeductions;
+    absenceDeduction +
+    lateDeduction +
+    sss.employee +
+    philhealth.employee +
+    pagibig.employee +
+    withholdingTax +
+    (input.otherDeductions ?? 0);
+
+  const netPay = Math.max(0, grossPay - totalDeductions);
 
   return {
     employeeId:          input.employeeId,
     basicSalary:         input.basicSalary,
     daysWorked,
-    overtimeHours:       input.overtimeHours ?? 0,
+    absentDays,
+    lateMins,
+    regHolidayDays,
+    specHolidayDays,
+    holidayPay,
+    overtimeHours,
     overtimePay,
+    nightDiffHours,
+    nightDiffPay,
     allowances,
     grossPay,
+    absenceDeduction,
+    lateDeduction,
     sssEmployee:         sss.employee,
     sssEmployer:         sss.employer,
     philhealthEmployee:  philhealth.employee,
@@ -329,10 +416,19 @@ export async function createPayrollRun(
           employeeId:          l.employeeId,
           basicSalary:         new Prisma.Decimal(l.basicSalary),
           daysWorked:          new Prisma.Decimal(l.daysWorked),
+          absentDays:          new Prisma.Decimal(l.absentDays),
+          lateMins:            new Prisma.Decimal(l.lateMins),
+          regHolidayDays:      new Prisma.Decimal(l.regHolidayDays),
+          specHolidayDays:     new Prisma.Decimal(l.specHolidayDays),
+          holidayPay:          new Prisma.Decimal(l.holidayPay),
           overtimeHours:       new Prisma.Decimal(l.overtimeHours),
           overtimePay:         new Prisma.Decimal(l.overtimePay),
+          nightDiffHours:      new Prisma.Decimal(l.nightDiffHours),
+          nightDiffPay:        new Prisma.Decimal(l.nightDiffPay),
           allowances:          new Prisma.Decimal(l.allowances),
           grossPay:            new Prisma.Decimal(l.grossPay),
+          absenceDeduction:    new Prisma.Decimal(l.absenceDeduction),
+          lateDeduction:       new Prisma.Decimal(l.lateDeduction),
           sssEmployee:         new Prisma.Decimal(l.sssEmployee),
           sssEmployer:         new Prisma.Decimal(l.sssEmployer),
           philhealthEmployee:  new Prisma.Decimal(l.philhealthEmployee),

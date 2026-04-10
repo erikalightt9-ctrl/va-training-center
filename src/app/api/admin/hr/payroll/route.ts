@@ -5,13 +5,19 @@ import { requireAdmin } from "@/lib/auth-guards";
 import { listPayrollRuns, createPayrollRun } from "@/lib/repositories/hr-payroll.repository";
 
 const lineSchema = z.object({
-  employeeId:     z.string(),
-  basicSalary:    z.number().positive(),
-  daysWorked:     z.number().nonnegative().optional(),
-  overtimeHours:  z.number().nonnegative().optional(),
-  allowances:     z.number().nonnegative().optional(),
-  otherDeductions: z.number().nonnegative().optional(),
-  remarks:        z.string().max(300).optional(),
+  employeeId:       z.string(),
+  basicSalary:      z.number().positive(),
+  totalWorkingDays: z.number().positive().optional(),
+  daysWorked:       z.number().nonnegative().optional(),
+  absentDays:       z.number().nonnegative().optional(),
+  lateMins:         z.number().nonnegative().optional(),
+  regHolidayDays:   z.number().nonnegative().optional(),
+  specHolidayDays:  z.number().nonnegative().optional(),
+  overtimeHours:    z.number().nonnegative().optional(),
+  nightDiffHours:   z.number().nonnegative().optional(),
+  allowances:       z.number().nonnegative().optional(),
+  otherDeductions:  z.number().nonnegative().optional(),
+  remarks:          z.string().max(300).optional(),
 });
 
 const createSchema = z.object({

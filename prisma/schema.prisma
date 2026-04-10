@@ -2675,10 +2675,24 @@ model HrPayrollLine {
   employeeId      String
   basicSalary     Decimal @default(0) @db.Decimal(15, 2)
   daysWorked      Decimal @default(0) @db.Decimal(5, 2)
+  absentDays      Decimal @default(0) @db.Decimal(5, 2)
+  lateMins        Decimal @default(0) @db.Decimal(7, 2)
+  // Holiday fields (DOLE)
+  regHolidayDays  Decimal @default(0) @db.Decimal(5, 2)  // regular holidays worked (200%)
+  specHolidayDays Decimal @default(0) @db.Decimal(5, 2)  // special non-working holidays worked (130%)
+  holidayPay      Decimal @default(0) @db.Decimal(15, 2) // extra pay from holiday premiums
+  // Overtime
   overtimeHours   Decimal @default(0) @db.Decimal(5, 2)
   overtimePay     Decimal @default(0) @db.Decimal(15, 2)
+  // Night differential
+  nightDiffHours  Decimal @default(0) @db.Decimal(5, 2)
+  nightDiffPay    Decimal @default(0) @db.Decimal(15, 2)
+  // Other earnings
   allowances      Decimal @default(0) @db.Decimal(15, 2)
   grossPay        Decimal @default(0) @db.Decimal(15, 2)
+  // Deductions
+  absenceDeduction Decimal @default(0) @db.Decimal(15, 2)
+  lateDeduction   Decimal @default(0) @db.Decimal(15, 2)
   sssEmployee     Decimal @default(0) @db.Decimal(15, 2)
   sssEmployer     Decimal @default(0) @db.Decimal(15, 2)
   philhealthEmployee Decimal @default(0) @db.Decimal(15, 2)
