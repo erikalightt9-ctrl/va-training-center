@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   Loader2, AlertCircle, ArrowLeft, Download, FileDown,
-  CheckCircle, DollarSign, Users, Edit2, X, Save, Info, BookmarkCheck, ChevronLeft,
+  CheckCircle, Users, Edit2, X, Save, Info, BookmarkCheck, ChevronLeft,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -564,7 +564,7 @@ export default function PayrollRunDetailPage() {
             </div>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
-            <DollarSign className="h-8 w-8 text-emerald-400" />
+            <span className="h-8 w-8 flex items-center justify-center text-2xl font-bold text-emerald-400 leading-none">₱</span>
             <div>
               <p className="text-xs text-slate-500">Total Net Pay</p>
               <p className="text-xl font-bold text-emerald-700">{fmt(Number(run.totalNet))}</p>
