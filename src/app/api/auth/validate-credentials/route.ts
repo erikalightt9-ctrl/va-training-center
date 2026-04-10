@@ -84,7 +84,20 @@ export async function POST(request: NextRequest) {
 
   /* ── auto-detect (Tenant Portal unified login) ──────────────── */
   if (provider === "auto") {
-    // 1. Check student
+    // 1. Check corporate manager FIRST — tenant admins take priority and are
+    //    never subject to the student/trainer failedAttempts lockout.
+    const manager = await prisma.corporateManager.findFirst({
+      where: { email: normalizedEmail },
+      select: { isActive: true, mustChangePassword: true },
+    });
+    if (manager) {
+      if (!manager.isActive) {
+        return NextResponse.json({ ok: false, error: "Your account has been deactivated. Please contact admin." });
+      }
+      return NextResponse.json({ ok: true, provider: "corporate", mustChangePassword: manager.mustChangePassword });
+    }
+
+    // 2. Check student
     const studentAuto = await prisma.student.findUnique({
       where: { email: normalizedEmail },
       select: { failedAttempts: true, accessGranted: true, accessExpiry: true, mustChangePassword: true },
@@ -100,18 +113,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: false, error: "Your access has expired. Please contact admin to renew." });
       }
       return NextResponse.json({ ok: true, provider: "student", mustChangePassword: studentAuto.mustChangePassword });
-    }
-
-    // 2. Check corporate manager / tenant admin
-    const manager = await prisma.corporateManager.findFirst({
-      where: { email: normalizedEmail },
-      select: { isActive: true, mustChangePassword: true },
-    });
-    if (manager) {
-      if (!manager.isActive) {
-        return NextResponse.json({ ok: false, error: "Your account has been deactivated. Please contact admin." });
-      }
-      return NextResponse.json({ ok: true, provider: "corporate", mustChangePassword: manager.mustChangePassword });
     }
 
     // 3. Check trainer
