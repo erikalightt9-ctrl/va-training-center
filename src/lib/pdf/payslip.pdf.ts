@@ -1,5 +1,24 @@
-import { renderToBuffer, Document, Page, Text, View, StyleSheet, Line, Svg } from "@react-pdf/renderer";
+import { renderToBuffer, Document, Page, Text, View, StyleSheet, Line, Svg, Font, Image } from "@react-pdf/renderer";
 import React from "react";
+
+/* ------------------------------------------------------------------ */
+/*  Font Registration                                                   */
+/*  Roboto supports the Philippine Peso sign (₱ U+20B1)                */
+/* ------------------------------------------------------------------ */
+
+Font.register({
+  family: "Roboto",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf",
+      fontWeight: "normal",
+    },
+    {
+      src: "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlvAw.ttf",
+      fontWeight: "bold",
+    },
+  ],
+});
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                               */
@@ -9,6 +28,7 @@ export interface PayslipData {
   // Company
   companyName: string;
   companyAddress?: string;
+  companyLogoUrl?: string;
   // Employee
   employeeNumber: string;
   employeeName: string;
@@ -56,52 +76,54 @@ export interface PayslipData {
 /* ------------------------------------------------------------------ */
 
 const s = StyleSheet.create({
-  page:         { padding: 36, backgroundColor: "#fff", fontFamily: "Helvetica", fontSize: 9 },
+  page:          { padding: 36, backgroundColor: "#fff", fontFamily: "Roboto", fontSize: 9 },
   // Header
-  header:       { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
-  company:      { flex: 1 },
-  companyName:  { fontSize: 14, fontFamily: "Helvetica-Bold", color: "#1e293b" },
-  companyAddr:  { fontSize: 8, color: "#64748b", marginTop: 2 },
-  payslipLabel: { fontSize: 18, fontFamily: "Helvetica-Bold", color: "#4f46e5", textAlign: "right" },
-  payslipSub:   { fontSize: 8, color: "#94a3b8", textAlign: "right", marginTop: 2 },
+  header:        { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
+  company:       { flex: 1, flexDirection: "row", alignItems: "center", gap: 10 },
+  companyLogo:   { height: 44, maxWidth: 120, objectFit: "contain" },
+  companyText:   { flex: 1 },
+  companyName:   { fontSize: 14, fontWeight: "bold", color: "#1e293b" },
+  companyAddr:   { fontSize: 8, color: "#64748b", marginTop: 2 },
+  payslipLabel:  { fontSize: 18, fontWeight: "bold", color: "#4f46e5", textAlign: "right" },
+  payslipSub:    { fontSize: 8, color: "#94a3b8", textAlign: "right", marginTop: 2 },
   // Divider
-  divider:      { marginVertical: 8 },
+  divider:       { marginVertical: 8 },
   // Employee Info
-  infoGrid:     { flexDirection: "row", gap: 16, marginBottom: 12 },
-  infoBox:      { flex: 1, backgroundColor: "#f8fafc", borderRadius: 4, padding: 8 },
-  infoLabel:    { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 2 },
-  infoValue:    { fontSize: 9, color: "#1e293b", fontFamily: "Helvetica-Bold" },
-  infoValueSm:  { fontSize: 8, color: "#475569" },
+  infoGrid:      { flexDirection: "row", gap: 16, marginBottom: 12 },
+  infoBox:       { flex: 1, backgroundColor: "#f8fafc", borderRadius: 4, padding: 8 },
+  infoLabel:     { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 2 },
+  infoValue:     { fontSize: 9, color: "#1e293b", fontWeight: "bold" },
+  infoValueSm:   { fontSize: 8, color: "#475569" },
   // Gov IDs
-  govRow:       { flexDirection: "row", gap: 8, marginBottom: 12 },
-  govItem:      { flex: 1, borderWidth: 1, borderColor: "#e2e8f0", borderRadius: 4, padding: 6 },
-  govLabel:     { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 1 },
-  govValue:     { fontSize: 8, color: "#334155", fontFamily: "Helvetica-Bold" },
+  govRow:        { flexDirection: "row", gap: 8, marginBottom: 12 },
+  govItem:       { flex: 1, borderWidth: 1, borderColor: "#e2e8f0", borderRadius: 4, padding: 6 },
+  govLabel:      { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 1 },
+  govValue:      { fontSize: 8, color: "#334155", fontWeight: "bold" },
   // Table
-  table:        { marginBottom: 10 },
-  tableHeader:  { flexDirection: "row", backgroundColor: "#4f46e5", borderRadius: 4, paddingVertical: 5, paddingHorizontal: 8 },
-  tableHeaderTxt:{ color: "#fff", fontSize: 8, fontFamily: "Helvetica-Bold", flex: 1 },
+  table:         { marginBottom: 10 },
+  tableHeader:   { flexDirection: "row", backgroundColor: "#4f46e5", borderRadius: 4, paddingVertical: 5, paddingHorizontal: 8 },
+  tableHeaderTxt:{ color: "#fff", fontSize: 8, fontWeight: "bold", flex: 1 },
   tableHeaderAmt:{ color: "#c7d2fe", fontSize: 8, textAlign: "right", width: 80 },
-  tableRow:     { flexDirection: "row", paddingVertical: 4, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: "#f1f5f9" },
-  tableRowAlt:  { backgroundColor: "#fafafa" },
-  tableCell:    { flex: 1, fontSize: 9, color: "#334155" },
-  tableCellAmt: { width: 80, textAlign: "right", fontSize: 9, color: "#334155" },
-  tableTotal:   { flexDirection: "row", paddingVertical: 5, paddingHorizontal: 8, backgroundColor: "#eef2ff" },
-  tableTotalTxt:{ flex: 1, fontSize: 9, fontFamily: "Helvetica-Bold", color: "#3730a3" },
-  tableTotalAmt:{ width: 80, textAlign: "right", fontSize: 9, fontFamily: "Helvetica-Bold", color: "#3730a3" },
+  tableRow:      { flexDirection: "row", paddingVertical: 4, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: "#f1f5f9" },
+  tableRowAlt:   { backgroundColor: "#fafafa" },
+  tableCell:     { flex: 1, fontSize: 9, color: "#334155" },
+  tableCellAmt:  { width: 80, textAlign: "right", fontSize: 9, color: "#334155" },
+  tableTotal:    { flexDirection: "row", paddingVertical: 5, paddingHorizontal: 8, backgroundColor: "#eef2ff" },
+  tableTotalTxt: { flex: 1, fontSize: 9, fontWeight: "bold", color: "#3730a3" },
+  tableTotalAmt: { width: 80, textAlign: "right", fontSize: 9, fontWeight: "bold", color: "#3730a3" },
   // Two columns
-  cols:         { flexDirection: "row", gap: 12, marginBottom: 10 },
-  col:          { flex: 1 },
+  cols:          { flexDirection: "row", gap: 12, marginBottom: 10 },
+  col:           { flex: 1 },
   // Net pay box
-  netBox:       { backgroundColor: "#4f46e5", borderRadius: 6, padding: 14, marginBottom: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  netLabel:     { fontSize: 11, color: "#c7d2fe", fontFamily: "Helvetica-Bold" },
-  netAmount:    { fontSize: 20, color: "#fff", fontFamily: "Helvetica-Bold" },
+  netBox:        { backgroundColor: "#4f46e5", borderRadius: 6, padding: 14, marginBottom: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  netLabel:      { fontSize: 11, color: "#c7d2fe", fontWeight: "bold" },
+  netAmount:     { fontSize: 20, color: "#fff", fontWeight: "bold" },
   // Footer
-  footer:       { marginTop: "auto", borderTopWidth: 1, borderTopColor: "#e2e8f0", paddingTop: 8, flexDirection: "row", justifyContent: "space-between" },
-  footerTxt:    { fontSize: 7, color: "#94a3b8" },
-  remarksBox:   { backgroundColor: "#fffbeb", borderRadius: 4, padding: 6, marginBottom: 10 },
-  remarksLabel: { fontSize: 7, color: "#92400e", fontFamily: "Helvetica-Bold", marginBottom: 2 },
-  remarksText:  { fontSize: 8, color: "#78350f" },
+  footer:        { marginTop: "auto", borderTopWidth: 1, borderTopColor: "#e2e8f0", paddingTop: 8, flexDirection: "row", justifyContent: "space-between" },
+  footerTxt:     { fontSize: 7, color: "#94a3b8" },
+  remarksBox:    { backgroundColor: "#fffbeb", borderRadius: 4, padding: 6, marginBottom: 10 },
+  remarksLabel:  { fontSize: 7, color: "#92400e", fontWeight: "bold", marginBottom: 2 },
+  remarksText:   { fontSize: 8, color: "#78350f" },
 });
 
 /* ------------------------------------------------------------------ */
@@ -109,7 +131,7 @@ const s = StyleSheet.create({
 /* ------------------------------------------------------------------ */
 
 const peso = (n: number) =>
-  `₱${n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  `\u20B1${n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" });
@@ -144,11 +166,11 @@ function TotalRow({ label, amount }: { label: string; amount: number }) {
 /* ------------------------------------------------------------------ */
 
 function PayslipDocument({ d }: { d: PayslipData }) {
-  const periodStr = `${fmtDateShort(d.periodStart)} – ${fmtDateShort(d.periodEnd)}`;
+  const periodStr = `${fmtDateShort(d.periodStart)} \u2013 ${fmtDateShort(d.periodEnd)}`;
 
   return React.createElement(
     Document,
-    { title: `Payslip – ${d.employeeName}` },
+    { title: `Payslip \u2013 ${d.employeeName}` },
     React.createElement(
       Page,
       { size: "A4", style: s.page },
@@ -157,14 +179,25 @@ function PayslipDocument({ d }: { d: PayslipData }) {
       React.createElement(
         View,
         { style: s.header },
+
+        /* Left: Logo + Company name */
         React.createElement(
           View,
           { style: s.company },
-          React.createElement(Text, { style: s.companyName }, d.companyName),
-          d.companyAddress
-            ? React.createElement(Text, { style: s.companyAddr }, d.companyAddress)
-            : null
+          d.companyLogoUrl
+            ? React.createElement(Image, { src: d.companyLogoUrl, style: s.companyLogo })
+            : null,
+          React.createElement(
+            View,
+            { style: s.companyText },
+            React.createElement(Text, { style: s.companyName }, d.companyName),
+            d.companyAddress
+              ? React.createElement(Text, { style: s.companyAddr }, d.companyAddress)
+              : null
+          )
         ),
+
+        /* Right: PAYSLIP label */
         React.createElement(
           View,
           null,
@@ -195,13 +228,13 @@ function PayslipDocument({ d }: { d: PayslipData }) {
           { style: s.infoBox },
           React.createElement(Text, { style: s.infoLabel }, "Employee"),
           React.createElement(Text, { style: s.infoValue }, d.employeeName),
-          React.createElement(Text, { style: s.infoValueSm }, `${d.employeeNumber} · ${d.position}`)
+          React.createElement(Text, { style: s.infoValueSm }, `${d.employeeNumber} \u00B7 ${d.position}`)
         ),
         React.createElement(
           View,
           { style: s.infoBox },
           React.createElement(Text, { style: s.infoLabel }, "Department"),
-          React.createElement(Text, { style: s.infoValue }, d.department ?? "—")
+          React.createElement(Text, { style: s.infoValue }, d.department ?? "\u2014")
         ),
         React.createElement(
           View,
@@ -219,22 +252,22 @@ function PayslipDocument({ d }: { d: PayslipData }) {
         React.createElement(
           View, { style: s.govItem },
           React.createElement(Text, { style: s.govLabel }, "SSS No."),
-          React.createElement(Text, { style: s.govValue }, d.sssNumber ?? "—")
+          React.createElement(Text, { style: s.govValue }, d.sssNumber ?? "\u2014")
         ),
         React.createElement(
           View, { style: s.govItem },
           React.createElement(Text, { style: s.govLabel }, "PhilHealth No."),
-          React.createElement(Text, { style: s.govValue }, d.philhealthNumber ?? "—")
+          React.createElement(Text, { style: s.govValue }, d.philhealthNumber ?? "\u2014")
         ),
         React.createElement(
           View, { style: s.govItem },
           React.createElement(Text, { style: s.govLabel }, "Pag-IBIG No."),
-          React.createElement(Text, { style: s.govValue }, d.pagibigNumber ?? "—")
+          React.createElement(Text, { style: s.govValue }, d.pagibigNumber ?? "\u2014")
         ),
         React.createElement(
           View, { style: s.govItem },
           React.createElement(Text, { style: s.govLabel }, "TIN"),
-          React.createElement(Text, { style: s.govValue }, d.tinNumber ?? "—")
+          React.createElement(Text, { style: s.govValue }, d.tinNumber ?? "\u2014")
         )
       ),
 
@@ -292,9 +325,9 @@ function PayslipDocument({ d }: { d: PayslipData }) {
             (d.lateDeduction ?? 0) > 0
               ? React.createElement(Row, { label: `Late (${d.lateMins ?? 0} mins)`, amount: d.lateDeduction!, alt: true })
               : null,
-            React.createElement(Row, { label: "SSS",           amount: d.sssEmployee }),
-            React.createElement(Row, { label: "PhilHealth",    amount: d.philhealthEmployee, alt: true }),
-            React.createElement(Row, { label: "Pag-IBIG",      amount: d.pagibigEmployee }),
+            React.createElement(Row, { label: "SSS",             amount: d.sssEmployee }),
+            React.createElement(Row, { label: "PhilHealth",      amount: d.philhealthEmployee, alt: true }),
+            React.createElement(Row, { label: "Pag-IBIG",        amount: d.pagibigEmployee }),
             React.createElement(Row, { label: "Withholding Tax", amount: d.withholdingTax, alt: true }),
             d.otherDeductions > 0
               ? React.createElement(Row, { label: "Other Deductions", amount: d.otherDeductions })

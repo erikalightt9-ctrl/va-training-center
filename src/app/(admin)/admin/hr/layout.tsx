@@ -10,6 +10,7 @@ const TABS = [
   { label: "Attendance",      href: "/admin/hr/attendance" },
   { label: "Leave Requests",  href: "/admin/hr/leave" },
   { label: "Gov. Contrib. Rules", href: "/admin/hr/gov-contrib-rules" },
+  { label: "⚙ Settings",          href: "/admin/hr/settings" },
 ];
 
 export default function HrLayout({ children }: { children: React.ReactNode }) {

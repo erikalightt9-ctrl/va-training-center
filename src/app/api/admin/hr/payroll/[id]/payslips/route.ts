@@ -42,7 +42,13 @@ export async function GET(
     if (!guard.ok) return guard.response;
 
     const { id } = await params;
-    const run = await getPayrollRunById(guard.tenantId, id);
+    const [run, org] = await Promise.all([
+      getPayrollRunById(guard.tenantId, id),
+      prisma.organization.findUnique({
+        where: { id: guard.tenantId },
+        select: { name: true, logoUrl: true },
+      }),
+    ]);
 
     if (!run) {
       return NextResponse.json(
@@ -74,7 +80,8 @@ export async function GET(
       run.lines.map((line) => {
         const emp     = empMap.get(line.employeeId);
         const data: PayslipData = {
-          companyName:        run.notes ?? "Your Company",
+          companyName:        org?.name ?? "Your Company",
+          companyLogoUrl:     org?.logoUrl ?? undefined,
           employeeNumber:     line.employee.employeeNumber,
           employeeName:       `${line.employee.firstName} ${line.employee.lastName}`,
           position:           line.employee.position,

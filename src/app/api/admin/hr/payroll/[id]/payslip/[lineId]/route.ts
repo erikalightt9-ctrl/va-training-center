@@ -3,6 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { requireAdmin } from "@/lib/auth-guards";
 import { getPayrollLineWithEmployee } from "@/lib/repositories/hr-payroll.repository";
 import { generatePayslipPdf } from "@/lib/pdf/payslip.pdf";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +15,13 @@ export async function GET(
     if (!guard.ok) return guard.response;
 
     const { id, lineId } = await params;
-    const line = await getPayrollLineWithEmployee(guard.tenantId, id, lineId);
+    const [line, org] = await Promise.all([
+      getPayrollLineWithEmployee(guard.tenantId, id, lineId),
+      prisma.organization.findUnique({
+        where: { id: guard.tenantId },
+        select: { name: true, logoUrl: true },
+      }),
+    ]);
 
     if (!line) {
       return NextResponse.json(
@@ -26,8 +33,8 @@ export async function GET(
     const { employee, payrollRun: run } = line;
 
     const pdfBuffer = await generatePayslipPdf({
-      // Company (org name not in token, use a placeholder resolved at org level)
-      companyName:            run.notes ?? "Your Company",
+      companyName:            org?.name ?? "Your Company",
+      companyLogoUrl:         org?.logoUrl ?? undefined,
       // Employee
       employeeNumber:         employee.employeeNumber,
       employeeName:           `${employee.firstName} ${employee.lastName}`,
