@@ -1305,6 +1305,14 @@ model Organization {
   crmDeals      CrmDeal[]
   crmActivities CrmActivity[]
   crmTasks      CrmTask[]
+  adminAssets          AdminAsset[]
+  adminCarMaintenance  AdminCarMaintenance[]
+  adminFuelLogs        AdminFuelLog[]
+  adminPantryItems     AdminPantryItem[]
+  adminMaintenanceItems AdminMaintenanceItem[]
+  adminRepairLogs      AdminRepairLog[]
+  adminSuppliers       AdminSupplier[]
+  adminEquipment       AdminEquipment[]
 
   @@map("organizations")
 }
@@ -2927,4 +2935,201 @@ model CrmTask {
   @@index([organizationId, isDone, dueDate])
   @@index([dealId])
   @@map("crm_tasks")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Admin Department                                                    */
+/* ------------------------------------------------------------------ */
+
+enum AdminAssetType {
+  FURNITURE
+  APPLIANCE
+  MACHINE
+  EQUIPMENT
+  VEHICLE
+  OTHER
+}
+
+enum AdminAssetStatus {
+  ACTIVE
+  FOR_REPAIR
+  IN_REPAIR
+  FOR_DISPOSE
+  DISPOSED
+  UNDER_WARRANTY
+}
+
+enum AdminRepairStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AdminSupplierStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model AdminAsset {
+  id             String           @id
+  organizationId String
+  name           String           @db.VarChar(200)
+  assetTag       String?          @db.VarChar(50)
+  assetType      AdminAssetType   @default(EQUIPMENT)
+  status         AdminAssetStatus @default(ACTIVE)
+  location       String?          @db.VarChar(200)
+  purchaseDate   DateTime?        @db.Date
+  purchaseValue  Decimal?         @db.Decimal(12, 2)
+  warrantyExpiry DateTime?        @db.Date
+  serialNumber   String?          @db.VarChar(100)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, assetType])
+  @@index([organizationId, status])
+  @@map("admin_assets")
+}
+
+model AdminCarMaintenance {
+  id              String   @id
+  organizationId  String
+  vehicleInfo     String   @db.VarChar(200)
+  date            DateTime @db.Date
+  maintenanceType String   @db.VarChar(100)
+  description     String?
+  cost            Decimal? @db.Decimal(10, 2)
+  odometer        Int?
+  shop            String?  @db.VarChar(200)
+  nextServiceDate DateTime? @db.Date
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, date])
+  @@map("admin_car_maintenance")
+}
+
+model AdminFuelLog {
+  id             String   @id
+  organizationId String
+  vehicleInfo    String   @db.VarChar(200)
+  date           DateTime @db.Date
+  liters         Decimal  @db.Decimal(6, 2)
+  pricePerLiter  Decimal? @db.Decimal(8, 2)
+  totalCost      Decimal? @db.Decimal(10, 2)
+  odometer       Int?
+  driver         String?  @db.VarChar(150)
+  station        String?  @db.VarChar(200)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, date])
+  @@map("admin_fuel_logs")
+}
+
+model AdminPantryItem {
+  id             String   @id
+  organizationId String
+  name           String   @db.VarChar(200)
+  category       String?  @db.VarChar(100)
+  quantity       Decimal  @default(0) @db.Decimal(10, 2)
+  unit           String   @default("pcs") @db.VarChar(50)
+  reorderLevel   Decimal  @default(0) @db.Decimal(10, 2)
+  supplier       String?  @db.VarChar(200)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("admin_pantry_items")
+}
+
+model AdminMaintenanceItem {
+  id             String   @id
+  organizationId String
+  name           String   @db.VarChar(200)
+  category       String?  @db.VarChar(100)
+  quantity       Decimal  @default(0) @db.Decimal(10, 2)
+  unit           String   @default("pcs") @db.VarChar(50)
+  reorderLevel   Decimal  @default(0) @db.Decimal(10, 2)
+  location       String?  @db.VarChar(200)
+  supplier       String?  @db.VarChar(200)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("admin_maintenance_items")
+}
+
+model AdminRepairLog {
+  id             String            @id
+  organizationId String
+  itemName       String            @db.VarChar(200)
+  itemType       String?           @db.VarChar(100)
+  dateReported   DateTime          @db.Date
+  dateResolved   DateTime?         @db.Date
+  description    String
+  status         AdminRepairStatus @default(PENDING)
+  cost           Decimal?          @db.Decimal(10, 2)
+  technician     String?           @db.VarChar(200)
+  notes          String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@map("admin_repair_logs")
+}
+
+model AdminSupplier {
+  id             String              @id
+  organizationId String
+  name           String              @db.VarChar(200)
+  contactPerson  String?             @db.VarChar(150)
+  email          String?             @db.VarChar(200)
+  phone          String?             @db.VarChar(50)
+  address        String?
+  category       String?             @db.VarChar(100)
+  status         AdminSupplierStatus @default(ACTIVE)
+  notes          String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@map("admin_suppliers")
+}
+
+model AdminEquipment {
+  id             String           @id
+  organizationId String
+  name           String           @db.VarChar(200)
+  serialNumber   String?          @db.VarChar(100)
+  category       String?          @db.VarChar(100)
+  location       String?          @db.VarChar(200)
+  purchaseDate   DateTime?        @db.Date
+  warrantyExpiry DateTime?        @db.Date
+  status         AdminAssetStatus @default(ACTIVE)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@map("admin_equipment")
 }

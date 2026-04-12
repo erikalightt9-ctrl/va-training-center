@@ -22,6 +22,7 @@ import {
   Package,
   TrendingUp,
   Monitor,
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -63,6 +64,7 @@ const MODULE_NAV: ReadonlyArray<NavItem> = [
   { href: "/admin/inventory",  label: "Inventory",  icon: Package,       moduleKey: "module_inventory" },
   { href: "/admin/sales",      label: "Sales",      icon: TrendingUp,    moduleKey: "module_sales" },
   { href: "/admin/it",         label: "IT",         icon: Monitor,       moduleKey: "module_it" },
+  { href: "/admin/admin",      label: "Admin",      icon: Briefcase,     moduleKey: "module_admin" },
 ];
 
 const SETTINGS_NAV: ReadonlyArray<NavItem> = [

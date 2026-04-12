@@ -38,6 +38,7 @@ export const MODULE_KEYS = [
   "module_inventory",
   "module_sales",
   "module_it",
+  "module_admin",
 ] as const;
 
 export type ModuleKey = (typeof MODULE_KEYS)[number];
@@ -150,6 +151,16 @@ export const MODULES: Record<ModuleKey, ModuleDefinition> = {
     badge: "bg-slate-100 text-slate-700 border-slate-200",
     defaultEnabled: false,
     navItems: [{ href: "/admin/it", label: "IT" }],
+  },
+  module_admin: {
+    key: "module_admin",
+    label: "Admin",
+    description: "Admin Department — assets, vehicles, pantry, maintenance, suppliers, repair logs.",
+    iconName: "Briefcase",
+    color: "teal",
+    badge: "bg-teal-100 text-teal-700 border-teal-200",
+    defaultEnabled: false,
+    navItems: [{ href: "/admin/admin", label: "Admin" }],
   },
 };
 
