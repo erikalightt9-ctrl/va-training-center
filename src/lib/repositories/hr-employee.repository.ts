@@ -29,6 +29,10 @@ export interface CreateEmployeeInput {
   address?: string;
   emergencyContact?: string;
   emergencyPhone?: string;
+  // Portal access
+  isPortalEnabled?: boolean;
+  portalRole?: "EMPLOYEE" | "DRIVER" | "MANAGER";
+  passwordHash?: string;
 }
 
 export interface UpdateEmployeeInput {
@@ -178,6 +182,10 @@ export async function createEmployee(
       address:        data.address        ?? null,
       emergencyContact: data.emergencyContact ?? null,
       emergencyPhone: data.emergencyPhone ?? null,
+      isPortalEnabled: data.isPortalEnabled ?? false,
+      portalRole:      (data.portalRole ?? "EMPLOYEE") as never,
+      passwordHash:    data.passwordHash ?? null,
+      mustChangePassword: data.passwordHash ? true : false,
       contracts: {
         create: {
           contractType:    data.employmentType ?? "REGULAR",

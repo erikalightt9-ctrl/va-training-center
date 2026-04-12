@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
+import { Loader2, ArrowLeft, AlertCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 const FIELD = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500";
@@ -22,13 +22,22 @@ export default function NewEmployeePage() {
     sssNumber: "", philhealthNumber: "", pagibigNumber: "", tinNumber: "",
     birthDate: "", gender: "", civilStatus: "",
     address: "", emergencyContact: "", emergencyPhone: "",
+    // Portal access
+    isPortalEnabled: false,
+    portalRole: "EMPLOYEE",
+    tempPassword: "",
   });
+  const [showTempPass, setShowTempPass] = useState(false);
 
-  const set = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k: string, v: string | boolean) => setForm((p) => ({ ...p, [k]: v }));
 
   const handleSubmit = async () => {
     if (!form.firstName || !form.lastName || !form.email || !form.position || !form.hireDate || !form.basicSalary) {
       setError("Please fill in all required fields.");
+      return;
+    }
+    if (form.isPortalEnabled && !form.tempPassword) {
+      setError("A temporary password is required when portal access is enabled.");
       return;
     }
     setSaving(true);
@@ -37,7 +46,11 @@ export default function NewEmployeePage() {
       const res = await fetch("/api/admin/hr/employees", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, basicSalary: parseFloat(form.basicSalary) }),
+        body: JSON.stringify({
+          ...form,
+          basicSalary: parseFloat(form.basicSalary),
+          tempPassword: form.isPortalEnabled ? form.tempPassword : undefined,
+        }),
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
@@ -188,6 +201,61 @@ export default function NewEmployeePage() {
             <input className={FIELD} placeholder="XXX-XXX-XXX" value={form.tinNumber} onChange={(e) => set("tinNumber", e.target.value)} />
           </div>
         </div>
+      </div>
+
+      {/* Portal Access */}
+      <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+        <h2 className="text-sm font-semibold text-slate-700 border-b border-slate-100 pb-2">
+          Portal Access <span className="text-xs font-normal text-slate-400 ml-1">Employee Self-Service</span>
+        </h2>
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="isPortalEnabled"
+            checked={form.isPortalEnabled}
+            onChange={(e) => set("isPortalEnabled", e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <label htmlFor="isPortalEnabled" className="text-sm text-slate-700">
+            Enable employee portal access
+          </label>
+        </div>
+        {form.isPortalEnabled && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL}>Portal Role</label>
+              <select className={FIELD} value={form.portalRole} onChange={(e) => set("portalRole", e.target.value)}>
+                <option value="EMPLOYEE">Employee</option>
+                <option value="DRIVER">Driver</option>
+                <option value="MANAGER">Manager</option>
+              </select>
+              <p className="text-xs text-slate-400 mt-1">
+                {form.portalRole === "DRIVER" && "Drivers can log fuel/gas requests."}
+                {form.portalRole === "MANAGER" && "Managers can approve leave requests."}
+                {form.portalRole === "EMPLOYEE" && "Standard self-service access."}
+              </p>
+            </div>
+            <div>
+              <label className={LABEL}>Temporary Password *</label>
+              <div className="relative">
+                <input
+                  type={showTempPass ? "text" : "password"}
+                  className={FIELD + " pr-10"}
+                  placeholder="Employee must change on first login"
+                  value={form.tempPassword}
+                  onChange={(e) => set("tempPassword", e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowTempPass((p) => !p)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showTempPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3">

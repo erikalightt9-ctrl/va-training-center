@@ -54,7 +54,7 @@ function fmt(iso: string | null) {
 
 export default function EmployeeAttendancePage() {
   const { data: session } = useSession();
-  const user = session?.user as { name?: string } | undefined;
+  const user = session?.user as { name?: string; portalRole?: string } | undefined;
 
   const videoRef  = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -397,10 +397,15 @@ export default function EmployeeAttendancePage() {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-6">
           <a href="/employee/leave" className="text-sm text-blue-600 hover:underline">
             Leave Requests →
           </a>
+          {user?.portalRole === "DRIVER" && (
+            <a href="/employee/fuel-requests" className="text-sm text-indigo-600 hover:underline">
+              Fuel Requests →
+            </a>
+          )}
         </div>
       </div>
     </div>

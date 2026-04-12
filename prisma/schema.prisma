@@ -2508,6 +2508,18 @@ enum HrLeaveStatus {
   CANCELLED
 }
 
+enum HrPortalRole {
+  EMPLOYEE
+  DRIVER
+  MANAGER
+}
+
+enum HrFuelRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum HrAttendanceStatus {
   PRESENT
   ABSENT
@@ -2583,9 +2595,10 @@ model HrEmployee {
   avatarUrl        String?
   // Employee portal auth
   passwordHash        String?
-  mustChangePassword  Boolean  @default(true)
-  failedAttempts      Int      @default(0)
-  isPortalEnabled     Boolean  @default(false)
+  mustChangePassword  Boolean       @default(true)
+  failedAttempts      Int           @default(0)
+  isPortalEnabled     Boolean       @default(false)
+  portalRole          HrPortalRole  @default(EMPLOYEE)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -2594,6 +2607,7 @@ model HrEmployee {
   payrollLines  HrPayrollLine[]
   attendance    HrAttendanceLog[]
   leaveRequests HrLeaveRequest[]
+  fuelRequests  HrFuelRequest[]
 
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, email])
@@ -2789,6 +2803,32 @@ model HrLeaveRequest {
   @@index([employeeId, status])
   @@index([employeeId, startDate])
   @@map("hr_leave_requests")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Fuel / Gas Requests (Driver portal)                                 */
+/* ------------------------------------------------------------------ */
+
+model HrFuelRequest {
+  id            String               @id @default(cuid())
+  employeeId    String
+  date          DateTime             @db.Date
+  vehicleInfo   String?              @db.VarChar(200)
+  odometer      Int?
+  liters        Decimal              @db.Decimal(6, 2)
+  purpose       String               @db.VarChar(300)
+  status        HrFuelRequestStatus  @default(PENDING)
+  reviewedById  String?
+  reviewedAt    DateTime?
+  reviewNote    String?              @db.VarChar(300)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  employee HrEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, date])
+  @@index([employeeId, status])
+  @@map("hr_fuel_requests")
 }
 
 /* ------------------------------------------------------------------ */

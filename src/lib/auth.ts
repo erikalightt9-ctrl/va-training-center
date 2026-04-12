@@ -455,6 +455,7 @@ export const authOptions: NextAuthOptions = {
           organizationId: employee.organizationId,
           tenantId: employee.organizationId,
           mustChangePassword: employee.mustChangePassword,
+          portalRole: employee.portalRole,
           isSuperAdmin: false,
           isTenantAdmin: false,
         };
@@ -561,6 +562,8 @@ export const authOptions: NextAuthOptions = {
           (user as typeof user & { isSuperAdmin?: boolean }).isSuperAdmin ?? false;
         token.isTenantAdmin =
           (user as typeof user & { isTenantAdmin?: boolean }).isTenantAdmin ?? false;
+        token.portalRole =
+          (user as typeof user & { portalRole?: string }).portalRole ?? null;
         token.isHumiAdmin =
           (user as typeof user & { isHumiAdmin?: boolean }).isHumiAdmin ?? false;
         token.humiAdminPermissions =

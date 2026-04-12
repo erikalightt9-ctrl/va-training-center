@@ -23,6 +23,7 @@ declare module "next-auth" {
       organizationId: string | null;
       mustChangePassword: boolean;
       accessExpiry: string | null;
+      portalRole: string | null;
       humiAdminPermissions: HumiAdminPermissions | null;
     };
   }
@@ -39,6 +40,7 @@ declare module "next-auth/jwt" {
     organizationId: string | null;
     mustChangePassword: boolean;
     accessExpiry: string | null;
+    portalRole: string | null;
     humiAdminPermissions: HumiAdminPermissions | null;
   }
 }

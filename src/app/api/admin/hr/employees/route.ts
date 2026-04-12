@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/auth-guards";
 import { listEmployees, createEmployee, getEmployeeStats } from "@/lib/repositories/hr-employee.repository";
 
@@ -25,6 +26,10 @@ const createSchema = z.object({
   address:         z.string().optional(),
   emergencyContact: z.string().max(150).optional(),
   emergencyPhone:  z.string().max(30).optional(),
+  // Portal access
+  isPortalEnabled: z.boolean().optional(),
+  portalRole:      z.enum(["EMPLOYEE", "DRIVER", "MANAGER"]).optional(),
+  tempPassword:    z.string().min(6).max(100).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -73,11 +78,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { hireDate, birthDate, ...rest } = parsed.data;
+    const { hireDate, birthDate, tempPassword, isPortalEnabled, portalRole, ...rest } = parsed.data;
+
+    let passwordHash: string | undefined;
+    if (isPortalEnabled && tempPassword) {
+      passwordHash = await bcrypt.hash(tempPassword, 10);
+    }
+
     const employee = await createEmployee(guard.tenantId, {
       ...rest,
-      hireDate:  new Date(hireDate),
-      birthDate: birthDate ? new Date(birthDate) : undefined,
+      hireDate:        new Date(hireDate),
+      birthDate:       birthDate ? new Date(birthDate) : undefined,
+      isPortalEnabled: isPortalEnabled ?? false,
+      portalRole:      portalRole ?? "EMPLOYEE",
+      passwordHash,
     });
 
     return NextResponse.json({ success: true, data: employee, error: null }, { status: 201 });
