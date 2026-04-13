@@ -45,43 +45,50 @@ export async function seedDefaultPhGovRules(organizationId: string) {
   const effective = new Date("2025-01-01");
 
   /**
-   * SSS 2025 — 15% total rate (employee 4.5%, employer 9.5%)
-   * MSC brackets: min ₱4,000, max ₱30,000 (₱500 increments)
-   * Source: SSS Circular No. 2024-003 effective Jan 2025
+   * SSS 2025 — 15% total (Employee 5%, Employer 10%)
+   * Uses official MSC bracket table: salary range → MSC → fixed contribution
+   * MSC 3,500  : salary 0–3,749
+   * MSC 4,000  : salary 3,750–4,249
+   * …(+500 MSC per ₱500 salary band)…
+   * MSC 30,000 : salary 29,750+
+   *
+   * employee = MSC × 5%   |   employer = MSC × 10%
+   * Source: SSS Circular 2024-003 effective Jan 2025
    */
   const sssRules: RuleInput[] = [];
-  for (let msc = 4000; msc <= 30000; msc += 500) {
-    const empShare  = Math.round(msc * 0.045 * 100) / 100;
-    const erShare   = Math.round(msc * 0.095 * 100) / 100;
-    const salFrom   = msc === 4000 ? 0 : msc - 249.99;
-    const salTo     = msc === 30000 ? undefined : msc + 249.99;
+  for (let msc = 3500; msc <= 30000; msc += 500) {
+    const empShare = Math.round(msc * 0.05 * 100) / 100;   // 5%
+    const erShare  = Math.round(msc * 0.10 * 100) / 100;   // 10%
+    const salFrom  = msc === 3500 ? 0 : msc - 250;
+    const salTo    = msc === 30000 ? undefined : msc + 249;
     sssRules.push({
       contributionType: "SSS",
-      salaryFrom: salFrom,
-      salaryTo:   salTo,
+      salaryFrom:    salFrom,
+      salaryTo:      salTo,
       employeeShare: empShare,
       employerShare: erShare,
-      ruleKind: "FIXED",
+      ruleKind:      "FIXED",
       effectiveDate: effective,
     });
   }
 
   /**
-   * PhilHealth 2025 — 5% of Basic Monthly Salary (equal 2.5% split)
-   * Floor: ₱10,000 basis (min ₱500 employee)
-   * Ceiling: ₱100,000 basis (max ₱2,500 employee)
+   * PhilHealth 2025 — 5% of Basic Monthly Salary (2.5% employee / 2.5% employer)
+   * Floor salary basis: ₱10,000 → min contribution ₱250 each
+   * Ceiling salary basis: ₱100,000 → max contribution ₱2,500 each
    */
   const philhealthRules: RuleInput[] = [
-    { contributionType: "PHILHEALTH", salaryFrom: 0,         salaryTo: 10000,     employeeShare: 500,  employerShare: 500,  ruleKind: "FIXED", effectiveDate: effective },
-    { contributionType: "PHILHEALTH", salaryFrom: 10000.01,  salaryTo: 99999.99,  employeeShare: 2.5,  employerShare: 2.5,  ruleKind: "RATE",  effectiveDate: effective },
-    { contributionType: "PHILHEALTH", salaryFrom: 100000,    salaryTo: undefined, employeeShare: 2500, employerShare: 2500, ruleKind: "FIXED", effectiveDate: effective },
+    { contributionType: "PHILHEALTH", salaryFrom: 0,        salaryTo: 9999.99,   employeeShare: 250,  employerShare: 250,  ruleKind: "FIXED", effectiveDate: effective },
+    { contributionType: "PHILHEALTH", salaryFrom: 10000,    salaryTo: 99999.99,  employeeShare: 2.5,  employerShare: 2.5,  ruleKind: "RATE",  effectiveDate: effective },
+    { contributionType: "PHILHEALTH", salaryFrom: 100000,   salaryTo: undefined, employeeShare: 2500, employerShare: 2500, ruleKind: "FIXED", effectiveDate: effective },
   ];
 
   /**
    * Pag-IBIG 2025
-   * Employee: 1% (≤₱1,500) or 2% (>₱1,500), CAPPED at ₱100/month
-   * Employer: 2%, CAPPED at ₱100/month
-   * Note: cap enforced in computePayrollLine, not here in the rule table
+   * Salary basis capped at ₱5,000 (max ₱100 employee + ₱100 employer)
+   * ≤₱1,500  → employee 1%, employer 2%
+   * >₱1,500  → employee 2%, employer 2%
+   * Salary cap enforced in computeContribution (salary_base = min(salary, 5000))
    */
   const pagibigRules: RuleInput[] = [
     { contributionType: "PAGIBIG", salaryFrom: 0,       salaryTo: 1500,     employeeShare: 1, employerShare: 2, ruleKind: "RATE", effectiveDate: effective },
@@ -134,33 +141,37 @@ function computeContribution(
   let employer: number;
 
   if (match.ruleKind === "RATE") {
-    employee = salary * (Number(match.employeeShare) / 100);
-    employer = salary * (Number(match.employerShare) / 100);
+    // Pag-IBIG: apply rate to salary_base = min(salary, ₱5,000) per HDMF rules
+    const base = type === "PAGIBIG" ? Math.min(salary, 5000) : salary;
+    employee = base * (Number(match.employeeShare) / 100);
+    employer = base * (Number(match.employerShare) / 100);
   } else {
     employee = Number(match.employeeShare);
     employer = Number(match.employerShare);
-  }
-
-  // Pag-IBIG: employee and employer contribution each fixed at ₱200/month
-  if (type === "PAGIBIG") {
-    employee = Math.min(employee, 200);
-    employer = Math.min(employer, 200);
   }
 
   return { employee: Math.round(employee * 100) / 100, employer: Math.round(employer * 100) / 100 };
 }
 
 /**
- * BIR Withholding Tax — TRAIN Law graduated rates (monthly), effective 2023+
- * Annual brackets converted to monthly (÷12).
+ * BIR Withholding Tax — TRAIN Law monthly table (2023–2027)
+ *
+ * Monthly Taxable Income | Tax
+ * ≤ ₱20,833             | 0%
+ * ₱20,833 – ₱33,333     | 15% of excess over ₱20,833
+ * ₱33,333 – ₱66,667     | ₱1,875 + 20% of excess over ₱33,333
+ * ₱66,667 – ₱166,667    | ₱8,541.67 + 25% of excess over ₱66,667
+ * ₱166,667 – ₱666,667   | ₱33,541.67 + 30% of excess over ₱166,667
+ * > ₱666,667             | ₱183,541.67 + 35% of excess over ₱666,667
  */
 function computeWithholdingTax(monthlyTaxableIncome: number): number {
+  const r = (n: number) => Math.round(n * 100) / 100;
   if (monthlyTaxableIncome <= 20833)  return 0;
-  if (monthlyTaxableIncome <= 33332)  return Math.round((monthlyTaxableIncome - 20833) * 0.15 * 100) / 100;
-  if (monthlyTaxableIncome <= 66666)  return Math.round((1875 + (monthlyTaxableIncome - 33333) * 0.20) * 100) / 100;
-  if (monthlyTaxableIncome <= 166666) return Math.round((8541.80 + (monthlyTaxableIncome - 66667) * 0.25) * 100) / 100;
-  if (monthlyTaxableIncome <= 666666) return Math.round((33541.80 + (monthlyTaxableIncome - 166667) * 0.30) * 100) / 100;
-  return Math.round((183541.80 + (monthlyTaxableIncome - 666667) * 0.35) * 100) / 100;
+  if (monthlyTaxableIncome <= 33333)  return r((monthlyTaxableIncome - 20833)  * 0.15);
+  if (monthlyTaxableIncome <= 66667)  return r(1875    + (monthlyTaxableIncome - 33333)  * 0.20);
+  if (monthlyTaxableIncome <= 166667) return r(8541.67 + (monthlyTaxableIncome - 66667)  * 0.25);
+  if (monthlyTaxableIncome <= 666667) return r(33541.67 + (monthlyTaxableIncome - 166667) * 0.30);
+  return r(183541.67 + (monthlyTaxableIncome - 666667) * 0.35);
 }
 
 export interface PayrollLineInput {

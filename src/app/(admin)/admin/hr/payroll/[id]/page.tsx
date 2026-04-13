@@ -101,8 +101,8 @@ function toEditForm(line: PayrollLine): EditForm {
     allowances:         String(Number(line.allowances)),
     otherDeductions:    String(Number(line.otherDeductions)),
     remarks:            line.remarks ?? "",
-    pagibigEmployee:    String(Number(line.pagibigEmployee) || 200),
-    pagibigEmployer:    String(Number(line.pagibigEmployee) || 200),
+    pagibigEmployee:    String(Number(line.pagibigEmployee) || 100),
+    pagibigEmployer:    String(Number(line.pagibigEmployee) || 100),
     sssEmployee:        String(Number(line.sssEmployee)),
     sssEmployer:        String(Number(line.sssEmployer)),
     philhealthEmployee: String(Number(line.philhealthEmployee)),
@@ -152,8 +152,8 @@ function EditLineModal({
           allowances:              parseFloat(form.allowances)       || 0,
           otherDeductions:         parseFloat(form.otherDeductions)  || 0,
           remarks:                    form.remarks || undefined,
-          pagibigEmployeeOverride:    parseFloat(form.pagibigEmployee)    || 200,
-          pagibigEmployerOverride:    parseFloat(form.pagibigEmployer)    || 200,
+          pagibigEmployeeOverride:    parseFloat(form.pagibigEmployee)    || 100,
+          pagibigEmployerOverride:    parseFloat(form.pagibigEmployer)    || 100,
           sssEmployeeOverride:        parseFloat(form.sssEmployee)        || undefined,
           sssEmployerOverride:        parseFloat(form.sssEmployer)        || undefined,
           philhealthEmployeeOverride: parseFloat(form.philhealthEmployee) || undefined,
@@ -357,7 +357,7 @@ function EditLineModal({
             {/* Pag-IBIG declared shares */}
             <div className="col-span-2 border border-amber-200 rounded-xl p-3 bg-amber-50 space-y-2">
               <p className="text-xs font-semibold text-amber-700">Pag-IBIG Declared Shares</p>
-              <p className="text-[10px] text-amber-600">Default ₱200 each. Adjust to declare a custom contribution amount.</p>
+              <p className="text-[10px] text-amber-600">Statutory max ₱100 each (2% × ₱5,000 cap). Adjust to declare a higher voluntary amount.</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-500 mb-1">Employee Share (₱)</label>
@@ -400,11 +400,11 @@ function EditLineModal({
 
           {/* 2025 contribution reference */}
           <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3 space-y-0.5">
-            <p className="font-medium text-slate-500 mb-1">2025/2026 Gov't Contribution Rates (auto-computed, all customizable above)</p>
-            <p>• <span className="text-blue-600 font-medium">SSS</span>: 4.5% emp / 9.5% er · MSC ₱4k–₱30k → max emp ₱1,350</p>
-            <p>• <span className="text-green-600 font-medium">PhilHealth</span>: 2.5% emp / 2.5% er · floor ₱500, cap ₱2,500</p>
-            <p>• <span className="text-amber-600 font-medium">Pag-IBIG</span>: ₱200 emp + ₱200 er = ₱400 total</p>
-            <p>• <span className="text-red-600 font-medium">BIR</span>: TRAIN Law graduated rates (0–35%)</p>
+            <p className="font-medium text-slate-500 mb-1">2025 Gov't Contribution Rates (auto-computed, all customizable above)</p>
+            <p>• <span className="text-blue-600 font-medium">SSS</span>: 5% emp / 10% er · MSC table ₱3,500–₱30,000 → max emp ₱1,500</p>
+            <p>• <span className="text-green-600 font-medium">PhilHealth</span>: 2.5% emp / 2.5% er · floor ₱250, cap ₱2,500</p>
+            <p>• <span className="text-amber-600 font-medium">Pag-IBIG</span>: 2% each on salary base (cap ₱5,000) → max ₱100 emp + ₱100 er</p>
+            <p>• <span className="text-red-600 font-medium">BIR</span>: TRAIN Law 2023–2027 graduated rates (0–35%)</p>
             <p className="mt-1 pt-1 border-t border-slate-200 text-emerald-600 font-medium">
               💾 Use &quot;Save as Default&quot; to store these amounts — they will auto-apply every payroll run so you never need to re-enter them.
             </p>
