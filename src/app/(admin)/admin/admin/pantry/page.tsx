@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Loader2, ShoppingBasket, X, AlertTriangle, Pencil } from "lucide-react";
+import { Plus, Loader2, ShoppingBag, X, AlertTriangle, Pencil } from "lucide-react";
 
 const FIELD = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500";
 const LABEL = "block text-xs text-slate-500 mb-1";
@@ -61,8 +61,8 @@ export default function PantryPage() {
     <div className="p-6 max-w-5xl space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Pantry Inventory</h1>
-          <p className="text-sm text-slate-500">Track pantry supplies, quantities, and reorder levels</p>
+          <h1 className="text-xl font-bold text-slate-900">Office Supplies</h1>
+          <p className="text-sm text-slate-500">Track office supplies, quantities, and reorder levels</p>
         </div>
         <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
           <Plus className="h-4 w-4" /> Add Item
@@ -73,7 +73,7 @@ export default function PantryPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-slate-800">{editing ? "Edit Item" : "Add Pantry Item"}</h2>
+              <h2 className="font-semibold text-slate-800">{editing ? "Edit Item" : "Add Office Supply"}</h2>
               <button onClick={() => setShowForm(false)}><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2">{error}</p>}
@@ -97,7 +97,7 @@ export default function PantryPage() {
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-teal-600" /></div>
       ) : items.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-400"><ShoppingBasket className="h-10 w-10 mx-auto mb-3 opacity-30" /><p className="text-sm">No pantry items recorded yet.</p></div>
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-400"><ShoppingBag className="h-10 w-10 mx-auto mb-3 opacity-30" /><p className="text-sm">No office supplies recorded yet.</p></div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">

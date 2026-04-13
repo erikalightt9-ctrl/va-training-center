@@ -8,11 +8,12 @@ const LABEL = "block text-xs text-slate-500 mb-1";
 
 type Equipment = { id: string; name: string; serialNumber: string | null; category: string | null; location: string | null; purchaseDate: string | null; warrantyExpiry: string | null; status: string; notes: string | null; };
 
-const STATUS_OPTIONS = ["ACTIVE","FOR_REPAIR","IN_REPAIR","FOR_DISPOSE","DISPOSED","UNDER_WARRANTY"];
+const STATUS_OPTIONS = ["ACTIVE","FOR_REPAIR","IN_REPAIR","FOR_DISPOSE","DISPOSED","FOR_SALE","SOLD","UNDER_WARRANTY"];
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE:"bg-green-50 text-green-700 border border-green-200", FOR_REPAIR:"bg-amber-50 text-amber-700 border border-amber-200",
   IN_REPAIR:"bg-orange-50 text-orange-700 border border-orange-200", FOR_DISPOSE:"bg-red-50 text-red-700 border border-red-200",
-  DISPOSED:"bg-slate-100 text-slate-500 border border-slate-200", UNDER_WARRANTY:"bg-blue-50 text-blue-700 border border-blue-200",
+  DISPOSED:"bg-slate-100 text-slate-500 border border-slate-200", FOR_SALE:"bg-purple-50 text-purple-700 border border-purple-200",
+  SOLD:"bg-slate-100 text-slate-600 border border-slate-300", UNDER_WARRANTY:"bg-blue-50 text-blue-700 border border-blue-200",
 };
 const fmt = (s: string) => s.replace(/_/g, " ");
 
@@ -65,11 +66,11 @@ export default function EquipmentPage() {
     <div className="p-6 max-w-5xl space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Equipment Inventory</h1>
-          <p className="text-sm text-slate-500">Office equipment — printers, projectors, tools, and more</p>
+          <h1 className="text-xl font-bold text-slate-900">Appliances & Furniture</h1>
+          <p className="text-sm text-slate-500">Track appliances and furniture — status, repairs, disposals, and sales</p>
         </div>
         <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
-          <Plus className="h-4 w-4" /> Add Equipment
+          <Plus className="h-4 w-4" /> Add Item
         </button>
       </div>
 
