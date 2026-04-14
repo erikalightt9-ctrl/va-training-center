@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GraduationCap, LayoutDashboard, ArrowRight, Home, Building2, ShieldCheck } from "lucide-react";
+import { GraduationCap, LayoutDashboard, ArrowRight, Home, Building2, ShieldCheck, Users } from "lucide-react";
 import { TenantFinder } from "@/components/public/TenantFinder";
 
 export const metadata: Metadata = {
@@ -41,18 +41,18 @@ export default function PortalPage() {
           </p>
         </div>
 
-        {/* Three cards: Tenant Portal | Org Finder | Super Admin */}
-        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        {/* Top row: Tenant Admin | Super Admin */}
+        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* Tenant Portal Card */}
-          <Link href="/student/login" className="group">
+          {/* Tenant Admin Card → corporate login */}
+          <Link href="/corporate/login" className="group">
             <div className="relative bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 rounded-2xl p-8 h-full flex flex-col transition-all duration-200 cursor-pointer">
               <div className="flex items-center gap-4 mb-5">
                 <div className="bg-emerald-400/20 border border-emerald-400/30 rounded-xl p-3">
                   <LayoutDashboard className="h-8 w-8 text-emerald-300" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Tenant Portal</h2>
+                  <h2 className="text-xl font-bold text-white">Tenant Admin Portal</h2>
                   <p className="text-blue-300 text-sm">Operations & business management</p>
                 </div>
               </div>
@@ -71,37 +71,12 @@ export default function PortalPage() {
               </ul>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-emerald-300 group-hover:text-emerald-200 transition-colors">
-                  Access Tenant Portal
+                  Sign in as Tenant Admin
                 </span>
                 <ArrowRight className="h-4 w-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </Link>
-
-          {/* Org Finder */}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px flex-1 bg-white/20" />
-              <span className="text-blue-300 text-sm whitespace-nowrap">Via your organization?</span>
-              <div className="h-px flex-1 bg-white/20" />
-            </div>
-            <div className="bg-white/5 border border-white/15 rounded-2xl p-6 flex-1 flex flex-col justify-between">
-              <div>
-                <div className="flex items-start gap-4 mb-5">
-                  <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
-                    <Building2 className="h-5 w-5 text-blue-300" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-sm">Find Your Organization</h3>
-                    <p className="text-blue-300 text-xs mt-0.5">
-                      Enter your organization&apos;s portal name to access your company workspace.
-                    </p>
-                  </div>
-                </div>
-                <TenantFinder />
-              </div>
-            </div>
-          </div>
 
           {/* Super Admin Card */}
           <Link href="/superadmin/login" className="group">
@@ -133,6 +108,60 @@ export default function PortalPage() {
                   Sign in as Super Admin
                 </span>
                 <ArrowRight className="h-4 w-4 text-amber-300 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+
+        </div>
+
+        {/* Bottom row: Student org finder | Employee portal */}
+        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+          {/* Org Finder — for students/trainees */}
+          <div className="bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex items-start gap-4 mb-5">
+                <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
+                  <Building2 className="h-5 w-5 text-blue-300" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold text-sm">Student / Trainee Portal</h3>
+                  <p className="text-blue-300 text-xs mt-0.5">
+                    Enter your organization&apos;s portal name to access your company workspace.
+                  </p>
+                </div>
+              </div>
+              <TenantFinder />
+            </div>
+          </div>
+
+          {/* Employee Portal */}
+          <Link href="/employee/login" className="group">
+            <div className="relative bg-white/5 hover:bg-white/10 border border-white/15 hover:border-white/30 rounded-2xl p-6 h-full flex flex-col transition-all duration-200 cursor-pointer">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="bg-violet-400/20 border border-violet-400/30 rounded-xl p-2.5 shrink-0">
+                  <Users className="h-5 w-5 text-violet-300" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold text-sm">Employee Portal</h3>
+                  <p className="text-blue-300 text-xs mt-0.5">
+                    Clock in/out, submit leave requests, and log fuel requests.
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-1.5 mb-4 flex-1">
+                {["Attendance & GPS clock-in","Leave requests","Driver fuel log"].map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-xs text-blue-200">
+                    <span className="h-1.5 w-1.5 rounded-full bg-violet-400 shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-violet-300 group-hover:text-violet-200 transition-colors">
+                  Employee Sign In
+                </span>
+                <ArrowRight className="h-4 w-4 text-violet-300 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </Link>
