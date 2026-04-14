@@ -10,8 +10,10 @@ type Params = { params: Promise<{ id: string }> };
 
 async function resolveOrgForAdmin(token: ReturnType<typeof getToken> extends Promise<infer T> ? T : never) {
   if (!token || typeof (token as { tenantId?: unknown }).tenantId !== "string") return null;
-  return prisma.organization.findFirst({
-    where: { tenantId: (token as { tenantId: string }).tenantId },
+  // guard.tenantId is the Organization.id directly in this codebase
+  const orgId = (token as { tenantId: string }).tenantId;
+  return prisma.organization.findUnique({
+    where: { id: orgId },
     select: { id: true },
   });
 }

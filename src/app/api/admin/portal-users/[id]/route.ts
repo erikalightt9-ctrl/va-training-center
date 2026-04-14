@@ -27,8 +27,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     const { id } = await params;
 
-    const org = await prisma.organization.findFirst({
-      where: { tenantId: guard.tenantId },
+    const org = await prisma.organization.findUnique({
+      where: { id: guard.tenantId },
       select: { id: true },
     });
 
@@ -116,8 +116,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     const { id } = await params;
 
-    const org = await prisma.organization.findFirst({
-      where: { tenantId: guard.tenantId },
+    const org = await prisma.organization.findUnique({
+      where: { id: guard.tenantId },
       select: { id: true },
     });
 

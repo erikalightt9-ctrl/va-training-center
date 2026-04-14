@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Resolve organizationId for this tenant
-    const org = await prisma.organization.findFirst({
-      where: { tenantId: guard.tenantId },
+    const org = await prisma.organization.findUnique({
+      where: { id: guard.tenantId },
       select: { id: true },
     });
 
@@ -116,8 +116,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const org = await prisma.organization.findFirst({
-      where: { tenantId: guard.tenantId },
+    const org = await prisma.organization.findUnique({
+      where: { id: guard.tenantId },
       select: { id: true, name: true },
     });
 
