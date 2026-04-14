@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GraduationCap, LayoutDashboard, ArrowRight, Home, Building2, ShieldCheck, Users } from "lucide-react";
+import { GraduationCap, LayoutDashboard, ArrowRight, Home, Building2, ShieldCheck } from "lucide-react";
 import { TenantFinder } from "@/components/public/TenantFinder";
 
 export const metadata: Metadata = {
-  title: "Tenant Portal — HUMI Hub",
-  description: "Access your HUMI Hub workspace. Manage operations, people, and performance with a centralized business platform.",
+  title: "Tenants Portal — HUMI Hub",
+  description: "Access your HUMI Hub workspace. All users — admins and employees — sign in through a single unified portal.",
 };
 
 export default function PortalPage() {
@@ -52,8 +52,8 @@ export default function PortalPage() {
                   <LayoutDashboard className="h-8 w-8 text-emerald-300" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Tenant Admin Portal</h2>
-                  <p className="text-blue-300 text-sm">Operations & business management</p>
+                  <h2 className="text-xl font-bold text-white">Tenants Portal</h2>
+                  <p className="text-blue-300 text-sm">All users — admins &amp; employees</p>
                 </div>
               </div>
               <ul className="space-y-2 mb-8 flex-1">
@@ -71,7 +71,7 @@ export default function PortalPage() {
               </ul>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-emerald-300 group-hover:text-emerald-200 transition-colors">
-                  Sign in as Tenant Admin
+                  Sign in to Tenants Portal
                 </span>
                 <ArrowRight className="h-4 w-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -114,58 +114,22 @@ export default function PortalPage() {
 
         </div>
 
-        {/* Bottom row: Student org finder | Employee portal */}
-        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-          {/* Org Finder — for students/trainees */}
-          <div className="bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-between">
-            <div>
-              <div className="flex items-start gap-4 mb-5">
-                <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
-                  <Building2 className="h-5 w-5 text-blue-300" />
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold text-sm">Student / Trainee Portal</h3>
-                  <p className="text-blue-300 text-xs mt-0.5">
-                    Enter your organization&apos;s portal name to access your company workspace.
-                  </p>
-                </div>
+        {/* Bottom row: Student / Trainee org finder */}
+        <div className="w-full max-w-5xl mt-6">
+          <div className="bg-white/5 border border-white/15 rounded-2xl p-6">
+            <div className="flex items-start gap-4 mb-5">
+              <div className="bg-blue-400/20 border border-blue-400/30 rounded-xl p-2.5 shrink-0">
+                <Building2 className="h-5 w-5 text-blue-300" />
               </div>
-              <TenantFinder />
+              <div>
+                <h3 className="text-white font-semibold text-sm">Student / Trainee Portal</h3>
+                <p className="text-blue-300 text-xs mt-0.5">
+                  Enter your organization&apos;s portal name to access your learning workspace.
+                </p>
+              </div>
             </div>
+            <TenantFinder />
           </div>
-
-          {/* Employee Portal */}
-          <Link href="/employee/login" className="group">
-            <div className="relative bg-white/5 hover:bg-white/10 border border-white/15 hover:border-white/30 rounded-2xl p-6 h-full flex flex-col transition-all duration-200 cursor-pointer">
-              <div className="flex items-start gap-4 mb-5">
-                <div className="bg-violet-400/20 border border-violet-400/30 rounded-xl p-2.5 shrink-0">
-                  <Users className="h-5 w-5 text-violet-300" />
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold text-sm">Employee Portal</h3>
-                  <p className="text-blue-300 text-xs mt-0.5">
-                    Clock in/out, submit leave requests, and log fuel requests.
-                  </p>
-                </div>
-              </div>
-              <ul className="space-y-1.5 mb-4 flex-1">
-                {["Attendance & GPS clock-in","Leave requests","Driver fuel log"].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-xs text-blue-200">
-                    <span className="h-1.5 w-1.5 rounded-full bg-violet-400 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-violet-300 group-hover:text-violet-200 transition-colors">
-                  Employee Sign In
-                </span>
-                <ArrowRight className="h-4 w-4 text-violet-300 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </Link>
-
         </div>
 
         {/* Divider + enroll CTA */}

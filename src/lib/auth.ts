@@ -530,8 +530,58 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!tenantUser) {
-            console.error("[auth][corporate] Login failed — email not found:", credentials.email);
-            throw new Error("Invalid credentials");
+            // ── Fall back to HrEmployee (unified portal) ─────────────────
+            const employee = await prisma.hrEmployee.findFirst({
+              where: { email: emailLower },
+              include: { organization: { select: { id: true, isActive: true, subdomain: true } } },
+            });
+
+            if (!employee || !employee.passwordHash) {
+              console.error("[auth][corporate] Login failed — email not found:", credentials.email);
+              throw new Error("Invalid credentials");
+            }
+
+            if (!employee.isPortalEnabled) {
+              throw new Error("Portal access has not been enabled for your account. Contact your admin.");
+            }
+
+            if (employee.failedAttempts >= MAX_FAILED_ATTEMPTS) {
+              throw new Error("Account locked after too many failed attempts. Contact your admin.");
+            }
+
+            const empValid = await bcrypt.compare(credentials.password, employee.passwordHash);
+            if (!empValid) {
+              await prisma.hrEmployee.update({
+                where: { id: employee.id },
+                data:  { failedAttempts: { increment: 1 } },
+              });
+              throw new Error("Invalid credentials");
+            }
+
+            if (!employee.organization.isActive) {
+              throw new Error("Your organization account has been suspended.");
+            }
+
+            await prisma.hrEmployee.update({
+              where: { id: employee.id },
+              data:  { failedAttempts: 0 },
+            });
+
+            return {
+              id:                 employee.id,
+              email:              employee.email,
+              name:               `${employee.firstName} ${employee.lastName}`,
+              role:               "employee" as const,
+              organizationId:     employee.organizationId,
+              tenantId:           employee.organizationId,
+              orgSubdomain:       employee.organization.subdomain ?? null,
+              isSuperAdmin:       false,
+              isTenantAdmin:      false,
+              isTenantUser:       false,
+              mustChangePassword: employee.mustChangePassword,
+              portalRole:         employee.portalRole,
+              permissions:        null,
+            };
           }
 
           const now = new Date();

@@ -8,7 +8,7 @@ export default async function EmployeePortalLayout({ children }: { children: Rea
   const user = session?.user as { role?: string; mustChangePassword?: boolean } | undefined;
 
   if (!session || user?.role !== "employee") {
-    redirect("/employee/login");
+    redirect("/corporate/login");
   }
 
   return <SessionProvider>{children}</SessionProvider>;

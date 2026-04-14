@@ -73,8 +73,9 @@ export default function CorporateLoginPage() {
       // - regular corporate manager → employee portal (/corporate/dashboard)
       const session = await getSession();
       const user    = session?.user as {
-        isTenantAdmin?:    boolean;
-        isTenantUser?:     boolean;
+        role?:               string;
+        isTenantAdmin?:      boolean;
+        isTenantUser?:       boolean;
         mustChangePassword?: boolean;
       } | undefined;
 
@@ -82,6 +83,8 @@ export default function CorporateLoginPage() {
         router.push("/corporate/change-password");
       } else if (user?.isTenantAdmin || user?.isTenantUser) {
         router.push("/admin");
+      } else if (user?.role === "employee") {
+        router.push("/employee/attendance");
       } else {
         router.push("/corporate/dashboard");
       }
@@ -105,14 +108,14 @@ export default function CorporateLoginPage() {
             <GraduationCap className="h-8 w-8 text-blue-400" />
           </div>
           <h1 className="text-2xl font-bold text-white">HUMI Hub</h1>
-          <p className="text-sm text-blue-300 mt-1">Tenant Portal</p>
+          <p className="text-sm text-blue-300 mt-1">Tenants Portal</p>
         </div>
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-center gap-2 mb-6">
             <Building2 className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Sign In</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Tenants Portal Sign In</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
