@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Loader2, Plus, CheckCircle, DollarSign, AlertCircle } from "lucide-react";
+import {
+  Loader2, Plus, CheckCircle, DollarSign, AlertCircle,
+  Monitor, Package, UserCheck, Wrench, Trash2, Archive,
+  ChevronRight, Search, X as XIcon,
+} from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Department config                                                  */
@@ -46,7 +50,25 @@ interface PayrollRun {
   _count: { lines: number };
 }
 
-type Tab = "members" | "activity" | "payroll" | "settings";
+type Tab = "members" | "activity" | "payroll" | "assets" | "settings";
+
+/* ------------------------------------------------------------------ */
+/*  IT Asset types                                                      */
+/* ------------------------------------------------------------------ */
+
+interface ItAsset {
+  id: string; assetTag: string; assetName: string;
+  brand: string | null; model: string | null; serialNumber: string | null;
+  status: string; condition: string; location: string | null;
+  warrantyEnd: string | null; purchaseCost: number | null;
+  category: { name: string } | null;
+  assignedTo: { firstName: string; lastName: string; position: string } | null;
+}
+
+interface ItStats {
+  total: number; available: number; assigned: number;
+  inRepair: number; forDisposal: number; retired: number;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Add Member Modal                                                    */
@@ -527,6 +549,144 @@ function PayrollRunsTab() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  IT Assets Tab                                                       */
+/* ------------------------------------------------------------------ */
+
+const IT_STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
+  AVAILABLE:    { label: "Available",    bg: "bg-green-100",  text: "text-green-700",  icon: <Package     className="h-3.5 w-3.5" /> },
+  ASSIGNED:     { label: "Assigned",     bg: "bg-blue-100",   text: "text-blue-700",   icon: <UserCheck   className="h-3.5 w-3.5" /> },
+  IN_REPAIR:    { label: "In Repair",    bg: "bg-amber-100",  text: "text-amber-700",  icon: <Wrench      className="h-3.5 w-3.5" /> },
+  FOR_DISPOSAL: { label: "For Disposal", bg: "bg-red-100",    text: "text-red-600",    icon: <Trash2      className="h-3.5 w-3.5" /> },
+  RETIRED:      { label: "Retired",      bg: "bg-slate-100",  text: "text-slate-500",  icon: <Archive     className="h-3.5 w-3.5" /> },
+};
+
+function ItStatusBadge({ status }: { status: string }) {
+  const cfg = IT_STATUS_CONFIG[status] ?? { label: status, bg: "bg-slate-100", text: "text-slate-500", icon: null };
+  return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>{cfg.icon}{cfg.label}</span>;
+}
+
+function ItAssetsTab() {
+  const [assets, setAssets]     = useState<ItAsset[]>([]);
+  const [stats, setStats]       = useState<ItStats | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [search, setSearch]     = useState("");
+  const [statusF, setStatusF]   = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const p = new URLSearchParams();
+      if (statusF) p.set("status", statusF);
+      if (search)  p.set("search", search);
+      p.set("limit", "100");
+
+      const [aRes, sRes] = await Promise.all([
+        fetch(`/api/admin/it/assets?${p}`),
+        fetch("/api/admin/it/assets?stats=1"),
+      ]);
+      const [aJson, sJson] = await Promise.all([aRes.json(), sRes.json()]);
+      if (aJson.success) setAssets(aJson.data.data);
+      if (sJson.success) setStats(sJson.data);
+    } catch { /* */ } finally {
+      setLoading(false);
+    }
+  }, [statusF, search]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const peso = (n: number | null) => n != null ? `₱${Number(n).toLocaleString("en-PH", { minimumFractionDigits: 2 })}` : "—";
+
+  return (
+    <div className="space-y-5">
+      {/* Stats row */}
+      {stats && (
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {([
+            { label: "Total",      value: stats.total,       color: "text-slate-900" },
+            { label: "Available",  value: stats.available,   color: "text-green-700" },
+            { label: "Assigned",   value: stats.assigned,    color: "text-blue-700" },
+            { label: "In Repair",  value: stats.inRepair,    color: "text-amber-700" },
+            { label: "Disposal",   value: stats.forDisposal, color: "text-red-600" },
+            { label: "Retired",    value: stats.retired,     color: "text-slate-500" },
+          ] as const).map((c) => (
+            <div key={c.label} className="bg-slate-50 rounded-xl p-3 text-center">
+              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{c.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[180px] max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search assets…"
+            className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <select value={statusF} onChange={(e) => setStatusF(e.target.value)}
+          className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="">All Status</option>
+          <option value="AVAILABLE">Available</option>
+          <option value="ASSIGNED">Assigned</option>
+          <option value="IN_REPAIR">In Repair</option>
+          <option value="FOR_DISPOSAL">For Disposal</option>
+          <option value="RETIRED">Retired</option>
+        </select>
+        <Link href="/admin/it/assets" className="ml-auto text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+          Open Full View →
+        </Link>
+      </div>
+
+      {/* Table */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12 text-slate-400"><Loader2 className="h-5 w-5 animate-spin" /></div>
+      ) : assets.length === 0 ? (
+        <div className="text-center py-10">
+          <Monitor className="h-10 w-10 text-slate-300 mx-auto mb-2" />
+          <p className="text-sm text-slate-500">No IT assets yet</p>
+          <Link href="/admin/it/assets" className="text-sm text-indigo-600 hover:underline mt-1 inline-block">Add your first asset →</Link>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                <th className="px-4 py-2.5 text-left">Asset</th>
+                <th className="px-4 py-2.5 text-center">Status</th>
+                <th className="px-4 py-2.5 text-left">Assigned To</th>
+                <th className="px-4 py-2.5 text-right">Cost</th>
+                <th className="px-4 py-2.5" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {assets.map((a) => (
+                <tr key={a.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3">
+                    <p className="font-medium text-slate-800">{a.assetName}</p>
+                    <p className="text-xs text-slate-400">{a.assetTag}{a.brand ? ` · ${a.brand}` : ""}{a.model ? ` ${a.model}` : ""}</p>
+                  </td>
+                  <td className="px-4 py-3 text-center"><ItStatusBadge status={a.status} /></td>
+                  <td className="px-4 py-3 text-xs text-slate-600">
+                    {a.assignedTo ? `${a.assignedTo.firstName} ${a.assignedTo.lastName}` : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right text-xs text-slate-600 font-mono">{peso(a.purchaseCost)}</td>
+                  <td className="px-4 py-3">
+                    <Link href={`/admin/it/assets/${a.id}`} className="text-indigo-600 hover:text-indigo-800">
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
@@ -536,9 +696,12 @@ export default function AdminDepartmentDetailPage() {
   const dept   = DEPARTMENTS.find((d) => d.slug === slug) ?? null;
 
   const isFinance = slug === "finance-payroll";
+  const isIT      = slug === "it-systems";
   const TABS: Tab[] = isFinance
     ? ["members", "payroll", "activity", "settings"]
-    : ["members", "activity", "settings"];
+    : isIT
+      ? ["members", "assets", "activity", "settings"]
+      : ["members", "activity", "settings"];
 
   const [tab, setTab]             = useState<Tab>("members");
   const [members, setMembers]     = useState<Employee[]>([]);
@@ -666,7 +829,7 @@ export default function AdminDepartmentDetailPage() {
                 : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-600"
             }`}
           >
-            {t === "payroll" ? "💵 Payroll Runs" : t}
+            {t === "payroll" ? "💵 Payroll Runs" : t === "assets" ? "💻 IT Assets" : t}
           </motion.button>
         ))}
       </div>
@@ -727,6 +890,9 @@ export default function AdminDepartmentDetailPage() {
 
         {/* ── Payroll Runs (Finance & Payroll only) ── */}
         {tab === "payroll" && <PayrollRunsTab />}
+
+        {/* ── IT Assets (IT & Systems only) ── */}
+        {tab === "assets" && <ItAssetsTab />}
 
         {/* ── Activity ── */}
         {tab === "activity" && (

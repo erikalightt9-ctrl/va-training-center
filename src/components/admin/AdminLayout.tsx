@@ -20,7 +20,6 @@ import {
   Briefcase,
   UserCheck,
   Building2,
-  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -62,7 +61,6 @@ const MODULE_NAV: ReadonlyArray<NavItem> = [
   { href: "/admin/enrollees",  label: "Tasks",      icon: CheckSquare,   moduleKey: "module_lms" },
   { href: "/admin/revenue",    label: "Revenue",    icon: DollarSign,    moduleKey: "module_lms" },
   { href: "/admin/departments", label: "Departments",  icon: Building2,  moduleKey: "module_hr" },
-  { href: "/admin/it/assets",   label: "IT Assets",    icon: Monitor,    moduleKey: "module_it" },
   { href: "/admin/admin",       label: "Office Admin", icon: Briefcase,  moduleKey: "module_admin" },
 ];
 
