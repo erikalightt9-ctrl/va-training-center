@@ -40,10 +40,6 @@ export async function GET(
       employeeName:           `${employee.firstName} ${employee.lastName}`,
       position:               employee.position,
       department:             employee.department,
-      sssNumber:              employee.sssNumber,
-      philhealthNumber:       employee.philhealthNumber,
-      pagibigNumber:          employee.pagibigNumber,
-      tinNumber:              employee.tinNumber,
       // Period
       periodStart:            run.periodStart,
       periodEnd:              run.periodEnd,

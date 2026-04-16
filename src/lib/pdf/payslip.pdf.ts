@@ -34,10 +34,6 @@ export interface PayslipData {
   employeeName: string;
   position: string;
   department: string | null;
-  sssNumber: string | null;
-  philhealthNumber: string | null;
-  pagibigNumber: string | null;
-  tinNumber: string | null;
   // Period
   periodStart: Date;
   periodEnd: Date;
@@ -94,11 +90,6 @@ const s = StyleSheet.create({
   infoLabel:     { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 2 },
   infoValue:     { fontSize: 9, color: "#1e293b", fontWeight: "bold" },
   infoValueSm:   { fontSize: 8, color: "#475569" },
-  // Gov IDs
-  govRow:        { flexDirection: "row", gap: 8, marginBottom: 12 },
-  govItem:       { flex: 1, borderWidth: 1, borderColor: "#e2e8f0", borderRadius: 4, padding: 6 },
-  govLabel:      { fontSize: 7, color: "#94a3b8", textTransform: "uppercase", marginBottom: 1 },
-  govValue:      { fontSize: 8, color: "#334155", fontWeight: "bold" },
   // Table
   table:         { marginBottom: 10 },
   tableHeader:   { flexDirection: "row", backgroundColor: "#4f46e5", borderRadius: 4, paddingVertical: 5, paddingHorizontal: 8 },
@@ -139,6 +130,32 @@ const fmtDate = (d: Date) =>
 const fmtDateShort = (d: Date) =>
   d.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
 
+/**
+ * Formats the cut-off period as a compact, human-readable range.
+ * Same month & year  →  "April 1–15, 2026"
+ * Diff month, same year → "March 16 – April 15, 2026"
+ * Diff year            → "December 16, 2025 – January 15, 2026"
+ */
+function formatCutoffPeriod(start: Date, end: Date): string {
+  const sDay   = start.getDate();
+  const eDay   = end.getDate();
+  const sMonth = start.toLocaleDateString("en-PH", { month: "long" });
+  const eMonth = end.toLocaleDateString("en-PH",   { month: "long" });
+  const sYear  = start.getFullYear();
+  const eYear  = end.getFullYear();
+
+  if (sYear === eYear && sMonth === eMonth) {
+    // April 1–15, 2026
+    return `${sMonth} ${sDay}–${eDay}, ${sYear}`;
+  } else if (sYear === eYear) {
+    // March 16 – April 15, 2026
+    return `${sMonth} ${sDay} – ${eMonth} ${eDay}, ${sYear}`;
+  } else {
+    // December 16, 2025 – January 15, 2026
+    return `${sMonth} ${sDay}, ${sYear} – ${eMonth} ${eDay}, ${eYear}`;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Row helpers                                                         */
 /* ------------------------------------------------------------------ */
@@ -166,7 +183,7 @@ function TotalRow({ label, amount }: { label: string; amount: number }) {
 /* ------------------------------------------------------------------ */
 
 function PayslipDocument({ d }: { d: PayslipData }) {
-  const periodStr = `${fmtDateShort(d.periodStart)} \u2013 ${fmtDateShort(d.periodEnd)}`;
+  const cutoffStr = formatCutoffPeriod(d.periodStart, d.periodEnd);
 
   return React.createElement(
     Document,
@@ -203,7 +220,7 @@ function PayslipDocument({ d }: { d: PayslipData }) {
           null,
           React.createElement(Text, { style: s.payslipLabel }, "PAYSLIP"),
           React.createElement(Text, { style: s.payslipSub }, `Run: ${d.runNumber}`),
-          React.createElement(Text, { style: s.payslipSub }, periodStr),
+          React.createElement(Text, { style: s.payslipSub }, `Cut-off: ${cutoffStr}`),
           d.payDate
             ? React.createElement(Text, { style: s.payslipSub }, `Pay Date: ${fmtDateShort(d.payDate)}`)
             : null
@@ -239,35 +256,9 @@ function PayslipDocument({ d }: { d: PayslipData }) {
         React.createElement(
           View,
           { style: s.infoBox },
-          React.createElement(Text, { style: s.infoLabel }, "Pay Period"),
-          React.createElement(Text, { style: s.infoValue }, periodStr),
+          React.createElement(Text, { style: s.infoLabel }, "Cut-off Period"),
+          React.createElement(Text, { style: s.infoValue }, cutoffStr),
           React.createElement(Text, { style: s.infoValueSm }, `Days Worked: ${d.daysWorked}`)
-        )
-      ),
-
-      /* ── Government IDs ── */
-      React.createElement(
-        View,
-        { style: s.govRow },
-        React.createElement(
-          View, { style: s.govItem },
-          React.createElement(Text, { style: s.govLabel }, "SSS No."),
-          React.createElement(Text, { style: s.govValue }, d.sssNumber ?? "\u2014")
-        ),
-        React.createElement(
-          View, { style: s.govItem },
-          React.createElement(Text, { style: s.govLabel }, "PhilHealth No."),
-          React.createElement(Text, { style: s.govValue }, d.philhealthNumber ?? "\u2014")
-        ),
-        React.createElement(
-          View, { style: s.govItem },
-          React.createElement(Text, { style: s.govLabel }, "Pag-IBIG No."),
-          React.createElement(Text, { style: s.govValue }, d.pagibigNumber ?? "\u2014")
-        ),
-        React.createElement(
-          View, { style: s.govItem },
-          React.createElement(Text, { style: s.govLabel }, "TIN"),
-          React.createElement(Text, { style: s.govValue }, d.tinNumber ?? "\u2014")
         )
       ),
 

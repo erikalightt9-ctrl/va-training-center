@@ -64,21 +64,8 @@ export async function GET(
       );
     }
 
-    // Fetch full gov ID data for all employees in one query
-    const employeeIds = run.lines.map((l) => l.employeeId);
-    const employees   = await prisma.hrEmployee.findMany({
-      where:  { id: { in: employeeIds } },
-      select: {
-        id: true,
-        sssNumber: true, philhealthNumber: true,
-        pagibigNumber: true, tinNumber: true,
-      },
-    });
-    const empMap = new Map(employees.map((e) => [e.id, e]));
-
     const pdfBuffers = await Promise.all(
       run.lines.map((line) => {
-        const emp     = empMap.get(line.employeeId);
         const data: PayslipData = {
           companyName:        org?.name ?? "Your Company",
           companyLogoUrl:     org?.logoUrl ?? undefined,
@@ -86,10 +73,6 @@ export async function GET(
           employeeName:       `${line.employee.firstName} ${line.employee.lastName}`,
           position:           line.employee.position,
           department:         line.employee.department,
-          sssNumber:          emp?.sssNumber         ?? null,
-          philhealthNumber:   emp?.philhealthNumber  ?? null,
-          pagibigNumber:      emp?.pagibigNumber     ?? null,
-          tinNumber:          emp?.tinNumber         ?? null,
           periodStart:        run.periodStart,
           periodEnd:          run.periodEnd,
           payDate:            run.payDate,
