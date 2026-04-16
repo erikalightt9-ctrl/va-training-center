@@ -35,6 +35,7 @@ interface Employee {
   id: string; firstName: string; lastName: string;
   email: string; phone: string | null;
   position: string; status: string; employeeNumber: string | null;
+  department?: string | null;
 }
 
 interface PayrollRun {
@@ -46,6 +47,186 @@ interface PayrollRun {
 }
 
 type Tab = "members" | "activity" | "payroll" | "settings";
+
+/* ------------------------------------------------------------------ */
+/*  Add Member Modal                                                    */
+/* ------------------------------------------------------------------ */
+
+interface AddMemberModalProps {
+  deptName: string;
+  currentMemberIds: Set<string>;
+  onClose: () => void;
+  onAdded: () => void;
+}
+
+function AddMemberModal({ deptName, currentMemberIds, onClose, onAdded }: AddMemberModalProps) {
+  const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [search, setSearch]     = useState("");
+  const [adding, setAdding]     = useState<string | null>(null);
+  const [error, setError]       = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/hr/employees?limit=500")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.success) {
+          setAllEmployees(
+            j.data.data.map((e: {
+              id: string; firstName: string; lastName: string;
+              email: string; phone?: string | null;
+              position: string; status: string; employeeNumber?: string | null;
+              department?: string | null;
+            }) => ({
+              id: e.id, firstName: e.firstName, lastName: e.lastName,
+              email: e.email, phone: e.phone ?? null,
+              position: e.position, status: e.status,
+              employeeNumber: e.employeeNumber ?? null,
+              department: (e as { department?: string | null }).department ?? null,
+            }))
+          );
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const candidates = allEmployees
+    .filter((e) => !currentMemberIds.has(e.id))
+    .filter((e) =>
+      `${e.firstName} ${e.lastName} ${e.email} ${e.position}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+
+  async function handleAdd(empId: string) {
+    setAdding(empId);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/hr/employees/${empId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ department: deptName }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error ?? "Failed to add member");
+      setSuccessId(empId);
+      setTimeout(() => {
+        setAllEmployees((prev) => prev.filter((e) => e.id !== empId));
+        setSuccessId(null);
+        onAdded();
+      }, 600);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setAdding(null);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+          <div>
+            <h2 className="text-base font-semibold text-slate-800">Add Member</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Assign an employee to {deptName}</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="px-6 py-3 border-b border-slate-100 shrink-0">
+          <input
+            type="text"
+            placeholder="Search employees by name, email, or position…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            autoFocus
+            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        {error && (
+          <div className="mx-6 mt-3 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
+            <AlertCircle className="h-4 w-4 shrink-0" /> {error}
+          </div>
+        )}
+
+        {/* Employee list */}
+        <div className="flex-1 overflow-y-auto px-6 py-3">
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-slate-400">
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </div>
+          ) : candidates.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-sm text-slate-400">
+                {search ? "No matching employees found." : "All employees are already in this department."}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {candidates.map((emp) => (
+                <div
+                  key={emp.id}
+                  className={`flex items-center justify-between p-3 border rounded-xl transition-colors ${
+                    successId === emp.id
+                      ? "border-green-300 bg-green-50"
+                      : "border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30"
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate">
+                      {emp.firstName} {emp.lastName}
+                    </p>
+                    <p className="text-xs text-slate-400 truncate">
+                      {emp.position}
+                      {(emp as { department?: string | null }).department
+                        ? ` · ${(emp as { department?: string | null }).department}`
+                        : " · No department"}
+                    </p>
+                  </div>
+                  {successId === emp.id ? (
+                    <span className="flex items-center gap-1 text-green-600 text-xs font-medium shrink-0">
+                      <CheckCircle className="h-4 w-4" /> Added
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => handleAdd(emp.id)}
+                      disabled={adding === emp.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg disabled:opacity-50 transition-colors shrink-0"
+                    >
+                      {adding === emp.id
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        : <Plus className="h-3.5 w-3.5" />}
+                      Add
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-3 border-t border-slate-100 flex justify-end shrink-0">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -359,15 +540,16 @@ export default function AdminDepartmentDetailPage() {
     ? ["members", "payroll", "activity", "settings"]
     : ["members", "activity", "settings"];
 
-  const [tab, setTab]           = useState<Tab>("members");
-  const [members, setMembers]   = useState<Employee[]>([]);
-  const [headId, setHeadId]     = useState<string | null>(null);
-  const [search, setSearch]     = useState("");
-  const [loading, setLoading]   = useState(true);
-  const [deptName, setDeptName] = useState(dept?.name ?? "");
-  const [deptDesc, setDeptDesc] = useState(dept?.description ?? "");
+  const [tab, setTab]             = useState<Tab>("members");
+  const [members, setMembers]     = useState<Employee[]>([]);
+  const [headId, setHeadId]       = useState<string | null>(null);
+  const [search, setSearch]       = useState("");
+  const [loading, setLoading]     = useState(true);
+  const [deptName, setDeptName]   = useState(dept?.name ?? "");
+  const [deptDesc, setDeptDesc]   = useState(dept?.description ?? "");
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  useEffect(() => {
+  const loadMembers = useCallback(() => {
     if (!dept) return;
     setLoading(true);
     fetch(`/api/admin/hr/employees?department=${encodeURIComponent(dept.name)}&limit=100`)
@@ -380,11 +562,13 @@ export default function AdminDepartmentDetailPage() {
             position: string; status: string; employeeNumber?: string | null;
           }) => ({ id: e.id, firstName: e.firstName, lastName: e.lastName, email: e.email, phone: e.phone ?? null, position: e.position, status: e.status, employeeNumber: e.employeeNumber ?? null }));
           setMembers(list);
-          setHeadId(list[0]?.id ?? null);
+          setHeadId((prev) => (list.find((m) => m.id === prev) ? prev : list[0]?.id ?? null));
         }
       })
       .finally(() => setLoading(false));
-  }, [dept?.name]);
+  }, [dept]);
+
+  useEffect(() => { loadMembers(); }, [loadMembers]);
 
   if (!dept) {
     return (
@@ -423,6 +607,16 @@ export default function AdminDepartmentDetailPage() {
         .animate-ripple { animation: ripple 0.6s linear; }
       `}</style>
 
+      {/* Add Member Modal */}
+      {showAddModal && (
+        <AddMemberModal
+          deptName={dept.name}
+          currentMemberIds={new Set(members.map((m) => m.id))}
+          onClose={() => setShowAddModal(false)}
+          onAdded={loadMembers}
+        />
+      )}
+
       {/* Back */}
       <Link href="/admin/departments" className="text-indigo-600 hover:underline text-sm">
         ← Back to Departments
@@ -447,7 +641,7 @@ export default function AdminDepartmentDetailPage() {
         </div>
         <div className="flex gap-2 shrink-0">
           <RippleButton className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm transition">Edit</RippleButton>
-          <RippleButton className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow active:scale-95 transition text-sm font-medium">Add Member</RippleButton>
+          <RippleButton onClick={() => setShowAddModal(true)} className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow active:scale-95 transition text-sm font-medium">Add Member</RippleButton>
         </div>
       </motion.div>
 
