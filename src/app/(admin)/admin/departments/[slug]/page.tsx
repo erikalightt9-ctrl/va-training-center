@@ -25,12 +25,13 @@ interface DeptConfig {
 }
 
 const DEPARTMENTS: DeptConfig[] = [
-  { slug: "administration-hr",     name: "Administration & HR",     description: "Employee management, recruitment, policies",  emoji: "🧑‍💼", activities: ["New employee onboarding completed", "Company policy updated", "Recruitment drive launched"] },
-  { slug: "finance-payroll",       name: "Finance & Payroll",       description: "Budgeting, payroll, financial reports",        emoji: "💵",  activities: ["Payroll processed for this month", "Budget report submitted", "Government contributions filed"] },
-  { slug: "operations",            name: "Operations",               description: "Daily operations and workflow",                emoji: "⚙️",  activities: ["Weekly ops review conducted", "New workflow process approved", "SLA targets updated"] },
-  { slug: "sales-marketing",       name: "Sales & Marketing",       description: "Sales, branding, lead generation",             emoji: "📈",  activities: ["Q2 sales targets achieved", "New marketing campaign launched", "Lead generation report submitted"] },
-  { slug: "it-systems",            name: "IT & Systems",             description: "System management and support",                emoji: "💻",  activities: ["System maintenance completed", "Security audit passed", "New software licenses acquired"] },
-  { slug: "logistics-procurement", name: "Logistics & Procurement", description: "Suppliers, inventory, fleet",                  emoji: "🚚",  activities: ["Supplier contracts renewed", "Inventory audit completed", "Fleet fuel logs reviewed"] },
+  { slug: "administration",         name: "Administration",           description: "Office management, compliance, policies",     emoji: "🏢", activities: ["Company policy updated", "Compliance audit completed", "Office facilities reviewed"] },
+  { slug: "human-resources",        name: "Human Resources",          description: "Recruitment, employee relations, benefits",    emoji: "🧑‍💼", activities: ["New employee onboarding completed", "Recruitment drive launched", "Performance reviews scheduled"] },
+  { slug: "finance-payroll",        name: "Finance & Payroll",        description: "Budgeting, payroll, financial reports",        emoji: "💵",  activities: ["Payroll processed for this month", "Budget report submitted", "Government contributions filed"] },
+  { slug: "operations",             name: "Operations",               description: "Daily operations and workflow",                emoji: "⚙️",  activities: ["Weekly ops review conducted", "New workflow process approved", "SLA targets updated"] },
+  { slug: "sales-marketing",        name: "Sales & Marketing",        description: "Sales, branding, lead generation",             emoji: "📈",  activities: ["Q2 sales targets achieved", "New marketing campaign launched", "Lead generation report submitted"] },
+  { slug: "it-systems",             name: "IT & Systems",             description: "System management and support",                emoji: "💻",  activities: ["System maintenance completed", "Security audit passed", "New software licenses acquired"] },
+  { slug: "logistics-procurement",  name: "Logistics & Procurement",  description: "Suppliers, inventory, fleet",                  emoji: "🚚",  activities: ["Supplier contracts renewed", "Inventory audit completed", "Fleet fuel logs reviewed"] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -719,7 +720,7 @@ function ItAssetsTab() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  HR Overview Tab (Administration & HR)                              */
+/*  HR Overview Tab (Human Resources dept)                             */
 /* ------------------------------------------------------------------ */
 
 const LEAVE_STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -972,7 +973,7 @@ export default function AdminDepartmentDetailPage() {
 
   const isFinance = slug === "finance-payroll";
   const isIT      = slug === "it-systems";
-  const isHR      = slug === "administration-hr";
+  const isHR      = slug === "human-resources";
   const isSales   = slug === "sales-marketing";
   const TABS: Tab[] = isFinance
     ? ["members", "payroll", "activity", "settings"]
@@ -1198,7 +1199,7 @@ export default function AdminDepartmentDetailPage() {
         {/* ── IT Assets (IT & Systems only) ── */}
         {tab === "assets" && <ItAssetsTab />}
 
-        {/* ── HR Overview (Administration & HR only) ── */}
+        {/* ── HR Overview (Human Resources only) ── */}
         {tab === "hr" && <HrOverviewTab />}
 
         {/* ── CRM / Sales (Sales & Marketing only) ── */}

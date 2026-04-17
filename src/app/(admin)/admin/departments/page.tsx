@@ -17,12 +17,13 @@ interface DeptConfig {
 }
 
 const DEPARTMENTS: DeptConfig[] = [
-  { slug: "administration-hr",     name: "Administration & HR",     description: "Employee management, recruitment, policies",  emoji: "🧑‍💼" },
-  { slug: "finance-payroll",       name: "Finance & Payroll",       description: "Budgeting, payroll, financial reports",        emoji: "💵" },
-  { slug: "operations",            name: "Operations",               description: "Daily operations and workflow",                emoji: "⚙️" },
-  { slug: "sales-marketing",       name: "Sales & Marketing",       description: "Sales, branding, lead generation",             emoji: "📈" },
-  { slug: "it-systems",            name: "IT & Systems",             description: "System management and support",                emoji: "💻" },
-  { slug: "logistics-procurement", name: "Logistics & Procurement", description: "Suppliers, inventory, fleet",                  emoji: "🚚" },
+  { slug: "administration",         name: "Administration",           description: "Office management, compliance, policies",     emoji: "🏢" },
+  { slug: "human-resources",        name: "Human Resources",          description: "Recruitment, employee relations, benefits",    emoji: "🧑‍💼" },
+  { slug: "finance-payroll",        name: "Finance & Payroll",        description: "Budgeting, payroll, financial reports",        emoji: "💵" },
+  { slug: "operations",             name: "Operations",               description: "Daily operations and workflow",                emoji: "⚙️" },
+  { slug: "sales-marketing",        name: "Sales & Marketing",        description: "Sales, branding, lead generation",             emoji: "📈" },
+  { slug: "it-systems",             name: "IT & Systems",             description: "System management and support",                emoji: "💻" },
+  { slug: "logistics-procurement",  name: "Logistics & Procurement",  description: "Suppliers, inventory, fleet",                  emoji: "🚚" },
 ];
 
 /* ------------------------------------------------------------------ */
