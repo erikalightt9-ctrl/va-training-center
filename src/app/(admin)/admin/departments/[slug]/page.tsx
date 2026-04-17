@@ -1129,15 +1129,34 @@ export default function AdminDepartmentDetailPage() {
         {/* ── Members ── */}
         {tab === "members" && (
           <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Search members..."
-              className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Search members..."
+                className="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <RippleButton
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow text-sm font-medium whitespace-nowrap active:scale-95 transition"
+              >
+                <Plus className="h-4 w-4" /> Add Employee
+              </RippleButton>
+            </div>
             {filtered.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-8">No members found.</p>
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center">
+                  <Users className="h-6 w-6 text-slate-300" />
+                </div>
+                <p className="text-sm text-slate-400">No members in this department yet.</p>
+                <RippleButton
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow text-sm font-medium active:scale-95 transition"
+                >
+                  <Plus className="h-4 w-4" /> Add First Employee
+                </RippleButton>
+              </div>
             ) : (
               <div className="space-y-2">
                 {filtered.map((m) => (
