@@ -14,8 +14,8 @@ interface Props {
 }
 
 const DEPARTMENTS = [
-  "Administration", "Finance", "Human Resources", "IT & Systems",
-  "Marketing", "Operations", "Sales", "Customer Service", "Legal", "Logistics",
+  "Administration", "Human Resources", "Finance & Payroll", "Operations",
+  "Sales & Marketing", "IT & Systems", "Logistics & Procurement", "Legal", "Customer Service",
 ];
 
 const EMPTY_FORM = {

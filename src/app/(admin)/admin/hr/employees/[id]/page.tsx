@@ -374,7 +374,7 @@ export default function EmployeeDetailPage() {
               <div><label className={L}>Department</label>
                 {editing ? <select className={F} value={form.department ?? ""} onChange={ff("department")}>
                     <option value="">—</option>
-                    <option>Administration & HR</option><option>Finance & Payroll</option><option>Operations</option>
+                    <option>Administration</option><option>Human Resources</option><option>Finance & Payroll</option><option>Operations</option>
                     <option>Sales & Marketing</option><option>IT & Systems</option><option>Logistics & Procurement</option>
                   </select> : <p className="text-sm">{blank(emp.department)}</p>}</div>
               <div><label className={L}>Employment Type</label>

@@ -196,7 +196,8 @@ export default function NewEmployeePage() {
               <label className={L}>Department</label>
               <select className={F} value={form.department} onChange={(e) => set("department", e.target.value)}>
                 <option value="">— Select —</option>
-                <option>Administration & HR</option>
+                <option>Administration</option>
+                <option>Human Resources</option>
                 <option>Finance & Payroll</option>
                 <option>Operations</option>
                 <option>Sales & Marketing</option>
