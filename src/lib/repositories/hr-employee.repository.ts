@@ -26,9 +26,18 @@ export interface CreateEmployeeInput {
   birthDate?: Date;
   gender?: string;
   civilStatus?: string;
-  address?: string;
+  nationality?: string;
+  address?: string;           // kept for compat → maps to presentAddress
+  presentAddress?: string;
+  permanentAddress?: string;
   emergencyContact?: string;
   emergencyPhone?: string;
+  emergencyRelationship?: string;
+  // Compensation
+  allowance?: number;
+  payrollType?: string;
+  // Employment
+  remarks?: string;
   // Portal access
   isPortalEnabled?: boolean;
   portalRole?: "EMPLOYEE" | "DRIVER" | "MANAGER";
@@ -47,6 +56,7 @@ export interface UpdateEmployeeInput {
   regularizationDate?: Date;
   separationDate?: Date;
   separationReason?: string;
+  lastWorkingDate?: Date;
   sssNumber?: string;
   philhealthNumber?: string;
   pagibigNumber?: string;
@@ -54,9 +64,25 @@ export interface UpdateEmployeeInput {
   birthDate?: Date;
   gender?: string;
   civilStatus?: string;
+  nationality?: string;
   address?: string;
+  presentAddress?: string;
+  permanentAddress?: string;
   emergencyContact?: string;
   emergencyPhone?: string;
+  emergencyRelationship?: string;
+  allowance?: number;
+  payrollType?: string;
+  remarks?: string;
+}
+
+export interface CreateDocumentInput {
+  fileUrl: string;
+  fileType: string;
+  documentType: string;
+  label: string;
+  fileSize?: number;
+  uploadedById?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -129,6 +155,10 @@ export async function getEmployeeById(organizationId: string, id: string) {
         orderBy: { createdAt: "desc" },
         take: 10,
       },
+      documents: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 }
@@ -149,6 +179,34 @@ export async function getEmployeeStats(organizationId: string) {
   return { active, onLeave, inactive, total: active + onLeave + inactive, byDept };
 }
 
+export async function listResignedEmployees(organizationId: string) {
+  return prisma.hrEmployee.findMany({
+    where: { organizationId, status: { in: ["RESIGNED", "TERMINATED"] } },
+    orderBy: [{ separationDate: "desc" }, { lastName: "asc" }],
+    include: {
+      contracts: {
+        where: { isCurrent: true },
+        select: { basicSalary: true },
+        take: 1,
+      },
+    },
+  });
+}
+
+export async function listAllActiveForExport(organizationId: string) {
+  return prisma.hrEmployee.findMany({
+    where: { organizationId, status: { not: "TERMINATED" } },
+    orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    include: {
+      contracts: {
+        where: { isCurrent: true },
+        select: { basicSalary: true },
+        take: 1,
+      },
+    },
+  });
+}
+
 /* ------------------------------------------------------------------ */
 /*  Mutations                                                           */
 /* ------------------------------------------------------------------ */
@@ -158,6 +216,7 @@ export async function createEmployee(
   data: CreateEmployeeInput
 ) {
   const employeeNumber = data.employeeNumber ?? await getNextEmployeeNumber(organizationId);
+  const presentAddr    = data.presentAddress ?? data.address ?? null;
 
   return prisma.hrEmployee.create({
     data: {
@@ -165,26 +224,33 @@ export async function createEmployee(
       employeeNumber,
       firstName:      data.firstName,
       lastName:       data.lastName,
-      middleName:     data.middleName     ?? null,
+      middleName:     data.middleName          ?? null,
       email:          data.email,
-      phone:          data.phone          ?? null,
+      phone:          data.phone               ?? null,
       position:       data.position,
-      department:     data.department     ?? null,
-      employmentType: data.employmentType ?? "REGULAR",
+      department:     data.department          ?? null,
+      employmentType: data.employmentType      ?? "REGULAR",
       hireDate:       data.hireDate,
-      sssNumber:      data.sssNumber      ?? null,
-      philhealthNumber: data.philhealthNumber ?? null,
-      pagibigNumber:  data.pagibigNumber  ?? null,
-      tinNumber:      data.tinNumber      ?? null,
-      birthDate:      data.birthDate      ?? null,
-      gender:         data.gender         ?? null,
-      civilStatus:    data.civilStatus    ?? null,
-      address:        data.address        ?? null,
-      emergencyContact: data.emergencyContact ?? null,
-      emergencyPhone: data.emergencyPhone ?? null,
-      isPortalEnabled: data.isPortalEnabled ?? false,
+      sssNumber:      data.sssNumber           ?? null,
+      philhealthNumber: data.philhealthNumber  ?? null,
+      pagibigNumber:  data.pagibigNumber       ?? null,
+      tinNumber:      data.tinNumber           ?? null,
+      birthDate:      data.birthDate           ?? null,
+      gender:         data.gender              ?? null,
+      civilStatus:    data.civilStatus         ?? null,
+      nationality:    data.nationality         ?? null,
+      address:        presentAddr,
+      presentAddress: presentAddr,
+      permanentAddress: data.permanentAddress  ?? null,
+      emergencyContact: data.emergencyContact  ?? null,
+      emergencyPhone: data.emergencyPhone      ?? null,
+      emergencyRelationship: data.emergencyRelationship ?? null,
+      allowance:      data.allowance != null ? new Prisma.Decimal(data.allowance) : null,
+      payrollType:    data.payrollType         ?? "MONTHLY",
+      remarks:        data.remarks             ?? null,
+      isPortalEnabled: data.isPortalEnabled    ?? false,
       portalRole:      (data.portalRole ?? "EMPLOYEE") as never,
-      passwordHash:    data.passwordHash ?? null,
+      passwordHash:    data.passwordHash       ?? null,
       mustChangePassword: data.passwordHash ? true : false,
       contracts: {
         create: {
@@ -208,30 +274,88 @@ export async function updateEmployee(
   const employee = await prisma.hrEmployee.findFirst({ where: { id, organizationId } });
   if (!employee) throw new Error("Employee not found");
 
+  const presentAddr = data.presentAddress ?? data.address;
+
   return prisma.hrEmployee.update({
     where: { id },
     data: {
-      ...(data.firstName          !== undefined && { firstName: data.firstName }),
-      ...(data.lastName           !== undefined && { lastName: data.lastName }),
-      ...(data.middleName         !== undefined && { middleName: data.middleName }),
-      ...(data.phone              !== undefined && { phone: data.phone }),
-      ...(data.position           !== undefined && { position: data.position }),
-      ...(data.department         !== undefined && { department: data.department }),
-      ...(data.employmentType     !== undefined && { employmentType: data.employmentType }),
-      ...(data.status             !== undefined && { status: data.status }),
-      ...(data.regularizationDate !== undefined && { regularizationDate: data.regularizationDate }),
-      ...(data.separationDate     !== undefined && { separationDate: data.separationDate }),
-      ...(data.separationReason   !== undefined && { separationReason: data.separationReason }),
-      ...(data.sssNumber          !== undefined && { sssNumber: data.sssNumber }),
-      ...(data.philhealthNumber   !== undefined && { philhealthNumber: data.philhealthNumber }),
-      ...(data.pagibigNumber      !== undefined && { pagibigNumber: data.pagibigNumber }),
-      ...(data.tinNumber          !== undefined && { tinNumber: data.tinNumber }),
-      ...(data.birthDate          !== undefined && { birthDate: data.birthDate }),
-      ...(data.gender             !== undefined && { gender: data.gender }),
-      ...(data.civilStatus        !== undefined && { civilStatus: data.civilStatus }),
-      ...(data.address            !== undefined && { address: data.address }),
-      ...(data.emergencyContact   !== undefined && { emergencyContact: data.emergencyContact }),
-      ...(data.emergencyPhone     !== undefined && { emergencyPhone: data.emergencyPhone }),
+      ...(data.firstName              !== undefined && { firstName: data.firstName }),
+      ...(data.lastName               !== undefined && { lastName: data.lastName }),
+      ...(data.middleName             !== undefined && { middleName: data.middleName }),
+      ...(data.phone                  !== undefined && { phone: data.phone }),
+      ...(data.position               !== undefined && { position: data.position }),
+      ...(data.department             !== undefined && { department: data.department }),
+      ...(data.employmentType         !== undefined && { employmentType: data.employmentType }),
+      ...(data.status                 !== undefined && { status: data.status }),
+      ...(data.regularizationDate     !== undefined && { regularizationDate: data.regularizationDate }),
+      ...(data.separationDate         !== undefined && { separationDate: data.separationDate }),
+      ...(data.separationReason       !== undefined && { separationReason: data.separationReason }),
+      ...(data.lastWorkingDate        !== undefined && { lastWorkingDate: data.lastWorkingDate }),
+      ...(data.sssNumber              !== undefined && { sssNumber: data.sssNumber }),
+      ...(data.philhealthNumber       !== undefined && { philhealthNumber: data.philhealthNumber }),
+      ...(data.pagibigNumber          !== undefined && { pagibigNumber: data.pagibigNumber }),
+      ...(data.tinNumber              !== undefined && { tinNumber: data.tinNumber }),
+      ...(data.birthDate              !== undefined && { birthDate: data.birthDate }),
+      ...(data.gender                 !== undefined && { gender: data.gender }),
+      ...(data.civilStatus            !== undefined && { civilStatus: data.civilStatus }),
+      ...(data.nationality            !== undefined && { nationality: data.nationality }),
+      ...(presentAddr                 !== undefined && { address: presentAddr, presentAddress: presentAddr }),
+      ...(data.permanentAddress       !== undefined && { permanentAddress: data.permanentAddress }),
+      ...(data.emergencyContact       !== undefined && { emergencyContact: data.emergencyContact }),
+      ...(data.emergencyPhone         !== undefined && { emergencyPhone: data.emergencyPhone }),
+      ...(data.emergencyRelationship  !== undefined && { emergencyRelationship: data.emergencyRelationship }),
+      ...(data.allowance              !== undefined && { allowance: new Prisma.Decimal(data.allowance) }),
+      ...(data.payrollType            !== undefined && { payrollType: data.payrollType }),
+      ...(data.remarks                !== undefined && { remarks: data.remarks }),
     },
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Documents                                                           */
+/* ------------------------------------------------------------------ */
+
+export async function listEmployeeDocuments(organizationId: string, employeeId: string) {
+  return prisma.hrEmployeeDocument.findMany({
+    where: { organizationId, employeeId, isDeleted: false },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function createEmployeeDocument(
+  organizationId: string,
+  employeeId: string,
+  data: CreateDocumentInput
+) {
+  const emp = await prisma.hrEmployee.findFirst({ where: { id: employeeId, organizationId } });
+  if (!emp) throw new Error("Employee not found");
+
+  return prisma.hrEmployeeDocument.create({
+    data: {
+      organizationId,
+      employeeId,
+      fileUrl:      data.fileUrl,
+      fileType:     data.fileType,
+      documentType: data.documentType,
+      label:        data.label,
+      fileSize:     data.fileSize ?? null,
+      uploadedById: data.uploadedById ?? null,
+    },
+  });
+}
+
+export async function softDeleteDocument(
+  organizationId: string,
+  employeeId: string,
+  docId: string
+) {
+  const doc = await prisma.hrEmployeeDocument.findFirst({
+    where: { id: docId, organizationId, employeeId },
+  });
+  if (!doc) throw new Error("Document not found");
+
+  return prisma.hrEmployeeDocument.update({
+    where: { id: docId },
+    data: { isDeleted: true },
   });
 }

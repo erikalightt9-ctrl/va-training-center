@@ -16,16 +16,28 @@ const createSchema = z.object({
   employmentType:  z.enum(["REGULAR","PROBATIONARY","CONTRACTUAL","PART_TIME","INTERN"]).optional(),
   hireDate:        z.string(),
   basicSalary:     z.number().positive(),
+  // Government IDs
   sssNumber:       z.string().max(20).optional(),
   philhealthNumber: z.string().max(20).optional(),
   pagibigNumber:   z.string().max(20).optional(),
   tinNumber:       z.string().max(20).optional(),
+  // Personal
   birthDate:       z.string().optional(),
   gender:          z.string().max(10).optional(),
   civilStatus:     z.string().max(20).optional(),
+  nationality:     z.string().max(100).optional(),
   address:         z.string().optional(),
+  presentAddress:  z.string().optional(),
+  permanentAddress: z.string().optional(),
+  // Emergency contact
   emergencyContact: z.string().max(150).optional(),
   emergencyPhone:  z.string().max(30).optional(),
+  emergencyRelationship: z.string().max(50).optional(),
+  // Compensation
+  allowance:       z.number().min(0).optional(),
+  payrollType:     z.enum(["MONTHLY","SEMI_MONTHLY","WEEKLY","DAILY"]).optional(),
+  // Employment
+  remarks:         z.string().optional(),
   // Portal access
   isPortalEnabled: z.boolean().optional(),
   portalRole:      z.enum(["EMPLOYEE", "DRIVER", "MANAGER"]).optional(),

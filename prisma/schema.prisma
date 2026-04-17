@@ -2618,6 +2618,15 @@ model HrEmployee {
   failedAttempts      Int           @default(0)
   isPortalEnabled     Boolean       @default(false)
   portalRole          HrPortalRole  @default(EMPLOYEE)
+  // Extended 201 fields
+  nationality         String?       @db.VarChar(100)
+  presentAddress      String?       @db.Text
+  permanentAddress    String?       @db.Text
+  allowance           Decimal?      @db.Decimal(10,2)
+  payrollType         String?       @db.VarChar(20)
+  remarks             String?       @db.Text
+  lastWorkingDate     DateTime?     @db.Date
+  emergencyRelationship String?     @db.VarChar(50)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -2627,6 +2636,7 @@ model HrEmployee {
   attendance    HrAttendanceLog[]
   leaveRequests HrLeaveRequest[]
   fuelRequests  HrFuelRequest[]
+  documents     HrEmployeeDocument[]
   itAssets             ItAsset[]
   itHistoryAssignee    ItAssetHistoryLog[] @relation("itHistoryAssignee")
   itHistoryPerformer   ItAssetHistoryLog[] @relation("itHistoryPerformer")
@@ -2636,6 +2646,30 @@ model HrEmployee {
   @@index([organizationId, status])
   @@index([organizationId, department])
   @@map("hr_employees")
+}
+
+/* ------------------------------------------------------------------ */
+/*  Employee 201 Documents                                              */
+/* ------------------------------------------------------------------ */
+
+model HrEmployeeDocument {
+  id             String    @id @default(cuid())
+  organizationId String
+  employeeId     String
+  fileUrl        String
+  fileType       String    @db.VarChar(10)
+  documentType   String    @db.VarChar(30)
+  label          String    @db.VarChar(150)
+  fileSize       Int?
+  uploadedById   String?
+  isDeleted      Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  employee HrEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([organizationId])
+  @@map("hr_employee_documents")
 }
 
 /* ------------------------------------------------------------------ */

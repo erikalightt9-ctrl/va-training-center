@@ -1,173 +1,78 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, Loader2, AlertCircle, UserCircle, Edit2, Save, X,
-  Briefcase, Shield, Heart, FileText, CheckCircle,
+  Loader2, ArrowLeft, AlertCircle, CheckCircle, Pencil, Save, X,
+  Download, FileText, Trash2, Upload, Eye, FileUp,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                               */
 /* ------------------------------------------------------------------ */
 
-interface Contract {
-  id: string;
-  contractType: string;
-  basicSalary: number;
-  salaryFrequency: string;
-  startDate: string;
-  endDate: string | null;
-  isCurrent: boolean;
-}
-
-interface LeaveRequest {
-  id: string;
-  leaveType: string;
-  startDate: string;
-  endDate: string;
-  daysRequested: number;
-  status: string;
-  reason: string | null;
-  createdAt: string;
-}
+interface Contract   { id: string; basicSalary: number; contractType: string; startDate: string; isCurrent: boolean }
+interface DocFile    { id: string; fileUrl: string; fileType: string; documentType: string; label: string; fileSize: number | null; createdAt: string }
+interface AuditEntry { id: string; action: string; changes: Record<string, unknown>; performedByName: string; createdAt: string }
 
 interface Employee {
-  id: string;
-  employeeNumber: string;
-  firstName: string;
-  lastName: string;
-  middleName: string | null;
-  email: string;
-  phone: string | null;
-  position: string;
-  department: string | null;
-  employmentType: string;
-  status: string;
-  hireDate: string;
-  regularizationDate: string | null;
-  separationDate: string | null;
-  separationReason: string | null;
-  sssNumber: string | null;
-  philhealthNumber: string | null;
-  pagibigNumber: string | null;
-  tinNumber: string | null;
-  birthDate: string | null;
-  gender: string | null;
-  civilStatus: string | null;
-  address: string | null;
-  emergencyContact: string | null;
-  emergencyPhone: string | null;
+  id: string; employeeNumber: string;
+  firstName: string; lastName: string; middleName: string | null;
+  email: string; phone: string | null;
+  birthDate: string | null; gender: string | null; civilStatus: string | null;
+  nationality: string | null;
+  presentAddress: string | null; permanentAddress: string | null; address: string | null;
+  position: string; department: string | null;
+  employmentType: string; status: string;
+  hireDate: string; regularizationDate: string | null;
+  separationDate: string | null; separationReason: string | null;
+  lastWorkingDate: string | null; remarks: string | null;
+  sssNumber: string | null; philhealthNumber: string | null;
+  pagibigNumber: string | null; tinNumber: string | null;
+  emergencyContact: string | null; emergencyRelationship: string | null; emergencyPhone: string | null;
+  allowance: number | null; payrollType: string | null;
   contracts: Contract[];
-  leaveRequests: LeaveRequest[];
+  documents: DocFile[];
 }
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                           */
 /* ------------------------------------------------------------------ */
 
+const F = "w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white";
+const L = "block text-xs font-medium text-slate-500 mb-1";
+
+type Tab = "profile" | "employment" | "govids" | "compensation" | "documents" | "audit";
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "profile",      label: "Profile"      },
+  { id: "employment",   label: "Employment"   },
+  { id: "govids",       label: "Gov't IDs"    },
+  { id: "compensation", label: "Compensation" },
+  { id: "documents",    label: "Documents"    },
+  { id: "audit",        label: "Audit Log"    },
+];
+
 const STATUS_COLORS: Record<string, string> = {
-  ACTIVE:      "bg-green-100 text-green-700",
-  ON_LEAVE:    "bg-amber-100 text-amber-700",
-  INACTIVE:    "bg-slate-100 text-slate-500",
-  RESIGNED:    "bg-red-100 text-red-600",
-  TERMINATED:  "bg-red-100 text-red-700",
+  ACTIVE:       "bg-green-100 text-green-700",
+  ON_LEAVE:     "bg-amber-100 text-amber-700",
+  INACTIVE:     "bg-slate-100 text-slate-500",
+  RESIGNED:     "bg-red-100 text-red-600",
+  TERMINATED:   "bg-red-100 text-red-800",
+  PROBATIONARY: "bg-blue-100 text-blue-700",
 };
 
-const LEAVE_STATUS_COLORS: Record<string, string> = {
-  PENDING:  "bg-amber-100 text-amber-700",
-  APPROVED: "bg-green-100 text-green-700",
-  REJECTED: "bg-red-100 text-red-600",
-  CANCELLED: "bg-slate-100 text-slate-500",
+const DOC_TYPE_LABELS: Record<string, string> = {
+  ID: "ID", RESUME: "Résumé", CONTRACT: "Contract",
+  CERTIFICATE: "Certificate", OTHER: "Other",
 };
 
-const fmt = (n: number) =>
-  `₱${Number(n).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
-
-const fmtDate = (d: string | null) =>
-  d ? new Date(d).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" }) : "—";
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                             */
-/* ------------------------------------------------------------------ */
-
-function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="py-2.5 grid grid-cols-2 gap-4 border-b border-slate-100 last:border-0">
-      <dt className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</dt>
-      <dd className="text-sm text-slate-800">{value ?? "—"}</dd>
-    </div>
-  );
-}
-
-function Section({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon className="h-4 w-4 text-indigo-500" />
-        <h2 className="text-sm font-semibold text-slate-700">{title}</h2>
-      </div>
-      <dl>{children}</dl>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Edit form state type (all strings for controlled inputs)           */
-/* ------------------------------------------------------------------ */
-
-type EditForm = {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  phone: string;
-  position: string;
-  department: string;
-  employmentType: string;
-  status: string;
-  sssNumber: string;
-  philhealthNumber: string;
-  pagibigNumber: string;
-  tinNumber: string;
-  birthDate: string;
-  gender: string;
-  civilStatus: string;
-  address: string;
-  emergencyContact: string;
-  emergencyPhone: string;
-};
-
-function toEditForm(emp: Employee): EditForm {
-  return {
-    firstName:       emp.firstName,
-    lastName:        emp.lastName,
-    middleName:      emp.middleName      ?? "",
-    phone:           emp.phone           ?? "",
-    position:        emp.position,
-    department:      emp.department      ?? "",
-    employmentType:  emp.employmentType,
-    status:          emp.status,
-    sssNumber:       emp.sssNumber       ?? "",
-    philhealthNumber: emp.philhealthNumber ?? "",
-    pagibigNumber:   emp.pagibigNumber   ?? "",
-    tinNumber:       emp.tinNumber       ?? "",
-    birthDate:       emp.birthDate       ? emp.birthDate.slice(0, 10) : "",
-    gender:          emp.gender          ?? "",
-    civilStatus:     emp.civilStatus     ?? "",
-    address:         emp.address         ?? "",
-    emergencyContact: emp.emergencyContact ?? "",
-    emergencyPhone:  emp.emergencyPhone  ?? "",
-  };
-}
+const fmtDate  = (d: string | null) => d ? new Date(d).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" }) : "—";
+const peso     = (n: number | null) => n != null ? `₱${Number(n).toLocaleString("en-PH", { minimumFractionDigits: 2 })}` : "₱0.00";
+const blank    = (v: string | null | undefined) => v || "—";
+const kb       = (n: number | null) => n ? `${(n / 1024).toFixed(1)} KB` : "";
+const isoDate  = (s: string | null) => s ? s.split("T")[0] : "";
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                                */
@@ -175,24 +80,35 @@ function toEditForm(emp: Employee): EditForm {
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const router  = useRouter();
 
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState<string | null>(null);
-  const [editing, setEditing]   = useState(false);
-  const [saving, setSaving]     = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [form, setForm]         = useState<EditForm | null>(null);
+  const [emp, setEmp]         = useState<Employee | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState<string | null>(null);
+  const [tab, setTab]         = useState<Tab>("profile");
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving]   = useState(false);
+  const [saveOk, setSaveOk]   = useState(false);
+  const [form, setForm]       = useState<Partial<Employee>>({});
+  const [audit, setAudit]     = useState<AuditEntry[]>([]);
+  const [auditLoaded, setAuditLoaded] = useState(false);
+  const [auditLoading, setAuditLoading] = useState(false);
 
+  // Document upload state
+  const fileRef                  = useRef<HTMLInputElement>(null);
+  const [docLabel, setDocLabel]   = useState("");
+  const [docType, setDocType]     = useState("ID");
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState<string | null>(null);
+
+  /* ── Load employee ── */
   const load = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const res  = await fetch(`/api/admin/hr/employees/${id}`);
       const json = await res.json();
-      if (!json.success) throw new Error(json.error ?? "Failed to load");
-      setEmployee(json.data);
+      if (!json.success) throw new Error(json.error);
+      setEmp(json.data);
+      setForm(json.data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
     } finally {
@@ -202,433 +118,484 @@ export default function EmployeeDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  function startEdit() {
-    if (!employee) return;
-    setForm(toEditForm(employee));
-    setSaveError(null);
-    setEditing(true);
-  }
+  /* ── Load audit log when tab opened ── */
+  useEffect(() => {
+    if (tab !== "audit" || auditLoaded) return;
+    setAuditLoading(true);
+    fetch(`/api/admin/accounting/audit?entityType=HrEmployee&entityId=${id}`)
+      .then((r) => r.json())
+      .then((j) => { if (j.success) setAudit(j.data ?? []); setAuditLoaded(true); })
+      .finally(() => setAuditLoading(false));
+  }, [tab, id, auditLoaded]);
 
-  function cancelEdit() {
-    setEditing(false);
-    setForm(null);
-    setSaveError(null);
-  }
-
-  function setField<K extends keyof EditForm>(key: K, value: EditForm[K]) {
-    setForm((prev) => prev ? { ...prev, [key]: value } : prev);
-  }
-
-  async function handleSave() {
-    if (!form || !employee) return;
+  /* ── Save edits ── */
+  const save = async () => {
     setSaving(true);
-    setSaveError(null);
+    setError(null);
     try {
+      const body: Record<string, unknown> = {
+        firstName:             form.firstName,
+        lastName:              form.lastName,
+        middleName:            form.middleName || undefined,
+        phone:                 form.phone      || undefined,
+        position:              form.position,
+        department:            form.department || undefined,
+        employmentType:        form.employmentType,
+        status:                form.status,
+        nationality:           form.nationality    || undefined,
+        presentAddress:        form.presentAddress || undefined,
+        permanentAddress:      form.permanentAddress || undefined,
+        birthDate:             form.birthDate ? isoDate(form.birthDate) : undefined,
+        gender:                form.gender         || undefined,
+        civilStatus:           form.civilStatus    || undefined,
+        sssNumber:             form.sssNumber      || undefined,
+        philhealthNumber:      form.philhealthNumber || undefined,
+        pagibigNumber:         form.pagibigNumber  || undefined,
+        tinNumber:             form.tinNumber      || undefined,
+        emergencyContact:      form.emergencyContact || undefined,
+        emergencyRelationship: form.emergencyRelationship || undefined,
+        emergencyPhone:        form.emergencyPhone || undefined,
+        allowance:             form.allowance != null ? Number(form.allowance) : undefined,
+        payrollType:           form.payrollType    || undefined,
+        remarks:               form.remarks        || undefined,
+        separationDate:        form.separationDate ? isoDate(form.separationDate) : undefined,
+        separationReason:      form.separationReason || undefined,
+        lastWorkingDate:       form.lastWorkingDate ? isoDate(form.lastWorkingDate) : undefined,
+        regularizationDate:    form.regularizationDate ? isoDate(form.regularizationDate) : undefined,
+      };
+
       const res  = await fetch(`/api/admin/hr/employees/${id}`, {
-        method: "PATCH",
+        method:  "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          middleName:      form.middleName      || undefined,
-          phone:           form.phone           || undefined,
-          department:      form.department      || undefined,
-          sssNumber:       form.sssNumber       || undefined,
-          philhealthNumber: form.philhealthNumber || undefined,
-          pagibigNumber:   form.pagibigNumber   || undefined,
-          tinNumber:       form.tinNumber       || undefined,
-          birthDate:       form.birthDate       || undefined,
-          gender:          form.gender          || undefined,
-          civilStatus:     form.civilStatus     || undefined,
-          address:         form.address         || undefined,
-          emergencyContact: form.emergencyContact || undefined,
-          emergencyPhone:  form.emergencyPhone  || undefined,
-        }),
+        body:    JSON.stringify(body),
       });
       const json = await res.json();
-      if (!json.success) throw new Error(json.error ?? "Save failed");
-      await load();
+      if (!json.success) throw new Error(json.error);
+      setEmp((prev) => ({ ...prev!, ...json.data }));
+      setForm((prev) => ({ ...prev, ...json.data }));
       setEditing(false);
-      setForm(null);
+      setSaveOk(true);
+      setAuditLoaded(false); // reset so audit refreshes next open
+      setTimeout(() => setSaveOk(false), 2500);
     } catch (e) {
-      setSaveError(e instanceof Error ? e.message : "Save failed");
+      setError(e instanceof Error ? e.message : "Failed to save");
     } finally {
       setSaving(false);
     }
-  }
+  };
 
-  /* ---- render ---- */
+  /* ── Delete document ── */
+  const deleteDoc = async (docId: string) => {
+    if (!confirm("Remove this document from the 201 file?")) return;
+    const res = await fetch(`/api/admin/hr/employees/${id}/documents/${docId}`, { method: "DELETE" });
+    if (res.ok) {
+      setEmp((p) => p ? { ...p, documents: p.documents.filter((d) => d.id !== docId) } : p);
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-24 text-slate-400">
-        <Loader2 className="h-6 w-6 animate-spin" />
-      </div>
-    );
-  }
+  /* ── Upload document ── */
+  const uploadDoc = async (file: File) => {
+    if (!docLabel.trim()) { setUploadErr("Please enter a document label first."); return; }
+    setUploading(true);
+    setUploadErr(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("documentType", docType);
+      fd.append("label", docLabel.trim());
+      const res  = await fetch(`/api/admin/hr/employees/${id}/documents`, { method: "POST", body: fd });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setEmp((p) => p ? { ...p, documents: [json.data, ...p.documents] } : p);
+      setDocLabel("");
+      if (fileRef.current) fileRef.current.value = "";
+    } catch (e) {
+      setUploadErr(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
-  if (error || !employee) {
-    return (
-      <div className="p-6">
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
-          <AlertCircle className="h-5 w-5 flex-shrink-0" />
-          <span>{error ?? "Employee not found"}</span>
-        </div>
-        <button
-          onClick={() => router.back()}
-          className="mt-4 text-sm text-indigo-600 hover:underline flex items-center gap-1"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </button>
-      </div>
-    );
-  }
+  const ff = (k: keyof Employee) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
 
-  const currentContract = employee.contracts.find((c) => c.isCurrent) ?? employee.contracts[0];
-
-  return (
-    <div className="p-6 space-y-6 max-w-5xl">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin/hr/employees"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-            <UserCircle className="h-6 w-6 text-indigo-500" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900">
-              {employee.lastName}, {employee.firstName}
-              {employee.middleName ? ` ${employee.middleName}` : ""}
-            </h1>
-            <p className="text-xs text-slate-400">
-              {employee.employeeNumber} · {employee.position}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span
-            className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-              STATUS_COLORS[employee.status] ?? "bg-slate-100 text-slate-500"
-            }`}
-          >
-            {employee.status.replace("_", " ")}
-          </span>
-          {editing ? (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={cancelEdit}
-                className="flex items-center gap-1.5 px-3 py-2 border border-slate-300 text-slate-600 text-sm rounded-lg hover:bg-slate-50"
-              >
-                <X className="h-4 w-4" /> Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-60"
-              >
-                {saving
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Saving…</>
-                  : <><Save className="h-4 w-4" /> Save Changes</>
-                }
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={startEdit}
-              className="flex items-center gap-1.5 px-3 py-2 border border-slate-300 text-slate-600 text-sm rounded-lg hover:bg-slate-50"
-            >
-              <Edit2 className="h-4 w-4" /> Edit
-            </button>
-          )}
-        </div>
-      </div>
-
-      {saveError && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
-          <AlertCircle className="h-4 w-4 flex-shrink-0" />
-          {saveError}
-        </div>
-      )}
-
-      {/* Two-column grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-        {/* Employment Info */}
-        <Section icon={Briefcase} title="Employment Information">
-          {editing && form ? (
-            <div className="space-y-3">
-              <Field label="First Name" required>
-                <input value={form.firstName} onChange={(e) => setField("firstName", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Last Name" required>
-                <input value={form.lastName} onChange={(e) => setField("lastName", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Middle Name">
-                <input value={form.middleName} onChange={(e) => setField("middleName", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Position" required>
-                <input value={form.position} onChange={(e) => setField("position", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Department">
-                <input value={form.department} onChange={(e) => setField("department", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Employment Type" required>
-                <select value={form.employmentType} onChange={(e) => setField("employmentType", e.target.value)}
-                  className={INPUT_CLS}>
-                  <option value="REGULAR">Regular</option>
-                  <option value="PROBATIONARY">Probationary</option>
-                  <option value="CONTRACTUAL">Contractual</option>
-                  <option value="PART_TIME">Part Time</option>
-                  <option value="INTERN">Intern</option>
-                </select>
-              </Field>
-              <Field label="Status" required>
-                <select value={form.status} onChange={(e) => setField("status", e.target.value)}
-                  className={INPUT_CLS}>
-                  <option value="ACTIVE">Active</option>
-                  <option value="PROBATIONARY">Probationary</option>
-                  <option value="ON_LEAVE">On Leave</option>
-                  <option value="INACTIVE">Inactive</option>
-                  <option value="RESIGNED">Resigned</option>
-                  <option value="TERMINATED">Terminated</option>
-                </select>
-              </Field>
-              <Field label="Phone">
-                <input value={form.phone} onChange={(e) => setField("phone", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-            </div>
-          ) : (
-            <>
-              <InfoRow label="Employee #"      value={employee.employeeNumber} />
-              <InfoRow label="Full Name"        value={`${employee.lastName}, ${employee.firstName}${employee.middleName ? ` ${employee.middleName}` : ""}`} />
-              <InfoRow label="Email"            value={employee.email} />
-              <InfoRow label="Phone"            value={employee.phone} />
-              <InfoRow label="Position"         value={employee.position} />
-              <InfoRow label="Department"       value={employee.department} />
-              <InfoRow label="Employment Type"  value={employee.employmentType.replace("_", " ")} />
-              <InfoRow label="Status"           value={
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[employee.status] ?? "bg-slate-100 text-slate-500"}`}>
-                  {employee.status.replace("_", " ")}
-                </span>
-              } />
-              <InfoRow label="Hire Date"        value={fmtDate(employee.hireDate)} />
-              <InfoRow label="Regularization"   value={fmtDate(employee.regularizationDate)} />
-              {(employee.status === "RESIGNED" || employee.status === "TERMINATED") && (
-                <>
-                  <InfoRow label="Separation Date"   value={fmtDate(employee.separationDate)} />
-                  <InfoRow label="Separation Reason" value={employee.separationReason} />
-                </>
-              )}
-            </>
-          )}
-        </Section>
-
-        {/* Government IDs */}
-        <Section icon={Shield} title="Government IDs">
-          {editing && form ? (
-            <div className="space-y-3">
-              <Field label="SSS Number">
-                <input value={form.sssNumber} onChange={(e) => setField("sssNumber", e.target.value)}
-                  className={INPUT_CLS} placeholder="XX-XXXXXXX-X" />
-              </Field>
-              <Field label="PhilHealth Number">
-                <input value={form.philhealthNumber} onChange={(e) => setField("philhealthNumber", e.target.value)}
-                  className={INPUT_CLS} placeholder="XX-XXXXXXXXX-X" />
-              </Field>
-              <Field label="Pag-IBIG Number">
-                <input value={form.pagibigNumber} onChange={(e) => setField("pagibigNumber", e.target.value)}
-                  className={INPUT_CLS} placeholder="XXXX-XXXX-XXXX" />
-              </Field>
-              <Field label="TIN Number">
-                <input value={form.tinNumber} onChange={(e) => setField("tinNumber", e.target.value)}
-                  className={INPUT_CLS} placeholder="XXX-XXX-XXX" />
-              </Field>
-            </div>
-          ) : (
-            <>
-              <InfoRow label="SSS Number"        value={employee.sssNumber} />
-              <InfoRow label="PhilHealth Number" value={employee.philhealthNumber} />
-              <InfoRow label="Pag-IBIG Number"   value={employee.pagibigNumber} />
-              <InfoRow label="TIN Number"         value={employee.tinNumber} />
-            </>
-          )}
-        </Section>
-
-        {/* Personal Info */}
-        <Section icon={Heart} title="Personal Information">
-          {editing && form ? (
-            <div className="space-y-3">
-              <Field label="Birth Date">
-                <input type="date" value={form.birthDate} onChange={(e) => setField("birthDate", e.target.value)}
-                  className={INPUT_CLS} />
-              </Field>
-              <Field label="Gender">
-                <select value={form.gender} onChange={(e) => setField("gender", e.target.value)}
-                  className={INPUT_CLS}>
-                  <option value="">— Select —</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                  <option value="Prefer not to say">Prefer not to say</option>
-                </select>
-              </Field>
-              <Field label="Civil Status">
-                <select value={form.civilStatus} onChange={(e) => setField("civilStatus", e.target.value)}
-                  className={INPUT_CLS}>
-                  <option value="">— Select —</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Widowed">Widowed</option>
-                  <option value="Separated">Separated</option>
-                  <option value="Divorced">Divorced</option>
-                </select>
-              </Field>
-              <Field label="Address">
-                <textarea value={form.address} onChange={(e) => setField("address", e.target.value)}
-                  rows={2} className={INPUT_CLS + " resize-none"} />
-              </Field>
-              <Field label="Emergency Contact">
-                <input value={form.emergencyContact} onChange={(e) => setField("emergencyContact", e.target.value)}
-                  className={INPUT_CLS} placeholder="Name" />
-              </Field>
-              <Field label="Emergency Phone">
-                <input value={form.emergencyPhone} onChange={(e) => setField("emergencyPhone", e.target.value)}
-                  className={INPUT_CLS} placeholder="+63 9XX XXX XXXX" />
-              </Field>
-            </div>
-          ) : (
-            <>
-              <InfoRow label="Birth Date"        value={fmtDate(employee.birthDate)} />
-              <InfoRow label="Gender"            value={employee.gender} />
-              <InfoRow label="Civil Status"      value={employee.civilStatus} />
-              <InfoRow label="Address"           value={employee.address} />
-              <InfoRow label="Emergency Contact" value={employee.emergencyContact} />
-              <InfoRow label="Emergency Phone"   value={employee.emergencyPhone} />
-            </>
-          )}
-        </Section>
-
-        {/* Current Contract */}
-        <Section icon={FileText} title="Current Contract">
-          {currentContract ? (
-            <>
-              <InfoRow label="Contract Type"     value={currentContract.contractType.replace("_", " ")} />
-              <InfoRow label="Basic Salary"      value={fmt(currentContract.basicSalary)} />
-              <InfoRow label="Pay Frequency"     value={currentContract.salaryFrequency.replace("_", " ")} />
-              <InfoRow label="Start Date"        value={fmtDate(currentContract.startDate)} />
-              <InfoRow label="End Date"          value={fmtDate(currentContract.endDate)} />
-              <InfoRow label="Active"            value={
-                currentContract.isCurrent
-                  ? <span className="text-xs text-green-700 font-medium flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> Yes</span>
-                  : <span className="text-xs text-slate-400">No</span>
-              } />
-            </>
-          ) : (
-            <p className="text-sm text-slate-400 py-2">No contract on record.</p>
-          )}
-
-          {employee.contracts.length > 1 && (
-            <details className="mt-3">
-              <summary className="text-xs text-indigo-600 cursor-pointer hover:text-indigo-800 font-medium">
-                View all {employee.contracts.length} contracts
-              </summary>
-              <div className="mt-3 space-y-2">
-                {employee.contracts.slice(1).map((c) => (
-                  <div key={c.id} className="text-xs text-slate-500 border border-slate-100 rounded-lg p-3">
-                    <p className="font-medium text-slate-700 mb-1">{c.contractType} — {fmt(c.basicSalary)}</p>
-                    <p>{fmtDate(c.startDate)} → {fmtDate(c.endDate)}</p>
-                  </div>
-                ))}
-              </div>
-            </details>
-          )}
-        </Section>
-      </div>
-
-      {/* Leave History */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-100">
-          <CheckCircle className="h-4 w-4 text-indigo-500" />
-          <h2 className="text-sm font-semibold text-slate-700">Leave Request History</h2>
-        </div>
-        {employee.leaveRequests.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-8">No leave requests on record.</p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
-                <th className="px-5 py-3 text-left">Type</th>
-                <th className="px-5 py-3 text-left">Dates</th>
-                <th className="px-5 py-3 text-center">Days</th>
-                <th className="px-5 py-3 text-left">Reason</th>
-                <th className="px-5 py-3 text-left">Status</th>
-                <th className="px-5 py-3 text-left">Filed</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {employee.leaveRequests.map((lr) => (
-                <tr key={lr.id} className="hover:bg-slate-50">
-                  <td className="px-5 py-3 font-medium text-slate-700">
-                    {lr.leaveType.replace("_", " ")}
-                  </td>
-                  <td className="px-5 py-3 text-slate-500 text-xs">
-                    {fmtDate(lr.startDate)}
-                    {lr.startDate !== lr.endDate && ` → ${fmtDate(lr.endDate)}`}
-                  </td>
-                  <td className="px-5 py-3 text-center text-slate-700">{lr.daysRequested}</td>
-                  <td className="px-5 py-3 text-slate-500 text-xs max-w-xs truncate">
-                    {lr.reason ?? "—"}
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEAVE_STATUS_COLORS[lr.status] ?? "bg-slate-100 text-slate-500"}`}>
-                      {lr.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 text-xs text-slate-400">
-                    {new Date(lr.createdAt).toLocaleDateString("en-PH")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+  /* ── States ── */
+  if (loading) return (
+    <div className="flex items-center justify-center py-24 text-slate-400">
+      <Loader2 className="h-6 w-6 animate-spin" />
+    </div>
+  );
+  if (!emp) return (
+    <div className="p-6">
+      <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
+        <AlertCircle className="h-5 w-5" />{error ?? "Employee not found"}
       </div>
     </div>
   );
-}
 
-/* ------------------------------------------------------------------ */
-/*  Small helper components                                             */
-/* ------------------------------------------------------------------ */
+  const salary   = emp.contracts[0]?.basicSalary ?? 0;
+  const fullName = `${emp.lastName}, ${emp.firstName}${emp.middleName ? ` ${emp.middleName[0]}.` : ""}`;
 
-const INPUT_CLS =
-  "w-full border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500";
-
-function Field({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
   return (
-    <div>
-      <label className="block text-xs font-medium text-slate-500 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      {children}
+    <div className="p-6 space-y-5 max-w-4xl">
+
+      {/* ─── Header ─── */}
+      <div>
+        <Link href="/admin/hr/employees" className="flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 mb-3">
+          <ArrowLeft className="h-4 w-4" /> Back to Employees
+        </Link>
+
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-xl font-bold text-slate-900">{fullName}</h1>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[emp.status] ?? "bg-slate-100 text-slate-500"}`}>
+                  {emp.status.replace("_", " ")}
+                </span>
+              </div>
+              <p className="text-sm text-slate-500 mt-0.5">{emp.position}{emp.department ? ` · ${emp.department}` : ""}</p>
+              <p className="text-xs text-slate-400 mt-1">#{emp.employeeNumber} · {emp.email}</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {saveOk && (
+                <span className="flex items-center gap-1 text-green-600 text-sm">
+                  <CheckCircle className="h-4 w-4" /> Saved
+                </span>
+              )}
+              {error && (
+                <span className="text-red-600 text-xs">{error}</span>
+              )}
+              <a href={`/api/admin/hr/employees/${id}/export201`}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50">
+                <FileText className="h-4 w-4" /> Export 201 PDF
+              </a>
+              {editing ? (
+                <>
+                  <button onClick={save} disabled={saving}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-700 disabled:opacity-50 font-medium">
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
+                  </button>
+                  <button onClick={() => { setEditing(false); setForm(emp); setError(null); }}
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50">
+                    <X className="h-4 w-4" /> Cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => setEditing(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-700 font-medium">
+                  <Pencil className="h-4 w-4" /> Edit
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Tabs ─── */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto">
+        {TABS.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-medium transition ${
+              tab === t.id ? "bg-white text-indigo-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+            }`}>
+            {t.label}
+            {t.id === "documents" && emp.documents.length > 0 && (
+              <span className="ml-1 bg-indigo-600 text-white text-[10px] rounded-full px-1.5">{emp.documents.length}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* ─── Tab panels ─── */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+
+        {/* ── Profile ── */}
+        {tab === "profile" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-3 gap-4">
+              <div><label className={L}>First Name</label>
+                {editing ? <input className={F} value={form.firstName ?? ""} onChange={ff("firstName")} /> : <p className="text-sm">{blank(emp.firstName)}</p>}</div>
+              <div><label className={L}>Last Name</label>
+                {editing ? <input className={F} value={form.lastName ?? ""} onChange={ff("lastName")} /> : <p className="text-sm">{blank(emp.lastName)}</p>}</div>
+              <div><label className={L}>Middle Name</label>
+                {editing ? <input className={F} value={form.middleName ?? ""} onChange={ff("middleName")} /> : <p className="text-sm">{blank(emp.middleName)}</p>}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className={L}>Email</label><p className="text-sm">{emp.email}</p></div>
+              <div><label className={L}>Phone</label>
+                {editing ? <input className={F} value={form.phone ?? ""} onChange={ff("phone")} /> : <p className="text-sm">{blank(emp.phone)}</p>}</div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div><label className={L}>Birth Date</label>
+                {editing ? <input type="date" className={F} value={isoDate(form.birthDate ?? null)} onChange={ff("birthDate")} /> : <p className="text-sm">{fmtDate(emp.birthDate)}</p>}</div>
+              <div><label className={L}>Gender</label>
+                {editing ? <select className={F} value={form.gender ?? ""} onChange={ff("gender")}><option value="">—</option><option>Male</option><option>Female</option></select>
+                         : <p className="text-sm">{blank(emp.gender)}</p>}</div>
+              <div><label className={L}>Civil Status</label>
+                {editing ? <select className={F} value={form.civilStatus ?? ""} onChange={ff("civilStatus")}>
+                    <option value="">—</option><option>Single</option><option>Married</option><option>Widowed</option><option>Separated</option>
+                  </select> : <p className="text-sm">{blank(emp.civilStatus)}</p>}</div>
+              <div><label className={L}>Nationality</label>
+                {editing ? <input className={F} value={form.nationality ?? ""} onChange={ff("nationality")} /> : <p className="text-sm">{blank(emp.nationality)}</p>}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className={L}>Present Address</label>
+                {editing ? <textarea className={F} rows={2} value={form.presentAddress ?? ""} onChange={ff("presentAddress")} />
+                         : <p className="text-sm whitespace-pre-wrap">{blank(emp.presentAddress ?? emp.address)}</p>}</div>
+              <div><label className={L}>Permanent Address</label>
+                {editing ? <textarea className={F} rows={2} value={form.permanentAddress ?? ""} onChange={ff("permanentAddress")} />
+                         : <p className="text-sm whitespace-pre-wrap">{blank(emp.permanentAddress)}</p>}</div>
+            </div>
+            <div className="border-t border-slate-100 pt-4">
+              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">Emergency Contact</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div><label className={L}>Name</label>
+                  {editing ? <input className={F} value={form.emergencyContact ?? ""} onChange={ff("emergencyContact")} /> : <p className="text-sm">{blank(emp.emergencyContact)}</p>}</div>
+                <div><label className={L}>Relationship</label>
+                  {editing ? <select className={F} value={form.emergencyRelationship ?? ""} onChange={ff("emergencyRelationship")}>
+                      <option value="">—</option><option>Spouse</option><option>Parent</option><option>Sibling</option>
+                      <option>Child</option><option>Relative</option><option>Friend</option><option>Other</option>
+                    </select> : <p className="text-sm">{blank(emp.emergencyRelationship)}</p>}</div>
+                <div><label className={L}>Contact Number</label>
+                  {editing ? <input className={F} value={form.emergencyPhone ?? ""} onChange={ff("emergencyPhone")} /> : <p className="text-sm">{blank(emp.emergencyPhone)}</p>}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Employment ── */}
+        {tab === "employment" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className={L}>Position</label>
+                {editing ? <input className={F} value={form.position ?? ""} onChange={ff("position")} /> : <p className="text-sm">{blank(emp.position)}</p>}</div>
+              <div><label className={L}>Department</label>
+                {editing ? <select className={F} value={form.department ?? ""} onChange={ff("department")}>
+                    <option value="">—</option>
+                    <option>Administration & HR</option><option>Finance & Payroll</option><option>Operations</option>
+                    <option>Sales & Marketing</option><option>IT & Systems</option><option>Logistics & Procurement</option>
+                  </select> : <p className="text-sm">{blank(emp.department)}</p>}</div>
+              <div><label className={L}>Employment Type</label>
+                {editing ? <select className={F} value={form.employmentType ?? ""} onChange={ff("employmentType")}>
+                    <option value="REGULAR">Regular</option><option value="PROBATIONARY">Probationary</option>
+                    <option value="CONTRACTUAL">Contractual</option><option value="PART_TIME">Part-Time</option><option value="INTERN">Intern</option>
+                  </select> : <p className="text-sm">{emp.employmentType.replace("_"," ")}</p>}</div>
+              <div><label className={L}>Status</label>
+                {editing ? <select className={F} value={form.status ?? ""} onChange={ff("status")}>
+                    <option value="ACTIVE">Active</option><option value="PROBATIONARY">Probationary</option>
+                    <option value="ON_LEAVE">On Leave</option><option value="INACTIVE">Inactive</option>
+                    <option value="RESIGNED">Resigned</option><option value="TERMINATED">Terminated</option>
+                  </select>
+                  : <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[emp.status] ?? ""}`}>{emp.status.replace("_"," ")}</span>}</div>
+              <div><label className={L}>Hire Date</label><p className="text-sm">{fmtDate(emp.hireDate)}</p></div>
+              <div><label className={L}>Regularization Date</label>
+                {editing ? <input type="date" className={F} value={isoDate(form.regularizationDate ?? null)} onChange={ff("regularizationDate")} />
+                         : <p className="text-sm">{fmtDate(emp.regularizationDate)}</p>}</div>
+            </div>
+
+            {/* Separation fields */}
+            <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
+              <div><label className={L}>Separation Date</label>
+                {editing ? <input type="date" className={F} value={isoDate(form.separationDate ?? null)} onChange={ff("separationDate")} />
+                         : <p className="text-sm">{fmtDate(emp.separationDate)}</p>}</div>
+              <div><label className={L}>Last Working Date</label>
+                {editing ? <input type="date" className={F} value={isoDate(form.lastWorkingDate ?? null)} onChange={ff("lastWorkingDate")} />
+                         : <p className="text-sm">{fmtDate(emp.lastWorkingDate)}</p>}</div>
+              <div className="col-span-2"><label className={L}>Separation Reason</label>
+                {editing ? <input className={F} value={form.separationReason ?? ""} onChange={ff("separationReason")} />
+                         : <p className="text-sm">{blank(emp.separationReason)}</p>}</div>
+            </div>
+
+            <div><label className={L}>Remarks / Notes</label>
+              {editing ? <textarea className={F} rows={3} value={form.remarks ?? ""} onChange={ff("remarks")} />
+                       : <p className="text-sm whitespace-pre-wrap">{blank(emp.remarks)}</p>}</div>
+          </div>
+        )}
+
+        {/* ── Gov't IDs ── */}
+        {tab === "govids" && (
+          <div className="grid grid-cols-2 gap-5">
+            {([
+              { key: "sssNumber"        as keyof Employee, label: "SSS Number",       ph: "XX-XXXXXXX-X" },
+              { key: "philhealthNumber" as keyof Employee, label: "PhilHealth Number", ph: "XX-XXXXXXXXX-X" },
+              { key: "pagibigNumber"    as keyof Employee, label: "Pag-IBIG (HDMF)",  ph: "XXXX-XXXX-XXXX" },
+              { key: "tinNumber"        as keyof Employee, label: "TIN",               ph: "XXX-XXX-XXX-XXX" },
+            ]).map(({ key, label, ph }) => (
+              <div key={key as string} className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+                <label className="block text-xs font-bold text-indigo-700 mb-2 uppercase tracking-wide">{label}</label>
+                {editing
+                  ? <input className="w-full bg-white border border-indigo-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder={ph} value={(form[key] as string) ?? ""} onChange={ff(key)} />
+                  : <p className="text-base font-mono font-semibold text-slate-800 tracking-wider">{blank(emp[key] as string)}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Compensation ── */}
+        {tab === "compensation" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <p className="text-xs font-bold text-green-700 mb-1 uppercase tracking-wide">Basic Salary</p>
+                <p className="text-2xl font-bold text-green-800">{peso(salary)}</p>
+                <p className="text-xs text-green-600 mt-1">Monthly · Current Contract</p>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <p className="text-xs font-bold text-blue-700 mb-1 uppercase tracking-wide">Allowance</p>
+                {editing
+                  ? <input type="number" min="0" className={F} value={form.allowance ?? ""} onChange={ff("allowance")} />
+                  : <p className="text-2xl font-bold text-blue-800">{peso(emp.allowance)}</p>}
+              </div>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <p className="text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">Payroll Type</p>
+                {editing
+                  ? <select className={F} value={form.payrollType ?? "MONTHLY"} onChange={ff("payrollType")}>
+                      <option value="MONTHLY">Monthly</option>
+                      <option value="SEMI_MONTHLY">Semi-Monthly</option>
+                      <option value="WEEKLY">Weekly</option>
+                      <option value="DAILY">Daily</option>
+                    </select>
+                  : <p className="text-lg font-bold text-slate-700">{(emp.payrollType ?? "MONTHLY").replace("_","-")}</p>}
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 bg-slate-50 rounded-xl p-3">
+              Government contributions (SSS, PhilHealth, Pag-IBIG) are auto-calculated per payroll run using the configured contribution tables.
+              To set per-employee overrides, visit <Link href="/admin/hr/payroll" className="text-indigo-600 hover:underline">Payroll → Payroll Defaults</Link>.
+            </p>
+          </div>
+        )}
+
+        {/* ── Documents ── */}
+        {tab === "documents" && (
+          <div className="space-y-5">
+            {/* Upload form */}
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-5 space-y-3 bg-slate-50/50 hover:border-indigo-300 transition-colors">
+              <div className="flex items-center gap-2 text-slate-500">
+                <Upload className="h-4 w-4" />
+                <span className="text-sm font-semibold">Attach Document</span>
+              </div>
+              {uploadErr && (
+                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
+                  <AlertCircle className="h-4 w-4 shrink-0" />{uploadErr}
+                </div>
+              )}
+              <div className="grid grid-cols-3 gap-3 items-end">
+                <div>
+                  <label className={L}>Label</label>
+                  <input className={F} value={docLabel} onChange={(e) => setDocLabel(e.target.value)}
+                    placeholder='e.g. "SSS ID", "NBI Clearance"' />
+                </div>
+                <div>
+                  <label className={L}>Document Type</label>
+                  <select className={F} value={docType} onChange={(e) => setDocType(e.target.value)}>
+                    <option value="ID">ID</option>
+                    <option value="RESUME">Résumé / CV</option>
+                    <option value="CONTRACT">Contract</option>
+                    <option value="CERTIFICATE">Certificate</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="flex items-center justify-center gap-2 w-full border border-indigo-300 bg-indigo-50 text-indigo-700 rounded-xl px-4 py-2 text-sm cursor-pointer hover:bg-indigo-100 transition font-medium">
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
+                    {uploading ? "Uploading…" : "Choose File"}
+                    <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" disabled={uploading}
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadDoc(f); }} />
+                  </label>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400">Accepted: PDF, JPG, PNG · Max 10 MB · Stored in secure per-tenant cloud storage</p>
+            </div>
+
+            {/* Document list */}
+            {emp.documents.length === 0 ? (
+              <div className="text-center py-10">
+                <FileText className="h-12 w-12 text-slate-200 mx-auto mb-3" />
+                <p className="text-sm text-slate-400">No documents in this 201 file yet</p>
+                <p className="text-xs text-slate-300 mt-1">Upload employee IDs, resume, contract, certificates above</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {emp.documents.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50/50 group transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                        doc.fileType === "PDF" ? "bg-red-100 text-red-600"
+                          : doc.fileType === "PNG" ? "bg-purple-100 text-purple-600"
+                          : "bg-amber-100 text-amber-600"
+                      }`}>{doc.fileType}</div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-slate-800 truncate">{doc.label}</p>
+                        <p className="text-xs text-slate-400 truncate">
+                          {DOC_TYPE_LABELS[doc.documentType] ?? doc.documentType}
+                          {doc.fileSize ? ` · ${kb(doc.fileSize)}` : ""}
+                          {" · "}{new Date(doc.createdAt).toLocaleDateString("en-PH")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition shrink-0 ml-4">
+                      <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition" title="Preview">
+                        <Eye className="h-4 w-4" />
+                      </a>
+                      <a href={doc.fileUrl} download
+                        className="p-1.5 text-slate-400 hover:text-green-600 rounded-lg hover:bg-green-50 transition" title="Download">
+                        <Download className="h-4 w-4" />
+                      </a>
+                      <button onClick={() => deleteDoc(doc.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition" title="Remove">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Audit Log ── */}
+        {tab === "audit" && (
+          <div className="space-y-3">
+            {auditLoading ? (
+              <div className="flex items-center justify-center py-10 text-slate-400"><Loader2 className="h-5 w-5 animate-spin" /></div>
+            ) : audit.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-sm text-slate-400">No audit log entries for this employee yet</p>
+              </div>
+            ) : (
+              audit.map((entry) => (
+                <div key={entry.id} className="flex items-start gap-3 p-3 border border-slate-100 rounded-xl text-sm">
+                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                    entry.action === "CREATE" ? "bg-green-500"
+                      : entry.action === "DELETE" ? "bg-red-500"
+                      : "bg-amber-500"
+                  }`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="font-medium text-slate-700">{entry.action}</span>
+                      <span className="text-xs text-slate-400">
+                        {new Date(entry.createdAt).toLocaleString("en-PH")}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">by {entry.performedByName || "System"}</p>
+                    {entry.changes && Object.keys(entry.changes).length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {Object.keys(entry.changes).map((k) => (
+                          <span key={k} className="px-1.5 py-0.5 bg-slate-100 rounded-md text-xs text-slate-500">{k}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

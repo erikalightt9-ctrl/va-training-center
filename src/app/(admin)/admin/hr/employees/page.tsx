@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Loader2, AlertCircle, Plus, Search, UserCircle } from "lucide-react";
+import { Loader2, AlertCircle, Plus, Search, UserCircle, Download, UserX } from "lucide-react";
 
 interface Employee {
   id: string;
@@ -67,12 +67,20 @@ export default function EmployeesPage() {
           <h1 className="text-xl font-bold text-slate-900">Employees</h1>
           <p className="text-sm text-slate-500 mt-1">{total} total employees</p>
         </div>
-        <Link
-          href="/admin/hr/employees/new"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700"
-        >
-          <Plus className="h-4 w-4" /> Add Employee
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/hr/employees/resigned"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50">
+            <UserX className="h-4 w-4" /> Resigned
+          </Link>
+          <a href="/api/admin/hr/employees/export"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50">
+            <Download className="h-4 w-4" /> Export Excel
+          </a>
+          <Link href="/admin/hr/employees/new"
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-700 font-medium">
+            <Plus className="h-4 w-4" /> Add Employee
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}

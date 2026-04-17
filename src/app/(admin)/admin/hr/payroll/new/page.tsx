@@ -19,6 +19,7 @@ interface Employee {
   lastName: string;
   position: string;
   department: string | null;
+  allowance?: number | null;
   contracts: { basicSalary: number }[];
 }
 
@@ -89,7 +90,7 @@ function defaultLine(emp: Employee): LineInput {
     specHolidayDays:  0,
     overtimeHours:    0,
     nightDiffHours:   0,
-    allowances:       0,
+    allowances:       emp.allowance ? Number(emp.allowance) : 0,
     otherDeductions:  0,
     remarks:          "",
   };
@@ -251,7 +252,7 @@ export default function NewPayrollRunPage() {
 
   // Load employees
   useEffect(() => {
-    fetch("/api/admin/hr/employees?limit=200")
+    fetch("/api/admin/hr/employees?limit=500&status=ACTIVE")
       .then((r) => r.json())
       .then((j) => { if (j.success) setAllEmployees(j.data.data); })
       .finally(() => setLoadingEmps(false));
