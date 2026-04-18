@@ -1111,7 +1111,6 @@ function InventoryTab() {
             { name: "Maintenance Supplies",       icon: "🔧", desc: "Tools & maintenance materials",    href: "/admin/admin/maintenance",     bg: "bg-orange-50 border-orange-200" },
             { name: "Appliances & Furniture",     icon: "🛋️", desc: "Equipment & office fixtures",    href: "/admin/admin/equipment",      bg: "bg-purple-50 border-purple-200" },
             { name: "Repair Logs",                icon: "🛠️", desc: "Track repairs & service logs",   href: "/admin/admin/repair-logs",    bg: "bg-red-50 border-red-200" },
-            { name: "Suppliers",                  icon: "🚚", desc: "Vendor & supplier directory",      href: "/admin/admin/suppliers",      bg: "bg-indigo-50 border-indigo-200" },
           ] as const).map((mod) => (
             <Link key={mod.name} href={mod.href}
               className={`${mod.bg} border rounded-2xl px-3 py-2 hover:shadow-md hover:scale-[1.02] transition-all duration-150 flex items-center gap-3 h-[72px]`}>

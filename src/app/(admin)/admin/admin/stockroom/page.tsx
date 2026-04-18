@@ -445,7 +445,6 @@ export default function StockroomPage() {
             { name: "Maintenance Supplies",       icon: "🔧", desc: "Tools & maintenance materials",    href: "/admin/admin/maintenance",     bg: "bg-orange-50 border-orange-200 dark:bg-orange-950/40 dark:border-orange-800" },
             { name: "Appliances & Furniture",     icon: "🛋️", desc: "Equipment & office fixtures",    href: "/admin/admin/equipment",      bg: "bg-purple-50 border-purple-200 dark:bg-purple-950/40 dark:border-purple-800" },
             { name: "Repair Logs",                icon: "🛠️", desc: "Track repairs & service logs",   href: "/admin/admin/repair-logs",    bg: "bg-red-50 border-red-200 dark:bg-red-950/40 dark:border-red-800" },
-            { name: "Suppliers",                  icon: "🚚", desc: "Vendor & supplier directory",      href: "/admin/admin/suppliers",      bg: "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-800" },
           ] as const).map((mod) => (
             <a key={mod.name} href={mod.href}
               className={`${mod.bg} border rounded-2xl px-3 py-2 hover:shadow-md hover:scale-[1.02] transition-all duration-150 flex items-center gap-3 h-[72px]`}>
