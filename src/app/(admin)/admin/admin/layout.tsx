@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import {
   PackageSearch,
   ShoppingBag,
+  TableProperties,
 } from "lucide-react";
 
 const TABS = [
   { label: "Inventory Management", href: "/admin/admin/inventory", icon: PackageSearch },
+  { label: "Bulk Entry",           href: "/admin/admin/stockroom/bulk", icon: TableProperties },
 ];
 
 export default function AdminDeptLayout({ children }: { children: React.ReactNode }) {
