@@ -4,30 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Archive,
-  Fuel,
   Wrench,
   Sofa,
   ShoppingBag,
-  Pill,
-  Car,
   ClipboardList,
   Truck,
   PackageSearch,
 } from "lucide-react";
 
 const TABS = [
-  { label: "Overview",                href: "/admin/admin",                  icon: LayoutDashboard },
-  { label: "Inventory",               href: "/admin/admin/stockroom",        icon: PackageSearch },
-  { label: "Inventory",               href: "/admin/admin/assets",           icon: Archive },
-  { label: "Fuel Requests",           href: "/admin/admin/fuel-requests",    icon: Fuel },
-  { label: "Maintenance Supplies",    href: "/admin/admin/maintenance",      icon: Wrench },
-  { label: "Appliances & Furniture",  href: "/admin/admin/equipment",        icon: Sofa },
-  { label: "Office Supplies",         href: "/admin/admin/pantry",           icon: ShoppingBag },
-  { label: "Medicine",                href: "/admin/admin/medicine",         icon: Pill },
-  { label: "Vehicle & Fuel",          href: "/admin/admin/car-maintenance",  icon: Car },
-  { label: "Repair Logs",             href: "/admin/admin/repair-logs",      icon: ClipboardList },
-  { label: "Suppliers",               href: "/admin/admin/suppliers",        icon: Truck },
+  { label: "Overview",               href: "/admin/admin",                 icon: LayoutDashboard },
+  { label: "Inventory",              href: "/admin/admin/stockroom",       icon: PackageSearch   },
+  { label: "Maintenance Supplies",   href: "/admin/admin/maintenance",     icon: Wrench          },
+  { label: "Appliances & Furniture", href: "/admin/admin/equipment",       icon: Sofa            },
+  { label: "Repair Logs",            href: "/admin/admin/repair-logs",     icon: ClipboardList   },
+  { label: "Suppliers",              href: "/admin/admin/suppliers",       icon: Truck           },
 ];
 
 export default function AdminDeptLayout({ children }: { children: React.ReactNode }) {

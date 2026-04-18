@@ -393,7 +393,7 @@ export default function StockroomPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-white">Inventory Management</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Track all inventory — cleaning, pantry, maintenance, assets
+            Cleaning, pantry, maintenance, fuel, medicine, vehicle & more
           </p>
         </div>
         <button
@@ -438,6 +438,26 @@ export default function StockroomPage() {
           })}
         </div>
       )}
+
+      {/* Module Link Cards */}
+      <div>
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Quick Access Modules</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {([
+            { name: "Fuel Requests",  icon: "⛽", desc: "Fuel logs & requests",         href: "/admin/admin/fuel-requests",   bg: "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:border-yellow-800" },
+            { name: "Office Supplies", icon: "🛒", desc: "Pantry & office consumables",  href: "/admin/admin/pantry",          bg: "bg-sky-50 border-sky-200 dark:bg-sky-950/40 dark:border-sky-800" },
+            { name: "Medicine",        icon: "💊", desc: "First aid & medical supplies", href: "/admin/admin/medicine",        bg: "bg-pink-50 border-pink-200 dark:bg-pink-950/40 dark:border-pink-800" },
+            { name: "Vehicle & Fuel",  icon: "🚗", desc: "Vehicle maintenance & fuel",   href: "/admin/admin/car-maintenance", bg: "bg-slate-50 border-slate-200 dark:bg-slate-800/60 dark:border-slate-700" },
+          ] as const).map((mod) => (
+            <a key={mod.name} href={mod.href}
+              className={`${mod.bg} border rounded-2xl p-4 hover:shadow-md hover:scale-[1.02] transition-all duration-150 block`}>
+              <div className="text-3xl mb-2">{mod.icon}</div>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">{mod.name}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{mod.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
 
       {/* Summary bar */}
       {!loading && stats && (
