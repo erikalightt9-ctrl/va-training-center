@@ -1301,27 +1301,38 @@ export default function AdminDepartmentDetailPage() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-3 flex-wrap">
-        {TABS.map((t) => (
-          <motion.button
-            key={t}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-full text-sm capitalize transition ${
-              tab === t
-                ? "bg-indigo-600 text-white shadow"
-                : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-600"
-            }`}
-          >
-            {t === "payroll"    ? "💵 Payroll Runs"
-              : t === "assets"    ? "💻 IT Assets"
-              : t === "hr"        ? "👥 HR Overview"
-              : t === "crm"       ? "📈 Sales & CRM"
-              : t === "inventory" ? "📦 Inventory"
-              : t}
-          </motion.button>
-        ))}
+      {/* Tabs — icon cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {TABS.map((t) => {
+          const cfg = {
+            members:   { label: "Members",      icon: <Users         className="h-5 w-5" /> },
+            activity:  { label: "Activity",     icon: <ClipboardList className="h-5 w-5" /> },
+            settings:  { label: "Settings",     icon: <Briefcase     className="h-5 w-5" /> },
+            payroll:   { label: "Payroll Runs", icon: <DollarSign    className="h-5 w-5" /> },
+            assets:    { label: "IT Assets",    icon: <Monitor       className="h-5 w-5" /> },
+            hr:        { label: "HR Overview",  icon: <UserCheck     className="h-5 w-5" /> },
+            crm:       { label: "Sales & CRM",  icon: <TrendingUp    className="h-5 w-5" /> },
+            inventory: { label: "Inventory",    icon: <Package       className="h-5 w-5" /> },
+          }[t] ?? { label: t, icon: <ClipboardList className="h-5 w-5" /> };
+
+          const active = tab === t;
+          return (
+            <motion.button
+              key={t}
+              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setTab(t)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all border ${
+                active
+                  ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-transparent shadow"
+                  : "bg-white border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 text-slate-700"
+              }`}
+            >
+              <span className={`${active ? "text-white" : "text-indigo-500"}`}>{cfg.icon}</span>
+              {cfg.label}
+            </motion.button>
+          );
+        })}
       </div>
 
       {/* Content */}
@@ -1334,33 +1345,19 @@ export default function AdminDepartmentDetailPage() {
         {/* ── Members ── */}
         {tab === "members" && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search members..."
-                className="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <RippleButton
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow text-sm font-medium whitespace-nowrap active:scale-95 transition"
-              >
-                <Plus className="h-4 w-4" /> Add Employee
-              </RippleButton>
-            </div>
+            <input
+              type="text"
+              placeholder="Search members..."
+              className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center">
                   <Users className="h-6 w-6 text-slate-300" />
                 </div>
                 <p className="text-sm text-slate-400">No members in this department yet.</p>
-                <RippleButton
-                  onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow text-sm font-medium active:scale-95 transition"
-                >
-                  <Plus className="h-4 w-4" /> Add First Employee
-                </RippleButton>
               </div>
             ) : (
               <div className="space-y-2">
