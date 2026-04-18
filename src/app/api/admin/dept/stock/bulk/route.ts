@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, data: null, error: parsed.error.message }, { status: 400 });
     }
 
+    const createdBy = (token?.id as string | undefined) ?? null;
+
     const payload = parsed.data.rows.map((r) => ({
       id: createId(),
       organizationId: guard.tenantId,
@@ -44,6 +46,7 @@ export async function POST(request: NextRequest) {
       quantity: r.quantity,
       unit: r.unit.trim() || "pcs",
       minThreshold: r.minThreshold,
+      createdBy,
     }));
 
     const result = await prisma.adminStockItem.createMany({ data: payload });

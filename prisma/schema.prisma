@@ -3152,6 +3152,7 @@ model AdminStockItem {
   location       String?  @db.VarChar(200)
   supplier       String?  @db.VarChar(200)
   notes          String?
+  createdBy      String?  @db.VarChar(30)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

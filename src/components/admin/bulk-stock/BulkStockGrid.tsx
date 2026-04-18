@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState, ClipboardEvent } from "react";
-import { Plus, Trash2, Save, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
+import { Plus, Trash2, Save, Loader2, AlertTriangle, CheckCircle, Download, X } from "lucide-react";
 import { EditableCell } from "./EditableCell";
 import { useKeyboardNavigation, CellPos } from "./useKeyboardNavigation";
 import { parseClipboardData } from "./parseClipboardData";
@@ -62,10 +62,32 @@ type Props = {
   onSaved?: (count: number) => void;
 };
 
+const PREVIEW_THRESHOLD = 20;
+
+function downloadCsvTemplate() {
+  const header = "Item Name\tCategory\tQuantity\tUnit\tMin Threshold";
+  const sample = [
+    "Bond paper A4\tStockroom Stocks\t50\tream\t10",
+    "Dishwashing liquid 500ml\tCleaning Supplies\t12\tbottle\t3",
+    "Coffee sachets\tPantry Supplies\t100\tpack\t20",
+  ].join("\n");
+  const tsv = `${header}\n${sample}\n`;
+  const blob = new Blob([tsv], { type: "text/tab-separated-values;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bulk-stock-template.tsv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function BulkStockGrid({ onSaved }: Props) {
   const [rows, setRows] = useState<Row[]>(() => Array.from({ length: DEFAULT_ROWS }, makeEmptyRow));
   const [saving, setSaving] = useState(false);
   const [banner, setBanner] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const cellRefs = useRef<Map<string, HTMLInputElement | HTMLSelectElement | null>>(new Map());
 
@@ -174,26 +196,30 @@ export function BulkStockGrid({ onSaved }: Props) {
 
   const canSave = stats.valid > 0 && stats.invalid === 0 && !saving;
 
-  const handleSave = useCallback(async () => {
-    if (!canSave) return;
+  const validPayload = useMemo(
+    () =>
+      rows
+        .filter((r, i) => !isRowEmpty(r) && Object.keys(rowErrors[i]).length === 0 && isRowFilled(r))
+        .map((r) => ({
+          name: r.name.trim(),
+          category: r.category,
+          quantity: Number(r.quantity),
+          unit: r.unit.trim() || "pcs",
+          minThreshold: Number(r.minThreshold) || 0,
+        })),
+    [rows, rowErrors]
+  );
+
+  const performSave = useCallback(async () => {
     setSaving(true);
     setBanner(null);
-
-    const payload = rows
-      .filter((r, i) => !isRowEmpty(r) && Object.keys(rowErrors[i]).length === 0 && isRowFilled(r))
-      .map((r) => ({
-        name: r.name.trim(),
-        category: r.category,
-        quantity: Number(r.quantity),
-        unit: r.unit.trim() || "pcs",
-        minThreshold: Number(r.minThreshold) || 0,
-      }));
+    setPreviewOpen(false);
 
     try {
       const res = await fetch("/api/admin/dept/stock/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rows: payload }),
+        body: JSON.stringify({ rows: validPayload }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.error || "Save failed");
@@ -206,7 +232,16 @@ export function BulkStockGrid({ onSaved }: Props) {
     } finally {
       setSaving(false);
     }
-  }, [canSave, rows, rowErrors, onSaved]);
+  }, [validPayload, onSaved]);
+
+  const handleSave = useCallback(() => {
+    if (!canSave) return;
+    if (validPayload.length > PREVIEW_THRESHOLD) {
+      setPreviewOpen(true);
+      return;
+    }
+    void performSave();
+  }, [canSave, validPayload.length, performSave]);
 
   return (
     <div className="space-y-3">
@@ -231,6 +266,13 @@ export function BulkStockGrid({ onSaved }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={downloadCsvTemplate}
+            className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            title="Download a TSV template to fill in Excel/Sheets"
+          >
+            <Download className="h-4 w-4" /> Template
+          </button>
           <button
             onClick={addRow}
             className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
@@ -389,6 +431,81 @@ export function BulkStockGrid({ onSaved }: Props) {
         Tip: copy rows from Excel/Sheets and paste into any cell — columns map to Item Name, Category, Quantity, Unit, Min Threshold.
         Suggested units: {UNITS_SUGGEST.join(", ")}.
       </p>
+
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+          onClick={() => !saving && setPreviewOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Confirm bulk save
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  You are about to insert <strong>{validPayload.length}</strong> stock items. Review and confirm.
+                </p>
+              </div>
+              <button
+                onClick={() => !saving && setPreviewOpen(false)}
+                className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                disabled={saving}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="overflow-auto flex-1">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-300">
+                  <tr>
+                    <th className="text-left px-3 py-2 font-medium">#</th>
+                    <th className="text-left px-3 py-2 font-medium">Name</th>
+                    <th className="text-left px-3 py-2 font-medium">Category</th>
+                    <th className="text-right px-3 py-2 font-medium">Qty</th>
+                    <th className="text-left px-3 py-2 font-medium">Unit</th>
+                    <th className="text-right px-3 py-2 font-medium">Min</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {validPayload.map((r, i) => (
+                    <tr key={i} className="border-t border-slate-100 dark:border-slate-800">
+                      <td className="px-3 py-1.5 text-xs text-slate-400 font-mono">{i + 1}</td>
+                      <td className="px-3 py-1.5 text-slate-800 dark:text-slate-200">{r.name}</td>
+                      <td className="px-3 py-1.5 text-slate-600 dark:text-slate-400">{r.category}</td>
+                      <td className="px-3 py-1.5 text-right tabular-nums">{r.quantity}</td>
+                      <td className="px-3 py-1.5">{r.unit}</td>
+                      <td className="px-3 py-1.5 text-right tabular-nums">{r.minThreshold}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-slate-200 dark:border-slate-700">
+              <button
+                onClick={() => setPreviewOpen(false)}
+                disabled={saving}
+                className="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => void performSave()}
+                disabled={saving}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white font-medium"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {saving ? "Saving..." : `Confirm & Save ${validPayload.length}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
