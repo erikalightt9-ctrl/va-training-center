@@ -25,7 +25,7 @@ interface DeptConfig {
 }
 
 const DEPARTMENTS: DeptConfig[] = [
-  { slug: "administration",        name: "Administration",          description: "Office management, compliance, policies",     emoji: "🏢",  activities: ["Office compliance review completed", "Company policy updated", "Stockroom inventory audited"] },
+  { slug: "administration",        name: "Office Admin",            description: "Office management, compliance, policies",     emoji: "🏢",  activities: ["Office compliance review completed", "Company policy updated", "Stockroom inventory audited"] },
   { slug: "human-resources",       name: "Human Resources",         description: "Recruitment, employee relations, benefits",   emoji: "🧑‍💼", activities: ["New employee onboarding completed", "Recruitment drive launched", "Benefits review submitted"] },
   { slug: "finance-payroll",       name: "Finance & Payroll",       description: "Budgeting, payroll, financial reports",       emoji: "💵",  activities: ["Payroll processed for this month", "Budget report submitted", "Government contributions filed"] },
   { slug: "operations",            name: "Operations",              description: "Daily operations and workflow",               emoji: "⚙️",  activities: ["Weekly ops review conducted", "New workflow process approved", "SLA targets updated"] },
