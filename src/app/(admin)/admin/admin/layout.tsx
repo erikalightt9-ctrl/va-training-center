@@ -3,23 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   PackageSearch,
   ShoppingBag,
 } from "lucide-react";
 
 const TABS = [
-  { label: "Overview",  href: "/admin/admin",           icon: LayoutDashboard },
-  { label: "Inventory", href: "/admin/admin/stockroom", icon: PackageSearch   },
+  { label: "Inventory Management", href: "/admin/admin/stockroom", icon: PackageSearch },
 ];
 
 export default function AdminDeptLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const isActive = (href: string) => {
-    if (href === "/admin/admin") return pathname === "/admin/admin";
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => pathname.startsWith(href);
 
   return (
     <div className="flex flex-col min-h-full">
