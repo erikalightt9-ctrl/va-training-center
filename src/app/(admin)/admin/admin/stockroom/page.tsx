@@ -441,7 +441,7 @@ export default function StockroomPage() {
 
       {/* Module Link Cards */}
       <div>
-        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Modules</p>
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Quick Access</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {([
             { name: "Fuel Requests",          icon: "⛽", desc: "Fuel logs & requests",          href: "/admin/admin/fuel-requests",   bg: "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:border-yellow-800" },
