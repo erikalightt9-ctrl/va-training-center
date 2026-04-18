@@ -408,7 +408,7 @@ export default function StockroomPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {CATEGORIES.map((c) => (
-            <div key={c} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 animate-pulse h-36" />
+            <div key={c} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl animate-pulse h-[72px]" />
           ))}
         </div>
       ) : (
@@ -421,18 +421,18 @@ export default function StockroomPage() {
               <button
                 key={cat}
                 onClick={() => setFilterCat(filterCat === cat ? "All" : cat)}
-                className={`border rounded-2xl p-4 text-left transition-all hover:shadow-md h-36 flex flex-col justify-between ${CAT_COLORS[cat]} ${
+                className={`border rounded-2xl px-3 py-2 text-left transition-all hover:shadow-md h-[72px] flex flex-col justify-between ${CAT_COLORS[cat]} ${
                   filterCat === cat ? "ring-2 ring-indigo-500 ring-offset-1" : ""
                 }`}
               >
-                <div>
-                  <div className="text-3xl mb-2">{CAT_ICONS[cat]}</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{CAT_ICONS[cat]}</span>
                   <p className="text-xs font-medium text-slate-600 dark:text-slate-300 leading-tight">{cat}</p>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{count}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-bold text-slate-900 dark:text-white">{count}</p>
                   {lowCnt > 0 && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5 flex items-center gap-1">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium flex items-center gap-0.5">
                       <AlertTriangle className="h-3 w-3" /> {lowCnt} low
                     </p>
                   )}
@@ -457,11 +457,11 @@ export default function StockroomPage() {
             { name: "Suppliers",               icon: "🚚", desc: "Vendor & supplier directory",   href: "/admin/admin/suppliers",      bg: "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-800" },
           ] as const).map((mod) => (
             <a key={mod.name} href={mod.href}
-              className={`${mod.bg} border rounded-2xl p-4 hover:shadow-md hover:scale-[1.02] transition-all duration-150 block h-36 flex flex-col justify-between`}>
-              <div className="text-3xl">{mod.icon}</div>
+              className={`${mod.bg} border rounded-2xl px-3 py-2 hover:shadow-md hover:scale-[1.02] transition-all duration-150 flex items-center gap-3 h-[72px]`}>
+              <div className="text-2xl shrink-0">{mod.icon}</div>
               <div>
-                <p className="text-sm font-semibold text-slate-800 dark:text-white">{mod.name}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{mod.desc}</p>
+                <p className="text-xs font-semibold text-slate-800 dark:text-white leading-tight">{mod.name}</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{mod.desc}</p>
               </div>
             </a>
           ))}

@@ -1080,7 +1080,7 @@ function InventoryTab() {
       {/* Category Cards */}
       {loadingData ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {STOCK_CATEGORIES.map(c => <div key={c.name} className="h-36 rounded-2xl bg-slate-100 animate-pulse" />)}
+          {STOCK_CATEGORIES.map(c => <div key={c.name} className="h-[72px] rounded-2xl bg-slate-100 animate-pulse" />)}
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1090,15 +1090,15 @@ function InventoryTab() {
             const low   = stat?.lowStock ?? 0;
             return (
               <button key={cat.name} onClick={() => setFilterCat(filterCat === cat.api ? "All" : cat.api)}
-                className={`${cat.bg} ${cat.border} border rounded-2xl p-4 text-left hover:shadow-md hover:scale-[1.02] transition-all duration-150 h-36 flex flex-col justify-between ${filterCat === cat.api ? "ring-2 ring-indigo-500 ring-offset-1" : ""}`}>
-                <div>
-                  <div className="text-3xl mb-2">{cat.icon}</div>
+                className={`${cat.bg} ${cat.border} border rounded-2xl px-3 py-2 text-left hover:shadow-md hover:scale-[1.02] transition-all duration-150 h-[72px] flex flex-col justify-between ${filterCat === cat.api ? "ring-2 ring-indigo-500 ring-offset-1" : ""}`}>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{cat.icon}</span>
                   <p className="text-xs font-semibold text-slate-700 leading-snug">{cat.name}</p>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900 leading-none">{count}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">items</p>
-                  {low > 0 && <p className="text-xs text-amber-600 font-semibold mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3 shrink-0" />{low} low stock</p>}
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-bold text-slate-900 leading-none">{count}</p>
+                  <p className="text-xs text-slate-500">items</p>
+                  {low > 0 && <p className="text-xs text-amber-600 font-semibold flex items-center gap-0.5"><AlertCircle className="h-3 w-3 shrink-0" />{low} low</p>}
                 </div>
               </button>
             );
@@ -1120,11 +1120,11 @@ function InventoryTab() {
             { name: "Suppliers",              icon: "🚚", desc: "Vendor & supplier directory",   href: "/admin/admin/suppliers",      bg: "bg-indigo-50 border-indigo-200" },
           ] as const).map((mod) => (
             <Link key={mod.name} href={mod.href}
-              className={`${mod.bg} border rounded-2xl p-4 hover:shadow-md hover:scale-[1.02] transition-all duration-150 block h-36 flex flex-col justify-between`}>
-              <div className="text-2xl">{mod.icon}</div>
+              className={`${mod.bg} border rounded-2xl px-3 py-2 hover:shadow-md hover:scale-[1.02] transition-all duration-150 flex items-center gap-3 h-[72px]`}>
+              <div className="text-2xl shrink-0">{mod.icon}</div>
               <div>
-                <p className="text-sm font-semibold text-slate-800">{mod.name}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{mod.desc}</p>
+                <p className="text-xs font-semibold text-slate-800 leading-tight">{mod.name}</p>
+                <p className="text-[11px] text-slate-500 mt-0.5 leading-tight">{mod.desc}</p>
               </div>
             </Link>
           ))}
