@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Loader2, ShoppingBag, X, AlertTriangle, Pencil } from "lucide-react";
+import { Plus, Loader2, ShoppingBag, X, AlertTriangle, Pencil, ChevronDown, ChevronUp, TableProperties } from "lucide-react";
+import { BulkStockGrid } from "@/components/admin/bulk-stock/BulkStockGrid";
 
 const FIELD = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500";
 const LABEL = "block text-xs text-slate-500 mb-1";
@@ -16,6 +17,7 @@ export default function PantryPage() {
   const [saving, setSaving]     = useState(false);
   const [error, setError]       = useState<string | null>(null);
   const [form, setForm] = useState({ name:"", category:"", quantity:"0", unit:"pcs", reorderLevel:"0", supplier:"", notes:"" });
+  const [showBulk, setShowBulk] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -64,9 +66,14 @@ export default function PantryPage() {
           <h1 className="text-xl font-bold text-slate-900">Office Supplies</h1>
           <p className="text-sm text-slate-500">Track office supplies, quantities, and reorder levels</p>
         </div>
-        <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
-          <Plus className="h-4 w-4" /> Add Item
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowBulk((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50">
+            <TableProperties className="h-4 w-4" /> Bulk Entry {showBulk ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          </button>
+          <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
+            <Plus className="h-4 w-4" /> Add Item
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -123,6 +130,17 @@ export default function PantryPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ── Bulk Stock Entry ── */}
+      {showBulk && (
+        <div className="border-t border-slate-200 pt-6 space-y-3">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Bulk Stock Entry</h2>
+            <p className="text-sm text-slate-500">Spreadsheet-style grid for fast encoding. Paste from Excel/Sheets to import many rows at once.</p>
+          </div>
+          <BulkStockGrid />
         </div>
       )}
     </div>

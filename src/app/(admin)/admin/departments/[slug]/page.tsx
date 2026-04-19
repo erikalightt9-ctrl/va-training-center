@@ -1104,14 +1104,16 @@ function InventoryTab() {
             );
           })}
           {([
-            { name: "Bulk Entry",                 icon: "📋", desc: "Spreadsheet-style fast stock entry", href: "/admin/admin/stockroom/bulk", bg: "bg-indigo-50 border-indigo-200" },
-            { name: "Vehicle Fuel & Maintenance", icon: "⛽", desc: "Fuel logs & maintenance requests", href: "/admin/admin/fuel-requests",   bg: "bg-yellow-50 border-yellow-200" },
-            { name: "Office Supplies",            icon: "🛒", desc: "Office consumables",               href: "/admin/admin/pantry",          bg: "bg-sky-50 border-sky-200" },
-            { name: "Medicine",                   icon: "💊", desc: "First aid & medical supplies",     href: "/admin/admin/medicine",        bg: "bg-pink-50 border-pink-200" },
-            { name: "Vehicle & Fuel",             icon: "🚗", desc: "Vehicle maintenance & fuel",       href: "/admin/admin/car-maintenance", bg: "bg-slate-50 border-slate-200" },
-            { name: "Maintenance Supplies",       icon: "🔧", desc: "Tools & maintenance materials",    href: "/admin/admin/maintenance",     bg: "bg-orange-50 border-orange-200" },
-            { name: "Appliances & Furniture",     icon: "🛋️", desc: "Equipment & office fixtures",    href: "/admin/admin/equipment",      bg: "bg-purple-50 border-purple-200" },
-            { name: "Repair Logs",                icon: "🛠️", desc: "Track repairs & service logs",   href: "/admin/admin/repair-logs",    bg: "bg-red-50 border-red-200" },
+            { name: "Bulk Entry",                 icon: "📋", desc: "Spreadsheet-style fast stock entry", href: "/admin/admin/stockroom/bulk",    bg: "bg-indigo-50 border-indigo-200" },
+            { name: "Pantry Supplies",            icon: "🍚", desc: "Kitchen & pantry essentials",        href: "/admin/admin/pantry-supplies",   bg: "bg-green-50 border-green-200" },
+            { name: "Office Supplies",            icon: "🛒", desc: "Office consumables",                 href: "/admin/admin/pantry",            bg: "bg-sky-50 border-sky-200" },
+            { name: "Medicine",                   icon: "💊", desc: "First aid & medical supplies",       href: "/admin/admin/medicine",          bg: "bg-pink-50 border-pink-200" },
+            { name: "Cleaning Supplies",          icon: "🧹", desc: "Janitorial & cleaning materials",    href: "/admin/admin/cleaning",          bg: "bg-blue-50 border-blue-200" },
+            { name: "Vehicle Fuel & Maintenance", icon: "⛽", desc: "Fuel logs & maintenance requests",   href: "/admin/admin/fuel-requests",     bg: "bg-yellow-50 border-yellow-200" },
+            { name: "Vehicle & Fuel",             icon: "🚗", desc: "Vehicle maintenance & fuel",         href: "/admin/admin/car-maintenance",   bg: "bg-slate-50 border-slate-200" },
+            { name: "Maintenance Supplies",       icon: "🔧", desc: "Tools & maintenance materials",      href: "/admin/admin/maintenance",       bg: "bg-orange-50 border-orange-200" },
+            { name: "Appliances & Furniture",     icon: "🛋️", desc: "Equipment & office fixtures",      href: "/admin/admin/equipment",         bg: "bg-purple-50 border-purple-200" },
+            { name: "Repair Logs",                icon: "🛠️", desc: "Track repairs & service logs",     href: "/admin/admin/repair-logs",       bg: "bg-red-50 border-red-200" },
           ] as const).map((mod) => (
             <Link key={mod.name} href={mod.href}
               className={`${mod.bg} border rounded-2xl px-3 py-2 hover:shadow-md hover:scale-[1.02] transition-all duration-150 flex items-center gap-3 h-[72px]`}>
