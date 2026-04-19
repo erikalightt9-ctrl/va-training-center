@@ -6,44 +6,40 @@ import { EditableCell } from "./EditableCell";
 import { useKeyboardNavigation, CellPos } from "./useKeyboardNavigation";
 import { parseClipboardData } from "./parseClipboardData";
 
-type CategoryOption = { id: string; name: string; icon: string | null };
-
 const TODAY = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 type Row = {
   name: string;
-  category: string; // stores categoryId
   quantity: string;
   minThreshold: string;
   location: string;
 };
 
-const COLUMNS = ["name", "category", "quantity", "minThreshold", "location"] as const;
+const COLUMNS = ["name", "quantity", "minThreshold", "location"] as const;
 type ColKey = (typeof COLUMNS)[number];
 
 const COL_COUNT = COLUMNS.length;
 const DEFAULT_ROWS = 5;
 
 function makeEmptyRow(): Row {
-  return { name: "", category: "", quantity: "", minThreshold: "0", location: "" };
+  return { name: "", quantity: "", minThreshold: "0", location: "" };
 }
 
 function isRowEmpty(r: Row): boolean {
-  return !r.name.trim() && !r.category && !r.quantity.trim();
+  return !r.name.trim() && !r.quantity.trim();
 }
 
 function isRowFilled(r: Row): boolean {
-  return !!r.name.trim() && !!r.category && r.quantity.trim() !== "";
+  return !!r.name.trim() && r.quantity.trim() !== "";
 }
 
-type CellError = { name?: boolean; category?: boolean; quantity?: boolean; minThreshold?: boolean };
+type CellError = { name?: boolean; quantity?: boolean; minThreshold?: boolean };
 
 function validateRow(r: Row): CellError {
   const errs: CellError = {};
   const isEmpty = isRowEmpty(r);
   if (isEmpty) return errs;
   if (!r.name.trim()) errs.name = true;
-  if (!r.category) errs.category = true;
   const q = Number(r.quantity);
   if (r.quantity.trim() === "" || isNaN(q) || q < 0) errs.quantity = true;
   const m = Number(r.minThreshold);
@@ -65,13 +61,12 @@ type Props = {
 
 const PREVIEW_THRESHOLD = 20;
 
-function downloadCsvTemplate(categoryNames: string[]) {
-  const header = "Item Name\tCategory\tQuantity\tMin Threshold\tLocation";
-  const firstCat = categoryNames[0] ?? "Stockroom";
+function downloadCsvTemplate(_: string[]) {
+  const header = "Item Name\tQuantity\tMin Threshold\tLocation";
   const sample = [
-    `Bond paper A4\t${firstCat}\t50\t10\tStorage Room A`,
-    `Dishwashing liquid 500ml\t${categoryNames[1] ?? firstCat}\t12\t3\tKitchen Cabinet`,
-    `Coffee sachets\t${categoryNames[2] ?? firstCat}\t100\t20\tPantry Shelf 2`,
+    `Bond paper A4\t50\t10\tStorage Room A`,
+    `Dishwashing liquid 500ml\t12\t3\tKitchen Cabinet`,
+    `Coffee sachets\t100\t20\tPantry Shelf 2`,
   ].join("\n");
   const tsv = `${header}\n${sample}\n`;
   const blob = new Blob([tsv], { type: "text/tab-separated-values;charset=utf-8" });
@@ -91,9 +86,6 @@ export function BulkStockGrid({ onSaved }: Props) {
   const [banner, setBanner] = useState<{ kind: "success" | "error"; text: string } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
-
   const [anchor, setAnchor] = useState<CellPos>({ row: 0, col: 0 });
   const [active, setActive] = useState<CellPos>({ row: 0, col: 0 });
   const dragging = useRef(false);
@@ -106,46 +98,6 @@ export function BulkStockGrid({ onSaved }: Props) {
     window.addEventListener("mouseup", onUp);
     return () => window.removeEventListener("mouseup", onUp);
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/admin/inventory/categories");
-        const json = await res.json();
-        if (json.success) {
-          setCategories((json.data as Array<{ id: string; name: string; icon: string | null }>).map((c) => ({
-            id: c.id,
-            name: c.name,
-            icon: c.icon,
-          })));
-        }
-      } finally {
-        setCategoriesLoading(false);
-      }
-    })();
-  }, []);
-
-  const categoryOptions = useMemo(
-    () => categories.map((c) => ({ value: c.id, label: `${c.icon ?? "📋"} ${c.name}` })),
-    [categories]
-  );
-  const categoryIdSet = useMemo(() => new Set(categories.map((c) => c.id)), [categories]);
-  const categoryNames = useMemo(() => categories.map((c) => c.name), [categories]);
-  const categoryByName = useMemo(() => {
-    const m = new Map<string, string>();
-    categories.forEach((c) => m.set(c.name.toLowerCase(), c.id));
-    return m;
-  }, [categories]);
-
-  const matchCategory = useCallback((value: string): string => {
-    const v = value.trim().toLowerCase();
-    if (!v) return "";
-    if (categoryByName.has(v)) return categoryByName.get(v)!;
-    for (const [name, id] of categoryByName.entries()) {
-      if (name.startsWith(v)) return id;
-    }
-    return "";
-  }, [categoryByName]);
 
   const cellRefs = useRef<Map<string, HTMLInputElement | HTMLSelectElement | null>>(new Map());
 
@@ -290,8 +242,7 @@ export function BulkStockGrid({ onSaved }: Props) {
             if (c >= COL_COUNT) return;
             const key = COLUMNS[c];
             const value = raw.trim();
-            (next[targetRow] as Row)[key] =
-              key === "category" ? matchCategory(value) : value;
+            (next[targetRow] as Row)[key] = value;
           });
         });
         // Ensure trailing empty row
@@ -327,14 +278,12 @@ export function BulkStockGrid({ onSaved }: Props) {
         .filter((r, i) => !isRowEmpty(r) && Object.keys(rowErrors[i]).length === 0 && isRowFilled(r))
         .map((r) => ({
           name: r.name.trim(),
-          categoryId: r.category,
-          categoryName: categories.find((c) => c.id === r.category)?.name ?? "",
           quantity: Number(r.quantity),
           unit: "pcs",
           minThreshold: Number(r.minThreshold) || 0,
           location: r.location.trim() || undefined,
         })),
-    [rows, rowErrors, categories]
+    [rows, rowErrors]
   );
 
   const performSave = useCallback(async () => {
@@ -346,7 +295,6 @@ export function BulkStockGrid({ onSaved }: Props) {
       const body = {
         rows: validPayload.map((r) => ({
           name: r.name,
-          categoryId: r.categoryId,
           quantity: r.quantity,
           minThreshold: r.minThreshold,
           location: r.location,
@@ -374,7 +322,7 @@ export function BulkStockGrid({ onSaved }: Props) {
   const handleSave = useCallback(() => {
     if (!canSave) return;
     if (validPayload.length === 0) {
-      setBanner({ kind: "error", text: "No valid rows to save. Fill in Item Name, Category, and Quantity for each row." });
+      setBanner({ kind: "error", text: "No valid rows to save. Fill in Item Name and Quantity for each row." });
       return;
     }
     if (validPayload.length > PREVIEW_THRESHOLD) {
@@ -383,27 +331,6 @@ export function BulkStockGrid({ onSaved }: Props) {
     }
     void performSave();
   }, [canSave, validPayload.length, performSave]);
-
-  if (categoriesLoading) {
-    return (
-      <div className="flex items-center justify-center py-10">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
-      </div>
-    );
-  }
-
-  if (categories.length === 0) {
-    return (
-      <div className="rounded-xl border border-dashed border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-950/20 p-8 text-center">
-        <AlertTriangle className="h-6 w-6 mx-auto text-amber-500 mb-2" />
-        <p className="text-sm text-slate-700 dark:text-slate-200 mb-1 font-medium">No categories yet</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Create at least one category before bulk-entering stock items.</p>
-        <a href="/admin/admin/inventory/categories" className="inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium">
-          Go to Categories
-        </a>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-3">
@@ -426,7 +353,7 @@ export function BulkStockGrid({ onSaved }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => downloadCsvTemplate(categoryNames)}
+            onClick={() => downloadCsvTemplate([])}
             className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             title="Download a TSV template to fill in Excel/Sheets"
           >
@@ -469,7 +396,6 @@ export function BulkStockGrid({ onSaved }: Props) {
             <tr>
               <th className="w-10 px-2 py-2 text-center font-medium border-b border-slate-200 dark:border-slate-700">#</th>
               <th className="px-2 py-2 text-left font-medium border-b border-slate-200 dark:border-slate-700 min-w-[200px]">Item Name</th>
-              <th className="px-2 py-2 text-left font-medium border-b border-slate-200 dark:border-slate-700 min-w-[170px]">Category</th>
               <th className="px-2 py-2 text-left font-medium border-b border-slate-200 dark:border-slate-700 w-[100px]">Quantity</th>
               <th className="px-2 py-2 text-left font-medium border-b border-slate-200 dark:border-slate-700 w-[90px]">Min</th>
               <th className="px-2 py-2 text-left font-medium border-b border-slate-200 dark:border-slate-700 w-[120px]">Status</th>
@@ -524,15 +450,19 @@ export function BulkStockGrid({ onSaved }: Props) {
                   >
                     <EditableCell
                       ref={registerRef(rIdx, 1)}
-                      kind="select"
-                      options={categoryOptions}
-                      value={row.category}
-                      placeholder="Select category"
-                      invalid={errs.category}
-                      onChange={(v) => updateCell(rIdx, "category", v)}
+                      kind="number"
+                      min={0}
+                      value={row.quantity}
+                      placeholder="0"
+                      invalid={errs.quantity}
+                      onChange={(v) => {
+                        if (v.startsWith("-")) return;
+                        updateCell(rIdx, "quantity", v);
+                      }}
                       onKeyDown={(e) =>
-                        onKey(e, { row: rIdx, col: 1 }, empty, row.category === "")
+                        onKey(e, { row: rIdx, col: 1 }, empty, row.quantity === "")
                       }
+                      onPaste={(e) => handlePaste(e, rIdx, 1)}
                       onFocus={() => handleCellFocus(rIdx, 1)}
                     />
                   </td>
@@ -545,29 +475,6 @@ export function BulkStockGrid({ onSaved }: Props) {
                       ref={registerRef(rIdx, 2)}
                       kind="number"
                       min={0}
-                      value={row.quantity}
-                      placeholder="0"
-                      invalid={errs.quantity}
-                      onChange={(v) => {
-                        if (v.startsWith("-")) return;
-                        updateCell(rIdx, "quantity", v);
-                      }}
-                      onKeyDown={(e) =>
-                        onKey(e, { row: rIdx, col: 2 }, empty, row.quantity === "")
-                      }
-                      onPaste={(e) => handlePaste(e, rIdx, 2)}
-                      onFocus={() => handleCellFocus(rIdx, 2)}
-                    />
-                  </td>
-                  <td
-                    className={cellTdClass(3)}
-                    onMouseDown={() => handleCellMouseDown(rIdx, 3)}
-                    onMouseEnter={() => handleCellMouseEnter(rIdx, 3)}
-                  >
-                    <EditableCell
-                      ref={registerRef(rIdx, 3)}
-                      kind="number"
-                      min={0}
                       value={row.minThreshold}
                       placeholder="0"
                       invalid={errs.minThreshold}
@@ -576,10 +483,10 @@ export function BulkStockGrid({ onSaved }: Props) {
                         updateCell(rIdx, "minThreshold", v);
                       }}
                       onKeyDown={(e) =>
-                        onKey(e, { row: rIdx, col: 3 }, empty, row.minThreshold === "")
+                        onKey(e, { row: rIdx, col: 2 }, empty, row.minThreshold === "")
                       }
-                      onPaste={(e) => handlePaste(e, rIdx, 3)}
-                      onFocus={() => handleCellFocus(rIdx, 3)}
+                      onPaste={(e) => handlePaste(e, rIdx, 2)}
+                      onFocus={() => handleCellFocus(rIdx, 2)}
                     />
                   </td>
                   {/* Status — computed, read-only */}
@@ -598,21 +505,21 @@ export function BulkStockGrid({ onSaved }: Props) {
                     )}
                   </td>
                   <td
-                    className={cellTdClass(4)}
-                    onMouseDown={() => handleCellMouseDown(rIdx, 4)}
-                    onMouseEnter={() => handleCellMouseEnter(rIdx, 4)}
+                    className={cellTdClass(3)}
+                    onMouseDown={() => handleCellMouseDown(rIdx, 3)}
+                    onMouseEnter={() => handleCellMouseEnter(rIdx, 3)}
                   >
                     <EditableCell
-                      ref={registerRef(rIdx, 4)}
+                      ref={registerRef(rIdx, 3)}
                       kind="text"
                       value={row.location}
                       placeholder="e.g. Storage Room A"
                       onChange={(v) => updateCell(rIdx, "location", v)}
                       onKeyDown={(e) =>
-                        onKey(e, { row: rIdx, col: 4 }, empty, row.location === "")
+                        onKey(e, { row: rIdx, col: 3 }, empty, row.location === "")
                       }
-                      onPaste={(e) => handlePaste(e, rIdx, 4)}
-                      onFocus={() => handleCellFocus(rIdx, 4)}
+                      onPaste={(e) => handlePaste(e, rIdx, 3)}
+                      onFocus={() => handleCellFocus(rIdx, 3)}
                     />
                   </td>
                   {/* Last Updated — auto today */}
@@ -669,7 +576,6 @@ export function BulkStockGrid({ onSaved }: Props) {
                   <tr>
                     <th className="text-left px-3 py-2 font-medium">#</th>
                     <th className="text-left px-3 py-2 font-medium">Name</th>
-                    <th className="text-left px-3 py-2 font-medium">Category</th>
                     <th className="text-right px-3 py-2 font-medium">Qty</th>
                     <th className="text-right px-3 py-2 font-medium">Min</th>
                     <th className="text-left px-3 py-2 font-medium">Status</th>
@@ -684,7 +590,6 @@ export function BulkStockGrid({ onSaved }: Props) {
                       <tr key={i} className="border-t border-slate-100 dark:border-slate-800">
                         <td className="px-3 py-1.5 text-xs text-slate-400 font-mono">{i + 1}</td>
                         <td className="px-3 py-1.5 text-slate-800 dark:text-slate-200">{r.name}</td>
-                        <td className="px-3 py-1.5 text-slate-600 dark:text-slate-400">{r.categoryName}</td>
                         <td className="px-3 py-1.5 text-right tabular-nums">{r.quantity}</td>
                         <td className="px-3 py-1.5 text-right tabular-nums">{r.minThreshold}</td>
                         <td className="px-3 py-1.5">

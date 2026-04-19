@@ -3197,7 +3197,7 @@ model InventoryCategory {
 model InventoryItem {
   id             String   @id
   organizationId String
-  categoryId     String
+  categoryId     String?
   name           String   @db.VarChar(200)
   sku            String?  @db.VarChar(100)
   unit           String   @default("pcs") @db.VarChar(50)
@@ -3209,8 +3209,8 @@ model InventoryItem {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  category     InventoryCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category     InventoryCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   movements    StockMovement[]
 
   @@unique([organizationId, sku])

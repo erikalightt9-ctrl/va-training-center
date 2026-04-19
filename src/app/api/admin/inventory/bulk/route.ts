@@ -8,7 +8,7 @@ import { logInventoryAudit } from "@/lib/inventory-audit";
 
 const rowSchema = z.object({
   name:         z.string().min(1).max(200),
-  categoryId:   z.string().min(1),
+  categoryId:   z.string().min(1).optional(),
   quantity:     z.number().min(0),
   minThreshold: z.number().min(0).default(0),
   location:     z.string().max(200).optional(),
@@ -30,16 +30,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, data: null, error: parsed.error.message }, { status: 400 });
     }
 
-    // Validate all referenced categories belong to this tenant
-    const uniqueCatIds = Array.from(new Set(parsed.data.rows.map((r) => r.categoryId)));
-    const cats = await prisma.inventoryCategory.findMany({
-      where: { id: { in: uniqueCatIds }, organizationId: guard.tenantId },
-      select: { id: true },
-    });
-    if (cats.length !== uniqueCatIds.length) {
-      return NextResponse.json({ success: false, data: null, error: "One or more categories are invalid" }, { status: 400 });
-    }
-
     const userId = (token?.id as string | undefined) ?? null;
 
     const inserted = await prisma.$transaction(async (tx) => {
@@ -50,7 +40,7 @@ export async function POST(request: NextRequest) {
           data: {
             id: itemId,
             organizationId: guard.tenantId,
-            categoryId: r.categoryId,
+            categoryId: r.categoryId ?? null,
             name: r.name.trim(),
             unit: r.unit.trim() || "pcs",
             minThreshold: r.minThreshold,
