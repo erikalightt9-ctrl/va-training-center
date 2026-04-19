@@ -631,11 +631,6 @@ export function BulkStockGrid({ onSaved }: Props) {
         </table>
       </div>
 
-      <p className="text-[11px] text-slate-500 dark:text-slate-400">
-        Tip: paste from Excel/Sheets — columns map to Item Name, Category, Quantity, Min Threshold, Location.
-        Status and Last Updated are computed automatically.
-      </p>
-
       {previewOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
