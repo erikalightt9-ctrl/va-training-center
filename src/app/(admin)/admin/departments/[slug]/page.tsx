@@ -1139,11 +1139,7 @@ function InventoryTab() {
         )}
         <button onClick={() => setShowBulk(v => !v)}
           className={`flex items-center gap-1.5 px-4 py-2.5 text-sm rounded-xl font-medium border transition-colors shrink-0 ${showBulk ? "bg-indigo-50 border-indigo-200 text-indigo-700" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
-          <TableProperties className="h-4 w-4" /> Bulk Entry {showBulk ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-        </button>
-        <button onClick={() => { setForm(EMPTY_STOCK_FORM); setShowModal(true); setFormError(null); }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-xl font-medium transition-colors shrink-0">
-          <Plus className="h-4 w-4" /> Add Stock
+          <TableProperties className="h-4 w-4" /> Add Stock {showBulk ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </button>
       </div>
 
