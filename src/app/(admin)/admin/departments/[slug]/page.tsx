@@ -1105,7 +1105,6 @@ function InventoryTab() {
             );
           })}
           {([
-            { name: "Pantry Supplies",            icon: "🍚", desc: "Kitchen & pantry essentials",        href: "/admin/admin/pantry-supplies",   bg: "bg-green-50 border-green-200" },
             { name: "Office Supplies",            icon: "🛒", desc: "Office consumables",                 href: "/admin/admin/pantry",            bg: "bg-sky-50 border-sky-200" },
             { name: "Medicine",                   icon: "💊", desc: "First aid & medical supplies",       href: "/admin/admin/medicine",          bg: "bg-pink-50 border-pink-200" },
             { name: "Cleaning Supplies",          icon: "🧹", desc: "Janitorial & cleaning materials",    href: "/admin/admin/cleaning",          bg: "bg-blue-50 border-blue-200" },
