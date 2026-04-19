@@ -16,13 +16,7 @@ export default function MedicinePage() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div>
-          <h2 className="text-base font-bold text-slate-900">Bulk Stock Entry</h2>
-          <p className="text-sm text-slate-500">Spreadsheet-style grid for fast encoding. Paste from Excel/Sheets to import many rows at once.</p>
-        </div>
-        <BulkStockGrid />
-      </div>
+      <BulkStockGrid />
     </div>
   );
 }

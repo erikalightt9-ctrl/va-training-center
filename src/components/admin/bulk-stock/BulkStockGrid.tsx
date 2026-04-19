@@ -418,9 +418,6 @@ export function BulkStockGrid({ onSaved }: Props) {
               {stats.incomplete} incomplete
             </span>
           )}
-          <span className="text-slate-500 dark:text-slate-400">
-            Tab/Enter to move · Shift+Arrow to select range · Ctrl+C copies TSV · Paste from Excel supported
-          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
