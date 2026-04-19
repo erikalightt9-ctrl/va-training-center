@@ -3089,16 +3089,23 @@ model AdminFuelLog {
 }
 
 model AdminVehicleLog {
-  id             String   @id
+  id             String    @id
   organizationId String
-  plateNumber    String   @db.VarChar(50)
-  vehicleType    String   @db.VarChar(100)
-  logType        String   @db.VarChar(20)  // FUEL | MAINTENANCE
+  plateNumber    String    @db.VarChar(50)
+  vehicleType    String    @db.VarChar(100)
+  logType        String    @db.VarChar(20)  // FUEL | MAINTENANCE
+  logDate        DateTime? @db.Date
   description    String?
-  amount         Decimal? @db.Decimal(10, 2)
-  performedBy    String?  @db.VarChar(150)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  liters         Decimal?  @db.Decimal(6, 2)
+  pricePerLiter  Decimal?  @db.Decimal(8, 2)
+  totalAmount    Decimal?  @db.Decimal(10, 2)
+  amount         Decimal?  @db.Decimal(10, 2)
+  status         String    @default("PENDING") @db.VarChar(20)
+  performedBy    String?   @db.VarChar(150)
+  lastEditedBy   String?   @db.VarChar(200)
+  lastEditedAt   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -3259,6 +3266,8 @@ model AdminRepairLog {
   cost           Decimal?          @db.Decimal(10, 2)
   technician     String?           @db.VarChar(200)
   notes          String?
+  lastEditedBy   String?           @db.VarChar(200)
+  lastEditedAt   DateTime?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @default(now())
 
