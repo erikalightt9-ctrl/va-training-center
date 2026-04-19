@@ -38,12 +38,12 @@ function isRowFilled(r: Row): boolean {
 
 type CellError = { name?: boolean; category?: boolean; quantity?: boolean; minThreshold?: boolean };
 
-function validateRow(r: Row, categoryIds: Set<string>): CellError {
+function validateRow(r: Row): CellError {
   const errs: CellError = {};
   const isEmpty = isRowEmpty(r);
   if (isEmpty) return errs;
   if (!r.name.trim()) errs.name = true;
-  if (!r.category || !categoryIds.has(r.category)) errs.category = true;
+  if (!r.category) errs.category = true;
   const q = Number(r.quantity);
   if (r.quantity.trim() === "" || isNaN(q) || q < 0) errs.quantity = true;
   const m = Number(r.minThreshold);
@@ -302,7 +302,7 @@ export function BulkStockGrid({ onSaved }: Props) {
     []
   );
 
-  const rowErrors = useMemo(() => rows.map((r) => validateRow(r, categoryIdSet)), [rows, categoryIdSet]);
+  const rowErrors = useMemo(() => rows.map((r) => validateRow(r)), [rows]);
 
   const stats = useMemo(() => {
     let valid = 0;
