@@ -5,7 +5,6 @@ import { useEffect, useState, FormEvent, use } from "react";
 import {
   ArrowLeft, Loader2, Edit2, Trash2, Package, X,
   ArrowUpRight, ArrowDownRight, SlidersHorizontal, History, Search,
-  TableProperties,
 } from "lucide-react";
 import { BulkStockGrid } from "@/components/admin/bulk-stock/BulkStockGrid";
 
@@ -211,7 +210,13 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
         </div>
       )}
 
-      {/* Existing items */}
+      {/* Bulk entry — primary view, loads immediately */}
+      <BulkStockGrid
+        categoryId={categoryId}
+        onSaved={() => void loadItems()}
+      />
+
+      {/* Current stock — secondary, below the grid */}
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-slate-700">Current Stock</h2>
@@ -231,10 +236,10 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
             <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center">
+          <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center">
             <Package className="h-7 w-7 mx-auto text-slate-400 mb-2" />
             <p className="text-sm text-slate-500">
-              {search ? "No items match your search." : "No items yet — use the bulk entry below to add stock."}
+              {search ? "No items match your search." : "No items yet — use the grid above to add stock."}
             </p>
           </div>
         ) : (
@@ -296,19 +301,6 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
             </table>
           </div>
         )}
-      </section>
-
-      {/* Bulk entry — scoped to this category */}
-      <section className="space-y-3">
-        <div className="flex items-center gap-2">
-          <TableProperties className="h-4 w-4 text-indigo-600" />
-          <h2 className="text-sm font-semibold text-slate-700">Add Stock</h2>
-          <span className="text-xs text-slate-400">— entries go directly into {category?.name ?? "this category"}</span>
-        </div>
-        <BulkStockGrid
-          categoryId={categoryId}
-          onSaved={() => void loadItems()}
-        />
       </section>
 
       {/* Edit item modal */}
