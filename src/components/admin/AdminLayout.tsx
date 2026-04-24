@@ -55,6 +55,7 @@ const ADMIN_ONLY_NAV: ReadonlyArray<NavItem> = [
 
 /** Module-gated nav items — shown only when the module is enabled */
 const MODULE_NAV: ReadonlyArray<NavItem> = [
+  { href: "/admin/training-center", label: "Training Center", icon: GraduationCap, moduleKey: "module_lms" },
   { href: "/admin/courses",    label: "Courses",    icon: BookOpen,      moduleKey: "module_lms" },
   { href: "/admin/students",   label: "Students",   icon: Users,         moduleKey: "module_lms", industries: ["training_center"] },
   { href: "/admin/trainers",   label: "Trainers",   icon: UserCog,       moduleKey: "module_lms" },
