@@ -16,9 +16,9 @@ interface NavLink {
 }
 
 const NAV_LINKS: readonly NavLink[] = [
-  { href: "/features", label: "Features" },
-  { href: "/pricing",  label: "Pricing" },
-  { href: "/contact",  label: "Demo" },
+  { href: "/features",  label: "Features" },
+  { href: "/pricing",   label: "Pricing"  },
+  { href: "/about",     label: "About"    },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -96,24 +96,33 @@ export function Navbar({ branding }: NavbarProps) {
               Log In
             </Link>
 
-            {/* Tenant portals show Enroll Now; main SaaS site shows Get Started (B2B) */}
             {isTenant ? (
               <Link
                 href={enrollHref}
-                className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0"
+                className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90"
                 style={{ backgroundColor: brandColor }}
               >
                 Enroll Now
                 <ArrowRight className="h-4 w-4" />
               </Link>
             ) : (
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90 hover:-translate-y-px active:translate-y-0 bg-amber-500 hover:bg-amber-600"
-              >
-                Get Started
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold border border-blue-200 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"
+                  style={{ color: brandColor }}
+                >
+                  Start Free
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-md transition-all hover:opacity-90"
+                  style={{ backgroundColor: brandColor }}
+                >
+                  Book a Demo
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </>
             )}
           </div>
 
@@ -155,14 +164,25 @@ export function Navbar({ branding }: NavbarProps) {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
-                <Link
-                  href="/contact"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md bg-amber-500 hover:bg-amber-600 transition-colors"
-                >
-                  Get Started
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                <>
+                  <Link
+                    href="/contact"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full text-white text-sm font-bold px-4 py-3 rounded-lg shadow-md transition-colors"
+                    style={{ backgroundColor: brandColor }}
+                  >
+                    Book a Demo
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full text-sm font-semibold border border-blue-200 px-4 py-3 rounded-lg transition-colors hover:bg-blue-50"
+                    style={{ color: brandColor }}
+                  >
+                    Start Free
+                  </Link>
+                </>
               )}
 
               <Link
