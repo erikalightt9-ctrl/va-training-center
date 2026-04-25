@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { SaasHeroSection } from "@/components/public/SaasHeroSection";
 import { SocialProofSection } from "@/components/public/SocialProofSection";
 import { ProblemSolutionSection } from "@/components/public/ProblemSolutionSection";
+import { FeatureHighlightsSection } from "@/components/public/FeatureHighlightsSection";
 import { NicheSection } from "@/components/public/NicheSection";
 import { TargetAudienceSection } from "@/components/public/TargetAudienceSection";
 import { ValuePropositionSection } from "@/components/public/ValuePropositionSection";
@@ -34,7 +35,10 @@ export default function HomePage() {
       {/* 3. Problem → Solution — pain/fix pairs + pull quote */}
       <ProblemSolutionSection />
 
-      {/* 4. Niche — platform identity, industries served, business pillars */}
+      {/* 4. Feature Highlights — 6 module cards */}
+      <FeatureHighlightsSection />
+
+      {/* 5. Niche — platform identity, industries served, business pillars */}
       <NicheSection />
 
       {/* 3. Target Audience — who it's for (6 industry cards) */}
