@@ -1,16 +1,17 @@
 /**
  * Role-Based Access Control definitions.
  *
- * Three portal roles for admin-portal users (CorporateManager):
+ * Four portal roles for admin-portal users (CorporateManager):
  *   ADMIN     – full system access and configuration
  *   EXECUTIVE – read-only view of all operational data
  *   MANAGER   – operational management and approvals
+ *   STAFF     – rank-and-file access to assigned modules only
  *
  * Employee portal users (HrEmployee) carry role="employee" and are
  * unaffected by this file.
  */
 
-export type UserRole = "ADMIN" | "EXECUTIVE" | "MANAGER";
+export type UserRole = "ADMIN" | "EXECUTIVE" | "MANAGER" | "STAFF";
 
 export const ROLE_CONFIG: Record<
   UserRole,
@@ -31,6 +32,11 @@ export const ROLE_CONFIG: Record<
     description: "Operational management and approvals",
     badgeClass: "bg-emerald-500 text-white",
   },
+  STAFF: {
+    label: "Staff",
+    description: "Rank-and-file access to assigned modules only",
+    badgeClass: "bg-slate-500 text-white",
+  },
 };
 
 /**
@@ -39,34 +45,34 @@ export const ROLE_CONFIG: Record<
  * Prefix matching: "/admin/departments" also covers "/admin/departments/...".
  */
 const NAV_ACCESS: Record<string, UserRole[]> = {
-  "/admin":                    ["ADMIN", "EXECUTIVE", "MANAGER"],
+  "/admin":                    ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
   "/admin/executive":          ["ADMIN", "EXECUTIVE"],
-  "/admin/admin":              ["ADMIN", "MANAGER"],
-  "/admin/accounting":         ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/hr":                 ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/operations":         ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/action-center":      ["ADMIN", "MANAGER"],
-  "/admin/training-center":    ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/courses":            ["ADMIN", "MANAGER"],
-  "/admin/students":           ["ADMIN", "MANAGER"],
+  "/admin/admin":              ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/accounting":         ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/hr":                 ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/operations":         ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/action-center":      ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/training-center":    ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/courses":            ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/students":           ["ADMIN", "MANAGER", "STAFF"],
   "/admin/trainers":           ["ADMIN"],
   "/admin/enrollees":          ["ADMIN"],
   "/admin/revenue":            ["ADMIN", "EXECUTIVE"],
-  "/admin/hr/analytics":       ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/departments":        ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/work":               ["ADMIN", "MANAGER"],
-  "/admin/admin/inventory":    ["ADMIN", "MANAGER"],
-  "/admin/finance":            ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/sales":              ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/sales/deals":        ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/sales/contacts":     ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/sales/campaigns":    ["ADMIN", "MANAGER"],
-  "/admin/sales/activities":   ["ADMIN", "MANAGER"],
-  "/admin/sales/tasks":        ["ADMIN", "MANAGER"],
-  "/admin/it":                 ["ADMIN", "EXECUTIVE", "MANAGER"],
-  "/admin/it/assets":          ["ADMIN", "MANAGER"],
-  "/admin/it/requests":        ["ADMIN", "MANAGER"],
-  "/admin/users-roles":        ["ADMIN", "EXECUTIVE", "MANAGER"],
+  "/admin/hr/analytics":       ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/departments":        ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/work":               ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/admin/inventory":    ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/finance":            ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/sales":              ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/sales/deals":        ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/sales/contacts":     ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/sales/campaigns":    ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/sales/activities":   ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/sales/tasks":        ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/it":                 ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
+  "/admin/it/assets":          ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/it/requests":        ["ADMIN", "MANAGER", "STAFF"],
+  "/admin/users-roles":        ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"],
   "/admin/settings":           ["ADMIN"],
 };
 

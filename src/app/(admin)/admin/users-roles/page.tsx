@@ -273,7 +273,7 @@ interface TeamMember {
   createdAt:          string;
 }
 
-const USER_ROLES: UserRole[] = ["ADMIN", "EXECUTIVE", "MANAGER"];
+const USER_ROLES: UserRole[] = ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"];
 
 function AddMemberModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
   const [name,       setName]       = useState("");

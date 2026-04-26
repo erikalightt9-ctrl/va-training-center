@@ -89,8 +89,8 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await bcrypt.hash(body.password.trim(), 12);
-    const validRoles   = ["ADMIN", "EXECUTIVE", "MANAGER"];
-    const userRole     = validRoles.includes(body.userRole ?? "") ? body.userRole as "ADMIN" | "EXECUTIVE" | "MANAGER" : "MANAGER";
+    const validRoles   = ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"];
+    const userRole     = validRoles.includes(body.userRole ?? "") ? body.userRole as "ADMIN" | "EXECUTIVE" | "MANAGER" | "STAFF" : "MANAGER";
 
     const member = await prisma.corporateManager.create({
       data: {

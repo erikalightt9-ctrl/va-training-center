@@ -1389,6 +1389,7 @@ enum UserRole {
   ADMIN
   EXECUTIVE
   MANAGER
+  STAFF
 }
 
 model CorporateManager {

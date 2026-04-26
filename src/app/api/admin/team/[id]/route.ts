@@ -45,12 +45,12 @@ export async function PATCH(
       }
     }
 
-    const validRoles = ["ADMIN", "EXECUTIVE", "MANAGER"];
+    const validRoles = ["ADMIN", "EXECUTIVE", "MANAGER", "STAFF"];
     const updated = await prisma.corporateManager.update({
       where: { id },
       data: {
         ...(body.userRole && validRoles.includes(body.userRole)
-          ? { userRole: body.userRole as "ADMIN" | "EXECUTIVE" | "MANAGER" }
+          ? { userRole: body.userRole as "ADMIN" | "EXECUTIVE" | "MANAGER" | "STAFF" }
           : {}),
         ...(typeof body.isActive === "boolean" ? { isActive: body.isActive } : {}),
         ...(body.department !== undefined ? { department: body.department || null } : {}),
