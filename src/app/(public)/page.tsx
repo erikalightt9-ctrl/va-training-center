@@ -10,9 +10,9 @@ import { LandingTestimonialsSection } from "@/components/public/LandingTestimoni
 import { FinalCtaSection } from "@/components/public/FinalCtaSection";
 
 export const metadata: Metadata = {
-  title: "HUMI Hub — The Operating System for Your Entire Company",
+  title: "HUMI Hub — Run Your Entire Company From One System",
   description:
-    "HUMI Hub unifies HR, Finance, Sales, IT, Operations, and Training into one executive command center. Real-time visibility across every department — built for leadership.",
+    "HUMI Hub is the centralized operating system for your entire company — connecting Operations, Finance, Sales, IT, Training, and HR into one real-time environment with full executive visibility.",
 };
 
 export default function HomePage() {

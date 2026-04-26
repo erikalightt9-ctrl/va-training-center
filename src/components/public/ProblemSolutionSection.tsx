@@ -38,10 +38,10 @@ export function ProblemSolutionSection() {
             Sound familiar?
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
-            Your company deserves better than this.
+            Scattered tools. Delayed reports. No single source of truth.
           </h2>
           <p className="text-slate-500 text-lg max-w-xl mx-auto">
-            Most organisations run on fragmented tools and delayed reports. HUMI Hub replaces all of it.
+            Most companies operate from disconnected systems that never share data. HUMI Hub replaces all of it.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export function ProblemSolutionSection() {
         <div className="mt-14 text-center">
           <div className="inline-block bg-slate-900 text-white rounded-2xl px-8 py-5 shadow-lg">
             <p className="text-lg sm:text-xl font-bold leading-snug">
-              &ldquo;For the first time, our CEO can see Finance, HR, and Sales<br className="hidden sm:block" /> in one screen — without asking anyone for a report.&rdquo;
+              &ldquo;For the first time, leadership can see Finance, HR, Sales, and Operations<br className="hidden sm:block" /> in one screen — without waiting for a single report.&rdquo;
             </p>
             <p className="text-slate-400 text-sm mt-2">— COO, mid-size enterprise, 300+ employees</p>
           </div>

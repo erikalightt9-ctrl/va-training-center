@@ -112,7 +112,7 @@ export default function ExecutiveDashboardPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Executive Command Center</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Company-wide overview · All departments · Live data
+            Single source of truth · All departments connected · Real-time
           </p>
         </div>
         <div className="flex items-center gap-3">

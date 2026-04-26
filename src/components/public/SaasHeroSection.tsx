@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { value: "6",     label: "Departments unified"    },
-  { value: "500+",  label: "Companies onboarded"    },
-  { value: "98%",   label: "Executive satisfaction" },
-  { value: "1",     label: "System for everything"  },
+  { value: "6",     label: "Departments connected"    },
+  { value: "500+",  label: "Companies onboarded"       },
+  { value: "100%",  label: "Real-time data"            },
+  { value: "1",     label: "System for everything"     },
 ] as const;
 
 const trust = [
@@ -46,9 +46,9 @@ function DashboardPreview() {
         <div className="p-5 grid grid-cols-3 gap-3">
           {/* KPI cards */}
           {[
-            { label: "Revenue (MTD)",      value: "₱2.4M",  color: "text-emerald-400" },
+            { label: "Cash Position",      value: "₱8.1M",  color: "text-emerald-400" },
             { label: "Active Employees",   value: "284",    color: "text-blue-400"    },
-            { label: "Open Tasks",         value: "17",     color: "text-amber-400"   },
+            { label: "Revenue (MTD)",      value: "₱2.4M",  color: "text-amber-400"   },
           ].map((c) => (
             <div key={c.label} className="bg-slate-800/70 rounded-xl p-4 border border-white/5">
               <p className="text-xs text-slate-400 mb-1">{c.label}</p>
@@ -67,10 +67,10 @@ function DashboardPreview() {
             </p>
             <div className="space-y-2">
               {[
-                { label: "Finance: Q2 payroll run approved",       time: "1m ago",  dot: "bg-emerald-400" },
-                { label: "Sales: New deal closed — ₱180K",         time: "6m ago",  dot: "bg-amber-400"   },
-                { label: "IT: Server maintenance completed",        time: "12m ago", dot: "bg-violet-400"  },
-                { label: "HR: 3 leave requests pending approval",   time: "18m ago", dot: "bg-blue-400"    },
+                { label: "Finance: Invoice #1042 marked paid",       time: "2m ago",  dot: "bg-emerald-400" },
+                { label: "Sales: Deal closed — ₱280K pipeline",      time: "8m ago",  dot: "bg-amber-400"   },
+                { label: "HR: Payroll run approved — 284 employees",  time: "14m ago", dot: "bg-blue-400"    },
+                { label: "IT: Asset audit completed — 0 issues",      time: "21m ago", dot: "bg-violet-400"  },
               ].map((a) => (
                 <div key={a.label} className="flex items-center gap-2.5">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${a.dot}`} />
@@ -112,24 +112,24 @@ export function SaasHeroSection() {
         {/* Pill badge */}
         <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-blue-200 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-white/15">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          HR · Finance · Sales · IT · Operations · Training
+          Operations · Finance · Sales · IT · Training · HR
         </div>
 
         {/* Headline */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-6 tracking-tight">
-          Every department.{" "}
+          Run your entire company{" "}
           <br className="hidden sm:block" />
-          One command center.{" "}
+          from{" "}
           <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
-            Full visibility.
+            one system.
           </span>
         </h1>
 
         {/* Subheadline */}
         <p className="text-blue-100/80 text-lg sm:text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
-          HUMI Hub is the operating system for your entire company — giving
-          executives real-time visibility across every department, and each
-          team a focused workspace built for their role.
+          HUMI Hub is the centralized operating system for your entire company —
+          connecting every department into one real-time environment where every
+          action, record, and workflow is visible to leadership.
         </p>
 
         {/* CTAs */}

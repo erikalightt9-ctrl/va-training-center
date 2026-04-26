@@ -14,17 +14,17 @@ export function FinalCtaSection() {
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
         <p className="text-sm font-semibold uppercase tracking-widest text-blue-300 mb-4">
-          Your operating system awaits
+          One system for everything
         </p>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] mb-6">
-          Give your leadership team<br className="hidden sm:block" />
-          the visibility they&apos;ve been missing.
+          Stop running your company<br className="hidden sm:block" />
+          from scattered tools.
         </h2>
 
         <p className="text-blue-200/80 text-lg max-w-xl mx-auto mb-10">
-          500+ companies already run every department — HR, Finance, Sales,
-          IT, and Training — from a single command center. Yours can too.
+          500+ companies already connect Operations, Finance, Sales, IT, HR, and
+          Training into one real-time system. Every department. One source of truth.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
