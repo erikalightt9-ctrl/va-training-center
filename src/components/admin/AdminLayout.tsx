@@ -23,6 +23,8 @@ import {
   Activity,
   Inbox,
   BarChart3,
+  MonitorDot,
+  Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -48,9 +50,10 @@ interface NavItem {
 }
 
 const STATIC_NAV: ReadonlyArray<NavItem> = [
-  { href: "/admin",               label: "Dashboard",     icon: LayoutDashboard, exact: true },
-  { href: "/admin/operations",    label: "Operations",    icon: Activity },
-  { href: "/admin/action-center", label: "Action Center", icon: Inbox },
+  { href: "/admin",               label: "Dashboard",       icon: LayoutDashboard, exact: true },
+  { href: "/admin/executive",     label: "Command Center",  icon: MonitorDot },
+  { href: "/admin/operations",    label: "Operations",      icon: Activity },
+  { href: "/admin/action-center", label: "Action Center",   icon: Inbox },
 ];
 
 const ADMIN_ONLY_NAV: ReadonlyArray<NavItem> = [
@@ -64,10 +67,12 @@ const MODULE_NAV: ReadonlyArray<NavItem> = [
   { href: "/admin/trainers",   label: "Trainers",   icon: UserCog,       moduleKey: "module_lms" },
   { href: "/admin/enrollees",  label: "Tasks",      icon: CheckSquare,   moduleKey: "module_lms" },
   { href: "/admin/revenue",    label: "Revenue",    icon: DollarSign,    moduleKey: "module_lms" },
-  { href: "/admin/departments",  label: "Departments",  icon: Building2,    moduleKey: "module_hr" },
-  { href: "/admin/work",        label: "Work Tracker", icon: CheckSquare,  moduleKey: "module_hr" },
-  { href: "/admin/hr/analytics", label: "HR Analytics", icon: BarChart3,   moduleKey: "module_hr" },
-  { href: "/admin/admin/inventory", label: "Office Admin", icon: Briefcase, moduleKey: "module_admin" },
+  { href: "/admin/departments",    label: "Departments",    icon: Building2,  moduleKey: "module_hr" },
+  { href: "/admin/work",          label: "Work Tracker",   icon: CheckSquare, moduleKey: "module_hr" },
+  { href: "/admin/hr/analytics",  label: "HR Analytics",   icon: BarChart3,  moduleKey: "module_hr" },
+  { href: "/admin/finance",       label: "Finance",        icon: Landmark,   moduleKey: "module_accounting" },
+  { href: "/admin/accounting",    label: "Accounting",     icon: DollarSign, moduleKey: "module_accounting" },
+  { href: "/admin/admin/inventory", label: "Office Admin", icon: Briefcase,  moduleKey: "module_admin" },
 ];
 
 const SETTINGS_NAV: ReadonlyArray<NavItem> = [

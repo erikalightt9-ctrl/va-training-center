@@ -40,6 +40,7 @@ export const ROLE_CONFIG: Record<
  */
 const NAV_ACCESS: Record<string, UserRole[]> = {
   "/admin":                    ["ADMIN", "EXECUTIVE", "MANAGER"],
+  "/admin/executive":          ["ADMIN", "EXECUTIVE"],
   "/admin/operations":         ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/action-center":      ["ADMIN", "MANAGER"],
   "/admin/training-center":    ["ADMIN", "EXECUTIVE", "MANAGER"],
@@ -52,6 +53,8 @@ const NAV_ACCESS: Record<string, UserRole[]> = {
   "/admin/departments":        ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/work":               ["ADMIN", "MANAGER"],
   "/admin/admin/inventory":    ["ADMIN", "MANAGER"],
+  "/admin/finance":            ["ADMIN", "EXECUTIVE", "MANAGER"],
+  "/admin/accounting":         ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/users-roles":        ["ADMIN"],
   "/admin/settings":           ["ADMIN"],
 };
@@ -78,6 +81,6 @@ export function canAccessNav(userRole: UserRole | null | undefined, href: string
 
 /** Returns the default landing page for a role after login. */
 export function defaultLanding(userRole: UserRole | null | undefined): string {
-  if (userRole === "EXECUTIVE") return "/admin/operations";
+  if (userRole === "EXECUTIVE") return "/admin/executive";
   return "/admin";
 }
