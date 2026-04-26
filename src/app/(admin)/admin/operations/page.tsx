@@ -84,10 +84,10 @@ export default function OperationsDashboardPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <Activity className="h-5 w-5 text-indigo-600" />
-            Operations Dashboard
+            Operations
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Real-time company pulse · Last updated {new Date(data.asOf).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+            Daily execution, task management, and workflows — updated {new Date(data.asOf).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
           </p>
         </div>
         <button

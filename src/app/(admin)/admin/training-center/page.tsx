@@ -47,6 +47,14 @@ export default function TrainingCenterOverviewPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-extrabold text-slate-900">Training & Learning</h1>
+        <p className="text-slate-500 text-sm mt-1">
+          Courses, learners, and certifications — workforce development connected to the operating system
+        </p>
+      </div>
+
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard

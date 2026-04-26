@@ -35,9 +35,9 @@ export default function HrDashboard() {
     <div className="p-6 space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">HR & Payroll</h1>
+          <h1 className="text-xl font-bold text-slate-900">HR & People</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Manage employees, payroll, attendance, and leave
+            People management and workforce data — connected to the operating system
           </p>
         </div>
         <Link
