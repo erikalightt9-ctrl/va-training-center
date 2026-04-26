@@ -111,28 +111,37 @@ export type AccountingGuardResult =
 /** Resolve tenantId the same way requireAdmin does, then check role */
 function resolveAccountingTenant(
   token: JWT | null,
-  allowedRoles: Set<string>
+  _allowedRoles: Set<string>
 ): AccountingGuardResult {
   if (!token?.id) return { ok: false, response: unauthorized() };
   const role = (token.role as string) ?? "";
 
-  // Super admin path — same as requireAdmin
+  // Super admin
   if (token.isSuperAdmin && role === "admin") {
     const defaultTenantId = process.env.DEFAULT_TENANT_ID;
     if (!defaultTenantId) return { ok: false, response: unauthorized() };
     return { ok: true, tenantId: defaultTenantId, userId: token.id as string, userRole: role };
   }
 
-  // Tenant admin / accountant / auditor path
-  if (!allowedRoles.has(role)) return { ok: false, response: unauthorized() };
+  // Tenant admin (isTenantAdmin flag — matches requireAdmin behaviour)
+  if (token.isTenantAdmin && token.tenantId) {
+    return { ok: true, tenantId: token.tenantId as string, userId: token.id as string, userRole: role };
+  }
 
-  // tenantId may live in token.tenantId or token.organizationId depending on session strategy
+  // Corporate team member with explicit userRole (ADMIN / EXECUTIVE / MANAGER)
+  if (token.userRole && token.tenantId) {
+    return { ok: true, tenantId: token.tenantId as string, userId: token.id as string, userRole: token.userRole as string };
+  }
+
+  // Legacy: accountant / auditor roles stored in token.role
   const tenantId =
     (token.tenantId as string | undefined) ??
     (token.organizationId as string | undefined);
+  if (tenantId && _allowedRoles.has(role)) {
+    return { ok: true, tenantId, userId: token.id as string, userRole: role };
+  }
 
-  if (!tenantId) return { ok: false, response: unauthorized() };
-  return { ok: true, tenantId, userId: token.id as string, userRole: role };
+  return { ok: false, response: unauthorized() };
 }
 
 const ACCOUNTING_WRITE_ROLES = new Set(["admin", "tenant_admin", "accountant"]);
