@@ -41,6 +41,8 @@ export const ROLE_CONFIG: Record<
 const NAV_ACCESS: Record<string, UserRole[]> = {
   "/admin":                    ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/executive":          ["ADMIN", "EXECUTIVE"],
+  "/admin/admin":              ["ADMIN", "MANAGER"],
+  "/admin/hr":                 ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/operations":         ["ADMIN", "EXECUTIVE", "MANAGER"],
   "/admin/action-center":      ["ADMIN", "MANAGER"],
   "/admin/training-center":    ["ADMIN", "EXECUTIVE", "MANAGER"],

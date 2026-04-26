@@ -5,21 +5,21 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
   GraduationCap,
-  CheckSquare,
   Settings,
   Menu,
   X,
   LogOut,
   Shield,
   ExternalLink,
-  DollarSign,
   Briefcase,
   UserCheck,
   Activity,
-  Inbox,
-  BarChart3,
   MonitorDot,
   Landmark,
+  Users,
+  TrendingUp,
+  Monitor,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -43,6 +43,7 @@ interface NavItem {
   readonly moduleKey?: ModuleKey;
   readonly industries?: string[];
   readonly adminOnly?: boolean;
+  readonly comingSoon?: boolean;
 }
 
 interface NavSection {
@@ -58,33 +59,15 @@ const NAV_SECTIONS: ReadonlyArray<NavSection> = [
     ],
   },
   {
-    label: "Operations",
+    label: "Departments",
     items: [
-      { href: "/admin/operations",      label: "Operations",    icon: Activity    },
-      { href: "/admin/action-center",   label: "Action Center", icon: Inbox       },
-      { href: "/admin/work",            label: "Task Manager",  icon: CheckSquare, moduleKey: "module_hr"    },
-      { href: "/admin/admin/inventory", label: "Office Admin",  icon: Briefcase,   moduleKey: "module_admin" },
-    ],
-  },
-  {
-    label: "People & HR",
-    items: [
-      { href: "/admin/hr/analytics", label: "HR Analytics", icon: BarChart3, moduleKey: "module_hr" },
-    ],
-  },
-  {
-    label: "Learning",
-    items: [
-      { href: "/admin/training-center", label: "Training Center", icon: GraduationCap, moduleKey: "module_lms" },
-      { href: "/admin/enrollees",       label: "Enrollee Tasks",  icon: CheckSquare,   moduleKey: "module_lms" },
-      { href: "/admin/revenue",         label: "LMS Revenue",     icon: DollarSign,    moduleKey: "module_lms" },
-    ],
-  },
-  {
-    label: "Finance",
-    items: [
-      { href: "/admin/finance",    label: "Finance",    icon: Landmark,   moduleKey: "module_accounting" },
-      { href: "/admin/accounting", label: "Accounting", icon: DollarSign, moduleKey: "module_accounting" },
+      { href: "/admin/admin",           label: "Office Admin",      icon: Briefcase,     moduleKey: "module_admin"        },
+      { href: "/admin/hr",              label: "HR & People",        icon: Users,         moduleKey: "module_hr"           },
+      { href: "/admin/finance",         label: "Finance & Payroll",  icon: Landmark,      moduleKey: "module_accounting"   },
+      { href: "/admin/operations",      label: "Operations",         icon: Activity                                        },
+      { href: "/admin/training-center", label: "Training",           icon: GraduationCap, moduleKey: "module_lms"          },
+      { href: "/admin/sales",           label: "Sales & Marketing",  icon: TrendingUp,    comingSoon: true                 },
+      { href: "/admin/it",              label: "IT & Systems",       icon: Monitor,       comingSoon: true                 },
     ],
   },
 ];
@@ -128,6 +111,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   function filterItem(item: NavItem): boolean {
+    if (item.comingSoon) return true;
     if (!canAccessNav(userRole, item.href)) return false;
     if (item.moduleKey) {
       if (isTenantUser && userPermissions !== null) {
@@ -158,6 +142,21 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const roleCfg = userRole ? ROLE_CONFIG[userRole] : null;
 
   const navLink = (item: NavItem) => {
+    if (item.comingSoon) {
+      return (
+        <div
+          key={item.href}
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-blue-100/30 cursor-not-allowed select-none"
+        >
+          <item.icon className="h-4 w-4 shrink-0" />
+          {item.label}
+          <span className="ml-auto inline-flex items-center gap-0.5 text-[9px] font-bold bg-white/10 px-1.5 py-0.5 rounded-full">
+            <Lock className="h-2 w-2" />
+            Soon
+          </span>
+        </div>
+      );
+    }
     const active = isActive(item);
     return (
       <Link
