@@ -149,9 +149,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     items: section.items.filter(filterItem),
   })).filter((section) => section.items.length > 0);
 
-  const visiblePlatform = PLATFORM_ITEMS.filter((item) =>
-    canAccessNav(userRole, item.href) && (isTenantAdmin || isSuperAdmin)
-  );
+  const visiblePlatform = PLATFORM_ITEMS.filter((item) => {
+    if (!canAccessNav(userRole, item.href)) return false;
+    // Settings stays admin/owner-only; Users & Roles is open to all roles
+    if (item.adminOnly && item.href === "/admin/settings") return isTenantAdmin || isSuperAdmin;
+    return isTenantAdmin || isSuperAdmin || Boolean(userRole);
+  });
 
   function isActive({ href, exact }: NavItem) {
     if (exact) return pathname === href;
