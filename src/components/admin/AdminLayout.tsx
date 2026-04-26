@@ -20,6 +20,7 @@ import {
   TrendingUp,
   Monitor,
   Lock,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -44,6 +45,7 @@ interface NavItem {
   readonly industries?: string[];
   readonly adminOnly?: boolean;
   readonly comingSoon?: boolean;
+  readonly children?: ReadonlyArray<NavItem>;
 }
 
 interface NavSection {
@@ -61,13 +63,18 @@ const NAV_SECTIONS: ReadonlyArray<NavSection> = [
   {
     label: "Departments",
     items: [
-      { href: "/admin/admin",           label: "Office Admin",      icon: Briefcase,     moduleKey: "module_admin"        },
-      { href: "/admin/hr",              label: "HR & People",        icon: Users,         moduleKey: "module_hr"           },
-      { href: "/admin/finance",         label: "Finance & Payroll",  icon: Landmark,      moduleKey: "module_accounting"   },
-      { href: "/admin/operations",      label: "Operations",         icon: Activity                                        },
-      { href: "/admin/training-center", label: "Training",           icon: GraduationCap, moduleKey: "module_lms"          },
-      { href: "/admin/sales",           label: "Sales & Marketing",  icon: TrendingUp,    comingSoon: true                 },
-      { href: "/admin/it",              label: "IT & Systems",       icon: Monitor,       comingSoon: true                 },
+      { href: "/admin/admin",       label: "Office Admin",      icon: Briefcase,   moduleKey: "module_admin"      },
+      { href: "/admin/accounting",  label: "Accounting",         icon: DollarSign,  moduleKey: "module_accounting" },
+      {
+        href: "/admin/hr",          label: "HR & People",        icon: Users,       moduleKey: "module_hr",
+        children: [
+          { href: "/admin/operations",      label: "Operations", icon: Activity                             },
+          { href: "/admin/training-center", label: "Training",   icon: GraduationCap, moduleKey: "module_lms" },
+        ],
+      },
+      { href: "/admin/finance",     label: "Finance & Payroll",  icon: Landmark,    moduleKey: "module_accounting" },
+      { href: "/admin/sales",       label: "Sales & Marketing",  icon: TrendingUp,  comingSoon: true               },
+      { href: "/admin/it",          label: "IT & Systems",       icon: Monitor,     comingSoon: true               },
     ],
   },
 ];
@@ -141,7 +148,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const roleCfg = userRole ? ROLE_CONFIG[userRole] : null;
 
-  const navLink = (item: NavItem) => {
+  const navLink = (item: NavItem): React.ReactNode => {
     if (item.comingSoon) {
       return (
         <div
@@ -157,8 +164,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </div>
       );
     }
+
     const active = isActive(item);
-    return (
+    const link = (
       <Link
         key={item.href}
         href={item.href}
@@ -173,6 +181,36 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         <item.icon className="h-4 w-4 shrink-0" />
         {item.label}
       </Link>
+    );
+
+    const visibleChildren = item.children?.filter(filterItem) ?? [];
+    if (!visibleChildren.length) return link;
+
+    return (
+      <div key={item.href}>
+        {link}
+        <div className="ml-[1.1rem] mt-0.5 pl-3 border-l border-white/10 space-y-0.5">
+          {visibleChildren.map((child) => {
+            const childActive = isActive(child);
+            return (
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors",
+                  childActive
+                    ? "bg-white/20 text-white"
+                    : "text-blue-100/60 hover:bg-white/10 hover:text-white",
+                )}
+              >
+                <child.icon className="h-3.5 w-3.5 shrink-0" />
+                {child.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     );
   };
 
