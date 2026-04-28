@@ -159,7 +159,7 @@ export const MODULES: Record<ModuleKey, ModuleDefinition> = {
     iconName: "Briefcase",
     color: "teal",
     badge: "bg-teal-100 text-teal-700 border-teal-200",
-    defaultEnabled: false,
+    defaultEnabled: true,
     navItems: [{ href: "/admin/admin", label: "Admin" }],
   },
 };
