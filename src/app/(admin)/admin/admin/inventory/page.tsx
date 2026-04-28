@@ -5,7 +5,8 @@ import {
   Package, Wrench, Pill, Archive, Fuel, Plus, Search,
   RefreshCw, ArrowDownToLine, ArrowUpFromLine, SlidersHorizontal,
   Trash2, Check, X, Loader2, AlertTriangle, TrendingDown,
-  Wifi, WifiOff,
+  Wifi, WifiOff, Inbox, CheckCircle2, XCircle, Clock, ChevronDown,
+  ShoppingBag,
 } from "lucide-react";
 import { ExcelGrid } from "@/components/admin/office-admin/ExcelGrid";
 import type { ColDef } from "@/components/admin/office-admin/useGridEngine";
@@ -265,9 +266,287 @@ function LogsPanel({ logs }: { logs: { msg: string; time: string }[] }) {
   );
 }
 
+// ─── Supply Requests Queue (admin view) ─────────────────────────────────────
+
+interface SupplyRequest {
+  id:              string;
+  itemName:        string;
+  quantity:        number;
+  unit:            string;
+  purpose:         string;
+  status:          string;
+  requesterName:   string;
+  requesterEmail:  string;
+  employeeNumber:  string;
+  department:      string;
+  createdAt:       string;
+  approvedAt?:     string;
+  completedAt?:    string;
+  rejectedAt?:     string;
+  rejectionReason?: string;
+}
+
+const REQ_STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
+  PENDING:   { label: "Pending",   bg: "bg-amber-50",  text: "text-amber-700",  icon: <Clock        className="h-3.5 w-3.5" /> },
+  APPROVED:  { label: "Approved",  bg: "bg-blue-50",   text: "text-blue-700",   icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
+  COMPLETED: { label: "Fulfilled", bg: "bg-green-50",  text: "text-green-700",  icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
+  REJECTED:  { label: "Rejected",  bg: "bg-rose-50",   text: "text-rose-700",   icon: <XCircle      className="h-3.5 w-3.5" /> },
+};
+
+function timeAgoReq(iso: string) {
+  const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (m < 1)  return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+function SupplyRequestsQueue() {
+  const [requests, setRequests]       = useState<SupplyRequest[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [statusFilter, setStatusFilter] = useState("PENDING");
+  const [expanded, setExpanded]       = useState<string | null>(null);
+  const [acting, setActing]           = useState<string | null>(null);
+  const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
+  const [rejectNote, setRejectNote]   = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res  = await fetch("/api/admin/office-admin/supply-requests");
+      const json = await res.json() as { success: boolean; data: SupplyRequest[] };
+      if (json.success) setRequests(json.data);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { void load(); }, [load]);
+
+  async function act(id: string, action: "APPROVE" | "REJECT" | "COMPLETE", note?: string) {
+    setActing(id);
+    try {
+      const res  = await fetch("/api/admin/office-admin/supply-requests", {
+        method:  "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ id, action, note: note ?? null }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      void load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Action failed");
+    } finally {
+      setActing(null);
+      setRejectModal(null);
+      setRejectNote("");
+    }
+  }
+
+  const displayed = requests.filter((r) => !statusFilter || r.status === statusFilter);
+  const counts = {
+    PENDING:   requests.filter((r) => r.status === "PENDING").length,
+    APPROVED:  requests.filter((r) => r.status === "APPROVED").length,
+    COMPLETED: requests.filter((r) => r.status === "COMPLETED").length,
+    REJECTED:  requests.filter((r) => r.status === "REJECTED").length,
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* KPI strip */}
+      <div className="grid grid-cols-4 gap-3">
+        {(["PENDING", "APPROVED", "COMPLETED", "REJECTED"] as const).map((s) => {
+          const sc = REQ_STATUS_CONFIG[s];
+          return (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(statusFilter === s ? "" : s)}
+              className={`rounded-xl p-3 text-center border transition-all ${
+                statusFilter === s
+                  ? `${sc.bg} border-current ${sc.text} shadow-sm`
+                  : "bg-white border-slate-200 hover:border-slate-300"
+              }`}
+            >
+              <div className={`text-2xl font-bold ${statusFilter === s ? sc.text : "text-slate-800"}`}>{counts[s]}</div>
+              <div className={`text-xs mt-0.5 ${statusFilter === s ? sc.text : "text-slate-500"}`}>{sc.label}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Filter chips */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setStatusFilter("")}
+          className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
+            !statusFilter ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"
+          }`}
+        >
+          All ({requests.length})
+        </button>
+        <button
+          onClick={load}
+          className="ml-auto p-1.5 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {/* Request list */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+          </div>
+        ) : displayed.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-14 gap-2 text-slate-400">
+            <Inbox className="h-10 w-10 opacity-30" />
+            <p className="text-sm">No {statusFilter.toLowerCase() || ""} requests</p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {displayed.map((req) => {
+              const sc     = REQ_STATUS_CONFIG[req.status] ?? REQ_STATUS_CONFIG.PENDING;
+              const isOpen = expanded === req.id;
+              const busy   = acting === req.id;
+
+              return (
+                <li key={req.id}>
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : req.id)}
+                    className="w-full flex items-center gap-3 px-5 py-4 hover:bg-slate-50 transition-colors text-left"
+                  >
+                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <ShoppingBag className="h-4 w-4 text-indigo-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-slate-800 truncate">
+                          {req.itemName}
+                        </span>
+                        <span className="text-xs text-slate-400 shrink-0">
+                          ×{req.quantity} {req.unit}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">
+                        {req.requesterName} · {req.department || "No dept"} · {req.employeeNumber}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${sc.bg} ${sc.text}`}>
+                        {sc.icon} {sc.label}
+                      </span>
+                      <span className="text-xs text-slate-400">{timeAgoReq(req.createdAt)}</span>
+                      <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-5 bg-slate-50 border-t border-slate-100 space-y-4">
+                      {/* Details */}
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-slate-600 pt-3">
+                        <div><span className="font-medium">Item:</span> {req.itemName}</div>
+                        <div><span className="font-medium">Qty:</span> {req.quantity} {req.unit}</div>
+                        <div><span className="font-medium">Requester:</span> {req.requesterName}</div>
+                        <div><span className="font-medium">Dept:</span> {req.department || "—"}</div>
+                        <div className="col-span-2"><span className="font-medium">Purpose:</span> {req.purpose}</div>
+                        <div><span className="font-medium">Submitted:</span> {new Date(req.createdAt).toLocaleString("en-PH")}</div>
+                        {req.rejectionReason && (
+                          <div className="col-span-2 flex items-start gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg px-3 py-2 mt-1">
+                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                            <span>{req.rejectionReason}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      {req.status === "PENDING" && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => act(req.id, "APPROVE")}
+                            disabled={busy}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+                          >
+                            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => { setRejectModal({ id: req.id }); setExpanded(null); }}
+                            disabled={busy}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+                          >
+                            <XCircle className="h-3.5 w-3.5" />
+                            Reject
+                          </button>
+                        </div>
+                      )}
+
+                      {req.status === "APPROVED" && (
+                        <button
+                          onClick={() => act(req.id, "COMPLETE")}
+                          disabled={busy}
+                          className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+                        >
+                          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+                          Mark as Issued
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      {/* Reject modal */}
+      {rejectModal && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setRejectModal(null)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+              <h3 className="text-base font-semibold text-slate-800">Reject Request</h3>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Reason (optional)</label>
+                <textarea
+                  autoFocus
+                  rows={3}
+                  value={rejectNote}
+                  onChange={(e) => setRejectNote(e.target.value)}
+                  placeholder="Explain why the request is being rejected…"
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-rose-400"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setRejectModal(null); setRejectNote(""); }}
+                  className="flex-1 border border-slate-200 text-slate-600 text-sm py-2 rounded-lg hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => act(rejectModal.id, "REJECT", rejectNote)}
+                  disabled={!!acting}
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg flex items-center justify-center gap-2"
+                >
+                  {acting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  Confirm Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function InventoryPage() {
+  const [viewMode, setViewMode]         = useState<"inventory" | "requests">("inventory");
   const [activeTab, setActiveTab]       = useState<SubcardKey>("officeSupplies");
   const [rows, setRows]                 = useState<Row[]>([]);
   const [kpis, setKpis]                 = useState<Kpi>({ total: 0, lowStock: 0, outOfStock: 0 });
@@ -416,11 +695,11 @@ export default function InventoryPage() {
       {/* Tabs */}
       <div className="flex gap-0.5 bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto">
         {TABS.map((t) => {
-          const active = t.key === activeTab;
+          const active = viewMode === "inventory" && t.key === activeTab;
           return (
             <button
               key={t.key}
-              onClick={() => { setActiveTab(t.key); setSearch(""); setDeleteId(null); }}
+              onClick={() => { setViewMode("inventory"); setActiveTab(t.key); setSearch(""); setDeleteId(null); }}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                 active
                   ? `bg-slate-800 text-white shadow-sm`
@@ -432,10 +711,25 @@ export default function InventoryPage() {
             </button>
           );
         })}
+        {/* Requests tab */}
+        <button
+          onClick={() => setViewMode("requests")}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+            viewMode === "requests"
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50"
+          }`}
+        >
+          <ShoppingBag className="h-3.5 w-3.5 shrink-0" />
+          Requests
+        </button>
       </div>
 
-      {/* KPI bar */}
-      {!isFuel && (
+      {/* Supply Requests view */}
+      {viewMode === "requests" && <SupplyRequestsQueue />}
+
+      {/* Inventory grid view */}
+      {viewMode === "inventory" && !isFuel && (
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: "Total Items",  value: kpis.total,      icon: <tab.icon className={`h-4 w-4 ${tab.accent}`} />, cls: "" },
@@ -450,109 +744,113 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* Action bar */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="relative flex-1 min-w-40 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-          <input
-            value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search items…"
-            className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        {!isFuel && (
-          <>
-            <button
-              onClick={() => {
-                if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
-              }}
-              className={`flex items-center gap-1.5 px-3 py-2 ${tab.bg} text-white text-xs rounded-lg hover:opacity-90`}
-            >
-              <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
-            </button>
-            <button
-              onClick={() => {
-                if (rows.length) setWorkflow({ open: true, type: "STOCK_OUT", row: rows[0] });
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700"
-            >
-              <ArrowUpFromLine className="h-3.5 w-3.5" /> Issue Item
-            </button>
-          </>
-        )}
-        <button onClick={load} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white">
-          <RefreshCw className="h-3.5 w-3.5" />
-        </button>
-      </div>
-
-      {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</div>}
-
-      {/* Hint */}
-      {!isFuel && !loading && rows.length > 0 && (
-        <p className="text-[10px] text-slate-400">
-          Double-click or press F2 on a <span className="text-blue-500">✎ editable</span> cell to edit.
-          Arrow keys navigate. Shift+click for range. Ctrl+C / Ctrl+V for copy/paste. Ctrl+Z to undo.
-        </p>
-      )}
-
-      {/* Excel Grid */}
-      <ExcelGrid
-        data={rows}
-        columns={COLUMNS[activeTab]}
-        loading={loading}
-        emptyMessage={`No ${tab.label.toLowerCase()} found`}
-        onCellCommit={isFuel ? undefined : handleCellCommit}
-        renderActions={(row, _rowIndex) => (
-          <div className="flex items-center gap-1">
+      {viewMode === "inventory" && (
+        <>
+          {/* Action bar */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative flex-1 min-w-40 max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <input
+                value={search} onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search items…"
+                className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
             {!isFuel && (
               <>
                 <button
-                  onClick={() => setWorkflow({ open: true, type: "STOCK_IN",  row })}
-                  title="Add Stock"
-                  className="p-1.5 rounded text-emerald-600 hover:bg-emerald-50"
+                  onClick={() => {
+                    if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-2 ${tab.bg} text-white text-xs rounded-lg hover:opacity-90`}
                 >
-                  <ArrowDownToLine className="h-3.5 w-3.5" />
+                  <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
                 </button>
                 <button
-                  onClick={() => setWorkflow({ open: true, type: "STOCK_OUT", row })}
-                  title="Issue"
-                  className="p-1.5 rounded text-amber-600 hover:bg-amber-50"
+                  onClick={() => {
+                    if (rows.length) setWorkflow({ open: true, type: "STOCK_OUT", row: rows[0] });
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700"
                 >
-                  <ArrowUpFromLine className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => setWorkflow({ open: true, type: "STOCK_ADJUST", row })}
-                  title="Adjust"
-                  className="p-1.5 rounded text-slate-500 hover:bg-slate-100"
-                >
-                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <ArrowUpFromLine className="h-3.5 w-3.5" /> Issue Item
                 </button>
               </>
             )}
-            {deleteId === row.id ? (
-              <>
-                <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
-                <button onClick={() => setDeleteId(null)}    className="p-1.5 rounded text-slate-400 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
-              </>
-            ) : (
-              <button onClick={() => setDeleteId(row.id)} title="Delete" className="p-1.5 rounded text-red-400 hover:bg-red-50">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            )}
+            <button onClick={load} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white">
+              <RefreshCw className="h-3.5 w-3.5" />
+            </button>
           </div>
-        )}
-      />
 
-      {/* Workflow Drawer */}
-      <WorkflowDrawer
-        state={workflow}
-        subcard={activeTab}
-        onClose={() => setWorkflow((s) => ({ ...s, open: false }))}
-        onDone={handleWorkflowDone}
-      />
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</div>}
 
-      {/* Session Activity Log */}
-      <LogsPanel logs={sessionLogs} />
+          {/* Hint */}
+          {!isFuel && !loading && rows.length > 0 && (
+            <p className="text-[10px] text-slate-400">
+              Double-click or press F2 on a <span className="text-blue-500">✎ editable</span> cell to edit.
+              Arrow keys navigate. Shift+click for range. Ctrl+C / Ctrl+V for copy/paste. Ctrl+Z to undo.
+            </p>
+          )}
+
+          {/* Excel Grid */}
+          <ExcelGrid
+            data={rows}
+            columns={COLUMNS[activeTab]}
+            loading={loading}
+            emptyMessage={`No ${tab.label.toLowerCase()} found`}
+            onCellCommit={isFuel ? undefined : handleCellCommit}
+            renderActions={(row, _rowIndex) => (
+              <div className="flex items-center gap-1">
+                {!isFuel && (
+                  <>
+                    <button
+                      onClick={() => setWorkflow({ open: true, type: "STOCK_IN",  row })}
+                      title="Add Stock"
+                      className="p-1.5 rounded text-emerald-600 hover:bg-emerald-50"
+                    >
+                      <ArrowDownToLine className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setWorkflow({ open: true, type: "STOCK_OUT", row })}
+                      title="Issue"
+                      className="p-1.5 rounded text-amber-600 hover:bg-amber-50"
+                    >
+                      <ArrowUpFromLine className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setWorkflow({ open: true, type: "STOCK_ADJUST", row })}
+                      title="Adjust"
+                      className="p-1.5 rounded text-slate-500 hover:bg-slate-100"
+                    >
+                      <SlidersHorizontal className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                )}
+                {deleteId === row.id ? (
+                  <>
+                    <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setDeleteId(null)}    className="p-1.5 rounded text-slate-400 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
+                  </>
+                ) : (
+                  <button onClick={() => setDeleteId(row.id)} title="Delete" className="p-1.5 rounded text-red-400 hover:bg-red-50">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+          />
+
+          {/* Workflow Drawer */}
+          <WorkflowDrawer
+            state={workflow}
+            subcard={activeTab}
+            onClose={() => setWorkflow((s) => ({ ...s, open: false }))}
+            onDone={handleWorkflowDone}
+          />
+
+          {/* Session Activity Log */}
+          <LogsPanel logs={sessionLogs} />
+        </>
+      )}
     </div>
   );
 }
