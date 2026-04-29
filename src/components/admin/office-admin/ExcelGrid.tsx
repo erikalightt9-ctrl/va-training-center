@@ -64,7 +64,11 @@ function renderCell(value: unknown, col: ColDef, row: Record<string, unknown>) {
   if (col.type === "number") {
     return <span className="tabular-nums">{String(value ?? 0)}</span>;
   }
-  return <span>{String(value ?? "—")}</span>;
+  return <span>{
+    value !== null && value !== undefined && typeof value === "object" && !Array.isArray(value)
+      ? String((value as Record<string, unknown>).name ?? (value as Record<string, unknown>).label ?? "—")
+      : String(value ?? "—")
+  }</span>;
 }
 
 // ─── Props ──────────────────────────────────────────────────────────────────

@@ -3,12 +3,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Package, Wrench, Pill, Archive, Fuel, Search,
-  RefreshCw, ArrowDownToLine,
+  RefreshCw, ArrowDownToLine, TableProperties,
   Trash2, Check, X, Loader2, AlertTriangle, TrendingDown,
   Wifi, WifiOff, Inbox, CheckCircle2, XCircle, Clock, ChevronDown,
   ShoppingBag,
 } from "lucide-react";
 import { ExcelGrid } from "@/components/admin/office-admin/ExcelGrid";
+import { BulkEntryGrid } from "@/components/admin/office-admin/BulkEntryGrid";
 import type { ColDef } from "@/components/admin/office-admin/useGridEngine";
 
 // ─── Column configs per subcard ─────────────────────────────────────────────
@@ -543,6 +544,7 @@ function SupplyRequestsQueue() {
 
 export default function InventoryPage() {
   const [viewMode, setViewMode]         = useState<"inventory" | "requests">("inventory");
+  const [bulkMode, setBulkMode]         = useState(false);
   const [activeTab, setActiveTab]       = useState<SubcardKey>("officeSupplies");
   const [rows, setRows]                 = useState<Row[]>([]);
   const [kpis, setKpis]                 = useState<Kpi>({ total: 0, lowStock: 0, outOfStock: 0 });
@@ -753,14 +755,29 @@ export default function InventoryPage() {
               />
             </div>
             {!isFuel && (
-              <button
-                onClick={() => {
-                  if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
-                }}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700"
-              >
-                <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700"
+                >
+                  <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
+                </button>
+                {activeTab === "officeSupplies" && (
+                  <button
+                    onClick={() => setBulkMode((v) => !v)}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs rounded-lg border transition-colors ${
+                      bulkMode
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-blue-600 border-blue-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    <TableProperties className="h-3.5 w-3.5" />
+                    {bulkMode ? "Hide Bulk Entry" : "Bulk Add"}
+                  </button>
+                )}
+              </>
             )}
             <button onClick={load} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white">
               <RefreshCw className="h-3.5 w-3.5" />
@@ -770,11 +787,19 @@ export default function InventoryPage() {
           {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</div>}
 
           {/* Hint */}
-          {!isFuel && !loading && rows.length > 0 && (
+          {!isFuel && !loading && rows.length > 0 && !bulkMode && (
             <p className="text-[10px] text-slate-400">
               Double-click or press F2 on a <span className="text-blue-500">✎ editable</span> cell to edit.
               Arrow keys navigate. Shift+click for range. Ctrl+C / Ctrl+V for copy/paste. Ctrl+Z to undo.
             </p>
+          )}
+
+          {/* Bulk Entry Grid */}
+          {bulkMode && activeTab === "officeSupplies" && (
+            <BulkEntryGrid
+              onSaved={() => { load(); }}
+              onCancel={() => setBulkMode(false)}
+            />
           )}
 
           {/* Excel Grid */}
