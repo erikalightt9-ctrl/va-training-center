@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { createId } from "@paralleldrive/cuid2";
 import { requireAdmin } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
@@ -67,6 +68,9 @@ export async function POST(request: NextRequest) {
     const asset = await prisma.adminAsset.create({
       data: { id: createId(), organizationId: guard.tenantId, ...rest, purchaseDate: purchaseDate ? new Date(purchaseDate) : null, warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null },
     });
+    await prisma.inventoryAuditLog.create({
+      data: { id: createId(), organizationId: guard.tenantId, actorId: token?.id as string ?? null, action: "item_created", targetType: "asset", targetId: asset.id, payload: { name: asset.name, performedBy: (token?.name as string) ?? "admin", timestamp: new Date().toISOString() } as Prisma.InputJsonValue },
+    }).catch(() => {});
     return NextResponse.json({ success: true, data: asset, error: null }, { status: 201 });
   } catch (err) {
     return NextResponse.json({ success: false, data: null, error: err instanceof Error ? err.message : "Internal server error" }, { status: 500 });
@@ -93,7 +97,33 @@ export async function PATCH(request: NextRequest) {
       where: { id },
       data: { ...rest, purchaseDate: purchaseDate ? new Date(purchaseDate) : null, warrantyExpiry: warrantyExpiry ? new Date(warrantyExpiry) : null, updatedAt: new Date() },
     });
+    await prisma.inventoryAuditLog.create({
+      data: { id: createId(), organizationId: guard.tenantId, actorId: token?.id as string ?? null, action: "item_updated", targetType: "asset", targetId: id, payload: { changes: rest, performedBy: (token?.name as string) ?? "admin", timestamp: new Date().toISOString() } as Prisma.InputJsonValue },
+    }).catch(() => {});
     return NextResponse.json({ success: true, data: updated, error: null });
+  } catch (err) {
+    return NextResponse.json({ success: false, data: null, error: err instanceof Error ? err.message : "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
+
+    const id = new URL(request.url).searchParams.get("id");
+    if (!id) return NextResponse.json({ success: false, data: null, error: "Missing id" }, { status: 400 });
+
+    const existing = await prisma.adminAsset.findFirst({ where: { id, organizationId: guard.tenantId } });
+    if (!existing) return NextResponse.json({ success: false, data: null, error: "Not found" }, { status: 404 });
+
+    await prisma.adminAsset.delete({ where: { id } });
+    await prisma.inventoryAuditLog.create({
+      data: { id: createId(), organizationId: guard.tenantId, actorId: token?.id as string ?? null, action: "item_deleted", targetType: "asset", targetId: id, payload: { name: existing.name, performedBy: (token?.name as string) ?? "admin", timestamp: new Date().toISOString() } as Prisma.InputJsonValue },
+    }).catch(() => {});
+
+    return NextResponse.json({ success: true, data: null, error: null });
   } catch (err) {
     return NextResponse.json({ success: false, data: null, error: err instanceof Error ? err.message : "Internal server error" }, { status: 500 });
   }
