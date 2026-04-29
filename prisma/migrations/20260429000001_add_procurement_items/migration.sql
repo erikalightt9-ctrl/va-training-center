@@ -1,8 +1,12 @@
--- CreateEnum
-CREATE TYPE "AdminProcurementStatus" AS ENUM ('PENDING', 'ORDERED', 'DELIVERED', 'CANCELLED');
+-- CreateEnum (idempotent)
+DO $$ BEGIN
+  CREATE TYPE "AdminProcurementStatus" AS ENUM ('PENDING', 'ORDERED', 'DELIVERED', 'CANCELLED');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
--- CreateTable
-CREATE TABLE "admin_procurement_items" (
+-- CreateTable (idempotent)
+CREATE TABLE IF NOT EXISTS "admin_procurement_items" (
     "id" TEXT NOT NULL,
     "organizationId" TEXT NOT NULL,
     "itemName" VARCHAR(200) NOT NULL,
@@ -22,8 +26,15 @@ CREATE TABLE "admin_procurement_items" (
     CONSTRAINT "admin_procurement_items_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE INDEX "admin_procurement_items_organizationId_status_idx" ON "admin_procurement_items"("organizationId", "status");
+-- CreateIndex (idempotent)
+CREATE INDEX IF NOT EXISTS "admin_procurement_items_organizationId_status_idx" ON "admin_procurement_items"("organizationId", "status");
 
--- AddForeignKey
-ALTER TABLE "admin_procurement_items" ADD CONSTRAINT "admin_procurement_items_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (idempotent)
+DO $$ BEGIN
+  ALTER TABLE "admin_procurement_items"
+    ADD CONSTRAINT "admin_procurement_items_organizationId_fkey"
+    FOREIGN KEY ("organizationId") REFERENCES "organizations"("id")
+    ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
