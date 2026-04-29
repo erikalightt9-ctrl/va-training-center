@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Loader2, Archive, X, AlertTriangle } from "lucide-react";
+import { Plus, Loader2, Archive, X, AlertTriangle, Trash2, Clock, RefreshCw } from "lucide-react";
+import { GenericBulkGrid, BulkColDef } from "@/components/admin/office-admin/GenericBulkGrid";
+import { HistoryPanel } from "@/components/admin/office-admin/HistoryPanel";
 
-const FIELD = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500";
-const LABEL = "block text-xs text-slate-500 mb-1";
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type Asset = {
   id: string; name: string; assetTag: string | null; assetType: string; status: string;
@@ -12,46 +13,84 @@ type Asset = {
   warrantyExpiry: string | null; serialNumber: string | null; notes: string | null;
 };
 
-const TYPE_OPTIONS = ["FURNITURE","APPLIANCE","MACHINE","EQUIPMENT","VEHICLE","OTHER"];
-const STATUS_OPTIONS = ["ACTIVE","FOR_REPAIR","IN_REPAIR","FOR_DISPOSE","DISPOSED","UNDER_WARRANTY"];
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const TYPE_OPTIONS    = ["FURNITURE", "APPLIANCE", "MACHINE", "EQUIPMENT", "VEHICLE", "OTHER"];
+const STATUS_OPTIONS  = ["ACTIVE", "FOR_REPAIR", "IN_REPAIR", "FOR_DISPOSE", "DISPOSED", "UNDER_WARRANTY"];
 
 const STATUS_COLORS: Record<string, string> = {
-  ACTIVE:          "bg-green-50 text-green-700 border border-green-200",
-  FOR_REPAIR:      "bg-amber-50 text-amber-700 border border-amber-200",
-  IN_REPAIR:       "bg-orange-50 text-orange-700 border border-orange-200",
-  FOR_DISPOSE:     "bg-red-50 text-red-700 border border-red-200",
-  DISPOSED:        "bg-slate-100 text-slate-500 border border-slate-200",
-  UNDER_WARRANTY:  "bg-blue-50 text-blue-700 border border-blue-200",
+  ACTIVE:         "bg-green-50 text-green-700 border border-green-200",
+  FOR_REPAIR:     "bg-amber-50 text-amber-700 border border-amber-200",
+  IN_REPAIR:      "bg-orange-50 text-orange-700 border border-orange-200",
+  FOR_DISPOSE:    "bg-red-50 text-red-700 border border-red-200",
+  DISPOSED:       "bg-slate-100 text-slate-500 border border-slate-200",
+  UNDER_WARRANTY: "bg-blue-50 text-blue-700 border border-blue-200",
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  FURNITURE: "bg-amber-50 text-amber-700", APPLIANCE: "bg-purple-50 text-purple-700",
-  MACHINE:   "bg-cyan-50 text-cyan-700",   EQUIPMENT: "bg-teal-50 text-teal-700",
-  VEHICLE:   "bg-blue-50 text-blue-700",   OTHER:     "bg-slate-100 text-slate-600",
+  FURNITURE: "bg-amber-50 text-amber-700",  APPLIANCE: "bg-purple-50 text-purple-700",
+  MACHINE:   "bg-cyan-50 text-cyan-700",    EQUIPMENT: "bg-teal-50 text-teal-700",
+  VEHICLE:   "bg-blue-50 text-blue-700",    OTHER:     "bg-slate-100 text-slate-600",
 };
 
-const fmt = (s: string) => s.replace(/_/g, " ");
+const BULK_COLS: BulkColDef[] = [
+  { key: "name",          label: "Name",          required: true,  type: "text",   width: "min-w-[200px]" },
+  { key: "assetTag",      label: "Tag",           required: false, type: "text",   width: "min-w-[90px]",  placeholder: "AST-001" },
+  { key: "serialNumber",  label: "Serial #",      required: false, type: "text",   width: "min-w-[110px]" },
+  {
+    key: "assetType", label: "Type", required: false, type: "select", width: "min-w-[110px]", default: "EQUIPMENT",
+    options: TYPE_OPTIONS.map((t) => ({ value: t, label: fmt(t) })),
+  },
+  {
+    key: "status", label: "Status", required: false, type: "select", width: "min-w-[130px]", default: "ACTIVE",
+    options: STATUS_OPTIONS.map((s) => ({ value: s, label: fmt(s) })),
+  },
+  { key: "location",      label: "Location",      required: false, type: "text",   width: "min-w-[130px]" },
+  { key: "purchaseDate",  label: "Purchase Date", required: false, type: "date",   width: "min-w-[130px]" },
+  { key: "purchaseValue", label: "Value (₱)",     required: false, type: "number", width: "min-w-[100px]" },
+  { key: "warrantyExpiry",label: "Warranty Exp",  required: false, type: "date",   width: "min-w-[130px]" },
+];
+
+function fmt(s: string) { return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()); }
+
+const FIELD = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500";
+const LABEL = "block text-xs text-slate-500 mb-1";
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AssetsPage() {
-  const [assets, setAssets]     = useState<Asset[]>([]);
-  const [loading, setLoading]   = useState(true);
+  const [assets, setAssets]         = useState<Asset[]>([]);
+  const [stats, setStats]           = useState({ total: 0, forRepair: 0, forDispose: 0, underWarranty: 0 });
+  const [loading, setLoading]       = useState(true);
   const [typeFilter, setTypeFilter]     = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing]   = useState<Asset | null>(null);
-  const [saving, setSaving]     = useState(false);
-  const [error, setError]       = useState<string | null>(null);
-  const [form, setForm] = useState({ name:"", assetTag:"", assetType:"FURNITURE", status:"ACTIVE", location:"", purchaseDate:"", purchaseValue:"", warrantyExpiry:"", serialNumber:"", notes:"" });
+  const [bulkMode, setBulkMode]     = useState(false);
+  const [showForm, setShowForm]     = useState(false);
+  const [editing, setEditing]       = useState<Asset | null>(null);
+  const [saving, setSaving]         = useState(false);
+  const [error, setError]           = useState<string | null>(null);
+  const [deleting, setDeleting]     = useState<string | null>(null);
+  const [historyAsset, setHistoryAsset] = useState<Asset | null>(null);
+  const [form, setForm] = useState({
+    name: "", assetTag: "", assetType: "FURNITURE", status: "ACTIVE",
+    location: "", purchaseDate: "", purchaseValue: "", warrantyExpiry: "", serialNumber: "", notes: "",
+  });
 
   const load = useCallback(async () => {
     setLoading(true);
-    const p = new URLSearchParams();
-    if (typeFilter)   p.set("type",   typeFilter);
-    if (statusFilter) p.set("status", statusFilter);
-    const res = await fetch(`/api/admin/dept/assets?${p}`);
-    const json = await res.json();
-    if (json.success) setAssets(json.data);
-    setLoading(false);
+    try {
+      const p = new URLSearchParams();
+      if (typeFilter)   p.set("type",   typeFilter);
+      if (statusFilter) p.set("status", statusFilter);
+      const [itemsRes, statsRes] = await Promise.all([
+        fetch(`/api/admin/dept/assets?${p}`).then((r) => r.json()),
+        fetch("/api/admin/dept/assets?stats=1").then((r) => r.json()),
+      ]);
+      if (itemsRes.success) setAssets(itemsRes.data);
+      if (statsRes.success) setStats(statsRes.data);
+    } finally {
+      setLoading(false);
+    }
   }, [typeFilter, statusFilter]);
 
   useEffect(() => { load(); }, [load]);
@@ -66,7 +105,7 @@ export default function AssetsPage() {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ name:"", assetTag:"", assetType:"FURNITURE", status:"ACTIVE", location:"", purchaseDate:"", purchaseValue:"", warrantyExpiry:"", serialNumber:"", notes:"" });
+    setForm({ name: "", assetTag: "", assetType: "FURNITURE", status: "ACTIVE", location: "", purchaseDate: "", purchaseValue: "", warrantyExpiry: "", serialNumber: "", notes: "" });
     setShowForm(true); setError(null);
   };
 
@@ -83,17 +122,88 @@ export default function AssetsPage() {
     finally { setSaving(false); }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this asset? This cannot be undone.")) return;
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/admin/dept/assets?id=${id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      load();
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleBulkSave = async (rows: Record<string, string>[]) => {
+    for (const row of rows) {
+      await fetch("/api/admin/dept/assets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name:           row.name,
+          assetTag:       row.assetTag || undefined,
+          serialNumber:   row.serialNumber || undefined,
+          assetType:      row.assetType || "EQUIPMENT",
+          status:         row.status || "ACTIVE",
+          location:       row.location || undefined,
+          purchaseDate:   row.purchaseDate || undefined,
+          purchaseValue:  row.purchaseValue ? parseFloat(row.purchaseValue) : undefined,
+          warrantyExpiry: row.warrantyExpiry || undefined,
+        }),
+      });
+    }
+    load();
+  };
+
   return (
-    <div className="p-6 max-w-6xl space-y-4">
+    <div className="p-6 max-w-6xl space-y-5">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Assets</h1>
           <p className="text-sm text-slate-500">Furniture, appliances, machines — track status and warranty</p>
         </div>
-        <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
-          <Plus className="h-4 w-4" /> Add Asset
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={load} className="p-2 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50">
+            <RefreshCw className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setBulkMode((p) => !p)}
+            className={`px-3 py-2 text-sm rounded-lg border font-medium ${bulkMode ? "bg-blue-600 text-white border-blue-600" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+          >
+            Bulk Add
+          </button>
+          <button onClick={openNew} className="flex items-center gap-1 px-3 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
+            <Plus className="h-4 w-4" /> Add Asset
+          </button>
+        </div>
       </div>
+
+      {/* KPI Strip */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: "Total Assets",     value: stats.total,        color: "text-slate-700" },
+          { label: "For Repair",       value: stats.forRepair,    color: "text-amber-600" },
+          { label: "For Dispose",      value: stats.forDispose,   color: "text-red-600" },
+          { label: "Under Warranty",   value: stats.underWarranty,color: "text-blue-600" },
+        ].map((s) => (
+          <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4">
+            <p className="text-xs text-slate-500">{s.label}</p>
+            <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Bulk Grid */}
+      {bulkMode && (
+        <GenericBulkGrid
+          columns={BULK_COLS}
+          onSave={handleBulkSave}
+          onCancel={() => setBulkMode(false)}
+          title="Bulk Add Assets"
+        />
+      )}
 
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
@@ -160,14 +270,14 @@ export default function AssetsPage() {
           <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                {["Name / Tag","Type","Status","Location","Purchase Date","Warranty Expiry",""].map((h) => (
+                {["Name / Tag", "Type", "Status", "Location", "Purchase Date", "Warranty Expiry", ""].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-medium text-slate-500">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {assets.map((a) => (
-                <tr key={a.id} className="hover:bg-slate-50">
+                <tr key={a.id} className="hover:bg-slate-50 group">
                   <td className="px-4 py-3">
                     <p className="font-medium text-slate-900">{a.name}</p>
                     {a.assetTag && <p className="text-xs text-slate-400">{a.assetTag}</p>}
@@ -180,22 +290,40 @@ export default function AssetsPage() {
                     {(a.status === "FOR_REPAIR" || a.status === "IN_REPAIR") && <AlertTriangle className="h-3 w-3 text-amber-500 inline ml-1" />}
                   </td>
                   <td className="px-4 py-3 text-slate-600">{a.location ?? "—"}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"}) : "—"}</td>
+                  <td className="px-4 py-3 text-slate-600">{a.purchaseDate ? new Date(a.purchaseDate).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" }) : "—"}</td>
                   <td className="px-4 py-3 text-slate-600">
                     {a.warrantyExpiry ? (
                       <span className={new Date(a.warrantyExpiry) < new Date() ? "text-red-500" : ""}>
-                        {new Date(a.warrantyExpiry).toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"})}
+                        {new Date(a.warrantyExpiry).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" })}
                       </span>
                     ) : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => openEdit(a)} className="text-xs text-teal-600 hover:underline">Edit</button>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => openEdit(a)} className="px-2 py-1 text-xs text-teal-600 hover:bg-teal-50 rounded">Edit</button>
+                      <button onClick={() => setHistoryAsset(a)} className="p-1 text-slate-400 hover:bg-slate-100 rounded" title="History">
+                        <Clock className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => handleDelete(a.id)} disabled={deleting === a.id} className="p-1 text-red-400 hover:bg-red-50 rounded" title="Delete">
+                        {deleting === a.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="px-4 py-2 border-t border-slate-100 text-xs text-slate-400">{assets.length} asset{assets.length !== 1 ? "s" : ""}</div>
         </div>
+      )}
+
+      {historyAsset && (
+        <HistoryPanel
+          targetId={historyAsset.id}
+          targetType="asset"
+          title={`History — ${historyAsset.name}`}
+          onClose={() => setHistoryAsset(null)}
+        />
       )}
     </div>
   );
