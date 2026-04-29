@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  Package, Wrench, Pill, Archive, Fuel, Plus, Search,
-  RefreshCw, ArrowDownToLine, ArrowUpFromLine, SlidersHorizontal,
+  Package, Wrench, Pill, Archive, Fuel, Search,
+  RefreshCw, ArrowDownToLine,
   Trash2, Check, X, Loader2, AlertTriangle, TrendingDown,
   Wifi, WifiOff, Inbox, CheckCircle2, XCircle, Clock, ChevronDown,
   ShoppingBag,
@@ -17,41 +17,41 @@ const COLUMNS: Record<string, ColDef[]> = {
   officeSupplies: [
     { key: "name",         label: "Item Name",  type: "text",   editable: false, width: "w-48" },
     { key: "category",     label: "Category",   type: "text",   editable: false },
-    { key: "totalStock",   label: "Stock",      type: "number", editable: true,  width: "w-24" },
+    { key: "totalStock",   label: "Stock Qty",  type: "number", editable: false, width: "w-24" },
     { key: "unit",         label: "Unit",       type: "text",   editable: false },
-    { key: "minThreshold", label: "Min Level",  type: "number", editable: true },
-    { key: "location",     label: "Location",   type: "text",   editable: true },
+    { key: "minThreshold", label: "Min Level",  type: "number", editable: true  },
+    { key: "location",     label: "Location",   type: "text",   editable: true  },
     { key: "status",       label: "Status",     type: "status", editable: false },
   ],
   maintenanceSupplies: [
-    { key: "name",        label: "Item Name",  type: "text",   editable: false, width: "w-48" },
-    { key: "category",    label: "Category",   type: "text",   editable: false },
-    { key: "quantity",    label: "Stock",      type: "number", editable: true,  width: "w-24" },
-    { key: "unit",        label: "Unit",       type: "text",   editable: false },
-    { key: "reorderLevel",label: "Min Level",  type: "number", editable: true },
-    { key: "location",    label: "Location",   type: "text",   editable: true },
-    { key: "supplier",    label: "Supplier",   type: "text",   editable: true },
-    { key: "status",      label: "Status",     type: "status", editable: false },
+    { key: "name",         label: "Item Name",  type: "text",   editable: false, width: "w-48" },
+    { key: "category",     label: "Category",   type: "text",   editable: false },
+    { key: "quantity",     label: "Stock Qty",  type: "number", editable: false, width: "w-24" },
+    { key: "unit",         label: "Unit",       type: "text",   editable: false },
+    { key: "reorderLevel", label: "Min Level",  type: "number", editable: true  },
+    { key: "location",     label: "Location",   type: "text",   editable: true  },
+    { key: "supplier",     label: "Supplier",   type: "text",   editable: true  },
+    { key: "status",       label: "Status",     type: "status", editable: false },
   ],
   medicalSupplies: [
-    { key: "name",        label: "Item Name",  type: "text",   editable: false, width: "w-40" },
-    { key: "quantity",    label: "Stock",      type: "number", editable: true,  width: "w-20" },
-    { key: "unit",        label: "Unit",       type: "text",   editable: false },
-    { key: "reorderLevel",label: "Min Level",  type: "number", editable: true },
-    { key: "expiryDate",  label: "Expiry",     type: "date",   editable: true },
-    { key: "batchNumber", label: "Batch #",    type: "text",   editable: true },
-    { key: "supplier",    label: "Supplier",   type: "text",   editable: true },
-    { key: "status",      label: "Status",     type: "status", editable: false },
+    { key: "name",         label: "Item Name",  type: "text",   editable: false, width: "w-40" },
+    { key: "quantity",     label: "Stock Qty",  type: "number", editable: false, width: "w-20" },
+    { key: "unit",         label: "Unit",       type: "text",   editable: false },
+    { key: "reorderLevel", label: "Min Level",  type: "number", editable: true  },
+    { key: "expiryDate",   label: "Expiry",     type: "date",   editable: true  },
+    { key: "batchNumber",  label: "Batch #",    type: "text",   editable: true  },
+    { key: "supplier",     label: "Supplier",   type: "text",   editable: true  },
+    { key: "status",       label: "Status",     type: "status", editable: false },
   ],
   stockroom: [
-    { key: "name",         label: "Item Name",     type: "text",   editable: false, width: "w-48" },
-    { key: "category",     label: "Category",      type: "text",   editable: false },
-    { key: "quantity",     label: "Bulk Qty",       type: "number", editable: true,  width: "w-24" },
-    { key: "unit",         label: "Unit",          type: "text",   editable: false },
-    { key: "minThreshold", label: "Min Level",     type: "number", editable: true },
-    { key: "location",     label: "Bin / Location",type: "text",   editable: true },
-    { key: "supplier",     label: "Supplier",      type: "text",   editable: true },
-    { key: "status",       label: "Status",        type: "status", editable: false },
+    { key: "name",         label: "Item Name",      type: "text",   editable: false, width: "w-48" },
+    { key: "category",     label: "Category",       type: "text",   editable: false },
+    { key: "quantity",     label: "Stock Qty",      type: "number", editable: false, width: "w-24" },
+    { key: "unit",         label: "Unit",           type: "text",   editable: false },
+    { key: "minThreshold", label: "Min Level",      type: "number", editable: true  },
+    { key: "location",     label: "Bin / Location", type: "text",   editable: true  },
+    { key: "supplier",     label: "Supplier",       type: "text",   editable: true  },
+    { key: "status",       label: "Status",         type: "status", editable: false },
   ],
   fuelMaintenance: [
     { key: "vehicleInfo",  label: "Vehicle",    type: "text",     editable: false, width: "w-40" },
@@ -76,7 +76,7 @@ const API: Record<string, string> = {
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 type SubcardKey = "officeSupplies" | "maintenanceSupplies" | "medicalSupplies" | "stockroom" | "fuelMaintenance";
-type WorkflowType = "STOCK_IN" | "STOCK_OUT" | "STOCK_ADJUST";
+type WorkflowType = "STOCK_IN";
 
 interface Row extends Record<string, unknown> {
   id: string;
@@ -155,14 +155,10 @@ function WorkflowDrawer({
   if (!state.open || !state.row) return null;
 
   const LABELS: Record<WorkflowType, string> = {
-    STOCK_IN:     "Add Stock",
-    STOCK_OUT:    "Issue Item",
-    STOCK_ADJUST: "Adjust Stock",
+    STOCK_IN: "Add Stock",
   };
   const ACCENTS: Record<WorkflowType, string> = {
-    STOCK_IN:     "bg-emerald-600",
-    STOCK_OUT:    "bg-amber-600",
-    STOCK_ADJUST: "bg-slate-600",
+    STOCK_IN: "bg-emerald-600",
   };
 
   const title  = LABELS[state.type];
@@ -757,24 +753,14 @@ export default function InventoryPage() {
               />
             </div>
             {!isFuel && (
-              <>
-                <button
-                  onClick={() => {
-                    if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
-                  }}
-                  className={`flex items-center gap-1.5 px-3 py-2 ${tab.bg} text-white text-xs rounded-lg hover:opacity-90`}
-                >
-                  <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
-                </button>
-                <button
-                  onClick={() => {
-                    if (rows.length) setWorkflow({ open: true, type: "STOCK_OUT", row: rows[0] });
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-amber-600 text-white text-xs rounded-lg hover:bg-amber-700"
-                >
-                  <ArrowUpFromLine className="h-3.5 w-3.5" /> Issue Item
-                </button>
-              </>
+              <button
+                onClick={() => {
+                  if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700"
+              >
+                <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
+              </button>
             )}
             <button onClick={load} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white">
               <RefreshCw className="h-3.5 w-3.5" />
@@ -801,29 +787,13 @@ export default function InventoryPage() {
             renderActions={(row, _rowIndex) => (
               <div className="flex items-center gap-1">
                 {!isFuel && (
-                  <>
-                    <button
-                      onClick={() => setWorkflow({ open: true, type: "STOCK_IN",  row })}
-                      title="Add Stock"
-                      className="p-1.5 rounded text-emerald-600 hover:bg-emerald-50"
-                    >
-                      <ArrowDownToLine className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setWorkflow({ open: true, type: "STOCK_OUT", row })}
-                      title="Issue"
-                      className="p-1.5 rounded text-amber-600 hover:bg-amber-50"
-                    >
-                      <ArrowUpFromLine className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setWorkflow({ open: true, type: "STOCK_ADJUST", row })}
-                      title="Adjust"
-                      className="p-1.5 rounded text-slate-500 hover:bg-slate-100"
-                    >
-                      <SlidersHorizontal className="h-3.5 w-3.5" />
-                    </button>
-                  </>
+                  <button
+                    onClick={() => setWorkflow({ open: true, type: "STOCK_IN", row })}
+                    title="Add Stock"
+                    className="p-1.5 rounded text-emerald-600 hover:bg-emerald-50"
+                  >
+                    <ArrowDownToLine className="h-3.5 w-3.5" />
+                  </button>
                 )}
                 {deleteId === row.id ? (
                   <>

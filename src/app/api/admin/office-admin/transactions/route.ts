@@ -174,12 +174,20 @@ export async function POST(request: NextRequest) {
     });
 
     // ── Audit log ────────────────────────────────────────────────────────────
+    const auditAction = type === "STOCK_IN" ? "stock_updated" : `transaction.${type.toLowerCase()}`;
     await prisma.inventoryAuditLog.create({
       data: {
         id: createId(), organizationId: tenantId, actorId: actorId ?? null,
-        action: `transaction.${type.toLowerCase()}`,
+        action: auditAction,
         targetType: subcard, targetId: payload.id ?? null,
-        payload: payload as Prisma.InputJsonValue,
+        payload: {
+          type:        type === "STOCK_IN" ? "ADD_STOCK" : type,
+          itemId:      payload.id,
+          quantity:    payload.quantity,
+          performedBy: actorId,
+          note:        payload.note,
+          timestamp:   new Date().toISOString(),
+        } as Prisma.InputJsonValue,
       },
     }).catch(() => {}); // non-blocking
 

@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         id:             createId(),
         organizationId: employee.organizationId,
         actorId:        employee.id,
-        action:         "supply.request",
+        action:         "request_created",
         targetType:     "supply_request",
         targetId:       null,
         payload:        payload as Prisma.InputJsonValue,

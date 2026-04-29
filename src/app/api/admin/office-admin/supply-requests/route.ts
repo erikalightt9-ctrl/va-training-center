@@ -3,11 +3,11 @@
  *
  * GET:   List supply requests for the tenant (filterable by status)
  * PATCH: Approve / Reject / Complete a request
- *        - APPROVE: updates status, auto-deducts stock if inventoryItemId provided
- *        - REJECT:  updates status, stores rejection reason
- *        - COMPLETE: marks item as physically issued
+ *        - APPROVE: deducts stock, writes stock_updated + request_approved audit logs
+ *        - REJECT:  writes request_rejected audit log, notifies requester
+ *        - COMPLETE: writes request_completed audit log, notifies requester
  *
- * Sends in-app notifications + email to the employee on every status change.
+ * Audit log actions: request_approved | request_rejected | stock_updated | request_completed
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -25,7 +25,7 @@ const updateSchema = z.object({
   id:              z.string(),
   action:          z.enum(["APPROVE", "REJECT", "COMPLETE"]),
   note:            z.string().optional().nullable(),
-  inventoryItemId: z.string().optional(), // link to InventoryItem for auto-deduction
+  inventoryItemId: z.string().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     const limit        = Math.min(parseInt(searchParams.get("limit") ?? "100"), 200);
 
     const logs = await prisma.inventoryAuditLog.findMany({
-      where:   { organizationId: guard.tenantId, action: "supply.request" },
+      where:   { organizationId: guard.tenantId, action: "request_created" },
       orderBy: { createdAt: "desc" },
       take:    limit,
     });
@@ -73,7 +73,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const existing = await prisma.inventoryAuditLog.findFirst({
-      where: { id: parsed.data.id, organizationId: guard.tenantId, action: "supply.request" },
+      where: { id: parsed.data.id, organizationId: guard.tenantId, action: "request_created" },
     });
     if (!existing) {
       return NextResponse.json({ success: false, data: null, error: "Request not found" }, { status: 404 });
@@ -84,18 +84,22 @@ export async function PATCH(request: NextRequest) {
         ? { ...(existing.payload as Record<string, unknown>) }
         : {};
 
-    // ── Apply state transition ───────────────────────────────────────────────
+    const qty      = Math.abs(Number(meta.quantity ?? 1));
+    const itemName = String(meta.itemName ?? "item");
+    const unit     = String(meta.unit ?? "piece");
+    const now      = new Date().toISOString();
+
+    // ── APPROVE ──────────────────────────────────────────────────────────────
     if (parsed.data.action === "APPROVE") {
-      meta.status     = "APPROVED";
-      meta.approvedBy = actorId;
-      meta.approvedAt = new Date().toISOString();
+      meta.status       = "APPROVED";
+      meta.approvedBy   = actorId;
+      meta.approvedAt   = now;
       meta.approvalNote = parsed.data.note ?? null;
 
-      // Auto-deduct stock when inventory item is linked
       if (parsed.data.inventoryItemId) {
         meta.inventoryItemId = parsed.data.inventoryItemId;
-        const qty = Math.abs(Number(meta.quantity ?? 1));
 
+        // Atomically deduct stock + record movement
         await prisma.$transaction([
           prisma.inventoryItem.updateMany({
             where: { id: parsed.data.inventoryItemId, organizationId: guard.tenantId },
@@ -108,41 +112,113 @@ export async function PATCH(request: NextRequest) {
               itemId:         parsed.data.inventoryItemId,
               type:           "OUT",
               quantity:       -qty,
-              note:           `Supply request by ${meta.requesterName ?? "employee"} (${meta.employeeNumber ?? ""})`,
+              note:           `ISSUE_ITEM — request by ${meta.requesterName ?? "employee"} (${meta.employeeNumber ?? ""})`,
               userId:         actorId,
             },
           }),
         ]);
 
-        // Audit log entry for stock movement
+        // stock_updated audit log
         await prisma.inventoryAuditLog.create({
           data: {
             id:             createId(),
             organizationId: guard.tenantId,
             actorId:        actorId ?? null,
-            action:         "transaction.stock_out",
-            targetType:     "officeSupplies",
+            action:         "stock_updated",
+            targetType:     "supply_request",
             targetId:       parsed.data.inventoryItemId,
             payload: {
-              quantity: -qty,
-              note:     `Approved supply request ${parsed.data.id}`,
-              requestId: parsed.data.id,
+              type:        "ISSUE_ITEM",
+              itemId:      parsed.data.inventoryItemId,
+              quantity:    -qty,
+              performedBy: actorId,
+              approvedBy:  actorId,
+              requestId:   parsed.data.id,
+              requester:   meta.requesterName,
+              timestamp:   now,
             } as Prisma.InputJsonValue,
           },
         }).catch(() => {});
       }
+
+      // request_approved audit log
+      await prisma.inventoryAuditLog.create({
+        data: {
+          id:             createId(),
+          organizationId: guard.tenantId,
+          actorId:        actorId ?? null,
+          action:         "request_approved",
+          targetType:     "supply_request",
+          targetId:       parsed.data.id,
+          payload: {
+            requestId:   parsed.data.id,
+            approvedBy:  actorId,
+            performedBy: actorId,
+            itemName,
+            quantity:    qty,
+            unit,
+            requester:   meta.requesterName,
+            timestamp:   now,
+          } as Prisma.InputJsonValue,
+        },
+      }).catch(() => {});
+
+    // ── REJECT ───────────────────────────────────────────────────────────────
     } else if (parsed.data.action === "REJECT") {
       meta.status          = "REJECTED";
       meta.rejectedBy      = actorId;
-      meta.rejectedAt      = new Date().toISOString();
+      meta.rejectedAt      = now;
       meta.rejectionReason = parsed.data.note ?? null;
+
+      await prisma.inventoryAuditLog.create({
+        data: {
+          id:             createId(),
+          organizationId: guard.tenantId,
+          actorId:        actorId ?? null,
+          action:         "request_rejected",
+          targetType:     "supply_request",
+          targetId:       parsed.data.id,
+          payload: {
+            requestId:       parsed.data.id,
+            rejectedBy:      actorId,
+            rejectionReason: parsed.data.note,
+            itemName,
+            quantity:        qty,
+            requester:       meta.requesterName,
+            timestamp:       now,
+          } as Prisma.InputJsonValue,
+        },
+      }).catch(() => {});
+
+    // ── COMPLETE ─────────────────────────────────────────────────────────────
     } else {
-      // COMPLETE
       meta.status      = "COMPLETED";
       meta.completedBy = actorId;
-      meta.completedAt = new Date().toISOString();
+      meta.completedAt = now;
+
+      await prisma.inventoryAuditLog.create({
+        data: {
+          id:             createId(),
+          organizationId: guard.tenantId,
+          actorId:        actorId ?? null,
+          action:         "request_completed",
+          targetType:     "supply_request",
+          targetId:       parsed.data.id,
+          payload: {
+            requestId:   parsed.data.id,
+            completedBy: actorId,
+            performedBy: actorId,
+            itemName,
+            quantity:    qty,
+            unit,
+            requester:   meta.requesterName,
+            timestamp:   now,
+          } as Prisma.InputJsonValue,
+        },
+      }).catch(() => {});
     }
 
+    // Update the request record status
     await prisma.inventoryAuditLog.update({
       where: { id: parsed.data.id },
       data:  { payload: meta as Prisma.InputJsonValue },
@@ -151,14 +227,11 @@ export async function PATCH(request: NextRequest) {
     // ── Notify the requesting employee ──────────────────────────────────────
     const requesterId    = String(meta.requesterId    ?? "");
     const requesterEmail = String(meta.requesterEmail ?? "");
-    const itemName       = String(meta.itemName       ?? "item");
-    const qty            = meta.quantity;
-    const unit           = String(meta.unit ?? "piece");
 
     const notifMap: Record<string, { title: string; message: string; subject: string }> = {
       APPROVE: {
         title:   "Supply Request Approved",
-        message: `Your request for ${qty} ${unit}(s) of ${itemName} has been approved. It will be prepared for you shortly.`,
+        message: `Your request for ${qty} ${unit}(s) of ${itemName} has been approved. It will be prepared shortly.`,
         subject: "Your Supply Request Has Been Approved",
       },
       REJECT: {
@@ -168,7 +241,7 @@ export async function PATCH(request: NextRequest) {
       },
       COMPLETE: {
         title:   "Item Ready for Collection",
-        message: `Your requested ${itemName} (x${qty}) has been issued. Please collect it from the stockroom.`,
+        message: `Your ${itemName} (×${qty}) has been issued. Please collect it from the stockroom.`,
         subject: "Your Supply Request Has Been Fulfilled",
       },
     };
