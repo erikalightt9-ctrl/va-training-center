@@ -13,11 +13,16 @@ import {
 /* ------------------------------------------------------------------ */
 
 interface ExecutiveData {
-  hr:         { activeEmployees: number; pendingLeaves: number; presentToday: number; absentToday: number };
-  payroll:    { lastRun: { status: string; periodStart: string; periodEnd: string; totalNet: number; employeeCount: number } | null };
-  finance:    { totalBankBalance: number; bankAccountCount: number; openReceivables: number; openInvoiceCount: number; expensesThisMonth: number };
-  training:   { activeCourses: number; activeEnrollments: number };
-  operations: { pendingRepairs: number };
+  hr:          { activeEmployees: number; pendingLeaves: number; presentToday: number; absentToday: number };
+  payroll:     { lastRun: { status: string; periodStart: string; periodEnd: string; totalNet: number; employeeCount: number } | null };
+  finance:     { totalBankBalance: number; bankAccountCount: number; openReceivables: number; openInvoiceCount: number; expensesThisMonth: number };
+  training:    { activeCourses: number; activeEnrollments: number };
+  operations:  { pendingRepairs: number };
+  officeAdmin: { pendingRequests: number; lowStockItems: number };
+  sales?:      { pipelineValue: number; activeDeals: number; wonThisMonth: number; revenueThisMonth: number };
+  it?:         { openRequests: number };
+  activity:    { department: string; label: string; time: string; dot: string }[];
+}
   sales?:     { pipelineValue: number; activeDeals: number; wonThisMonth: number; revenueThisMonth: number };
   it?:        { openRequests: number };
   activity:   { department: string; label: string; time: string; dot: string }[];
@@ -320,18 +325,16 @@ export default function ExecutiveDashboardPage() {
                     View Office Admin →
                   </Link>
                 </div>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "Inventory",   href: "/admin/admin/inventory",   dot: "bg-blue-500"    },
-                    { label: "Procurement", href: "/admin/admin/procurement",  dot: "bg-indigo-500"  },
-                    { label: "Logistics",   href: "/admin/admin/logistics",    dot: "bg-amber-500"   },
-                    { label: "Reports",     href: "/admin/admin/reports",      dot: "bg-rose-500"    },
-                  ].map((l) => (
-                    <Link key={l.href} href={l.href}
-                      className="flex flex-col items-center gap-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl p-3 transition-colors">
-                      <span className={`w-2 h-2 rounded-full ${l.dot}`} />
-                      <span className="text-[11px] font-semibold text-slate-600">{l.label}</span>
-                    </Link>
+                    { label: "Pending Requests", value: data.officeAdmin?.pendingRequests ?? 0, color: "text-amber-600" },
+                    { label: "Low Stock Items",  value: data.officeAdmin?.lowStockItems   ?? 0, color: "text-rose-600"  },
+                    { label: "Open Repairs",     value: data.operations.pendingRepairs,          color: "text-slate-700" },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center bg-slate-50 rounded-xl p-3">
+                      <p className={`text-xl font-extrabold ${s.color}`}>{s.value}</p>
+                      <p className="text-[11px] text-slate-400 font-medium">{s.label}</p>
+                    </div>
                   ))}
                 </div>
               </div>
