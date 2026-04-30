@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Users, Wallet, GraduationCap, Wrench, TrendingUp,
   RefreshCw, ArrowRight, AlertCircle, Landmark, Monitor, ShoppingCart,
+  Briefcase,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -107,7 +108,7 @@ export default function ExecutiveDashboardPage() {
   useEffect(() => { void load(); }, [load]);
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 space-y-8">
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -306,6 +307,35 @@ export default function ExecutiveDashboardPage() {
                 </div>
               )}
 
+              {/* Office Admin */}
+              <div className="bg-white border rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-lg bg-slate-700 flex items-center justify-center">
+                      <Briefcase className="h-3.5 w-3.5 text-white" />
+                    </div>
+                    <span className="font-semibold text-slate-800 text-sm">Office Admin</span>
+                  </div>
+                  <Link href="/admin/admin" className="text-xs text-blue-600 hover:underline font-medium">
+                    View Office Admin →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-4 gap-3">
+                  {[
+                    { label: "Inventory",   href: "/admin/admin/inventory",   dot: "bg-blue-500"    },
+                    { label: "Procurement", href: "/admin/admin/procurement",  dot: "bg-indigo-500"  },
+                    { label: "Logistics",   href: "/admin/admin/logistics",    dot: "bg-amber-500"   },
+                    { label: "Reports",     href: "/admin/admin/reports",      dot: "bg-rose-500"    },
+                  ].map((l) => (
+                    <Link key={l.href} href={l.href}
+                      className="flex flex-col items-center gap-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl p-3 transition-colors">
+                      <span className={`w-2 h-2 rounded-full ${l.dot}`} />
+                      <span className="text-[11px] font-semibold text-slate-600">{l.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               {/* Operations */}
               <div className="bg-white border rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -360,6 +390,7 @@ export default function ExecutiveDashboardPage() {
                 {[
                   { label: "HR Analytics",    href: "/admin/hr/analytics",    dot: "bg-blue-500"    },
                   { label: "Finance Overview", href: "/admin/finance",          dot: "bg-violet-500"  },
+                  { label: "Office Admin",     href: "/admin/admin",            dot: "bg-slate-600"   },
                   { label: "Action Center",    href: "/admin/action-center",    dot: "bg-amber-500"   },
                   { label: "Training Center",  href: "/admin/training-center",  dot: "bg-cyan-500"    },
                   { label: "Accounting",       href: "/admin/accounting",       dot: "bg-emerald-500" },
