@@ -1,5 +1,5 @@
 /**
- * Next.js Edge Middleware entry point.
+ * Next.js Edge Proxy entry point (renamed from middleware.ts per Next.js 16 convention).
  * Delegates all logic to src/tenant-proxy.ts which handles:
  *  - Subdomain extraction → tenant routing
  *  - Tenant login page rewrites

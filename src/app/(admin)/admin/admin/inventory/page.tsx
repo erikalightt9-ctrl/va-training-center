@@ -5,8 +5,8 @@ import {
   Package, Wrench, Pill, Archive, Fuel, Search,
   RefreshCw, ArrowDownToLine, TableProperties,
   Trash2, Check, X, Loader2, AlertTriangle, TrendingDown,
-  Wifi, WifiOff, Inbox, CheckCircle2, XCircle, Clock, ChevronDown,
-  ShoppingBag,
+  Inbox, CheckCircle2, XCircle, Clock, ChevronDown,
+  ShoppingBag, Pencil, Save,
 } from "lucide-react";
 import { ExcelGrid } from "@/components/admin/office-admin/ExcelGrid";
 import { BulkEntryGrid } from "@/components/admin/office-admin/BulkEntryGrid";
@@ -540,6 +540,81 @@ function SupplyRequestsQueue() {
   );
 }
 
+// ─── EditModal ───────────────────────────────────────────────────────────────
+
+interface EditModalProps {
+  open: boolean;
+  row: Row | null;
+  onClose: () => void;
+  onSave: (id: string, fields: Record<string, string>) => Promise<void>;
+  saving: boolean;
+}
+
+function EditModal({ open, row, onClose, onSave, saving }: EditModalProps) {
+  const [form, setForm] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (open && row) {
+      setForm({
+        name:         String(row.name         ?? ""),
+        unit:         String((row as Record<string, unknown>).unit         ?? ""),
+        minThreshold: String((row as Record<string, unknown>).minThreshold ?? (row as Record<string, unknown>).reorderLevel ?? "0"),
+        location:     String((row as Record<string, unknown>).location     ?? ""),
+      });
+    }
+  }, [open, row]);
+
+  if (!open || !row) return null;
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-slate-800">Edit Item</h3>
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              { key: "name",         label: "Item Name",  type: "text"   },
+              { key: "unit",         label: "Unit",       type: "text"   },
+              { key: "minThreshold", label: "Min Level",  type: "number" },
+              { key: "location",     label: "Location",   type: "text"   },
+            ].map(({ key, label, type }) => (
+              <div key={key}>
+                <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
+                <input
+                  type={type}
+                  min={type === "number" ? "0" : undefined}
+                  value={form[key] ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-3 pt-1">
+            <button onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 text-sm py-2 rounded-lg hover:bg-slate-50">
+              Cancel
+            </button>
+            <button
+              onClick={() => onSave(String(row.id), form)}
+              disabled={saving}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg flex items-center justify-center gap-2"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function InventoryPage() {
@@ -552,6 +627,8 @@ export default function InventoryPage() {
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState<string | null>(null);
   const [deleteId, setDeleteId]         = useState<string | null>(null);
+  const [editRow, setEditRow]           = useState<Row | null>(null);
+  const [editSaving, setEditSaving]     = useState(false);
   const [workflow, setWorkflow]         = useState<WorkflowState>({ open: false, type: "STOCK_IN", row: null });
   const [sessionLogs, setSessionLogs]   = useState<{ msg: string; time: string }[]>([]);
   const [rtStatus, setRtStatus]         = useState<"connecting" | "live" | "off">("off");
@@ -661,6 +738,25 @@ export default function InventoryPage() {
 
   // ── workflow done ──────────────────────────────────────────────────────
 
+  const handleEditSave = async (id: string, fields: Record<string, string>) => {
+    setEditSaving(true);
+    try {
+      const res  = await createTransaction({
+        subcard: activeTab,
+        type: "UPDATE_CELL",
+        payload: { id, ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v])) },
+      });
+      if (!res.success) throw new Error(res.error);
+      pushLog(`Edited item "${fields.name || id}"`);
+      setEditRow(null);
+      load();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Edit failed");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   const handleWorkflowDone = (msg: string) => {
     pushLog(msg);
     load();
@@ -677,17 +773,7 @@ export default function InventoryPage() {
           <h1 className="text-xl font-bold text-slate-900">Inventory</h1>
           <p className="text-xs text-slate-500 mt-0.5">All office inventory — inline editable, real-time sync</p>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Real-time indicator */}
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${
-            rtStatus === "live" ? "bg-emerald-50 text-emerald-600" :
-            rtStatus === "connecting" ? "bg-amber-50 text-amber-600" :
-            "bg-slate-100 text-slate-400"
-          }`}>
-            {rtStatus === "live" ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
-            {rtStatus === "live" ? "Live" : rtStatus === "connecting" ? "Connecting…" : "Offline"}
-          </div>
-        </div>
+
       </div>
 
       {/* Tabs */}
@@ -756,14 +842,6 @@ export default function InventoryPage() {
             </div>
             {!isFuel && (
               <>
-                <button
-                  onClick={() => {
-                    if (rows.length) setWorkflow({ open: true, type: "STOCK_IN", row: rows[0] });
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700"
-                >
-                  <ArrowDownToLine className="h-3.5 w-3.5" /> Add Stock
-                </button>
                 {activeTab === "officeSupplies" && (
                   <button
                     onClick={() => setBulkMode((v) => !v)}
@@ -774,7 +852,7 @@ export default function InventoryPage() {
                     }`}
                   >
                     <TableProperties className="h-3.5 w-3.5" />
-                    {bulkMode ? "Hide Bulk Entry" : "Bulk Add"}
+                    {bulkMode ? "Hide Add Stock" : "Add Stock"}
                   </button>
                 )}
               </>
@@ -786,13 +864,7 @@ export default function InventoryPage() {
 
           {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</div>}
 
-          {/* Hint */}
-          {!isFuel && !loading && rows.length > 0 && !bulkMode && (
-            <p className="text-[10px] text-slate-400">
-              Double-click or press F2 on a <span className="text-blue-500">✎ editable</span> cell to edit.
-              Arrow keys navigate. Shift+click for range. Ctrl+C / Ctrl+V for copy/paste. Ctrl+Z to undo.
-            </p>
-          )}
+
 
           {/* Bulk Entry Grid */}
           {bulkMode && activeTab === "officeSupplies" && (
@@ -820,6 +892,13 @@ export default function InventoryPage() {
                     <ArrowDownToLine className="h-3.5 w-3.5" />
                   </button>
                 )}
+                <button
+                  onClick={() => setEditRow(row)}
+                  title="Edit"
+                  className="p-1.5 rounded text-blue-500 hover:bg-blue-50"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
                 {deleteId === row.id ? (
                   <>
                     <button onClick={() => handleDelete(row.id)} className="p-1.5 rounded text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
@@ -832,6 +911,15 @@ export default function InventoryPage() {
                 )}
               </div>
             )}
+          />
+
+          {/* Edit Modal */}
+          <EditModal
+            open={!!editRow}
+            row={editRow}
+            onClose={() => setEditRow(null)}
+            onSave={handleEditSave}
+            saving={editSaving}
           />
 
           {/* Workflow Drawer */}

@@ -255,7 +255,7 @@ export function BulkEntryGrid({ onSaved, onCancel }: BulkEntryGridProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-slate-800 text-white">
         <div>
-          <h3 className="text-sm font-semibold">Bulk Add Items</h3>
+          <h3 className="text-sm font-semibold">Add Stock</h3>
           <p className="text-[11px] text-slate-400 mt-0.5">
             Tab / Enter to move between cells · ArrowKeys to navigate · Ctrl+Enter to save
           </p>
