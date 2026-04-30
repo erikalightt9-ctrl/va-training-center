@@ -9,7 +9,7 @@
  *
  * NOTE: `config` must be statically defined here — Next.js cannot parse re-exported configs.
  */
-export { proxy as middleware } from "@/tenant-proxy";
+export { proxy } from "@/tenant-proxy";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth).*)"],
