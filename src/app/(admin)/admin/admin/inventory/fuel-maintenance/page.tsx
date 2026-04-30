@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
-  Fuel, Wrench, Plus, Search, Loader2,
+  Fuel, Wrench, Plus, Loader2,
   ChevronRight, RefreshCw, Trash2, X, Check, Car,
-  Gauge, DollarSign, Droplets, Filter,
+  DollarSign, Droplets, Filter, Pencil, Save,
 } from "lucide-react";
 
 interface FuelLog {
@@ -41,27 +41,165 @@ interface Kpis {
   totalMaintCost: number;
 }
 
-const fmt = (n: number) => `₱${n.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
+const fmt     = (n: number) => `₱${n.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+const isoDate = (d: string) => new Date(d).toISOString().split("T")[0];
 
-const EMPTY_FUEL = { vehicleInfo: "", date: "", liters: "", pricePerLiter: "", totalCost: "", odometer: "", driver: "", station: "" };
+const EMPTY_FUEL  = { vehicleInfo: "", date: "", liters: "", pricePerLiter: "", totalCost: "", odometer: "", driver: "", station: "" };
 const EMPTY_MAINT = { vehicleInfo: "", date: "", maintenanceType: "", description: "", cost: "", odometer: "", shop: "", nextServiceDate: "" };
 
+function FuelEditModal({ log, onClose, onSave, saving }: {
+  log: FuelLog | null; onClose: () => void;
+  onSave: (id: string, fields: Record<string, string>) => Promise<void>;
+  saving: boolean;
+}) {
+  const [form, setForm] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (log) setForm({
+      vehicleInfo:   log.vehicleInfo,
+      date:          isoDate(log.date),
+      liters:        String(log.liters),
+      pricePerLiter: log.pricePerLiter != null ? String(log.pricePerLiter) : "",
+      totalCost:     log.totalCost     != null ? String(log.totalCost)     : "",
+      odometer:      log.odometer      != null ? String(log.odometer)      : "",
+      driver:        log.driver   ?? "",
+      station:       log.station  ?? "",
+    });
+  }, [log]);
+
+  if (!log) return null;
+  return (
+    <>
+      <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-slate-800 flex items-center gap-2">
+              <Fuel className="h-4 w-4 text-emerald-600" /> Edit Fuel Log
+            </h3>
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {([
+              { key: "vehicleInfo",   label: "Vehicle *",     type: "text",   required: true },
+              { key: "date",          label: "Date *",        type: "date",   required: true },
+              { key: "driver",        label: "Driver",        type: "text"   },
+              { key: "liters",        label: "Liters *",      type: "number", required: true },
+              { key: "pricePerLiter", label: "Price / Liter", type: "number" },
+              { key: "totalCost",     label: "Total Cost",    type: "number" },
+              { key: "odometer",      label: "Odometer (km)", type: "number" },
+              { key: "station",       label: "Station",       type: "text"   },
+            ] as { key: string; label: string; type: string; required?: boolean }[]).map(({ key, label, type }) => (
+              <div key={key}>
+                <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
+                <input type={type} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined}
+                  value={form[key] ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3 pt-1">
+            <button onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 text-sm py-2 rounded-lg hover:bg-slate-50">Cancel</button>
+            <button onClick={() => onSave(log.id, form)} disabled={saving}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg flex items-center justify-center gap-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function MaintEditModal({ log, onClose, onSave, saving }: {
+  log: MaintLog | null; onClose: () => void;
+  onSave: (id: string, fields: Record<string, string>) => Promise<void>;
+  saving: boolean;
+}) {
+  const [form, setForm] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (log) setForm({
+      vehicleInfo:     log.vehicleInfo,
+      date:            isoDate(log.date),
+      maintenanceType: log.maintenanceType,
+      description:     log.description    ?? "",
+      cost:            log.cost           != null ? String(log.cost)     : "",
+      odometer:        log.odometer       != null ? String(log.odometer) : "",
+      shop:            log.shop           ?? "",
+      nextServiceDate: log.nextServiceDate ? isoDate(log.nextServiceDate) : "",
+    });
+  }, [log]);
+
+  if (!log) return null;
+  return (
+    <>
+      <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-slate-800 flex items-center gap-2">
+              <Wrench className="h-4 w-4 text-amber-600" /> Edit Maintenance Log
+            </h3>
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {([
+              { key: "vehicleInfo",     label: "Vehicle *",         type: "text",   required: true },
+              { key: "date",            label: "Date *",            type: "date",   required: true },
+              { key: "maintenanceType", label: "Type *",            type: "text",   required: true },
+              { key: "shop",            label: "Shop",              type: "text"   },
+              { key: "cost",            label: "Cost",              type: "number" },
+              { key: "odometer",        label: "Odometer (km)",     type: "number" },
+              { key: "nextServiceDate", label: "Next Service Date", type: "date"   },
+            ] as { key: string; label: string; type: string; required?: boolean }[]).map(({ key, label, type }) => (
+              <div key={key}>
+                <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
+                <input type={type} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined}
+                  value={form[key] ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+              </div>
+            ))}
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+              <textarea value={form.description ?? ""} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                rows={2} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            </div>
+          </div>
+          <div className="flex gap-3 pt-1">
+            <button onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 text-sm py-2 rounded-lg hover:bg-slate-50">Cancel</button>
+            <button onClick={() => onSave(log.id, form)} disabled={saving}
+              className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg flex items-center justify-center gap-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function FuelMaintenancePage() {
-  const [tab, setTab]           = useState<"fuel" | "maintenance">("fuel");
-  const [fuelLogs, setFuelLogs] = useState<FuelLog[]>([]);
-  const [maintLogs, setMaintLogs] = useState<MaintLog[]>([]);
-  const [vehicles, setVehicles] = useState<string[]>([]);
-  const [kpis, setKpis]         = useState<Kpis>({ totalVehicles: 0, totalFuelLogs: 0, totalMaintLogs: 0, totalLiters: 0, totalFuelCost: 0, totalMaintCost: 0 });
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState<string | null>(null);
+  const [tab, setTab]               = useState<"fuel" | "maintenance">("fuel");
+  const [fuelLogs, setFuelLogs]     = useState<FuelLog[]>([]);
+  const [maintLogs, setMaintLogs]   = useState<MaintLog[]>([]);
+  const [vehicles, setVehicles]     = useState<string[]>([]);
+  const [kpis, setKpis]             = useState<Kpis>({ totalVehicles: 0, totalFuelLogs: 0, totalMaintLogs: 0, totalLiters: 0, totalFuelCost: 0, totalMaintCost: 0 });
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState<string | null>(null);
   const [filterVehicle, setFilterVehicle] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [fuelForm, setFuelForm] = useState({ ...EMPTY_FUEL });
-  const [maintForm, setMaintForm] = useState({ ...EMPTY_MAINT });
-  const [saving, setSaving]     = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showForm, setShowForm]     = useState(false);
+  const [fuelForm, setFuelForm]     = useState({ ...EMPTY_FUEL });
+  const [maintForm, setMaintForm]   = useState({ ...EMPTY_MAINT });
+  const [saving, setSaving]         = useState(false);
+  const [formError, setFormError]   = useState<string | null>(null);
+  const [deleteId, setDeleteId]     = useState<string | null>(null);
+  const [editFuelLog, setEditFuelLog]   = useState<FuelLog | null>(null);
+  const [editMaintLog, setEditMaintLog] = useState<MaintLog | null>(null);
+  const [editSaving, setEditSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
@@ -93,9 +231,7 @@ export default function FuelMaintenancePage() {
       const res  = await fetch("/api/admin/office-admin/fuel-maintenance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
-      setShowForm(false);
-      setFuelForm({ ...EMPTY_FUEL });
-      setMaintForm({ ...EMPTY_MAINT });
+      setShowForm(false); setFuelForm({ ...EMPTY_FUEL }); setMaintForm({ ...EMPTY_MAINT });
       load();
     } catch (e) { setFormError(e instanceof Error ? e.message : "Failed"); }
     finally { setSaving(false); }
@@ -109,6 +245,25 @@ export default function FuelMaintenancePage() {
       setDeleteId(null); load();
     } catch (e) { alert(e instanceof Error ? e.message : "Failed"); }
   };
+
+  const handleEditSave = async (id: string, fields: Record<string, string>) => {
+    setEditSaving(true);
+    try {
+      const type = editFuelLog ? "fuel" : "maintenance";
+      const res  = await fetch("/api/admin/office-admin/fuel-maintenance", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, type, ...fields }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setEditFuelLog(null); setEditMaintLog(null); load();
+    } catch (e) { alert(e instanceof Error ? e.message : "Edit failed"); }
+    finally { setEditSaving(false); }
+  };
+
+  const thCls = "px-4 py-3 text-left text-xs font-semibold text-slate-600 whitespace-nowrap";
+  const tdCls = "px-4 py-3";
 
   return (
     <div className="p-6 space-y-6">
@@ -134,12 +289,12 @@ export default function FuelMaintenancePage() {
       {/* KPI bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: "Vehicles",      value: kpis.totalVehicles,            icon: <Car className="h-4 w-4 text-slate-500" />,       format: "num" },
-          { label: "Fuel Logs",     value: kpis.totalFuelLogs,            icon: <Fuel className="h-4 w-4 text-emerald-600" />,    format: "num" },
-          { label: "Maint. Logs",   value: kpis.totalMaintLogs,           icon: <Wrench className="h-4 w-4 text-amber-600" />,    format: "num" },
-          { label: "Total Liters",  value: kpis.totalLiters,              icon: <Droplets className="h-4 w-4 text-blue-500" />,   format: "dec" },
-          { label: "Fuel Cost",     value: kpis.totalFuelCost,            icon: <DollarSign className="h-4 w-4 text-emerald-600" />, format: "money" },
-          { label: "Maint. Cost",   value: kpis.totalMaintCost,           icon: <DollarSign className="h-4 w-4 text-amber-600" />,  format: "money" },
+          { label: "Vehicles",     value: kpis.totalVehicles,  icon: <Car        className="h-4 w-4 text-slate-500" />,      format: "num"   },
+          { label: "Fuel Logs",    value: kpis.totalFuelLogs,  icon: <Fuel       className="h-4 w-4 text-emerald-600" />,   format: "num"   },
+          { label: "Maint. Logs",  value: kpis.totalMaintLogs, icon: <Wrench     className="h-4 w-4 text-amber-600" />,     format: "num"   },
+          { label: "Total Liters", value: kpis.totalLiters,    icon: <Droplets   className="h-4 w-4 text-blue-500" />,      format: "dec"   },
+          { label: "Fuel Cost",    value: kpis.totalFuelCost,  icon: <DollarSign className="h-4 w-4 text-emerald-600" />,  format: "money" },
+          { label: "Maint. Cost",  value: kpis.totalMaintCost, icon: <DollarSign className="h-4 w-4 text-amber-600" />,    format: "money" },
         ].map((k) => (
           <div key={k.label} className="bg-white border border-slate-200 rounded-xl p-3">
             <div className="flex items-center justify-between mb-1"><p className="text-[10px] text-slate-500">{k.label}</p>{k.icon}</div>
@@ -167,16 +322,16 @@ export default function FuelMaintenancePage() {
           <form onSubmit={handleSave} className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {tab === "fuel" ? (
               <>
-                {[
-                  { key: "vehicleInfo", label: "Vehicle *", required: true },
-                  { key: "date", label: "Date *", type: "date", required: true },
-                  { key: "driver", label: "Driver" },
-                  { key: "liters", label: "Liters *", type: "number", required: true },
-                  { key: "pricePerLiter", label: "Price/Liter", type: "number" },
-                  { key: "totalCost", label: "Total Cost", type: "number" },
-                  { key: "odometer", label: "Odometer (km)", type: "number" },
-                  { key: "station", label: "Station" },
-                ].map(({ key, label, required, type }) => (
+                {([
+                  { key: "vehicleInfo",   label: "Vehicle *",     required: true },
+                  { key: "date",          label: "Date *",        type: "date",   required: true },
+                  { key: "driver",        label: "Driver" },
+                  { key: "liters",        label: "Liters *",      type: "number", required: true },
+                  { key: "pricePerLiter", label: "Price/Liter",   type: "number" },
+                  { key: "totalCost",     label: "Total Cost",    type: "number" },
+                  { key: "odometer",      label: "Odometer (km)", type: "number" },
+                  { key: "station",       label: "Station" },
+                ] as { key: string; label: string; type?: string; required?: boolean }[]).map(({ key, label, required, type }) => (
                   <div key={key}>
                     <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
                     <input required={required} type={type ?? "text"} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined}
@@ -188,15 +343,15 @@ export default function FuelMaintenancePage() {
               </>
             ) : (
               <>
-                {[
-                  { key: "vehicleInfo", label: "Vehicle *", required: true },
-                  { key: "date", label: "Date *", type: "date", required: true },
-                  { key: "maintenanceType", label: "Type *", required: true },
-                  { key: "shop", label: "Shop / Service Center" },
-                  { key: "cost", label: "Cost", type: "number" },
-                  { key: "odometer", label: "Odometer (km)", type: "number" },
-                  { key: "nextServiceDate", label: "Next Service Date", type: "date" },
-                ].map(({ key, label, required, type }) => (
+                {([
+                  { key: "vehicleInfo",     label: "Vehicle *",          required: true },
+                  { key: "date",            label: "Date *",             type: "date",   required: true },
+                  { key: "maintenanceType", label: "Type *",             required: true },
+                  { key: "shop",            label: "Shop / Service Center" },
+                  { key: "cost",            label: "Cost",               type: "number" },
+                  { key: "odometer",        label: "Odometer (km)",      type: "number" },
+                  { key: "nextServiceDate", label: "Next Service Date",  type: "date"   },
+                ] as { key: string; label: string; type?: string; required?: boolean }[]).map(({ key, label, required, type }) => (
                   <div key={key}>
                     <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
                     <input required={required} type={type ?? "text"} min={type === "number" ? "0" : undefined} step={type === "number" ? "any" : undefined}
@@ -250,76 +405,107 @@ export default function FuelMaintenancePage() {
       ) : tab === "fuel" ? (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>{["Vehicle", "Date", "Driver", "Liters", "₱/Liter", "Total Cost", "Odometer", "Station", "Actions"].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">{h}</th>)}</tr>
+                <tr>{["#", "Vehicle", "Date", "Driver", "Liters", "₱/Liter", "Total Cost", "Odometer", "Station", "Actions"].map((h) => <th key={h} className={thCls}>{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {fuelLogs.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-slate-400">No fuel logs</td></tr>
-                ) : fuelLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{log.vehicleInfo}</td>
-                    <td className="px-4 py-3 text-slate-600">{fmtDate(log.date)}</td>
-                    <td className="px-4 py-3 text-slate-500">{log.driver ?? "—"}</td>
-                    <td className="px-4 py-3 font-semibold tabular-nums text-blue-700">{Number(log.liters).toFixed(2)}L</td>
-                    <td className="px-4 py-3 text-slate-500 tabular-nums">{log.pricePerLiter ? fmt(Number(log.pricePerLiter)) : "—"}</td>
-                    <td className="px-4 py-3 font-semibold text-emerald-700">{log.totalCost ? fmt(Number(log.totalCost)) : "—"}</td>
-                    <td className="px-4 py-3 text-slate-500 tabular-nums">{log.odometer ? `${log.odometer.toLocaleString()} km` : "—"}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">{log.station ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      {deleteId === log.id ? (
-                        <div className="flex gap-1">
-                          <button onClick={() => handleDelete(log.id, "fuel")} className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
-                          <button onClick={() => setDeleteId(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
-                        </div>
-                      ) : (
-                        <button onClick={() => setDeleteId(log.id)} className="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><Trash2 className="h-3.5 w-3.5" /></button>
-                      )}
+                  <tr><td colSpan={10} className="px-4 py-12 text-center text-sm text-slate-400">No fuel logs. Click "Log Entry" to add one.</td></tr>
+                ) : fuelLogs.map((log, i) => (
+                  <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                    <td className={`${tdCls} text-xs text-slate-400 tabular-nums`}>{i + 1}</td>
+                    <td className={`${tdCls} font-medium text-slate-800`}>{log.vehicleInfo}</td>
+                    <td className={`${tdCls} text-slate-600`}>{fmtDate(log.date)}</td>
+                    <td className={`${tdCls} text-slate-500`}>{log.driver ?? "—"}</td>
+                    <td className={`${tdCls} font-semibold tabular-nums text-blue-700`}>{Number(log.liters).toFixed(2)}L</td>
+                    <td className={`${tdCls} text-slate-500 tabular-nums`}>{log.pricePerLiter ? fmt(Number(log.pricePerLiter)) : "—"}</td>
+                    <td className={`${tdCls} font-semibold text-emerald-700`}>{log.totalCost ? fmt(Number(log.totalCost)) : "—"}</td>
+                    <td className={`${tdCls} text-slate-500 tabular-nums`}>{log.odometer ? `${log.odometer.toLocaleString()} km` : "—"}</td>
+                    <td className={`${tdCls} text-slate-500 text-xs`}>{log.station ?? "—"}</td>
+                    <td className={tdCls}>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setEditFuelLog(log)} title="Edit" className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50"><Pencil className="h-3.5 w-3.5" /></button>
+                        {deleteId === log.id ? (
+                          <>
+                            <button onClick={() => handleDelete(log.id, "fuel")} className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
+                            <button onClick={() => setDeleteId(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
+                          </>
+                        ) : (
+                          <button onClick={() => setDeleteId(log.id)} title="Delete" className="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><Trash2 className="h-3.5 w-3.5" /></button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
+              {fuelLogs.length > 0 && (
+                <tfoot className="bg-slate-50 border-t-2 border-slate-200">
+                  <tr>
+                    <td colSpan={4} className="px-4 py-2 text-xs font-semibold text-slate-600">{fuelLogs.length} record{fuelLogs.length !== 1 ? "s" : ""}</td>
+                    <td className="px-4 py-2 text-xs font-semibold text-blue-700 tabular-nums">{fuelLogs.reduce((s, l) => s + Number(l.liters), 0).toFixed(2)}L</td>
+                    <td />
+                    <td className="px-4 py-2 text-xs font-semibold text-emerald-700 tabular-nums">{fmt(fuelLogs.reduce((s, l) => s + Number(l.totalCost ?? 0), 0))}</td>
+                    <td colSpan={3} />
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>{["Vehicle", "Date", "Type", "Description", "Cost", "Odometer", "Shop", "Next Service", "Actions"].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-600 whitespace-nowrap">{h}</th>)}</tr>
+                <tr>{["#", "Vehicle", "Date", "Type", "Description", "Cost", "Odometer", "Shop", "Next Service", "Actions"].map((h) => <th key={h} className={thCls}>{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {maintLogs.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-slate-400">No maintenance logs</td></tr>
-                ) : maintLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{log.vehicleInfo}</td>
-                    <td className="px-4 py-3 text-slate-600">{fmtDate(log.date)}</td>
-                    <td className="px-4 py-3"><span className="px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-full">{log.maintenanceType}</span></td>
-                    <td className="px-4 py-3 text-slate-500 text-xs max-w-40 truncate">{log.description ?? "—"}</td>
-                    <td className="px-4 py-3 font-semibold text-amber-700">{log.cost ? fmt(Number(log.cost)) : "—"}</td>
-                    <td className="px-4 py-3 text-slate-500 tabular-nums">{log.odometer ? `${log.odometer.toLocaleString()} km` : "—"}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">{log.shop ?? "—"}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs">{log.nextServiceDate ? fmtDate(log.nextServiceDate) : "—"}</td>
-                    <td className="px-4 py-3">
-                      {deleteId === log.id ? (
-                        <div className="flex gap-1">
-                          <button onClick={() => handleDelete(log.id, "maintenance")} className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
-                          <button onClick={() => setDeleteId(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
-                        </div>
-                      ) : (
-                        <button onClick={() => setDeleteId(log.id)} className="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><Trash2 className="h-3.5 w-3.5" /></button>
-                      )}
+                  <tr><td colSpan={10} className="px-4 py-12 text-center text-sm text-slate-400">No maintenance logs. Click "Log Entry" to add one.</td></tr>
+                ) : maintLogs.map((log, i) => (
+                  <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                    <td className={`${tdCls} text-xs text-slate-400 tabular-nums`}>{i + 1}</td>
+                    <td className={`${tdCls} font-medium text-slate-800`}>{log.vehicleInfo}</td>
+                    <td className={`${tdCls} text-slate-600`}>{fmtDate(log.date)}</td>
+                    <td className={tdCls}><span className="px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-full">{log.maintenanceType}</span></td>
+                    <td className={`${tdCls} text-slate-500 text-xs max-w-40 truncate`}>{log.description ?? "—"}</td>
+                    <td className={`${tdCls} font-semibold text-amber-700`}>{log.cost ? fmt(Number(log.cost)) : "—"}</td>
+                    <td className={`${tdCls} text-slate-500 tabular-nums`}>{log.odometer ? `${log.odometer.toLocaleString()} km` : "—"}</td>
+                    <td className={`${tdCls} text-slate-500 text-xs`}>{log.shop ?? "—"}</td>
+                    <td className={`${tdCls} text-slate-500 text-xs`}>{log.nextServiceDate ? fmtDate(log.nextServiceDate) : "—"}</td>
+                    <td className={tdCls}>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setEditMaintLog(log)} title="Edit" className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50"><Pencil className="h-3.5 w-3.5" /></button>
+                        {deleteId === log.id ? (
+                          <>
+                            <button onClick={() => handleDelete(log.id, "maintenance")} className="p-1.5 rounded-lg text-red-600 hover:bg-red-50"><Check className="h-3.5 w-3.5" /></button>
+                            <button onClick={() => setDeleteId(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><X className="h-3.5 w-3.5" /></button>
+                          </>
+                        ) : (
+                          <button onClick={() => setDeleteId(log.id)} title="Delete" className="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><Trash2 className="h-3.5 w-3.5" /></button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
+              {maintLogs.length > 0 && (
+                <tfoot className="bg-slate-50 border-t-2 border-slate-200">
+                  <tr>
+                    <td colSpan={5} className="px-4 py-2 text-xs font-semibold text-slate-600">{maintLogs.length} record{maintLogs.length !== 1 ? "s" : ""}</td>
+                    <td className="px-4 py-2 text-xs font-semibold text-amber-700 tabular-nums">{fmt(maintLogs.reduce((s, l) => s + Number(l.cost ?? 0), 0))}</td>
+                    <td colSpan={4} />
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
         </div>
       )}
+
+      <FuelEditModal  log={editFuelLog}  onClose={() => setEditFuelLog(null)}  onSave={handleEditSave} saving={editSaving} />
+      <MaintEditModal log={editMaintLog} onClose={() => setEditMaintLog(null)} onSave={handleEditSave} saving={editSaving} />
     </div>
   );
 }
