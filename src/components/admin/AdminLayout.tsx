@@ -4,23 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
-  GraduationCap,
-  Settings,
-  Menu,
-  X,
-  LogOut,
-  Shield,
-  ExternalLink,
-  Briefcase,
-  UserCheck,
-  Activity,
-  MonitorDot,
-  Landmark,
-  Users,
-  TrendingUp,
-  Monitor,
-  Lock,
-  DollarSign,
+  GraduationCap, Settings, Menu, X, LogOut, Shield, ExternalLink,
+  Briefcase, UserCheck, Activity, MonitorDot, Landmark, Users,
+  TrendingUp, Monitor, Lock, DollarSign, Package, ShoppingCart,
+  Truck, Laptop, Building2, BarChart3, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -53,6 +40,18 @@ interface NavSection {
   readonly items: ReadonlyArray<NavItem>;
 }
 
+const OFFICE_ADMIN_CHILDREN: ReadonlyArray<NavItem> = [
+  { href: "/admin/admin",             label: "Overview",     icon: MonitorDot   },
+  { href: "/admin/admin/inventory",   label: "Inventory",    icon: Package      },
+  { href: "/admin/admin/procurement", label: "Procurement",  icon: ShoppingCart },
+  { href: "/admin/admin/logistics",   label: "Logistics",    icon: Truck        },
+  { href: "/admin/admin/assets",      label: "Assets",       icon: Laptop       },
+  { href: "/admin/admin/requests",    label: "Requests",     icon: Briefcase    },
+  { href: "/admin/admin/vendors",     label: "Vendors",      icon: Building2    },
+  { href: "/admin/admin/budget",      label: "Budget",       icon: DollarSign   },
+  { href: "/admin/admin/reports",     label: "Reports",      icon: BarChart3    },
+];
+
 const NAV_SECTIONS: ReadonlyArray<NavSection> = [
   {
     label: "Overview",
@@ -63,29 +62,32 @@ const NAV_SECTIONS: ReadonlyArray<NavSection> = [
   {
     label: "Departments",
     items: [
-      { href: "/admin/admin",       label: "Office Admin",      icon: Briefcase,   moduleKey: "module_admin"      },
-      { href: "/admin/accounting",  label: "Accounting",         icon: DollarSign,  moduleKey: "module_accounting" },
       {
-        href: "/admin/hr",          label: "HR & People",        icon: Users,       moduleKey: "module_hr",
+        href: "/admin/admin", label: "Office Admin", icon: Briefcase, moduleKey: "module_admin",
+        children: OFFICE_ADMIN_CHILDREN as NavItem[],
+      },
+      { href: "/admin/accounting",  label: "Accounting",        icon: DollarSign,  moduleKey: "module_accounting" },
+      {
+        href: "/admin/hr",          label: "HR & People",       icon: Users,       moduleKey: "module_hr",
         children: [
-          { href: "/admin/operations",      label: "Operations", icon: Activity                             },
+          { href: "/admin/operations",      label: "Operations", icon: Activity },
           { href: "/admin/training-center", label: "Training",   icon: GraduationCap, moduleKey: "module_lms" },
         ],
       },
-      { href: "/admin/finance",     label: "Finance",            icon: Landmark,    moduleKey: "module_accounting" },
+      { href: "/admin/finance",     label: "Finance",           icon: Landmark,    moduleKey: "module_accounting" },
       {
-        href: "/admin/sales",       label: "Sales & Marketing",  icon: TrendingUp,
+        href: "/admin/sales",       label: "Sales & Marketing", icon: TrendingUp,
         children: [
-          { href: "/admin/sales/deals",     label: "Pipeline",   icon: TrendingUp  },
-          { href: "/admin/sales/contacts",  label: "Contacts",   icon: Users       },
-          { href: "/admin/sales/campaigns", label: "Campaigns",  icon: Activity    },
+          { href: "/admin/sales/deals",     label: "Pipeline",  icon: TrendingUp },
+          { href: "/admin/sales/contacts",  label: "Contacts",  icon: Users      },
+          { href: "/admin/sales/campaigns", label: "Campaigns", icon: Activity   },
         ],
       },
       {
-        href: "/admin/it",          label: "IT & Systems",       icon: Monitor,
+        href: "/admin/it",          label: "IT & Systems",      icon: Monitor,
         children: [
-          { href: "/admin/it/assets",   label: "Assets",      icon: Monitor   },
-          { href: "/admin/it/requests", label: "IT Requests",  icon: Briefcase },
+          { href: "/admin/it/assets",   label: "Assets",     icon: Monitor   },
+          { href: "/admin/it/requests", label: "IT Requests", icon: Briefcase },
         ],
       },
     ],
@@ -104,6 +106,7 @@ const PLATFORM_ITEMS: ReadonlyArray<NavItem> = [
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [officeAdminOpen, setOfficeAdminOpen] = useState(true);
   const { data: session } = useSession();
 
   const isSuperAdmin  = (session?.user as { isSuperAdmin?: boolean })?.isSuperAdmin  === true;
@@ -201,6 +204,48 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
     const visibleChildren = item.children?.filter(filterItem) ?? [];
     if (!visibleChildren.length) return link;
+
+    // Office Admin gets special collapsible treatment
+    const isOfficeAdmin = item.href === "/admin/admin";
+    if (isOfficeAdmin) {
+      const isAnyChildActive = visibleChildren.some((c) => isActive(c));
+      return (
+        <div key={item.href}>
+          <button
+            onClick={() => setOfficeAdminOpen((p) => !p)}
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+              isAnyChildActive ? "bg-white/20 text-white" : "text-blue-100/80 hover:bg-white/10 hover:text-white",
+            )}
+          >
+            <item.icon className="h-4 w-4 shrink-0" />
+            <span className="flex-1 text-left">{item.label}</span>
+            {officeAdminOpen ? <ChevronDown className="h-3 w-3 shrink-0 opacity-60" /> : <ChevronRight className="h-3 w-3 shrink-0 opacity-60" />}
+          </button>
+          {officeAdminOpen && (
+            <div className="ml-[1.1rem] mt-0.5 pl-3 border-l border-white/10 space-y-0.5">
+              {visibleChildren.map((child) => {
+                const childActive = isActive({ ...child, exact: child.href === "/admin/admin" });
+                return (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors",
+                      childActive ? "bg-white/20 text-white" : "text-blue-100/60 hover:bg-white/10 hover:text-white",
+                    )}
+                  >
+                    <child.icon className="h-3.5 w-3.5 shrink-0" />
+                    {child.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
 
     return (
       <div key={item.href}>

@@ -1325,6 +1325,10 @@ model Organization {
   adminSuppliers       AdminSupplier[]
   adminEquipment       AdminEquipment[]
   adminProcurementItems AdminProcurementItem[]
+  adminVehicles         AdminVehicle[]
+  adminDeliveries       AdminDelivery[]
+  adminOfficeRequests   AdminOfficeRequest[]
+  adminBudgetCategories AdminBudgetCategory[]
   inventoryCategories  InventoryCategory[]
   inventoryItems       InventoryItem[]
   stockMovements       StockMovement[]
@@ -3096,6 +3100,136 @@ model AdminAsset {
   @@index([organizationId, status])
   @@map("admin_assets")
 }
+
+// ── Logistics ─────────────────────────────────────────────────────────────────
+
+enum AdminVehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  RETIRED
+}
+
+enum AdminDeliveryStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model AdminVehicle {
+  id             String              @id
+  organizationId String
+  name           String              @db.VarChar(200)
+  plateNumber    String?             @db.VarChar(50)
+  vehicleType    String              @default("Van") @db.VarChar(100)
+  driver         String?             @db.VarChar(200)
+  status         AdminVehicleStatus  @default(ACTIVE)
+  notes          String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deliveries   AdminDelivery[]
+
+  @@index([organizationId, status])
+  @@map("admin_vehicles")
+}
+
+model AdminDelivery {
+  id             String              @id
+  organizationId String
+  vehicleId      String?
+  origin         String              @db.VarChar(300)
+  destination    String              @db.VarChar(300)
+  scheduledAt    DateTime
+  cargo          String?
+  status         AdminDeliveryStatus @default(SCHEDULED)
+  notes          String?
+  createdBy      String?             @db.VarChar(50)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle      AdminVehicle?  @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, status])
+  @@index([organizationId, scheduledAt])
+  @@map("admin_deliveries")
+}
+
+// ── Office Requests ────────────────────────────────────────────────────────────
+
+enum AdminRequestStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+  REJECTED
+}
+
+enum AdminRequestPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model AdminOfficeRequest {
+  id              String               @id
+  organizationId  String
+  title           String               @db.VarChar(300)
+  category        String               @default("Supplies") @db.VarChar(100)
+  priority        AdminRequestPriority @default(NORMAL)
+  description     String?
+  status          AdminRequestStatus   @default(PENDING)
+  requestedBy     String?              @db.VarChar(200)
+  approvedBy      String?              @db.VarChar(200)
+  rejectionReason String?
+  completionNote  String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@index([organizationId, priority])
+  @@map("admin_office_requests")
+}
+
+// ── Budget ────────────────────────────────────────────────────────────────────
+
+model AdminBudgetCategory {
+  id             String   @id
+  organizationId String
+  name           String   @db.VarChar(200)
+  monthlyBudget  Decimal  @default(0) @db.Decimal(12, 2)
+  yearlyBudget   Decimal  @default(0) @db.Decimal(14, 2)
+  color          String   @default("#6366f1") @db.VarChar(20)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  entries      AdminBudgetEntry[]
+
+  @@index([organizationId])
+  @@map("admin_budget_categories")
+}
+
+model AdminBudgetEntry {
+  id          String   @id
+  categoryId  String
+  description String   @db.VarChar(300)
+  amount      Decimal  @db.Decimal(12, 2)
+  entryDate   DateTime @db.Date
+  reference   String?  @db.VarChar(100)
+  createdAt   DateTime @default(now())
+
+  category AdminBudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId, entryDate])
+  @@map("admin_budget_entries")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 
 model AdminCarMaintenance {
   id              String   @id
