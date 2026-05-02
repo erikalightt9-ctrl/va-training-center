@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Users, Wallet, GraduationCap, Wrench, TrendingUp,
   RefreshCw, ArrowRight, AlertCircle, Landmark, Monitor, ShoppingCart,
+  Briefcase,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -12,14 +13,15 @@ import {
 /* ------------------------------------------------------------------ */
 
 interface ExecutiveData {
-  hr:         { activeEmployees: number; pendingLeaves: number; presentToday: number; absentToday: number };
-  payroll:    { lastRun: { status: string; periodStart: string; periodEnd: string; totalNet: number; employeeCount: number } | null };
-  finance:    { totalBankBalance: number; bankAccountCount: number; openReceivables: number; openInvoiceCount: number; expensesThisMonth: number };
-  training:   { activeCourses: number; activeEnrollments: number };
-  operations: { pendingRepairs: number };
-  sales?:     { pipelineValue: number; activeDeals: number; wonThisMonth: number; revenueThisMonth: number };
-  it?:        { openRequests: number };
-  activity:   { department: string; label: string; time: string; dot: string }[];
+  hr:          { activeEmployees: number; pendingLeaves: number; presentToday: number; absentToday: number };
+  payroll:     { lastRun: { status: string; periodStart: string; periodEnd: string; totalNet: number; employeeCount: number } | null };
+  finance:     { totalBankBalance: number; bankAccountCount: number; openReceivables: number; openInvoiceCount: number; expensesThisMonth: number };
+  training:    { activeCourses: number; activeEnrollments: number };
+  operations:  { pendingRepairs: number };
+  officeAdmin: { pendingRequests: number; lowStockItems: number };
+  sales?:      { pipelineValue: number; activeDeals: number; wonThisMonth: number; revenueThisMonth: number };
+  it?:         { openRequests: number };
+  activity:    { department: string; label: string; time: string; dot: string }[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -107,7 +109,7 @@ export default function ExecutiveDashboardPage() {
   useEffect(() => { void load(); }, [load]);
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 space-y-8">
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -306,6 +308,33 @@ export default function ExecutiveDashboardPage() {
                 </div>
               )}
 
+              {/* Office Admin */}
+              <div className="bg-white border rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-lg bg-slate-700 flex items-center justify-center">
+                      <Briefcase className="h-3.5 w-3.5 text-white" />
+                    </div>
+                    <span className="font-semibold text-slate-800 text-sm">Office Admin</span>
+                  </div>
+                  <Link href="/admin/admin" className="text-xs text-blue-600 hover:underline font-medium">
+                    View Office Admin →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: "Pending Requests", value: data.officeAdmin?.pendingRequests ?? 0, color: "text-amber-600" },
+                    { label: "Low Stock Items",  value: data.officeAdmin?.lowStockItems   ?? 0, color: "text-rose-600"  },
+                    { label: "Open Repairs",     value: data.operations.pendingRepairs,          color: "text-slate-700" },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center bg-slate-50 rounded-xl p-3">
+                      <p className={`text-xl font-extrabold ${s.color}`}>{s.value}</p>
+                      <p className="text-[11px] text-slate-400 font-medium">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Operations */}
               <div className="bg-white border rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -360,6 +389,7 @@ export default function ExecutiveDashboardPage() {
                 {[
                   { label: "HR Analytics",    href: "/admin/hr/analytics",    dot: "bg-blue-500"    },
                   { label: "Finance Overview", href: "/admin/finance",          dot: "bg-violet-500"  },
+                  { label: "Office Admin",     href: "/admin/admin",            dot: "bg-slate-600"   },
                   { label: "Action Center",    href: "/admin/action-center",    dot: "bg-amber-500"   },
                   { label: "Training Center",  href: "/admin/training-center",  dot: "bg-cyan-500"    },
                   { label: "Accounting",       href: "/admin/accounting",       dot: "bg-emerald-500" },

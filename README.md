@@ -1,8 +1,8 @@
 # HUMI Training Hub
 
-A full-stack, multi-tenant Learning Management System (LMS) built for training professionals across any field or industry. The platform manages the entire student lifecycle — from enrollment and payment to course delivery, AI-powered practice, assessments, certifications, and job placement — while supporting multiple user roles and white-label corporate clients.
+A full-stack, multi-tenant Learning Management System (LMS) built for training professionals across any field or industry. The platform manages the entire student lifecycle — from enrollment and payment to course delivery, AI-powered practice, assessments, certifications, and job placement — while supporting multiple user roles, white-label corporate clients, and a fully integrated Office Admin department for internal operations management.
 
-**Live:** [humi-hub.vercel.app](https://humi-hub.vercel.app)
+**Live:** [va-training-center.vercel.app](https://va-training-center.vercel.app)
 
 ---
 
@@ -15,6 +15,7 @@ humi-hub/
 │   ├── public/             # Marketing site, enrollment, job board, placement
 │   ├── student/            # Learning, AI tools, career, community
 │   ├── admin/              # Full LMS + accounting + operations management
+│   │   └── office-admin/   # Inventory, procurement, logistics, budget, reports
 │   ├── trainer/            # Course delivery, grading, student management
 │   ├── corporate/          # White-label client portal with page builder
 │   ├── employer/           # Job postings and applicant management
@@ -103,7 +104,6 @@ humi-hub/
 - **Revenue** — Revenue tracking and financial overview
 - **Sales** — Sales pipeline and management
 - **HR** — Human resources management
-- **Inventory** — Resource and asset inventory
 - **IT** — IT asset and system management
 - **Marketing** — Marketing campaigns and content
 - **Organizations** — Partner and organization management
@@ -125,14 +125,60 @@ humi-hub/
 - **Expenses** — Expense submission, approval, and rejection workflow
 - **Bank Accounts** — Bank account management with auto-reconciliation and CSV import
 - **Bank Transactions** — Transaction matching and reconciliation
-- **Financial Reports**:
-  - Profit & Loss Statement
-  - Balance Sheet
-  - Cash Flow Statement
-  - Trial Balance
-  - General Ledger
+- **Financial Reports** — Profit & Loss, Balance Sheet, Cash Flow, Trial Balance, General Ledger
 - **Forensic Flags** — Anomaly detection and financial audit trail
 - **Audit Logs** — Complete accounting audit history
+
+#### Office Admin Department (8 modules)
+
+A dedicated operations management department within the Admin portal for day-to-day office management.
+
+**Inventory** — Multi-category inventory with real-time sync:
+- Office Supplies, Maintenance, Medical, Stockroom, Fuel & Maintenance subcategories
+- Inline editable grid with stock movements (IN / OUT / ADJUST)
+- Add Stock bulk entry, low stock and out-of-stock alerts
+- Per-row edit modal and delete with confirm
+- Supply Requests queue with approval workflow (Approve → Issue → Complete)
+
+**Procurement** — Purchase order management:
+- PO tracking with vendor, quantity, unit price, delivery date, and status (Pending → Ordered → Delivered → Cancelled)
+- Bulk grid entry for multiple items at once
+- Full edit and delete per row
+
+**Logistics** — Fleet and delivery management:
+- **Fleet tab** — Vehicle registry (name, plate, type, driver, status)
+- **Deliveries tab** — Origin/destination tracking, scheduled date/time, vehicle assignment, cargo notes
+- Inline status updates (Scheduled → In Transit → Delivered → Cancelled)
+- KPI strip: Scheduled, In Transit, Delivered, Cancelled counts
+- Full edit modal and delete with confirm on both vehicles and deliveries
+
+**Assets** — Office asset registry:
+- Asset tracking with tag, type, status, location, purchase date, warranty, and serial number
+- Full CRUD with inline editing
+
+**Requests** — Internal office request system with approval chain:
+- Categories: Supplies, Repair, IT, Facilities, Other
+- Priority levels: Low, Normal, High, Urgent (color-coded)
+- Workflow: Pending → Approved → Completed (or Rejected with reason)
+- Filterable by status, category, and search term
+
+**Vendors** — Supplier management:
+- Vendor directory with contact person, email, phone, address, category, and status
+- Full CRUD with search
+
+**Budget** — Category-based budget tracking:
+- Per-category monthly and yearly budget allocations
+- Expense logging with description, amount, date, and reference
+- Auto-pulls procurement spend (delivered POs) and fuel costs into actual spend
+- Progress bars with over-budget alerts and utilization percentages
+- Monthly / yearly period switching
+
+**Reports** — 5 built-in report types with CSV export:
+- **Inventory Usage Summary** — Stock IN / OUT by item with usage bars
+- **Procurement Spend by Vendor** — Delivered PO spend ranked by vendor
+- **Fuel Cost per Vehicle** — Liters, total cost, avg price/liter per vehicle
+- **Budget vs Actual** — Category budgets against actual spend with status indicators
+- **Monthly Expense Trends** — Month-by-month procurement, fuel, and other spend for the full year
 
 ### Trainer Portal (12+ pages)
 - **Course Dashboard** — Assigned course overview and activity
@@ -264,143 +310,63 @@ humi-hub/
 ```
 humi-hub/
 ├── prisma/
-│   ├── schema.prisma              # Database schema (40+ models)
+│   ├── schema.prisma              # Database schema (137+ models)
 │   └── seed.ts                    # Seed data (courses, admin, badges, lessons)
 ├── src/
 │   ├── app/
 │   │   ├── (public)/              # Public pages
-│   │   │   ├── page.tsx               # Landing page
-│   │   │   ├── about/                 # About page
-│   │   │   ├── activate/[token]/      # Account activation
-│   │   │   ├── career-placement/      # Job board & placement services
-│   │   │   ├── certifications/        # Certification programs
-│   │   │   ├── community/             # Community hub
-│   │   │   ├── contact/               # Contact form
-│   │   │   ├── courses/ → programs/   # Redirected (permanent)
-│   │   │   ├── enterprise/            # Corporate solutions
-│   │   │   ├── enroll/                # Multi-step enrollment form
-│   │   │   ├── enrollment-status/[id]/# Enrollment tracker
-│   │   │   ├── employer-dashboard/    # Employer portal
-│   │   │   ├── features/              # Platform features page
-│   │   │   ├── forgot-password/       # Password recovery
-│   │   │   ├── help/[slug]/           # Help center
-│   │   │   ├── invite/[code]/         # Invite system
-│   │   │   ├── jobs/ → career-placement/ # Redirected (permanent)
-│   │   │   ├── learning-paths/        # Learning pathways
-│   │   │   ├── pay/[enrollmentId]/    # Payment page (online + manual)
-│   │   │   ├── placement/             # Placement services
-│   │   │   ├── portfolio/[studentId]/ # Public student portfolio
-│   │   │   ├── pricing/               # Pricing plans
-│   │   │   ├── programs/[slug]/       # Program catalog & detail pages
-│   │   │   ├── register/              # Direct registration
-│   │   │   ├── reset-password/        # Password reset
-│   │   │   ├── resources/             # Free resources
-│   │   │   ├── student-ranking/       # Public leaderboard
-│   │   │   ├── student-success/       # Success stories
-│   │   │   ├── verify/                # Certificate verification
-│   │   │   ├── verify-email/          # Email verification
-│   │   │   └── verify-skills/[id]/    # Skill verification
 │   │   ├── (admin)/admin/         # Admin dashboard (40+ protected routes)
-│   │   │   ├── page.tsx               # Dashboard overview
 │   │   │   ├── accounting/            # Full accounting suite
-│   │   │   ├── ai-insights/           # AI analytics
-│   │   │   ├── analytics/             # Platform analytics
-│   │   │   ├── attendance/            # Live attendance tracking
-│   │   │   ├── calendar/              # Event calendar
-│   │   │   ├── certificates/          # Certificate management
-│   │   │   ├── communications/        # Email management
-│   │   │   ├── control-tower/         # AI control tower
-│   │   │   ├── courses/               # Course CRUD
-│   │   │   ├── engagement/            # Student engagement
-│   │   │   ├── enrollees/             # Enrollment pipeline
-│   │   │   ├── hr/                    # HR management
-│   │   │   ├── inventory/             # Inventory management
-│   │   │   ├── it/                    # IT management
-│   │   │   ├── job-applications/      # Job applicant management
-│   │   │   ├── job-postings/          # Job posting management
-│   │   │   ├── knowledge-base/        # Knowledge base
-│   │   │   ├── lessons/               # Lesson management
-│   │   │   ├── marketing/             # Marketing management
-│   │   │   ├── messages/              # Messaging
-│   │   │   ├── notifications/         # Notification management
-│   │   │   ├── organizations/         # Organization management
-│   │   │   ├── payments/              # Payment verification
-│   │   │   ├── placements/            # Placement tracking
-│   │   │   ├── reports/               # Data export
-│   │   │   ├── revenue/               # Revenue overview
-│   │   │   ├── sales/                 # Sales management
-│   │   │   ├── schedules/             # Batch schedule management
-│   │   │   ├── settings/              # Platform settings
-│   │   │   ├── student-ranking/       # Leaderboard management
-│   │   │   ├── students/              # Student management
-│   │   │   ├── submissions/           # Assignment grading
-│   │   │   ├── subscriptions/         # Subscription management
-│   │   │   ├── tasks/                 # Task management
-│   │   │   ├── testimonials/          # Testimonial management
-│   │   │   ├── tickets/               # Support ticket management
-│   │   │   ├── tiers/                 # Pricing tier management
-│   │   │   ├── trainers/              # Trainer management
-│   │   │   └── users/                 # User management
+│   │   │   ├── admin/                 # Office Admin department
+│   │   │   │   ├── inventory/         # Multi-category inventory
+│   │   │   │   │   ├── page.tsx           # Main inventory grid (5 subcategories)
+│   │   │   │   │   ├── office-supplies/   # Office supplies subpage
+│   │   │   │   │   ├── maintenance-supplies/
+│   │   │   │   │   ├── medical-supplies/
+│   │   │   │   │   ├── stockroom/
+│   │   │   │   │   ├── fuel-maintenance/  # Fuel logs + car maintenance
+│   │   │   │   │   └── categories/[id]/   # Category bulk grid
+│   │   │   │   ├── procurement/       # Purchase order management
+│   │   │   │   ├── logistics/         # Fleet + delivery tracking
+│   │   │   │   ├── assets/            # Office asset registry
+│   │   │   │   ├── requests/          # Internal requests + approval chain
+│   │   │   │   ├── vendors/           # Supplier directory
+│   │   │   │   ├── budget/            # Category budgets + expense tracking
+│   │   │   │   └── reports/           # 5-report analytics + CSV export
+│   │   │   └── ...                    # Other admin modules
 │   │   ├── (trainer)/trainer/     # Trainer portal (12+ protected routes)
 │   │   ├── (corporate)/corporate/ # Corporate portal (18+ protected routes)
 │   │   ├── (employer)/            # Employer dashboard
 │   │   ├── (humi-admin)/          # Humi admin portal
 │   │   ├── (superadmin)/          # Super admin portal (10+ protected routes)
 │   │   ├── (student)/student/     # Student portal (35+ protected routes)
-│   │   └── api/                   # 150+ API endpoints
-│   │       ├── auth/                  # NextAuth
-│   │       ├── admin/                 # Admin API (accounting + LMS)
-│   │       ├── corporate/             # Corporate API
-│   │       ├── employer/              # Employer API
-│   │       ├── humi-admin/            # Humi admin API
-│   │       ├── superadmin/            # Super admin API
-│   │       ├── student/               # Student API
-│   │       ├── trainer/               # Trainer API
-│   │       ├── payments/              # Payment processing & webhooks
-│   │       ├── cron/                  # Scheduled jobs
-│   │       ├── google/                # Google Calendar integration
-│   │       ├── invite/                # Invite system
-│   │       ├── jobs/                  # Public job board API
-│   │       ├── knowledge-base/        # Knowledge base API
-│   │       ├── messages/              # Messaging API
-│   │       ├── notifications/         # Notifications API
-│   │       ├── placement/             # Placement API
-│   │       ├── subscriptions/         # Subscription API
-│   │       ├── tenant/                # Tenant management API
-│   │       ├── testimonials/          # Public testimonials API
-│   │       ├── tickets/               # Support ticket API
-│   │       ├── tiers/                 # Tier config API
-│   │       └── chat/                  # AI chatbot
+│   │   └── api/                   # 461+ API endpoints
+│   │       ├── admin/office-admin/    # Office Admin APIs
+│   │       │   ├── requests/          # CRUD + approval workflow
+│   │       │   ├── logistics/         # Fleet + delivery management
+│   │       │   ├── budget/            # Categories + entries + spend aggregation
+│   │       │   ├── reports/           # 5 report types
+│   │       │   ├── inventory/         # Inventory items + movements
+│   │       │   ├── procurement/       # PO management
+│   │       │   ├── fuel-maintenance/  # Fuel logs + car maintenance + PATCH
+│   │       │   ├── supply-requests/   # Employee supply request queue
+│   │       │   ├── transactions/      # Cell-level edit transactions
+│   │       │   ├── workflows/         # Stock workflow recording
+│   │       │   ├── stream/            # SSE real-time events
+│   │       │   ├── activity-logs/     # Audit activity logs
+│   │       │   └── ...
+│   │       └── ...                    # 400+ other API routes
 │   ├── components/
-│   │   ├── admin/                 # Admin components (settings, etc.)
-│   │   ├── corporate/             # Corporate portal components
-│   │   ├── employer/              # Employer portal components
-│   │   ├── enrollment/            # Enrollment form components
-│   │   ├── humi-admin/            # Humi admin components
-│   │   ├── page-builder/          # Drag-and-drop page builder
-│   │   ├── placement/             # Placement components
-│   │   ├── portal/                # Login portal components
-│   │   ├── public/                # Public page components
-│   │   ├── shared/                # Shared across portals
-│   │   ├── student/               # Student portal components
-│   │   ├── superadmin/            # Super admin components
-│   │   ├── theme-panel/           # White-label theme panel
-│   │   ├── trainer/               # Trainer portal components
-│   │   └── ui/                    # shadcn/ui primitives
+│   │   ├── admin/office-admin/    # ExcelGrid, BulkEntryGrid, GenericBulkGrid
+│   │   └── ...
 │   └── lib/
-│       ├── auth.ts                # NextAuth configuration
-│       ├── prisma.ts              # Prisma client singleton
-│       ├── guards/                # Route guard utilities
-│       ├── repositories/          # 50+ data access modules
-│       ├── services/              # 35+ business logic modules
-│       ├── validations/           # Zod schemas
-│       ├── validators/            # Additional validators
-│       ├── email/templates/       # 26+ React Email templates
-│       ├── constants/             # Enums and constants
-│       ├── types/                 # TypeScript type definitions
-│       └── utils/                 # Utility functions
+│       ├── auth.ts
+│       ├── prisma.ts
+│       ├── repositories/
+│       ├── services/
+│       ├── email/templates/
+│       └── ...
 └── public/
-    └── uploads/                   # Uploaded files (payments, resources)
 ```
 
 ---
@@ -430,8 +396,9 @@ humi-hub/
 ```
 Superadmin
     │
-    ├── Tenant A (e.g. HUMI Training Hub)
+    ├── Tenant A (e.g. HUMI Training Hub / VA Training Center)
     │       ├── Admin → Trainers → Students
+    │       ├── Office Admin → Inventory → Procurement → Logistics → Budget
     │       ├── Corporate Clients → Employees
     │       └── Employers → Job Postings
     │
@@ -469,12 +436,32 @@ Course access begins
 
 ---
 
+## Office Admin Request Workflow
+
+```
+Request submitted (Supplies / Repair / IT / Facilities / Other)
+        │
+        ▼
+Admin reviews → Reject (with reason) ──▸ Closed
+        │
+        ▼ Approve
+Request moves to Approved queue
+        │
+        ▼
+Admin fulfills → Mark Complete (with completion note)
+        │
+        ▼
+Completed
+```
+
+---
+
 ## User Roles
 
 | Role | Portal | Description |
 |------|--------|-------------|
 | **Student** | `/student` | Enrolled learners accessing courses and AI tools |
-| **Admin** | `/admin` | Full platform management including accounting |
+| **Admin** | `/admin` | Full platform management including accounting and office operations |
 | **Trainer** | `/trainer` | Course delivery and student evaluation |
 | **Corporate** | `/corporate` | White-label client with page builder and team training |
 | **Employer** | `/employer-dashboard` | Job posting and applicant management |
@@ -483,7 +470,7 @@ Course access begins
 
 ---
 
-## Database Models
+## Database Models (137+)
 
 | Category | Models |
 |----------|--------|
@@ -496,13 +483,12 @@ Course access begins
 | **Management** | Trainer, CourseTrainer, CourseResource, Testimonial, ContactMessage, KnowledgeBase, SupportTicket |
 | **Corporate** | Organization, CorporateUser, TenantPage, TenantTheme |
 | **Accounting** | Account, Transaction, Invoice, Expense, BankAccount, BankTransaction, ForensicFlag, AuditLog |
+| **Office Admin — Inventory** | InventoryCategory, InventoryItem, StockMovement, InventoryAuditLog, AdminStockItem, AdminMaintenanceItem |
+| **Office Admin — Operations** | AdminProcurementItem, AdminAsset, AdminSupplier, AdminEquipment, AdminRepairLog |
+| **Office Admin — Logistics** | AdminVehicle, AdminDelivery, AdminFuelLog, AdminCarMaintenance, AdminVehicleLog |
+| **Office Admin — Requests** | AdminOfficeRequest |
+| **Office Admin — Budget** | AdminBudgetCategory, AdminBudgetEntry |
 | **SaaS** | Subscription, Tier, Module, FeatureFlag |
-
----
-
-## Available Programs
-
-Programs are fully configurable from the Admin Dashboard. The platform currently features specialized virtual assistant training programs and supports any training curriculum — professional skills, technical courses, certifications, and more.
 
 ---
 
@@ -585,7 +571,7 @@ CRON_SECRET="your-cron-secret"
 
 ```bash
 npx prisma generate
-npx prisma db push
+npx prisma migrate deploy
 npx tsx prisma/seed.ts
 ```
 
@@ -611,10 +597,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Run migrations + generate Prisma client + production build |
 | `npm start` | Start production server |
 | `npm run db:migrate` | Run Prisma migrations |
-| `npm run db:seed` | Seed the database |
-| `npm run db:studio` | Open Prisma Studio (database GUI) |
-| `npm test` | Run tests |
-| `npm run test:coverage` | Run tests with coverage report |
 
 ---
 
@@ -622,7 +604,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - JWT-based sessions with 8-hour expiry
 - bcrypt password hashing
-- Role-based access control (7 roles: student, admin, trainer, corporate, employer, humi-admin, superadmin)
+- Role-based access control (7 roles)
 - Security headers (X-Frame-Options, CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
 - Rate limiting on API endpoints
 - Input validation at all boundaries (Zod)
@@ -647,7 +629,7 @@ npx vercel --prod
 **Required Vercel Environment Variables:**
 
 | Variable | Purpose |
-|----------|---------|
+|----------|---------| 
 | `DATABASE_URL` | Neon PostgreSQL connection |
 | `NEXTAUTH_SECRET` | JWT signing secret |
 | `NEXTAUTH_URL` | Production URL |
@@ -665,3 +647,4 @@ npx vercel --prod
 ## License
 
 Private project. All rights reserved.
+

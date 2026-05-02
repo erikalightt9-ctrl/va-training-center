@@ -136,6 +136,51 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PATCH(request: NextRequest) {
+  try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const guard = requireAdmin(token);
+    if (!guard.ok) return guard.response;
+
+    const body = await request.json();
+    const { id, type, ...fields } = body as { id: string; type: "fuel" | "maintenance"; [k: string]: unknown };
+    if (!id || !type) return NextResponse.json({ success: false, data: null, error: "Missing id or type" }, { status: 400 });
+
+    if (type === "fuel") {
+      const existing = await prisma.adminFuelLog.findFirst({ where: { id, organizationId: guard.tenantId } });
+      if (!existing) return NextResponse.json({ success: false, data: null, error: "Not found" }, { status: 404 });
+      const updateData: Record<string, unknown> = {};
+      if (fields.vehicleInfo   !== undefined) updateData.vehicleInfo   = String(fields.vehicleInfo);
+      if (fields.date          !== undefined) updateData.date          = new Date(String(fields.date));
+      if (fields.liters        !== undefined) updateData.liters        = parseFloat(String(fields.liters)) || 0;
+      if (fields.pricePerLiter !== undefined) updateData.pricePerLiter = fields.pricePerLiter ? parseFloat(String(fields.pricePerLiter)) : null;
+      if (fields.totalCost     !== undefined) updateData.totalCost     = fields.totalCost     ? parseFloat(String(fields.totalCost))     : null;
+      if (fields.odometer      !== undefined) updateData.odometer      = fields.odometer      ? parseInt(String(fields.odometer))        : null;
+      if (fields.driver        !== undefined) updateData.driver        = fields.driver        ? String(fields.driver)        : null;
+      if (fields.station       !== undefined) updateData.station       = fields.station       ? String(fields.station)       : null;
+      const log = await prisma.adminFuelLog.update({ where: { id }, data: updateData });
+      return NextResponse.json({ success: true, data: log, error: null });
+    } else {
+      const existing = await prisma.adminCarMaintenance.findFirst({ where: { id, organizationId: guard.tenantId } });
+      if (!existing) return NextResponse.json({ success: false, data: null, error: "Not found" }, { status: 404 });
+      const updateData: Record<string, unknown> = {};
+      if (fields.vehicleInfo     !== undefined) updateData.vehicleInfo     = String(fields.vehicleInfo);
+      if (fields.date            !== undefined) updateData.date            = new Date(String(fields.date));
+      if (fields.maintenanceType !== undefined) updateData.maintenanceType = String(fields.maintenanceType);
+      if (fields.description     !== undefined) updateData.description     = fields.description     ? String(fields.description)     : null;
+      if (fields.cost            !== undefined) updateData.cost            = fields.cost            ? parseFloat(String(fields.cost))  : null;
+      if (fields.odometer        !== undefined) updateData.odometer        = fields.odometer        ? parseInt(String(fields.odometer)) : null;
+      if (fields.shop            !== undefined) updateData.shop            = fields.shop            ? String(fields.shop)            : null;
+      if (fields.nextServiceDate !== undefined) updateData.nextServiceDate = fields.nextServiceDate ? new Date(String(fields.nextServiceDate)) : null;
+      const log = await prisma.adminCarMaintenance.update({ where: { id }, data: updateData });
+      return NextResponse.json({ success: true, data: log, error: null });
+    }
+  } catch (err) {
+    console.error("[PATCH /api/admin/office-admin/fuel-maintenance]", err);
+    return NextResponse.json({ success: false, data: null, error: "Internal server error" }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });

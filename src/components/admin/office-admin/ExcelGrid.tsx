@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { RotateCcw, RotateCw, Copy, ClipboardPaste } from "lucide-react";
+
 import { useGridEngine, ColDef } from "./useGridEngine";
 
 // ─── Status badge helper ────────────────────────────────────────────────────
@@ -124,49 +124,6 @@ export function ExcelGrid<T extends Record<string, unknown>>({
 
   return (
     <div className="space-y-1">
-      {/* Toolbar */}
-      <div className="flex items-center gap-1.5 px-1">
-        <button
-          onClick={engine.undo}
-          disabled={!engine.canUndo}
-          title="Undo (Ctrl+Z)"
-          className="p-1.5 rounded text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <RotateCcw className="h-3.5 w-3.5" />
-        </button>
-        <button
-          onClick={engine.redo}
-          disabled={!engine.canRedo}
-          title="Redo (Ctrl+Y)"
-          className="p-1.5 rounded text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <RotateCw className="h-3.5 w-3.5" />
-        </button>
-        <div className="w-px h-4 bg-slate-200 mx-0.5" />
-        <button
-          onClick={() => engine.onCopy(columns)}
-          title="Copy selection (Ctrl+C)"
-          className="p-1.5 rounded text-slate-500 hover:bg-slate-100"
-        >
-          <Copy className="h-3.5 w-3.5" />
-        </button>
-        <button
-          onClick={() => engine.onPaste(columns, (r, k, v) => {
-            onCellCommit?.(r, k, v, engine.data[r]);
-          })}
-          title="Paste (Ctrl+V)"
-          className="p-1.5 rounded text-slate-500 hover:bg-slate-100"
-        >
-          <ClipboardPaste className="h-3.5 w-3.5" />
-        </button>
-        {engine.selectedCells.size > 1 && (
-          <span className="ml-1 text-[10px] text-slate-400">{engine.selectedCells.size} cells selected</span>
-        )}
-        {(engine.canUndo || engine.canRedo) && (
-          <span className="ml-1 text-[10px] text-amber-500">{engine.canUndo ? "● unsaved changes" : ""}</span>
-        )}
-      </div>
-
       {/* Grid */}
       <div
         ref={containerRef}
