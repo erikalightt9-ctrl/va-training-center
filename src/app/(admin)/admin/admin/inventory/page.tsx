@@ -783,7 +783,7 @@ export default function InventoryPage() {
           return (
             <button
               key={t.key}
-              onClick={() => { setViewMode("inventory"); setActiveTab(t.key); setSearch(""); setDeleteId(null); }}
+              onClick={() => { setViewMode("inventory"); setActiveTab(t.key); setSearch(""); setDeleteId(null); setBulkMode(false); }}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                 active
                   ? `bg-slate-800 text-white shadow-sm`
@@ -842,8 +842,7 @@ export default function InventoryPage() {
             </div>
             {!isFuel && (
               <>
-                {activeTab === "officeSupplies" && (
-                  <button
+                <button
                     onClick={() => setBulkMode((v) => !v)}
                     className={`flex items-center gap-1.5 px-3 py-2 text-xs rounded-lg border transition-colors ${
                       bulkMode
@@ -852,9 +851,8 @@ export default function InventoryPage() {
                     }`}
                   >
                     <TableProperties className="h-3.5 w-3.5" />
-                    {bulkMode ? "Hide Add Stock" : "Add Stock"}
+                    {bulkMode ? "Hide Bulk Entry" : "Bulk Add"}
                   </button>
-                )}
               </>
             )}
             <button onClick={load} className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 bg-white">
@@ -867,9 +865,9 @@ export default function InventoryPage() {
 
 
           {/* Bulk Entry Grid */}
-          {bulkMode && activeTab === "officeSupplies" && (
+          {bulkMode && !isFuel && (
             <BulkEntryGrid
-              onSaved={() => { load(); }}
+              onSaved={() => { setBulkMode(false); load(); }}
               onCancel={() => setBulkMode(false)}
             />
           )}

@@ -8,6 +8,7 @@ import {
   Briefcase, UserCheck, Activity, MonitorDot, Landmark, Users,
   TrendingUp, Monitor, Lock, DollarSign, Package, ShoppingCart,
   Truck, Laptop, Building2, BarChart3, ChevronDown, ChevronRight,
+  Pill, Sparkles, UtensilsCrossed, Archive, Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/shared/NotificationBell";
@@ -40,9 +41,18 @@ interface NavSection {
   readonly items: ReadonlyArray<NavItem>;
 }
 
+const INVENTORY_CHILDREN: ReadonlyArray<NavItem> = [
+  { href: "/admin/admin/inventory",               label: "All Items",    icon: Package    },
+  { href: "/admin/admin/medicine",                label: "Medicine",     icon: Pill       },
+  { href: "/admin/admin/cleaning",                label: "Cleaning",     icon: Sparkles   },
+  { href: "/admin/admin/pantry",                  label: "Pantry",       icon: UtensilsCrossed },
+  { href: "/admin/admin/stockroom",               label: "Stockroom",    icon: Archive    },
+  { href: "/admin/admin/maintenance",             label: "Maintenance",  icon: Wrench     },
+];
+
 const OFFICE_ADMIN_CHILDREN: ReadonlyArray<NavItem> = [
   { href: "/admin/admin",             label: "Overview",     icon: MonitorDot   },
-  { href: "/admin/admin/inventory",   label: "Inventory",    icon: Package      },
+  { href: "/admin/admin/inventory",   label: "Inventory",    icon: Package,      children: INVENTORY_CHILDREN as NavItem[] },
   { href: "/admin/admin/procurement", label: "Procurement",  icon: ShoppingCart },
   { href: "/admin/admin/logistics",   label: "Logistics",    icon: Truck        },
   { href: "/admin/admin/assets",      label: "Assets",       icon: Laptop       },
@@ -226,6 +236,51 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <div className="ml-[1.1rem] mt-0.5 pl-3 border-l border-white/10 space-y-0.5">
               {visibleChildren.map((child) => {
                 const childActive = isActive({ ...child, exact: child.href === "/admin/admin" });
+                const subItems = child.children?.filter(filterItem) ?? [];
+                const anySubActive = subItems.some((s) => isActive(s));
+                const [subOpen, setSubOpen] = [
+                  pathname.startsWith(child.href + "/") || pathname === child.href || anySubActive,
+                  () => {},
+                ];
+                if (subItems.length > 0) {
+                  return (
+                    <div key={child.href}>
+                      <Link
+                        href={child.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors",
+                          childActive || anySubActive ? "bg-white/20 text-white" : "text-blue-100/60 hover:bg-white/10 hover:text-white",
+                        )}
+                      >
+                        <child.icon className="h-3.5 w-3.5 shrink-0" />
+                        <span className="flex-1">{child.label}</span>
+                        {subOpen ? <ChevronDown className="h-2.5 w-2.5 opacity-50" /> : <ChevronRight className="h-2.5 w-2.5 opacity-50" />}
+                      </Link>
+                      {subOpen && (
+                        <div className="ml-[1.1rem] mt-0.5 pl-3 border-l border-white/10 space-y-0.5">
+                          {subItems.map((sub) => {
+                            const subActive = isActive(sub);
+                            return (
+                              <Link
+                                key={sub.href}
+                                href={sub.href}
+                                onClick={() => setSidebarOpen(false)}
+                                className={cn(
+                                  "flex items-center gap-2 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors",
+                                  subActive ? "bg-white/20 text-white" : "text-blue-100/50 hover:bg-white/10 hover:text-white",
+                                )}
+                              >
+                                <sub.icon className="h-3 w-3 shrink-0" />
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 return (
                   <Link
                     key={child.href}
