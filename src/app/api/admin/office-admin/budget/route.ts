@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       const cat = await prisma.adminBudgetCategory.findFirst({ where: { id: parsed.data.categoryId, organizationId: guard.tenantId } });
       if (!cat) return NextResponse.json({ success: false, data: null, error: "Category not found" }, { status: 404 });
       const record = await prisma.adminBudgetEntry.create({
-        data: { id: createId(), ...parsed.data, entryDate: new Date(parsed.data.entryDate) },
+        data: { id: createId(), organizationId: guard.tenantId, ...parsed.data, entryDate: new Date(parsed.data.entryDate) },
         include: { category: { select: { id: true, name: true, color: true } } },
       });
       return NextResponse.json({ success: true, data: record, error: null }, { status: 201 });

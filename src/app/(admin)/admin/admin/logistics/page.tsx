@@ -25,10 +25,13 @@ interface Vehicle {
 
 interface Delivery {
   id:          string;
+  title:       string;
   vehicleId:   string | null;
   origin:      string;
   destination: string;
   scheduledAt: string;
+  deliveredAt: string | null;
+  driver:      string | null;
   cargo:       string | null;
   status:      DeliveryStatus;
   notes:       string | null;
@@ -204,10 +207,13 @@ function DeliveryModal({ delivery, vehicles, onClose, onSaved }: DeliveryModalPr
   };
 
   const [form, setForm] = useState({
+    title:       delivery?.title ?? "",
     origin:      delivery?.origin ?? "",
     destination: delivery?.destination ?? "",
     scheduledAt: delivery ? toDatetimeLocal(delivery.scheduledAt) : "",
+    deliveredAt: delivery?.deliveredAt ? toDatetimeLocal(delivery.deliveredAt) : "",
     vehicleId:   delivery?.vehicleId ?? "",
+    driver:      delivery?.driver ?? "",
     cargo:       delivery?.cargo ?? "",
     status:      (delivery?.status ?? "SCHEDULED") as DeliveryStatus,
     notes:       delivery?.notes ?? "",
@@ -218,16 +224,20 @@ function DeliveryModal({ delivery, vehicles, onClose, onSaved }: DeliveryModalPr
   const set = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
   const handleSave = async () => {
+    if (!form.title.trim())        { setError("Title is required."); return; }
     if (!form.origin.trim())      { setError("Origin is required."); return; }
     if (!form.destination.trim()) { setError("Destination is required."); return; }
     if (!form.scheduledAt)        { setError("Scheduled date/time is required."); return; }
     setSaving(true); setError(null);
     try {
       const body = {
+        title:       form.title.trim(),
         origin:      form.origin.trim(),
         destination: form.destination.trim(),
         scheduledAt: new Date(form.scheduledAt).toISOString(),
+        deliveredAt: form.deliveredAt ? new Date(form.deliveredAt).toISOString() : null,
         vehicleId:   form.vehicleId || null,
+        driver:      form.driver.trim() || null,
         cargo:       form.cargo.trim() || null,
         status:      form.status,
         notes:       form.notes.trim() || null,
@@ -265,6 +275,10 @@ function DeliveryModal({ delivery, vehicles, onClose, onSaved }: DeliveryModalPr
             <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
           )}
           <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2">
+              <label className={LABEL}>Title *</label>
+              <input className={FIELD} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Branch delivery run" />
+            </div>
             <div>
               <label className={LABEL}>Origin *</label>
               <input className={FIELD} value={form.origin} onChange={(e) => set("origin", e.target.value)} placeholder="e.g. Warehouse A" />

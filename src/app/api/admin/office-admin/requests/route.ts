@@ -10,15 +10,15 @@ const createSchema = z.object({
   title:       z.string().min(1).max(300),
   category:    z.string().max(100).default("Supplies"),
   priority:    z.enum(["LOW","NORMAL","HIGH","URGENT"]).default("NORMAL"),
-  description: z.string().optional().nullable(),
-  requestedBy: z.string().max(200).optional().nullable(),
+  description: z.string().default(""),
+  requestedBy: z.string().max(200).default(""),
 });
 
 const actionSchema = z.object({
-  action:          z.enum(["APPROVE","REJECT","COMPLETE"]),
-  approvedBy:      z.string().optional(),
-  rejectionReason: z.string().optional(),
-  completionNote:  z.string().optional(),
+  action:         z.enum(["APPROVE","REJECT","COMPLETE"]),
+  approvedBy:     z.string().optional(),
+  rejectionNote:  z.string().optional(),
+  completionNote: z.string().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -93,16 +93,16 @@ export async function PATCH(request: NextRequest) {
     // Action (approve/reject/complete)
     const actionParsed = actionSchema.safeParse(body);
     if (actionParsed.success) {
-      const { action, approvedBy, rejectionReason, completionNote } = actionParsed.data;
+      const { action, approvedBy, rejectionNote, completionNote } = actionParsed.data;
       const statusMap = { APPROVE: "APPROVED", REJECT: "REJECTED", COMPLETE: "COMPLETED" } as const;
       const updated = await prisma.adminOfficeRequest.update({
         where: { id },
         data: {
-          status:          statusMap[action],
-          approvedBy:      action === "APPROVE" ? (approvedBy ?? (token?.name as string) ?? "Admin") : undefined,
-          rejectionReason: action === "REJECT"  ? rejectionReason : undefined,
-          completionNote:  action === "COMPLETE"? completionNote  : undefined,
-          updatedAt:       new Date(),
+          status:         statusMap[action],
+          approvedBy:     action === "APPROVE" ? (approvedBy ?? (token?.name as string) ?? "Admin") : undefined,
+          rejectionNote:  action === "REJECT"  ? rejectionNote  : undefined,
+          completionNote: action === "COMPLETE" ? completionNote : undefined,
+          updatedAt:      new Date(),
         },
       });
 

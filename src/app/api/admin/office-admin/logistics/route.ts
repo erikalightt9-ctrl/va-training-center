@@ -8,18 +8,21 @@ import { prisma } from "@/lib/prisma";
 
 const vehicleSchema = z.object({
   name:        z.string().min(1).max(200),
-  plateNumber: z.string().max(50).optional().nullable(),
+  plateNumber: z.string().max(50).default(""),
   vehicleType: z.string().max(100).default("Van"),
-  driver:      z.string().max(200).optional().nullable(),
-  status:      z.enum(["ACTIVE","MAINTENANCE","RETIRED"]).default("ACTIVE"),
+  driver:      z.string().max(150).optional().nullable(),
+  status:      z.string().default("ACTIVE"),
   notes:       z.string().optional().nullable(),
 });
 
 const deliverySchema = z.object({
+  title:       z.string().min(1).max(200),
   vehicleId:   z.string().optional().nullable(),
   origin:      z.string().min(1).max(300),
   destination: z.string().min(1).max(300),
   scheduledAt: z.string(),
+  deliveredAt: z.string().optional().nullable(),
+  driver:      z.string().max(150).optional().nullable(),
   cargo:       z.string().optional().nullable(),
   status:      z.enum(["SCHEDULED","IN_TRANSIT","DELIVERED","CANCELLED"]).default("SCHEDULED"),
   notes:       z.string().optional().nullable(),
@@ -77,7 +80,7 @@ export async function POST(request: NextRequest) {
       const parsed = deliverySchema.safeParse(body);
       if (!parsed.success) return NextResponse.json({ success: false, data: null, error: parsed.error.message }, { status: 400 });
       const record = await prisma.adminDelivery.create({
-        data: { id: createId(), organizationId: guard.tenantId, ...parsed.data, scheduledAt: new Date(parsed.data.scheduledAt), createdBy: (token?.name as string) ?? "admin" },
+        data: { id: createId(), organizationId: guard.tenantId, ...parsed.data, scheduledAt: new Date(parsed.data.scheduledAt), ...(parsed.data.deliveredAt ? { deliveredAt: new Date(parsed.data.deliveredAt) } : {}) },
         include: { vehicle: { select: { id: true, name: true, plateNumber: true } } },
       });
       return NextResponse.json({ success: true, data: record, error: null }, { status: 201 });
